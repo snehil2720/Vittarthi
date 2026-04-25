@@ -1,0 +1,18 @@
+🚀 NEXT (ab aur dangerous banate hain)
+
+Bol bhai:
+
+📥 Download PDF report
+📊 Pie chart (interest vs principal)
+🔐 Login + save history
+🤖 AI investment suggestion
+
+
+2. Functionality add
+user login
+save calculations
+history
+
+👉 “1 user = 1 like (toggle system)”
+👉 “unlike option”
+👉 “login-based reaction system”    

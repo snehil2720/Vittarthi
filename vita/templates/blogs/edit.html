@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* ══════════ WRITE BLOG UI ══════════ */
+    .editor-wrapper {
+        max-width: 900px;
+        margin: 2rem auto 4rem;
+        animation: fadeUp 0.5s ease both;
+    }
+    
+    .editor-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .editor-header h1 {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+    
+    .editor-header p {
+        color: var(--muted);
+        font-size: 1.05rem;
+    }
+
+    .form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: clamp(1.5rem, 4vw, 3rem);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .custom-input, .custom-select {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .custom-input:focus, .custom-select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-lt);
+    }
+
+    .custom-file-input {
+        padding: 8px;
+    }
+
+    .custom-file-input::file-selector-button {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 6px;
+        color: var(--text);
+        cursor: pointer;
+        margin-right: 15px;
+        transition: background 0.2s;
+    }
+
+    .custom-file-input::file-selector-button:hover {
+        background: var(--border);
+    }
+
+    /* Grid for side-by-side inputs on Desktop */
+    .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+
+    /* Make CKEditor fit theme */
+    .django-ckeditor-widget {
+        width: 100% !important;
+    }
+</style>
+
+<main class="page">
+    <div class="editor-wrapper">
+        
+        <div class="editor-header">
+            <h1>✏️ Edit Blog</h1>
+            <p>Update your article content and details.</p>
+        </div>
+
+        <div class="form-card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- TITLE -->
+                <div class="form-group">
+                    <label class="form-label">Article Title</label>
+                    <input type="text" name="title" class="custom-input" value="{{ blog.title }}" required>
+                </div>
+
+                <!-- CATEGORY + SLUG -->
+                <div class="input-grid form-group">
+                    <div>
+                        <label class="form-label">Category</label>
+                        <select name="category" class="custom-select">
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if blog.category.id == cat.id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Slug</label>
+                        <input type="text" name="slug" class="custom-input" value="{{ blog.slug }}">
+                    </div>
+                </div>
+
+                <!-- CONTENT (CKEDITOR) -->
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea name="content" id="editor">{{ blog.content }}</textarea>
+                </div>
+
+                <!-- IMAGE + STATUS -->
+                <div class="input-grid form-group">
+                    <div>
+                        <label class="form-label">Cover Image</label>
+                        <input type="file" name="image" class="custom-input" accept="image/*">
+
+                        {% if blog.image %}
+                        <img src="{{ blog.image.url }}" id="imagePreview" 
+                             style="max-width:100%; margin-top:10px; border-radius:8px;" />
+                        {% else %}
+                        <img id="imagePreview" style="display:none; max-width:100%; margin-top:10px;" />
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="form-label">Publish Status</label>
+                        <select name="status" class="custom-select">
+                            <option value="draft" {% if blog.status == 'draft' %}selected{% endif %}>
+                                📁 Draft
+                            </option>
+                            <option value="published" {% if blog.status == 'published' %}selected{% endif %}>
+                                🚀 Publish
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary submit-btn">
+                    <i class="bi bi-arrow-repeat"></i> Update Blog
+                </button>
+
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- CKEDITOR -->
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // ✅ CKEDITOR LOAD
+    if (typeof CKEDITOR !== 'undefined') {
+        CKEDITOR.replace('editor', {
+            height: 350,
+            filebrowserUploadUrl: '/ckeditor/upload/',
+            filebrowserUploadMethod: 'form',
+            uiColor: '#ffffff',
+        });
+    }
+
+    // ✅ SLUG AUTO UPDATE (only if not manually changed)
+    const titleInput = document.querySelector("input[name='title']");
+    const slugInput = document.querySelector("input[name='slug']");
+
+    titleInput.addEventListener("input", function() {
+        if(slugInput.dataset.manual === "true") return;
+
+        let slug = this.value
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+
+        slugInput.value = slug;
+    });
+
+    slugInput.addEventListener("input", function() {
+        this.dataset.manual = "true";
+    });
+
+    // ✅ IMAGE PREVIEW
+    document.querySelector("input[name='image']").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById("imagePreview");
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                preview.src = event.target.result;
+                preview.style.display = "block";
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+});
+</script>
+
+{% endblock %}

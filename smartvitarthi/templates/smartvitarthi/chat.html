@@ -1,0 +1,26 @@
+<h2>Smart Financial Advisor</h2>
+
+<input type="number" id="salary" placeholder="Enter salary">
+<input type="number" id="expenses" placeholder="Enter expenses">
+
+<button onclick="getAdvice()">Ask</button>
+
+<div id="result"></div>
+
+<script>
+function getAdvice() {
+    let salary = document.getElementById("salary").value;
+    let expenses = document.getElementById("expenses").value;
+
+    fetch(`/smart/api/?salary=${salary}&expenses=${expenses}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("result").innerHTML =
+            `
+            <b>Needs:</b> ${data.needs} <br>
+            <b>Savings:</b> ${data.savings} <br>
+            <b>Advice:</b> ${data.advice.join(", ")}
+            `;
+    });
+}
+</script>

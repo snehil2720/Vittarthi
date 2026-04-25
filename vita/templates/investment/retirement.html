@@ -1,0 +1,1031 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Retirement Calculator — Vitarthi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+{% block content %}
+<style>
+/* ═══════════ RESET & BASE ═══════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s, color .3s;
+}
+
+/* Mobile drawer */
+.drawer {
+  display:none; position:fixed;
+  top:var(--nav-h); left:0; right:0; bottom:0;
+  z-index:190;
+}
+.drawer.open { display:block; }
+.drawer-overlay {
+  position:absolute; inset:0; background:rgba(0,0,0,.45);
+}
+.drawer-panel {
+  position:absolute; top:0; right:0;
+  width:min(260px, 80vw); height:100%;
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  padding:1.25rem 1rem;
+  box-shadow:var(--shadow-lg);
+  display:flex; flex-direction:column; gap:.25rem;
+  overflow-y:auto;
+}
+.drawer-panel a {
+  display:block; text-decoration:none; color:var(--muted);
+  font-size:.9rem; font-weight:500;
+  padding:.55rem .85rem; border-radius:8px;
+  transition:all .2s;
+}
+.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
+.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
+.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
+
+/* ═══════════ PAGE SHELL ═══════════ */
+.page {
+  max-width:1340px; margin:0 auto;
+  padding:0 var(--pad) 4rem;
+}
+
+/* ═══════════ HERO ═══════════ */
+.hero {
+  text-align:center;
+  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
+  animation:fadeUp .5s ease both;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--accent);
+  background:var(--accent-lt);
+  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
+}
+.hero h1 {
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(1.75rem, 5vw, 3.4rem);
+  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
+}
+.hero h1 em { color:var(--accent); font-style:italic; }
+.hero p { color:var(--muted); font-size:.95rem; max-width:540px; margin:0 auto; }
+
+/* ═══════════ METRICS ROW ═══════════ */
+.metrics-row {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(.6rem,2vw,1rem);
+  margin-bottom:clamp(1rem,2.5vw,1.5rem);
+  animation:fadeUp .5s .15s ease both;
+}
+.metric {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
+  box-shadow:var(--shadow);
+  position:relative; overflow:hidden;
+  transition:transform .2s, background .3s;
+}
+.metric::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:3px; border-radius:3px 3px 0 0;
+}
+.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
+.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
+.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
+.metric:hover { transform:translateY(-2px); }
+.metric-lbl {
+  font-size:.68rem; font-weight:600; letter-spacing:1px;
+  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
+}
+.metric-val {
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(1.2rem,3vw,1.6rem);
+  line-height:1; margin-bottom:3px;
+}
+.metric-sub { font-size:.68rem; color:var(--muted); }
+.metric.total .metric-val  { color:var(--accent); }
+.metric.profit .metric-val { color:var(--gold); }
+
+/* ═══════════ 3-COL GRID ═══════════ */
+.main-grid {
+  display:grid;
+  grid-template-columns:320px 1fr 200px;
+  grid-template-areas:"inputs charts sidebar";
+  gap:clamp(1rem,2vw,1.5rem);
+  align-items:start;
+}
+.inputs-col { grid-area:inputs; }
+.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
+.sidebar-col { grid-area:sidebar; }
+
+/* ═══════════ CARD ═══════════ */
+.card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:clamp(1rem,3vw,1.5rem);
+  box-shadow:var(--shadow);
+  transition:background .3s, border-color .3s;
+}
+.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
+.card-title {
+  font-size:.72rem; font-weight:600; letter-spacing:1px;
+  text-transform:uppercase; color:var(--muted);
+  margin-bottom:1.1rem;
+}
+
+/* ═══════════ SLIDERS & INPUTS ═══════════ */
+.field { margin-bottom:1.25rem; }
+.field:last-child { margin-bottom:0; }
+.field-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:.5rem;
+}
+.field-lbl  { font-size:.85rem; color:var(--muted); }
+
+input.field-val  {
+  font-size:.92rem; font-weight:600; color:var(--text);
+  background:var(--surface2); padding:4px 10px; border-radius:6px;
+  width:110px; text-align:right; border:1px solid transparent;
+  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
+}
+input.field-val:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+input.field-val::-webkit-outer-spin-button,
+input.field-val::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+input.field-val[type=number] {
+  -moz-appearance: textfield;
+}
+
+.range-wrap { position:relative; }
+.range-fill {
+  position:absolute; top:50%; transform:translateY(-50%);
+  height:5px; border-radius:100px;
+  background:linear-gradient(90deg,var(--accent),#059669);
+  pointer-events:none; transition:width .08s;
+}
+input[type=range] {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:5px;
+  background:var(--surface2); border-radius:100px;
+  outline:none; cursor:pointer; display:block;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-lt);
+  cursor:pointer; transition:transform .18s;
+}
+input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
+input[type=range]::-moz-range-thumb {
+  width:22px; height:22px; border-radius:50%;
+  border:none; background:var(--accent); cursor:pointer;
+}
+.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
+.range-hint  { font-size:.66rem; color:var(--muted); }
+
+/* ═══════════ DONUT ═══════════ */
+.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
+.donut-canvas-wrap { position:relative; flex-shrink:0; }
+.donut-canvas-wrap canvas { display:block; }
+.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+.leg-row { display:flex; align-items:center; gap:8px; }
+.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
+.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
+.mult-box {
+  margin-top:8px; padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.mult-lbl { font-size:.68rem; color:var(--muted); margin-bottom:2px; }
+.mult-val { font-size:1.15rem; font-weight:600; color:var(--text); }
+
+/* ═══════════ CHART TABS ═══════════ */
+.chart-hdr {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:.85rem;
+  flex-wrap:wrap; gap:.5rem;
+}
+.tab-row { display:flex; gap:5px; }
+.tab-btn {
+  background:var(--surface2); border:none; border-radius:7px;
+  padding:4px 14px; font-size:.78rem; font-weight:500;
+  color:var(--muted); cursor:pointer; font-family:inherit;
+  transition:all .2s;
+}
+.tab-btn.active { background:var(--accent); color:#fff; }
+.chart-box { position:relative; width:100%; }
+.chart-legend {
+  display:flex; gap:14px; margin-bottom:.6rem; flex-wrap:wrap;
+}
+.chart-legend span {
+  display:flex; align-items:center; gap:5px;
+  font-size:.72rem; color:var(--muted);
+}
+.chart-legend .dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+
+/* ═══════════ TABLE ═══════════ */
+.tbl-scroll {
+  max-height:260px; overflow-y:auto;
+  border-radius:8px; border:1px solid var(--border);
+}
+.tbl-scroll::-webkit-scrollbar { width:4px; }
+.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+table { width:100%; border-collapse:collapse; font-size:.78rem; }
+thead th {
+  padding:9px 12px; text-align:right;
+  font-size:.65rem; font-weight:600; letter-spacing:.5px;
+  text-transform:uppercase; color:var(--muted);
+  background:var(--surface2);
+  position:sticky; top:0; z-index:1;
+  border-bottom:1px solid var(--border);
+}
+thead th:first-child { text-align:left; }
+tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--surface2); }
+tbody td { padding:8px 12px; text-align:right; color:var(--text); }
+tbody td:first-child { text-align:left; font-weight:500; }
+td.green { color:var(--accent); font-weight:600; }
+td.gold { color:var(--gold); font-weight:600; }
+
+/* ═══════════ TIPS ═══════════ */
+.tips-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
+}
+.tip {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:.9rem 1rem;
+  cursor:pointer; transition:all .2s;
+}
+.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
+.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
+.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
+.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
+
+/* ═══════════ SIDEBAR ═══════════ */
+.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
+.sb-links { display:flex; flex-direction:column; gap:3px; }
+.sb-links a {
+  display:flex; align-items:center; gap:7px;
+  text-decoration:none; color:var(--muted);
+  font-size:.8rem; padding:7px 9px; border-radius:8px;
+  border:1px solid transparent; transition:all .18s;
+}
+.sb-links a i { font-size:13px; flex-shrink:0; }
+.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
+.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
+.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
+.qf { padding-top:10px; border-top:1px solid var(--border); }
+.qf:first-child { padding-top:0; border-top:none; }
+.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
+.qf-val { font-weight:600; color:var(--text); }
+.qf-val.accent { color:var(--accent); }
+
+/* ═══════════ SEO CONTENT AREA ═══════════ */
+.seo-content {
+  max-width: 900px;
+  margin: 5rem auto 2rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--border);
+}
+.seo-content h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--text);
+  margin: 2.5rem 0 1rem;
+}
+.seo-content h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 1.5rem 0 0.5rem;
+}
+.seo-content p {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+.seo-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+.seo-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.seo-list li::before {
+  content: '•';
+  color: var(--accent);
+  font-size: 1.8rem;
+  position: absolute;
+  left: 0;
+  top: -6px;
+}
+.seo-list li strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* FAQ Accordion */
+.faq-box { margin-top: 2rem; }
+details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+details:hover { box-shadow: var(--shadow); }
+summary {
+  padding: 1.2rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after {
+  content: '\F282';
+  font-family: 'bootstrap-icons';
+  font-size: 1rem;
+  transition: transform 0.3s;
+  color: var(--muted);
+}
+details[open] summary::after {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+.faq-content {
+  padding: 0 1.5rem 1.2rem;
+  color: var(--muted);
+  font-size: .95rem;
+  line-height: 1.7;
+}
+
+/* ═══════════ FOOTER ═══════════ */
+footer {
+  text-align:center; padding:1.75rem var(--pad);
+  color:var(--muted); font-size:.75rem;
+  border-top:1px solid var(--border); margin-top:3rem;
+}
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.card { animation:fadeUp .45s ease both; }
+
+/* ════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+════════════════════════════════════════ */
+@media (max-width:1024px) {
+  .main-grid {
+    grid-template-columns:300px 1fr;
+    grid-template-areas:
+      "inputs charts"
+      "sidebar sidebar";
+  }
+  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .sidebar-col .card + .card { margin-top:0; }
+}
+
+@media (max-width:768px) {
+  :root { --nav-h:56px; }
+  .ham-btn     { display:flex; }
+  .nav-desktop { display:none; }
+  .main-grid {
+    grid-template-columns:1fr;
+    grid-template-areas: "inputs" "charts" "sidebar";
+  }
+  .sidebar-col { grid-template-columns:1fr 1fr; }
+  .metrics-row { grid-template-columns:repeat(3,1fr); }
+  .tips-grid   { grid-template-columns:repeat(2,1fr); }
+  .donut-wrap  { flex-direction:row; }
+}
+
+@media (max-width:580px) {
+  .metrics-row { grid-template-columns:1fr 1fr; }
+  .metric.total { grid-column:1 / -1; }
+  .sidebar-col { grid-template-columns:1fr; }
+  .sidebar-col .card + .card { margin-top:1rem; }
+  .tips-grid { grid-template-columns:1fr; }
+  .donut-wrap { flex-direction:column; align-items:flex-start; }
+  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
+  .leg-row { flex:1; min-width:130px; }
+  table { font-size:.72rem; }
+  thead th, tbody td { padding:7px 8px; }
+  .hide-xs { display:none; }
+  .card { padding:1rem; }
+}
+
+@media (max-width:400px) {
+  .metrics-row { grid-template-columns:1fr; }
+  .metric.total { grid-column:auto; }
+  .hero h1 { font-size:1.6rem; }
+}
+
+@media (hover:none) {
+  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
+  .tip:hover, .metric:hover { transform:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="drawer" id="navDrawer" onclick="closeOnOverlay(event)">
+  <div class="drawer-overlay"></div>
+  <div class="drawer-panel">
+    <a href="/">Home</a>
+    <a href="/calculators/" class="active">Calculators</a>
+    <a href="/blogs/">Blogs</a>
+    <a href="/contact/">Contact</a>
+    <a href="/login/">Sign In</a>
+    <hr class="drawer-divider">
+    <a href="/sip/"><i class="bi bi-graph-up-arrow"></i> SIP Calculator</a>
+    <a href="/emi/"><i class="bi bi-credit-card"></i> EMI Calculator</a>
+    <a href="/loan/home/"><i class="bi bi-house"></i> Home Loan</a>
+    <a href="/loan/car/"><i class="bi bi-car-front"></i> Car Loan</a>
+    <a href="/loan/personal/"><i class="bi bi-person"></i> Personal Loan</a>
+    <a href="/nps/"><i class="bi bi-shield-check"></i> NPS</a>
+    <a href="/ppf"><i class="bi bi-piggy-bank"></i> PPF</a>
+    <a href="/pf/"><i class="bi bi-briefcase"></i> PF</a>
+    <a href="/retirement/" class="active"><i class="bi bi-clock-history"></i> Retirement</a>
+    <a href="/salary/"><i class="bi bi-cash-stack"></i> Salary</a>
+    <a href="/eligibility/"><i class="bi bi-check-circle"></i> Eligibility</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-badge"><i class="bi bi-clock-history"></i> Retirement Planner</div>
+    <h1>Design your golden years with<br><em>precision</em></h1>
+    <p>Calculate the total corpus you will need and build when you retire by combining your current savings and future investments.</p>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric total">
+      <div class="metric-lbl">Retirement Corpus</div>
+      <div class="metric-val" id="m-total">₹0</div>
+      <div class="metric-sub" id="m-retirement-age">At Age 60</div>
+    </div>
+    <div class="metric invested">
+      <div class="metric-lbl">Total Invested</div>
+      <div class="metric-val" id="m-invested">₹0</div>
+      <div class="metric-sub" id="m-years">Over 0 Years</div>
+    </div>
+    <div class="metric profit">
+      <div class="metric-lbl">Wealth Gained</div>
+      <div class="metric-val" id="m-profit">₹0</div>
+      <div class="metric-sub" id="m-profitpct">—</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <div class="inputs-col">
+      <div class="card">
+        <div class="card-title">⏳ Timeline</div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Current Age</span>
+            <input type="number" class="field-val" id="inp-age" value="30" step="1" oninput="syncFromInput('age')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-age"></div>
+            <input type="range" id="sl-age" min="18" max="65" step="1" value="30" oninput="syncFromSlider('age')">
+          </div>
+          <div class="range-hints"><span class="range-hint">18 yrs</span><span class="range-hint">65 yrs</span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Retirement Age</span>
+            <input type="number" class="field-val" id="inp-ret-age" value="60" step="1" oninput="syncFromInput('ret-age')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-ret-age"></div>
+            <input type="range" id="sl-ret-age" min="40" max="75" step="1" value="60" oninput="syncFromSlider('ret-age')">
+          </div>
+          <div class="range-hints"><span class="range-hint">40 yrs</span><span class="range-hint">75 yrs</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💰 Investment Details</div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Existing Corpus (₹)</span>
+            <input type="number" class="field-val" id="inp-savings" value="500000" oninput="syncFromInput('savings')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-savings"></div>
+            <input type="range" id="sl-savings" min="0" max="50000000" step="50000" value="500000" oninput="syncFromSlider('savings')">
+          </div>
+          <div class="range-hints"><span class="range-hint">₹0</span><span class="range-hint">₹5 Cr</span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Monthly SIP (₹)</span>
+            <input type="number" class="field-val" id="inp-sip" value="10000" oninput="syncFromInput('sip')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-sip"></div>
+            <input type="range" id="sl-sip" min="1000" max="500000" step="1000" value="10000" oninput="syncFromSlider('sip')">
+          </div>
+          <div class="range-hints"><span class="range-hint">₹1K</span><span class="range-hint">₹5L</span></div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <div class="field-hdr">
+            <span class="field-lbl">Expected Return (% p.a)</span>
+            <input type="number" class="field-val" id="inp-rate" value="12.0" step="0.5" oninput="syncFromInput('rate')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-rate"></div>
+            <input type="range" id="sl-rate" min="5" max="20" step="0.5" value="12.0" oninput="syncFromSlider('rate')">
+          </div>
+          <div class="range-hints"><span class="range-hint">5%</span><span class="range-hint">20%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-col">
+
+      <div class="card">
+        <div class="chart-hdr">
+          <div class="card-title" style="margin-bottom:0;">📈 Wealth Accumulation</div>
+          <div class="tab-row">
+            <button class="tab-btn active" onclick="switchTab('bar',this)">Split</button>
+            <button class="tab-btn" onclick="switchTab('line',this)">Growth Trend</button>
+          </div>
+        </div>
+        
+        <div class="chart-legend">
+        <span><span class="dot" style="background:#2563eb;"></span>Total Invested</span>
+        <span><span class="dot" style="background:#d97706;"></span>Est. Returns</span>
+        </div>
+        
+        <div class="chart-box" style="height:clamp(200px,35vw,300px);">
+          <canvas id="mainChart" role="img" aria-label="Retirement growth chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:.75rem;">📅 Age-by-Age Milestone</div>
+        <div class="tbl-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Age</th>
+                <th>Invested Amount</th>
+                <th>Est. Returns</th>
+                <th class="hide-xs">Corpus Value</th>
+              </tr>
+            </thead>
+            <tbody id="yearTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:.75rem;">⚡ Retirement Goals</div>
+        <div class="tips-grid">
+          <div class="tip" onclick="applyTip(25, 50, 0, 30000, 14)">
+            <div class="tip-icon">🔥</div>
+            <div class="tip-title">FIRE Movement</div>
+            <div class="tip-desc">Retire at 50 · Aggressive</div>
+          </div>
+          <div class="tip" onclick="applyTip(30, 60, 500000, 15000, 12)">
+            <div class="tip-icon">🏢</div>
+            <div class="tip-title">Standard Career</div>
+            <div class="tip-desc">Age 30 to 60 · Balanced</div>
+          </div>
+          <div class="tip" onclick="applyTip(40, 60, 2500000, 40000, 10)">
+            <div class="tip-icon">🏃</div>
+            <div class="tip-title">Late Starter</div>
+            <div class="tip-desc">Age 40 · Heavy Catch-up</div>
+          </div>
+          <div class="tip" onclick="applyTip(35, 55, 1500000, 20000, 12)">
+            <div class="tip-icon">🏖️</div>
+            <div class="tip-title">Early Out</div>
+            <div class="tip-desc">Age 35 to 55 · Smart Prep</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-col">
+      <div class="card">
+        <div class="sb-title">Calculators</div>
+        <div class="sb-links">
+          <a href="/sip/"><i class="bi bi-graph-up-arrow"></i>SIP</a>
+          <a href="/emi/"><i class="bi bi-credit-card"></i>EMI</a>
+          <a href="/loan/home/"><i class="bi bi-house"></i>Home Loan</a>
+          <a href="/loan/car/"><i class="bi bi-car-front"></i>Car Loan</a>
+          <a href="/loan/personal/"><i class="bi bi-person"></i>Personal Loan</a>
+          <a href="/nps/"><i class="bi bi-shield-check"></i>NPS</a>
+          <a href="/ppf"><i class="bi bi-piggy-bank"></i>PPF</a>
+          <a href="/pf/"><i class="bi bi-briefcase"></i>PF</a>
+          <a href="/retirement/" class="active"><i class="bi bi-clock-history"></i>Retirement</a>
+          <a href="/salary/"><i class="bi bi-cash-stack"></i>Salary</a>
+          <a href="/eligibility/"><i class="bi bi-check-circle"></i>Eligibility</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sb-title">Retirement Tips</div>
+        <div class="quick-facts">
+          <div class="qf">
+            <div class="qf-lbl">Rule of 4%</div>
+            <div class="qf-val">You should be able to cover your yearly expenses with just 4% of your total corpus.</div>
+          </div>
+          <div class="qf">
+            <div class="qf-lbl">Don't ignore Inflation</div>
+            <div class="qf-val">₹1 Crore today will have the buying power of just ₹30 Lakhs after 20 years!</div>
+          </div>
+          <div class="qf">
+            <div class="qf-lbl">Step-Up Strategy</div>
+            <div class="qf-val accent">Increase your SIP by 10% every year as your salary grows ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="seo-content">
+    <h2>Retirement Calculator – Plan Your Golden Years</h2>
+    <p>Retirement planning is not an age, it is a financial number. Whether you plan to work until you are 60 or join the FIRE (Financial Independence, Retire Early) movement at 45, knowing your target corpus is the most important step in personal finance. Our Retirement Calculator helps you combine your existing savings with your monthly investments to forecast your future wealth.</p>
+    
+    <h3>Why is Retirement Planning Crucial?</h3>
+    <p>With increasing life expectancy and rising healthcare costs, you might spend 25 to 30 years in retirement without a regular paycheck. Unlike previous generations, most private-sector employees today do not have a guaranteed government pension. Relying solely on EPF or PPF might not be enough due to the silent wealth-killer: <strong>Inflation</strong>.</p>
+
+    <h3>The Impact of Inflation</h3>
+    <p>If your monthly household expenses are ₹50,000 today, at a 6% inflation rate, you will need approximately ₹1,60,000 per month just to maintain the exact same lifestyle 20 years from now. This is why investing purely in safe, low-yield instruments like FDs might actually deplete your purchasing power over time. You need a balanced portfolio of equity (Mutual Funds/SIPs) and debt (EPF/PPF) to comfortably beat inflation.</p>
+
+    <h3>How to Use This Calculator</h3>
+    <ul class="seo-list">
+      <li><strong>Current Age & Retirement Age:</strong> Sets your investment horizon. The wider this gap, the harder compounding works in your favor.</li>
+      <li><strong>Existing Corpus:</strong> Enter the sum of your current FDs, EPF, PPF, and Mutual Fund holdings earmarked for retirement.</li>
+      <li><strong>Monthly SIP:</strong> The fresh money you will invest every month specifically for your retirement goal.</li>
+      <li><strong>Expected Return:</strong> A realistic estimate. Historically, a balanced portfolio of Nifty 50 Index funds and debt provides around 10% to 12% long-term returns.</li>
+    </ul>
+
+    <h3>Frequently Asked Questions</h3>
+    <div class="faq-box">
+      <details name="faq">
+        <summary>What is the 4% Rule in Retirement?</summary>
+        <div class="faq-content">The 4% rule is a rule of thumb used to determine how much you can safely withdraw from your retirement funds each year without running out of money. For example, if you need ₹12 Lakhs a year (₹1 Lakh/month) in retirement, your total corpus should be at least ₹3 Crores (since 4% of 3 Cr = 12 Lakhs).</div>
+      </details>
+      <details name="faq">
+        <summary>Should I reduce equity exposure as I get closer to retirement?</summary>
+        <div class="faq-content">Yes. This is called "Glide Path" investing. When you are 20 years away from retirement, you can afford 70-80% equity risk. But 3 years before retirement, you should shift a large portion of your corpus into safe debt instruments to protect it from a sudden stock market crash.</div>
+      </details>
+      <details name="faq">
+        <summary>Is ₹1 Crore enough to retire in India?</summary>
+        <div class="faq-content">It depends on your lifestyle, city of residence, and when you retire. However, for a 30-year-old retiring at 60, ₹1 Crore will not be sufficient due to 30 years of inflation. Use the calculator to set a realistic goal.</div>
+      </details>
+    </div>
+    <br>
+  </section>
+
+</div>
+
+<footer>
+  &copy; 2026 Vita₹thi &nbsp;·&nbsp; Figures are estimates. Mutual Fund investments are subject to market risks. Please consult a SEBI registered investment advisor before making financial decisions.
+</footer>
+
+<script>
+/* helpers */
+function fmt(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(2) + ' L';
+  if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
+  return '₹' + Math.round(n);
+}
+function fmtS(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
+  if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
+  return '₹' + Math.round(n);
+}
+
+/* Retirement Math Engine */
+function calcRetirement(age, retAge, savings, sip, rate) {
+  const y = retAge - age;
+  if(y <= 0) return {invested: savings, profit: 0, total: savings, yearlyData: [], years: 0};
+  
+  const i = rate / 100 / 12;
+  let yearlyData = [];
+  
+  // Track continuous growth
+  let currentBalance = savings;
+  let totalInvested = savings;
+
+  for (let year = 1; year <= y; year++) {
+      let investedThisYear = 0;
+      
+      // Process 12 months for this year
+      for(let month = 1; month <= 12; month++) {
+          // Add monthly sip
+          currentBalance += sip;
+          investedThisYear += sip;
+          // Apply monthly interest
+          if (rate > 0) {
+              currentBalance += currentBalance * i;
+          }
+      }
+      
+      totalInvested += investedThisYear;
+      
+      yearlyData.push({
+          currentAge: age + year,
+          invested: Math.round(totalInvested),
+          profit: Math.round(currentBalance - totalInvested),
+          total: Math.round(currentBalance)
+      });
+  }
+
+  const totalProfit = currentBalance - totalInvested;
+
+  return { 
+      invested: Math.round(totalInvested), 
+      profit: Math.round(totalProfit), 
+      total: Math.round(currentBalance), 
+      yearlyData,
+      years: y
+  };
+}
+
+/* Sync Logic: Input <--> Slider */
+function updateFill(id) {
+  const sl = document.getElementById('sl-'+id);
+  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
+  const el = document.getElementById('fill-'+id);
+  if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
+}
+
+function syncFromSlider(id) {
+  const v = parseFloat(document.getElementById('sl-'+id).value);
+  document.getElementById('inp-'+id).value = v; 
+  
+  // Special logic: ensure retAge > age
+  if (id === 'age') {
+      const retAge = parseFloat(document.getElementById('inp-ret-age').value);
+      if (v >= retAge) {
+          document.getElementById('sl-ret-age').value = v + 1;
+          document.getElementById('inp-ret-age').value = v + 1;
+          updateFill('ret-age');
+      }
+  }
+  if (id === 'ret-age') {
+      const age = parseFloat(document.getElementById('inp-age').value);
+      if (v <= age) {
+          document.getElementById('sl-age').value = v - 1;
+          document.getElementById('inp-age').value = v - 1;
+          updateFill('age');
+      }
+  }
+
+  updateFill(id);
+  updateAll();
+}
+
+function syncFromInput(id) {
+  const v = parseFloat(document.getElementById('inp-'+id).value);
+  if (isNaN(v)) return; 
+  
+  const sl = document.getElementById('sl-'+id);
+  if (v < parseFloat(sl.min)) sl.value = sl.min;
+  else if (v > parseFloat(sl.max)) sl.value = sl.max;
+  else sl.value = v;
+
+  // Special logic: ensure retAge > age
+  if (id === 'age') {
+      const retAge = parseFloat(document.getElementById('inp-ret-age').value);
+      if (v >= retAge) {
+          document.getElementById('sl-ret-age').value = v + 1;
+          document.getElementById('inp-ret-age').value = v + 1;
+          updateFill('ret-age');
+      }
+  }
+  if (id === 'ret-age') {
+      const age = parseFloat(document.getElementById('inp-age').value);
+      if (v <= age) {
+          document.getElementById('sl-age').value = v - 1;
+          document.getElementById('inp-age').value = v - 1;
+          updateFill('age');
+      }
+  }
+  
+  updateFill(id);
+  updateAll();
+}
+
+/* Chart Colors & Base Configuration */
+let mode = 'bar', mainChart;
+const C = { 
+  inv: '#2563eb', invBg: 'rgba(37, 99, 235, 0.85)',
+  pro: '#d97706', proBg: 'rgba(217, 119, 6, 0.85)'
+};
+
+function getChartOpts(isBar) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { 
+          label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0),
+          title: ctx => 'Age: ' + ctx[0].label
+        },
+        backgroundColor: 'rgba(0,0,0,.82)', padding: 10, cornerRadius: 8
+      }
+    },
+    animation: { duration: 400 },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 }, stacked: true },
+      y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }, stacked: true }
+    }
+  };
+}
+
+function chartData() {
+  const age = +document.getElementById('inp-age').value || 30;
+  const retAge = +document.getElementById('inp-ret-age').value || 60;
+  const savings = +document.getElementById('inp-savings').value || 0;
+  const sip = +document.getElementById('inp-sip').value || 0;
+  const rate = +document.getElementById('inp-rate').value || 0;
+  
+  const { yearlyData } = calcRetirement(age, retAge, savings, sip, rate);
+  
+  const labels = [age], invested = [savings], profit = [0];
+  yearlyData.forEach(d => {
+    labels.push(d.currentAge);
+    invested.push(d.invested);
+    profit.push(d.profit);
+  });
+  return { labels, invested, profit };
+}
+
+function getDatasets(d, isBar) {
+  if (isBar) {
+    return [
+      { type: 'bar', label: 'Invested Amount', data: d.invested, backgroundColor: C.invBg, borderRadius: {topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4} },
+      { type: 'bar', label: 'Est. Returns',    data: d.profit,   backgroundColor: C.proBg, borderRadius: {topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0} }
+    ];
+  } else {
+    let totalArr = d.invested.map((val, idx) => val + d.profit[idx]);
+    return [
+      { type: 'line', label: 'Total Corpus', data: totalArr, borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.35, pointRadius: 2 },
+      { type: 'line', label: 'Invested Amount', data: d.invested, borderColor: C.inv, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, borderDash: [5, 5] }
+    ];
+  }
+}
+
+function initCharts() {
+  const d = chartData();
+  mainChart = new Chart(document.getElementById('mainChart'), {
+    type: 'bar',
+    data: { labels: d.labels, datasets: getDatasets(d, true) },
+    options: getChartOpts(true)
+  });
+}
+
+function switchTab(m, btn) {
+  mode = m;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const d = chartData();
+  if (mainChart) mainChart.destroy();
+
+  let opts = getChartOpts(m === 'bar');
+  if(m !== 'bar') { opts.scales.x.stacked = false; opts.scales.y.stacked = false; }
+
+  mainChart = new Chart(document.getElementById('mainChart'), {
+    type: (m === 'bar') ? 'bar' : 'line',
+    data: { labels: d.labels, datasets: getDatasets(d, m === 'bar') },
+    options: opts
+  });
+}
+
+/* table */
+function buildTable(yearlyData) {
+  const tb = document.getElementById('yearTable');
+  tb.innerHTML = '';
+  yearlyData.forEach(d => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>Age ${d.currentAge}</td><td>${fmt(d.invested)}</td><td class="gold">+${fmt(d.profit)}</td><td class="hide-xs" style="color:var(--accent); font-weight:600;">${fmt(d.total)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* master update */
+function updateAll() {
+  const age = +document.getElementById('inp-age').value || 30;
+  const retAge = +document.getElementById('inp-ret-age').value || 60;
+  const savings = +document.getElementById('inp-savings').value || 0;
+  const sip = +document.getElementById('inp-sip').value || 0;
+  const rate = +document.getElementById('inp-rate').value || 0;
+  
+  const { invested, profit, total, yearlyData, years } = calcRetirement(age, retAge, savings, sip, rate);
+
+  document.getElementById('m-total').textContent    = fmt(total);
+  document.getElementById('m-invested').textContent = fmt(invested);
+  document.getElementById('m-profit').textContent   = fmt(profit);
+  document.getElementById('m-years').textContent    = 'Over ' + years + ' Years';
+  document.getElementById('m-retirement-age').textContent = 'At Age ' + retAge;
+  
+  const profitPct = invested > 0 ? ((profit/total)*100).toFixed(1) : 0;
+  document.getElementById('m-profitpct').textContent = profitPct + '% wealth gain';
+
+  const d = chartData();
+  if (mainChart) {
+    mainChart.data.labels = d.labels;
+    mainChart.data.datasets = getDatasets(d, mode === 'bar');
+    mainChart.update();
+  }
+  buildTable(yearlyData);
+}
+
+/* presets */
+function applyTip(age, retAge, savings, sip, rate) {
+  document.getElementById('sl-age').value = age;
+  document.getElementById('sl-ret-age').value = retAge;
+  document.getElementById('sl-savings').value = savings;
+  document.getElementById('sl-sip').value = sip;
+  document.getElementById('sl-rate').value = rate;
+  ['age','ret-age','savings','sip','rate'].forEach(syncFromSlider);
+}
+
+/* dark mode */
+function toggleDark() {
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+}
+
+/* mobile drawer */
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
+  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+}
+function closeOnOverlay(e) {
+  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
+}
+
+/* init */
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
+  }
+  ['age','ret-age','savings','sip','rate'].forEach(updateFill);
+  initCharts();
+  updateAll();
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
+  });
+});
+</script>
+</body>
+</html>
+{% endblock %} 

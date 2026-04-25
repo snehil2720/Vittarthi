@@ -1,0 +1,79 @@
+from django.db import models
+from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField   
+from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.utils.text import slugify
+import re
+from django.utils.html import strip_tags
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class Blog(models.Model):
+    STATUS_CHOICES = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+
+    title = models.CharField(max_length=200)
+    content = RichTextField()
+    image = models.ImageField(upload_to='blogs/', default='default.jpg')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
+    slug = models.SlugField(unique=True, blank=True, null=True)
+    is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
+    summary = models.TextField(blank=True)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title) 
+        if self.is_featured:
+            Blog.objects.filter(is_featured=True).exclude(id=self.id).update(is_featured=False)
+        self.summary = generate_clean_summary(self.content)
+        super().save(*args, **kwargs)
+
+    #author = models.ForeignKey(User, on_delete=models.CASCADE)
+    #author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    content = RichTextUploadingField()
+    likes = models.IntegerField(default=0)
+    def __str__(self):
+        return self.title
+
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = (
+        ('admin', 'Admin'),
+        ('writer', 'Writer'),
+        ('user', 'User'),
+    )
+
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
+
+    def __str__(self):
+        return self.username
+
+
+class CalcUsage(models.Model):
+    name = models.CharField(max_length=100) 
+    created_at = models.DateTimeField(auto_now_add=True)
+
+def generate_clean_summary(content):
+    if not content:
+        return ""
+
+    content = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL | re.IGNORECASE)
+    content = re.sub(r'<style[^>]*>.*?</style>', '', content, flags=re.DOTALL | re.IGNORECASE)
+    content = re.sub(r'\{[\s\S]*?\}', '', content)
+
+    content = strip_tags(content)
+    content = re.sub(r'\s+', ' ', content).strip()
+
+    return " ".join(content.split()[:30]) + "..."

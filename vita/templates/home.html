@@ -1,0 +1,650 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Plan your money with clarity using simple, reliable financial calculators. From SIP investments to loan EMIs and retirement planning.">
+<title>Financial Calculators for Smart Money Decisions — Vita₹thi</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% block content %}
+<style>
+/* ═══════════ TOKENS ═══════════ */
+/* :root {
+  --bg:         #f7f5f0;
+  --surface:    #ffffff;
+  --surface2:   #f0ede8;
+  --text:       #1a1a18;
+  --muted:      #7a7870;
+  --accent:     #1a6b4a;
+  --accent-lt:  #d6efe5;
+  --blue:       #2563eb;
+  --blue-lt:    #dbeafe;
+  --gold:       #d97706;
+  --border:     rgba(0,0,0,0.08);
+  --shadow:     0 1px 12px rgba(0,0,0,0.06);
+  --shadow-lg:  0 6px 32px rgba(0,0,0,0.10);
+  --r:          16px;
+  --r-sm:       10px;
+  --nav-h:      60px;
+  --pad:        clamp(1rem, 4vw, 2rem);
+}
+.dark {
+  --bg:         #0e1018;
+  --surface:    #181c27;
+  --surface2:   #222636;
+  --text:       #e6e3dc;
+  --muted:      #7a8090;
+  --accent:     #34d399;
+  --accent-lt:  #064e3b;
+  --blue:       #60a5fa;
+  --blue-lt:    #1e3a5f;
+  --gold:       #fbbf24;
+  --border:     rgba(255,255,255,0.07);
+  --shadow:     0 1px 12px rgba(0,0,0,0.35);
+  --shadow-lg:  0 6px 32px rgba(0,0,0,0.5);
+}
+
+/* ═══════════ RESET & BASE ═══════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s, color .3s;
+}
+
+/* ═══════════ NAVBAR ═══════════ */
+
+.icon-btn {
+  background:none; border:none; cursor:pointer;
+  color:var(--muted); font-size:1.1rem;
+  padding:7px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s, color .2s;
+}
+.icon-btn:hover { background:var(--surface2); color:var(--text); }
+.ham-btn { display:none; }
+
+/* Mobile drawer */
+.drawer {
+  display:none; position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; z-index:190;
+}
+.drawer.open { display:block; }
+.drawer-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45); }
+.drawer-panel {
+  position:absolute; top:0; right:0; width:min(260px, 80vw); height:100%;
+  background:var(--surface); border-left:1px solid var(--border);
+  padding:1.25rem 1rem; box-shadow:var(--shadow-lg);
+  display:flex; flex-direction:column; gap:.25rem; overflow-y:auto;
+}
+.drawer-panel a {
+  display:block; text-decoration:none; color:var(--muted);
+  font-size:.9rem; font-weight:500; padding:.55rem .85rem; border-radius:8px;
+}
+.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
+.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
+.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
+
+/* ═══════════ PAGE SHELL ═══════════ */
+/* .page { max-width:1140px; margin:0 auto; padding:0 var(--pad) 4rem; } */
+.page {
+  max-width:1400px;
+  margin:auto;
+  /* padding:2rem var(--pad); */
+}
+/* ═══════════ HERO ═══════════ */
+.hero {
+  text-align:center;
+  /* padding:clamp(3rem,6vw,5rem) 0 clamp(2rem,4vw,3rem); */
+  animation:fadeUp .5s ease both;
+}
+.hero h1 {
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2rem, 5vw, 3.8rem);
+  line-height:1.1; letter-spacing:-1px; margin-bottom:1rem;
+}
+.hero h1 em { color:var(--accent); font-style:italic; }
+.hero p { color:var(--muted); font-size:1.05rem; max-width:650px; margin:0 auto 2rem; line-height:1.6; }
+
+/* Buttons & Inputs */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:inherit; font-weight:600; font-size:.95rem;
+  padding:12px 24px; border-radius:10px; border:none; cursor:pointer;
+  transition:all .2s; text-decoration:none; white-space:nowrap;
+}
+.btn-primary { background:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(26,107,74,0.3); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,107,74,0.4); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-outline:hover, .btn-outline.active { background:var(--surface2); border-color:var(--muted); }
+
+.input-txt {
+  width:100%; padding:12px 16px; border-radius:8px;
+  border:1px solid var(--border); background:var(--surface2);
+  color:var(--text); font-family:inherit; font-size:.95rem;
+  outline:none; transition:border-color .2s;
+}
+.input-txt:focus { border-color:var(--accent); background:var(--surface); }
+
+/* Quick SIP Card */
+.quick-sip {
+  max-width:700px; margin:2.5rem auto 0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:1.5rem; box-shadow:var(--shadow-lg);
+}
+.quick-sip-row { display:flex; gap:1rem; align-items:center; }
+.quick-sip-row > * { flex:1; }
+.qs-result { margin-top:1rem; font-weight:600; color:var(--accent); font-size:1.1rem; min-height:1.5rem; }
+
+/* ═══════════ SECTION LAYOUTS ═══════════ */
+.section { margin-top:clamp(4rem, 8vw, 6rem); animation:fadeUp .5s .15s ease both; }
+.sec-title {
+  text-align:center; font-family:'DM Serif Display',serif;
+  font-size:clamp(1.75rem, 4vw, 2.4rem); margin-bottom:2rem;
+}
+
+/* Grids */
+.grid-3 { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; }
+.grid-2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:2rem; }
+
+/* Cards */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:2rem; text-align:center;
+  box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s, border-color .3s;
+  text-decoration:none; display:flex; flex-direction:column; align-items:center;
+  height: 100%;
+}
+.card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
+.card-icon {
+  width:56px; height:56px; border-radius:14px; background:var(--accent-lt);
+  color:var(--accent); display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; margin-bottom:1.2rem; transition:background .3s, color .3s;
+}
+.card:hover .card-icon { background:var(--accent); color:#fff; }
+.card h3 { font-size:1.1rem; color:var(--text); margin-bottom:.5rem; }
+.card p { color:var(--muted); font-size:.85rem; line-height:1.5; margin-bottom:1.5rem; flex:1; }
+
+/* Live Metrics */
+.metric {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:1.5rem; text-align:center;
+  box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.metric::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--accent),#059669);
+}
+.metric-val { font-family:'DM Serif Display',serif; font-size:2.2rem; color:var(--text); line-height:1; margin-bottom:.5rem; }
+.metric-lbl { font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+
+/* Compare Section */
+.compare-box {
+  max-width:600px; margin:0 auto; background:var(--surface);
+  border:1px solid var(--border); border-radius:var(--r); padding:2rem;
+  box-shadow:var(--shadow); text-align:center;
+}
+.compare-tabs { display:flex; justify-content:center; gap:10px; margin-bottom:1.5rem; flex-wrap:wrap; }
+.compare-res { font-size:1.1rem; color:var(--accent); font-weight:500; min-height:1.5rem; }
+
+/* Blog Cards */
+.blog-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; text-decoration:none;
+  box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s;
+  display:flex; flex-direction:column;
+}
+.blog-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+.blog-img { width:100%; height:200px; object-fit:cover; border-bottom:1px solid var(--border); }
+.blog-body { padding:1.5rem; display:flex; flex-direction:column; flex:1; }
+.blog-title { font-size:1.05rem; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:1rem; }
+.blog-link { margin-top:auto; font-size:.85rem; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:1px; }
+
+/* CTA Banner */
+.cta-banner {
+  background:linear-gradient(135deg, var(--accent), #059669);
+  border-radius:var(--r); padding:clamp(2rem, 5vw, 4rem); text-align:center;
+  color:#fff; box-shadow:var(--shadow-lg); margin-top:clamp(4rem, 8vw, 6rem);
+}
+.cta-banner h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem, 4vw, 2.5rem); margin-bottom:1rem; }
+.cta-banner p { font-size:1.05rem; opacity:0.9; margin-bottom:2rem; }
+.cta-banner .btn { background:#fff; color:var(--accent); }
+.cta-banner .btn:hover { box-shadow:0 10px 25px rgba(0,0,0,0.2); }
+
+/* Feature Check Lists */
+.feature-box { background:var(--surface); border:1px solid var(--border); padding:2rem; border-radius:var(--r); box-shadow:var(--shadow); }
+.feature-box h2 { font-family:'DM Serif Display',serif; font-size:1.6rem; margin-bottom:1.2rem; }
+.feature-box p { color:var(--muted); margin-bottom:1.5rem; line-height:1.6; font-size:.95rem; }
+.check-list { list-style:none; padding:0; }
+.check-list li { display:flex; align-items:flex-start; gap:12px; margin-bottom:1rem; font-size:.95rem; color:var(--text); line-height:1.5; }
+.check-list i { color:var(--accent); font-size:1.2rem; margin-top:-2px; flex-shrink:0; }
+
+/* SEO Content Blocks */
+.content-block { max-width:800px; margin:0 auto; padding-top:4rem; }
+.content-block h2 { font-family:'DM Serif Display',serif; font-size:1.8rem; margin-bottom:1rem; margin-top:2.5rem; color:var(--text); }
+.content-block p { color:var(--muted); line-height:1.7; font-size:1.05rem; margin-bottom:1.5rem; }
+
+/* FAQ Accordion */
+.faq-box { max-width:800px; margin:0 auto; }
+details { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:1rem; overflow:hidden; transition:box-shadow .2s; }
+details:hover { box-shadow:var(--shadow); }
+summary {
+  padding:1.2rem 1.5rem; font-weight:600; cursor:pointer; list-style:none;
+  display:flex; justify-content:space-between; align-items:center; color:var(--text);
+}
+summary::-webkit-details-marker { display:none; }
+summary::after { content:'\F282'; font-family:'bootstrap-icons'; font-size:1rem; transition:transform 0.3s; color:var(--muted); }
+details[open] summary::after { transform:rotate(180deg); color:var(--accent); }
+.faq-content { padding:0 1.5rem 1.2rem; color:var(--muted); font-size:.95rem; line-height:1.6; }
+
+/* Footer */
+footer {
+  text-align:center; padding:2rem var(--pad); color:var(--muted);
+  font-size:.8rem; border-top:1px solid var(--border); margin-top:4rem; line-height: 1.5;
+}
+
+/* Animations */
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+/* Responsive Constraints */
+@media (max-width:768px) {
+  :root { --nav-h:56px; }
+  .ham-btn { display:flex; }
+  .nav-desktop { display:none; }
+  .quick-sip-row { flex-direction:column; }
+  .quick-sip-row > * { width:100%; }
+} 
+.finance-bar {
+  position: sticky;
+  top: 65px;
+  z-index: 999;
+  backdrop-filter: blur(12px);
+  background: rgba(19, 19, 19, 0.788);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-radius: 15px;
+}
+.tv-ticker-item-tape {
+  color: black !important;
+}
+
+.finance-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 6px 20px;
+}
+
+.finance-label {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.finance-label span {
+  background: linear-gradient(45deg, #4ade80, #22c55e);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.finance-ticker {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* remove extra spacing from widget */
+.tradingview-widget-container {
+  height: 40px !important;
+}
+
+@media (max-width: 768px) {
+  .finance-label {
+    display: none;
+  }
+}
+.tv-ticker-item-tape__short-name {
+    color: black !important;
+}
+</style>
+</head>
+<body>
+
+
+<main class="page">
+<!-- TOP FINANCE BAR -->
+<div class="finance-bar">
+  <div class="finance-inner">
+
+    <!-- LEFT TITLE -->
+    <div class="finance-label">
+      <span>📊 Live Markets</span>
+    </div>
+
+    <!-- TRADINGVIEW WIDGET -->
+    <div class="finance-ticker">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+          "symbols": [
+            { "proName": "FOREXCOM:XAUUSD", "title": "Gold" },
+            { "proName": "FOREXCOM:XAGUSD", "title": "Silver" },
+            { "proName": "BSE:SENSEX", "title": "Sensex" },
+            { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" }
+          ],
+          "showSymbolLogo": false,
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "displayMode": "adaptive"
+        }
+        </script>
+      </div>
+    </div>
+
+  </div>
+</div>
+  <header class="hero">
+    <h1>Financial Calculators for <br><em>Smart Money Decisions</em></h1>
+    <p>Plan your money with clarity using simple, reliable financial calculators. From SIP investments to loan EMIs and retirement planning, each tool is designed to show clear results without unnecessary steps. Enter your numbers, adjust the sliders, and understand your financial future in seconds.</p>
+
+    <div class="quick-sip">
+      <div class="quick-sip-row">
+        <input type="number" id="sip_amount" class="input-txt" placeholder="Monthly SIP (₹)">
+        <input type="number" id="sip_years" class="input-txt" placeholder="Duration (Years)">
+        <button onclick="quickSIP()" class="btn btn-primary" style="width:100%;">Quick Calc</button>
+      </div>
+      <div class="qs-result" id="sip_result"></div>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2 class="sec-title">📊 Live Insights</h2>
+    <div class="grid-3">
+      <div class="metric">
+        <div class="metric-val" id="calc_count">0</div>
+        <div class="metric-lbl">Calculations Done</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--blue);">100%</div>
+        <div class="metric-lbl">Free Tools</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--gold);">Live</div>
+        <div class="metric-lbl">Instant Results</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="sec-title" style="margin-bottom:0.5rem;">Popular Calculators</h2>
+    <p style="text-align:center; color:var(--muted); margin-bottom:2.5rem; max-width:600px; margin-inline:auto;">Explore the most used financial calculators to plan investments, manage loans, and estimate future savings.</p>
+    
+    <div class="grid-3">
+      <a href="/sip/" class="card">
+        <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <h3>SIP Calculator <span id="sip_count"></span></h3>
+        <p>Estimate how your monthly investments grow over time with compound returns.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+      
+      <a href="/emi/" class="card">
+        <div class="card-icon" style="background:var(--blue-lt); color:var(--blue);"><i class="bi bi-credit-card"></i></div>
+        <h3>EMI Calculator <span id="emi_count"></span></h3>
+        <p>Calculate monthly loan payments, total interest, and repayment schedule instantly.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+      
+      <a href="/loan/home/" class="card">
+        <div class="card-icon" style="background:#fef3c7; color:var(--gold);"><i class="bi bi-house"></i></div>
+        <h3>Home Loan Calculator <span id="home_loan_count"></span></h3>
+        <p>Understand long-term housing loan costs, EMIs, and total interest outflow.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+
+      <!-- <a href="/lumpsum/" class="card">
+        <div class="card-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="bi bi-piggy-bank"></i></div>
+        <h3>Lumpsum Calculator</h3>
+        <p>See how a one-time investment grows with compounding over time.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a> -->
+
+      <a href="/ppf/" class="card">
+        <div class="card-icon" style="background:#dcfce7; color:#16a34a;"><i class="bi bi-shield-check"></i></div>
+        <h3>PPF Calculator <span id="ppf_count"></span></h3>
+        <p>Project returns on Public Provident Fund investments with long-term tax benefits.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+
+      <a href="/nps/" class="card">
+        <div class="card-icon" style="background:#fce7f3; color:#db2777;"><i class="bi bi-umbrella"></i></div>
+        <h3>NPS Calculator <span id="nps_count"></span></h3>
+        <p>Estimate retirement corpus and pension based on your contributions.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+
+      <a href="/retirement/" class="card">
+        <div class="card-icon" style="background:#ffedd5; color:#ea580c;"><i class="bi bi-clock-history"></i></div>
+        <h3>Retirement Calculator <span id="retirement_count"></span></h3>
+        <p>Plan how much you need to save today for a financially stable retirement.</p>
+        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- <section class="section">
+    <h2 class="sec-title">⚖️ Compare Strategies</h2>
+    <div class="compare-box">
+      <div class="compare-tabs">
+        <button class="btn btn-outline" onclick="compare('sip', this)">Mutual Fund SIP</button>
+        <button class="btn btn-outline" onclick="compare('fd', this)">Fixed Deposit (FD)</button>
+        <button class="btn btn-outline" onclick="compare('emi', this)">Loan EMI</button>
+      </div>
+      <div class="compare-res" id="compare_result">Select an option to see the insight.</div>
+    </div>
+  </section> -->
+
+  <section class="section grid-2">
+    <div class="feature-box">
+      <h2>Why Use Our Calculators</h2>
+      <p>Financial planning should be straightforward. These calculators are built to simplify decisions without hidden assumptions.</p>
+      <ul class="check-list">
+        <li><i class="bi bi-check-circle-fill"></i> Uses standard financial formulas</li>
+        <li><i class="bi bi-check-circle-fill"></i> No login or personal data required</li>
+        <li><i class="bi bi-check-circle-fill"></i> Instant and accurate results</li>
+        <li><i class="bi bi-check-circle-fill"></i> Designed for Indian financial scenarios</li>
+        <li><i class="bi bi-check-circle-fill"></i> Works seamlessly across mobile and desktop</li>
+      </ul>
+    </div>
+
+    <div class="feature-box">
+      <h2>How These Calculators Help</h2>
+      <p>Financial decisions often involve uncertainty. These tools reduce that uncertainty by showing clear projections.</p>
+      <ul class="check-list">
+        <li><i class="bi bi-check-circle-fill"></i> Understand how compounding builds wealth over time</li>
+        <li><i class="bi bi-check-circle-fill"></i> Compare loan options before committing</li>
+        <li><i class="bi bi-check-circle-fill"></i> Plan investments with realistic return expectations</li>
+        <li><i class="bi bi-check-circle-fill"></i> Estimate future financial goals such as retirement or home purchase</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="content-block">
+    <h2>Investment Planning Made Simple</h2>
+    <p>Consistent investing, even in small amounts, can lead to meaningful long-term growth. Tools like the SIP and Lumpsum calculators help visualize this growth and adjust expectations based on time and return rates.</p>
+
+    <h2>Loan Planning and EMI Insights</h2>
+    <p>Before taking a loan, it is important to understand the total cost, not just the monthly EMI. Loan calculators provide a clear breakdown of principal and interest, helping you choose a manageable repayment plan.</p>
+
+    <h2>Retirement and Long-Term Goals</h2>
+    <p>Planning for retirement requires estimating future expenses and building a sufficient corpus. Retirement and NPS calculators help bridge the gap between current savings and future needs.</p>
+  </section>
+
+<div class="grid-3" style="grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));">
+  {% for blog in latestblogs %}
+  <a href="/blogs/{{ blog.slug }}/" class="blog-card">
+
+    {% if blog.image %}
+      <img src="{{ blog.image.url }}" alt="Blog Image" class="blog-img"
+           onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80'">
+    {% else %}
+      <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80"
+           class="blog-img">
+    {% endif %}
+
+    <div class="blog-body">
+      <h3 class="blog-title">{{ blog.title }}</h3>
+        <p class="blog-desc">
+          <!-- {{ blog.content|striptags|truncatewords:25|cut:"{"|cut:"}" }} -->
+            {{ blog.summary }}
+        </p>
+      <span class="blog-link">Read Article <i class="bi bi-arrow-right-short"></i></span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+  <section class="section">
+    <h2 class="sec-title">Frequently Asked Questions</h2>
+    <div class="faq-box">
+      
+      <details name="faq">
+        <summary>What is a financial calculator?</summary>
+        <div class="faq-content">A financial calculator helps estimate investment growth, loan repayments, and savings outcomes using mathematical formulas.</div>
+      </details>
+      
+      <details name="faq">
+        <summary>Are these calculators accurate?</summary>
+        <div class="faq-content">They use standard formulas. Results are indicative and depend on actual market conditions and interest rates.</div>
+      </details>
+
+      <details name="faq">
+        <summary>Do I need to sign up to use these tools?</summary>
+        <div class="faq-content">No. All calculators are free to use and do not require login.</div>
+      </details>
+
+      <details name="faq">
+        <summary>Can I use these calculators on mobile?</summary>
+        <div class="faq-content">Yes. The calculators are responsive and work on all screen sizes.</div>
+      </details>
+
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <h2>Calculate Before You Invest 💡</h2>
+    <p>Make smarter financial decisions using real data and predictive planning.</p>
+    <a href="/calculators/" class="btn">Explore All Calculators</a>
+  </section>
+
+</main>
+
+<footer>
+  All calculations are indicative and based on assumed rates. Actual returns and loan terms may vary. Please consult a financial advisor before making investment or borrowing decisions.
+</footer>
+
+<script>
+/* Dark Mode */
+function toggleDark() {
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+}
+
+/* Mobile Drawer */
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
+  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+}
+function closeOnOverlay(e) {
+  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
+}
+
+/* Quick SIP Widget */
+function quickSIP() {
+  const amount = document.getElementById("sip_amount").value;
+  const years = document.getElementById("sip_years").value;
+  const resEl = document.getElementById("sip_result");
+
+  if (!amount || !years) {
+      resEl.innerHTML = "<span style='color:var(--bal);'>Please enter both amount and years.</span>";
+      return;
+  }
+  
+  const r = 0.12 / 12; 
+  const n = years * 12;
+  const future = amount * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+  
+  resEl.innerHTML = "Estimated Value: ₹" + Math.round(future).toLocaleString('en-IN');
+}
+
+/* Animated Counter */
+let count = 0;
+const interval = setInterval(() => {
+  count += 5;
+  const el = document.getElementById("calc_count");
+  if (el) el.innerText = count.toLocaleString('en-IN');
+  if (count >= 500) clearInterval(interval);
+}, 25);
+
+/* Compare Widget */
+function compare(type, btn) {
+  // UI Tabs update
+  document.querySelectorAll('.compare-tabs .btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Text update
+  let text = "";
+  if (type === "sip") text = "SIP gives higher returns in long term due to compound interest 📈";
+  if (type === "fd")  text = "FD is safe with guaranteed returns, but struggles to beat inflation 🏦";
+  if (type === "emi") text = "EMIs help manage large payments, but pre-payments save you heavy interest 💳";
+  
+  document.getElementById("compare_result").innerText = text;
+}
+
+/* Init */
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
+  }
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
+  });
+});
+function loadCalcCount() {
+    fetch('/calc-count/')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('calc_count').innerText = data.count;
+    });
+}
+
+// page load pe
+loadCalcCount();
+setInterval(loadCalcCount, 5000);
+
+fetch('/popular-calculators/')
+.then(res => res.json())
+.then(data => {
+    data.forEach(item => {
+        let id = item.name.toLowerCase() + "_count";
+        let el = document.getElementById(id);
+        if(el){
+            el.innerText = `(${item.total})`;
+        }
+    });
+});
+</script>
+</body>
+</html>
+{% endblock %}

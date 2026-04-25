@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+body {
+    /* background: linear-gradient(135deg, #1e3c72, #2a5298); */
+    color: gray;
+}
+
+/* GLASS */
+.glass {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+/* TABLE */
+.table-box {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* SIDEBAR */
+.sidebar a {
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgb(229 226 226 / 69%);
+    border-radius: 10px;
+    color: gray;
+    text-decoration: none;
+}
+.sidebar a:hover {
+    background: rgb(229 226 226 / 69%);
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+    .col-md-3, .col-md-7, .col-md-2 {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+</style>
+
+<div class="container-fluid mt-4">
+<div class="row">
+
+    <!-- 🔵 LEFT -->
+    <div class="col-md-3">
+
+        <div class="glass shadow">
+            <h4>💰 EMI Inputs</h4>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <label>Loan Amount</label>
+                <input type="number" id="amount" name="amount" class="form-control mb-2" required>
+                <input type="range" min="10000" max="5000000" step="10000"
+                       oninput="amount.value=this.value" class="mb-3 w-100">
+
+                <label>Interest (%)</label>
+                <input type="number" id="rate" name="rate" class="form-control mb-2" required>
+                <input type="range" min="1" max="20" step="0.5"
+                       oninput="rate.value=this.value" class="mb-3 w-100">
+
+                <label>Years</label>
+                <input type="number" id="time" name="time" class="form-control mb-2" required>
+                <input type="range" min="1" max="30"
+                       oninput="time.value=this.value" class="mb-3 w-100">
+
+                <button class="btn w-100"
+                    style="background: linear-gradient(45deg,#ff7e5f,#feb47b); border:none;">
+                    Calculate
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+
+    <!-- 🟢 CENTER -->
+    <div class="col-md-7">
+
+        {% if emi %}
+
+        <!-- DONUT -->
+        <div class="glass text-center shadow mb-4">
+            <h5>Payment Breakdown</h5>
+            <canvas id="pieChart" style="max-height:250px;"></canvas>
+        </div>
+
+        <!-- INSIGHTS -->
+        <div class="row text-center">
+
+            <div class="col-md-4">
+                <div class="glass p-3 shadow">
+                    <h6>EMI</h6>
+                    <h5>₹{{ emi }}</h5>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass p-3 shadow">
+                    <h6>Total Payment</h6>
+                    <h5>₹{{ total_payment }}</h5>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass p-3 shadow">
+                    <h6>Interest</h6>
+                    <h5>₹{{ total_interest }}</h5>
+                </div>
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="glass text-center p-5 shadow">
+            <h4>💡 Plan Your Loan Smartly</h4>
+            <p>Enter details to see EMI breakdown</p>
+        </div>
+
+        {% endif %}
+        {% if emi %}
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="glass shadow">
+                    <h5>📋 Amortization Table</h5>
+
+                    <div class="table-box">
+                        <table class="table table-dark table-hover">
+                            <thead class="sticky-top">
+                                <tr>
+                                    <th>M</th>
+                                    <th>EMI</th>
+                                    <th>Prin</th>
+                                    <th>Int</th>
+                                    <th>Bal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in table_data %}
+                                <tr>
+                                    <td>{{ row.month }}</td>
+                                    <td>{{ row.emi }}</td>
+                                    <td>{{ row.principal }}</td>
+                                    <td>{{ row.interest }}</td>
+                                    <td>{{ row.balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <!-- 🟣 RIGHT -->
+    <div class="col-md-2">
+        <div class="glass sidebar shadow">
+
+            <h5>Calculators</h5>
+
+            <a href="/sip">SIP Calculator</a>
+            <a href="/loan/home/">Home Loan</a>
+            <a href="loan/car/">Car Loan</a>
+            <a href="loan/personal/">Personal Loan</a>
+            <a href="nps/">NPS</a>
+            <a href="retirement/">Retirement</a>
+            <a href="salary/">Salary</a>
+            <a href="pf/">PF</a>
+            <a href="eligibility/">Eligibility</a>
+            <a href="/ppf">PPF</a>
+
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const interest = {{ total_interest|default:0 }};
+const principal = {{ total_payment|default:0 }} - interest;
+
+// CENTER TEXT
+const centerTextPlugin = {
+    id: 'centerText',
+    beforeDraw(chart) {
+        const { ctx, width, height } = chart;
+        ctx.restore();
+        ctx.font = "18px sans-serif";
+        ctx.fillStyle = "gray";
+        ctx.textAlign = "center";
+        ctx.fillText("₹" + {{ total_payment|default:0 }}, width / 2, height / 2);
+        ctx.save();
+    }
+};
+
+// DONUT
+new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+        labels: [
+            `Principal (₹${principal})`,
+            `Interest (₹${interest})`
+        ],
+        datasets: [{
+            data: [principal, interest],
+            backgroundColor: ['#ff7e5f', '#feb47b']
+        }]
+    },
+    options: {
+        cutout: '65%',
+        animation: {
+            duration: 1500,
+            easing: 'easeOutBounce'
+        },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: 'gray' }
+            }
+        }
+    },
+    plugins: [centerTextPlugin]
+});
+
+</script>
+
+{% endblock %}

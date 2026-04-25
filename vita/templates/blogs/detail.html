@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* ══════════ PROGRESS BAR ══════════ */
+  #progressBar {
+    position: fixed;
+    top: 0; left: 0; width: 0%; height: 4px;
+    background: var(--accent);
+    z-index: 9999;
+    transition: width 0.1s;
+  }
+
+  /* ══════════ LAYOUT ══════════ */
+  .detail-page {
+    max-width: 1300px;
+    /* margin: 2rem auto; */
+    /* padding: 0 clamp(1rem, 4vw, 2rem); */
+  }
+
+  .content-layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 300px;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: start;
+  }
+
+  /* ══════════ LEFT TOC ══════════ */
+  .toc-col {
+    position: sticky;
+    top: 80px; 
+    background: var(--surface);
+    padding: 0.5rem;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .toc-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+  .toc-nav a:hover, .toc-nav a.active {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* ══════════ MAIN ARTICLE ══════════ */
+  .article-col {
+    animation: fadeUp 0.5s ease both;
+  }
+  .blog-cover {
+    width: 100%;
+    height: clamp(250px, 40vw, 400px);
+    object-fit: cover;
+    border-radius: var(--r);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  
+  .article-badge {
+    background: var(--accent-lt);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .article-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 2.2rem);
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .meta-author { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); }
+  .meta-author img { width: 30px; height: 30px; border-radius: 50%; }
+
+  .article-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .article-content h2, .article-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    font-weight: 700;
+  }
+  .article-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+  }
+
+  /* ══════════ SHARE & AUTHOR BOX ══════════ */
+  .share-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3rem 0;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .share-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    background: var(--surface2);
+    color: var(--text);
+    text-decoration: none;
+    transition: 0.2s;
+  }
+  .share-btn:hover { background: var(--accent); color: white; transform: translateY(-3px); }
+
+  .author-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+  .author-box i { font-size: 3rem; color: var(--muted); }
+  .author-info h4 { margin-bottom: 5px; color: var(--text); }
+  .author-info p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+  /* ══════════ RIGHT SIDEBAR ══════════ */
+  .sidebar-col {
+    position: sticky;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .sb-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .sb-links { display: flex; flex-direction: column; gap: 10px; }
+  .sb-links a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  .sb-links a:hover { background: var(--accent-lt); color: var(--accent); }
+
+  .qf-card {
+    background: linear-gradient(135deg, var(--accent-lt), var(--surface));
+    border-left: 4px solid var(--accent);
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* ══════════ RESPONSIVE ══════════ */
+  @media (max-width: 1024px) {
+    .content-layout { grid-template-columns: 1fr 300px; }
+    .toc-col { display: none; } 
+  }
+  @media (max-width: 768px) {
+    .content-layout { grid-template-columns: 1fr; }
+    .sidebar-col { position: static; } /* Remove sticky on mobile */
+    .article-meta { flex-wrap: wrap; gap: 10px; }
+  }
+  .ai-summary {
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.6;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+/* optional label */
+.ai-summary::before {
+    content: "✨ Quick Summary";
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.ai-summary:hover {
+    transform: translateY(-2px);
+    transition: 0.3s;
+}
+</style>
+
+<div id="progressBar"></div>
+
+<div class="page detail-page">
+  <div class="content-layout">
+
+    <aside class="toc-col">
+      <div class="toc-title"><i class="bi bi-list-nested"></i> In this article</div>
+      <nav class="toc-nav" id="toc">
+        </nav>
+    </aside>
+
+    <main class="article-col">
+      
+      {% if blog.category %}
+      <div class="article-badge">{{ blog.category.name }}</div>
+      {% endif %}
+
+      <h1 class="article-title">{{ blog.title }}</h1>
+
+      <div class="article-meta">
+        <div class="meta-author">
+          <i class="bi bi-person-circle fs-4"></i> {{ blog.author.username }}
+        </div>
+        <div><i class="bi bi-calendar3"></i> {{ blog.created_at|date:"M d, Y" }}</div>
+        <div><i class="bi bi-clock"></i> {{ read_time|default:"5" }} min read</div>
+        <div><i class="bi bi-eye"></i> {{ blog.views|default:"100" }} views</div>
+      </div>
+
+      {% if blog.image %}
+          <img src="{{ blog.image.url }}" class="blog-cover" alt="{{ blog.title }}">
+      {% endif %}
+      <!-- {% if blog.summary %}
+      <div class="ai-summary">
+          {{ blog.summary }}
+      </div>
+      {% endif %} -->
+      <div class="article-content" id="blogContent">
+        {{ blog.content|safe }}
+      </div>
+
+      <div class="share-bar">
+        <strong>Share this guide:</strong>
+        <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}" target="_blank" class="share-btn"><i class="bi bi-whatsapp"></i></a>
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ blog.title }}" target="_blank" class="share-btn"><i class="bi bi-twitter-x"></i></a>
+        <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}" target="_blank" class="share-btn"><i class="bi bi-linkedin"></i></a>
+      </div>
+
+      <div class="author-box">
+        <i class="bi bi-person-bounding-box"></i>
+        <div class="author-info">
+          <h4>Written by {{ blog.author.first_name|default:blog.author.username }}</h4>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="sidebar-col">
+
+      <div class="widget">
+        <div class="sb-title">Financial Calculators</div>
+        <div class="sb-links">
+          <a href="/sip/"><i class="bi bi-graph-up-arrow text-success"></i> SIP Calculator</a>
+          <a href="/emi/"><i class="bi bi-calculator text-primary"></i> EMI Calculator</a>
+          <a href="/retirement/"><i class="bi bi-clock-history text-warning"></i> Retirement Planner</a>
+         <a href="/loan/home/"><i class="bi bi-house-door" style="color:var(--blue);"></i> Home Loan</a>
+        <a href="/loan/car/"><i class="bi bi-car-front" style="color:var(--red);"></i> Car Loan</a>
+        <a href="/loan/personal/"><i class="bi bi-person-badge" style="color:var(--purple);"></i> Personal Loan</a>
+
+        <a href="/ppf/"><i class="bi bi-safe" style="color:var(--accent);"></i> PPF Calc</a>
+        <a href="/nps/"><i class="bi bi-shield-check" style="color:var(--yellow);"></i> NPS Calc</a>
+        <a href="/salary/"><i class="bi bi-cash-stack" style="color:var(--purple);"></i> Salary Calc</a>
+        <a href="/pf/"><i class="bi bi-wallet2" style="color:var(--accent);"></i> EPF Calc</a>
+        <a href="/eligibility/"><i class="bi bi-check2-circle" style="color:var(--blue);"></i> Loan Eligibility</a>
+        </div>
+      </div>
+
+      <div class="widget">
+        <div class="sb-title">💡 Vita₹thi Pro Tip</div>
+        <div class="qf-card">
+          <strong>Did you know?</strong><br>
+          Paying just <em>one extra EMI</em> every year can reduce your 20-year home loan tenure by almost 3.5 years, saving you lakhs in interest!
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Reading Progress Bar
+    window.addEventListener('scroll', () => {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
+    });
+
+    // 2. Auto-generate Table of Contents (TOC)
+    const content = document.getElementById("blogContent");
+    const toc = document.getElementById("toc");
+
+    if (!content || !toc) return;
+
+    toc.innerHTML = "";
+
+    const headings = content.querySelectorAll("h2");
+
+    headings.forEach((heading, index) => {
+
+        // 🔥 sirf direct text (child h3 ignore)
+        let text = "";
+
+        heading.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                text += node.textContent;
+            }
+        });
+
+        text = text.trim();
+
+        if (!text) return;
+
+        const id = `heading-${index}`;
+        heading.id = id;
+
+        const link = document.createElement("a");
+        link.href = `#${id}`;
+        link.innerText = text;
+
+        toc.appendChild(link);
+    });
+
+});
+</script>
+{% endblock %}

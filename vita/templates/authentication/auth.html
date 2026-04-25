@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Auth | Glassmorphism</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    {% block content %}
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            /* display: flex; */
+            align-items: center;
+            justify-content: center;
+            /* Animated Deep Gradient Background */
+            background: radial-gradient(circle at top left, #0d1b2a, #000814);
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Floating background shapes for the glass effect */
+        .bg-shape {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #00ff88, #00bdff);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .shape-1 { top: 10%; left: 15%; }
+        .shape-2 { bottom: 10%; right: 15%; animation: float 6s infinite alternate; }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(40px); }
+        }
+
+        .wrapper {
+            position: relative;
+            width: 420px;
+            height: 520px;
+            perspective: 1000px;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 45px;
+            /* Frosted Glass Effect */
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-sizing: border-box;
+        }
+
+        .card.active {
+            z-index: 5;
+            transform: translateZ(0) rotateX(0);
+            opacity: 1;
+        }
+
+        .card.inactive {
+            z-index: 1;
+            transform: translateZ(-100px) translateY(50px) rotateX(-10deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 30px;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-green);
+            display: block;
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--neon-green);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bb {
+            width: 100%;
+            padding: 15px;
+            margin-top: 35px;
+            border: none;
+            border-radius: 12px;
+            background: var(--neon-green);
+            color: #000;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .bb:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .switch-btn {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .switch-btn b {
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .switch-btn b:hover {
+            color: var(--neon-green);
+        }
+
+        /* Django Message Styling */
+        .msg {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .mt-4{
+            display: flex !important;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="wrapper">
+        <div class="card active" id="signinCard">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Access your digital vault</p>
+
+            <form method="POST" action="/signin/">
+                {% csrf_token %}
+                <label>Identifier</label>
+                <input type="text" name="username" placeholder="Username" required>
+
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+
+                <button class="bb" type="submit">AUTHORIZE</button>
+
+                <div class="switch-btn">
+                    New here? <b onclick="toggleCard('signup')">CREATE ACCOUNT</b>
+                </div>
+
+                {% for message in messages %}
+                <div class="msg" style="color: {% if 'error' in message.tags %}#ff4d4d{% else %}#00ff88{% endif %};">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </form>
+        </div>
+
+        <div class="card inactive" id="signupCard">
+            <h2>Get Started</h2>
+            <p class="subtitle">Secure your financial future</p>
+
+            <form method="POST" action="/signup/">
+                {% csrf_token %}
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Choose a handle" required>
+
+                <label>Secure Password</label>
+                <input type="password" name="password" placeholder="Min. 8 characters" required>
+
+                <button class="bb" type="submit">REGISTER</button>
+
+                <div class="switch-btn">
+                    Already a member? <b onclick="toggleCard('signin')">LOGIN</b>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(type) {
+            const signin = document.getElementById("signinCard");
+            const signup = document.getElementById("signupCard");
+
+            if(type === 'signup') {
+                signin.classList.replace("active", "inactive");
+                signup.classList.replace("inactive", "active");
+            } else {
+                signup.classList.replace("active", "inactive");
+                signin.classList.replace("inactive", "active");
+            }
+        }
+    </script>
+
+</body>
+</html>
+{% endblock %}
