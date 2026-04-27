@@ -16,7 +16,7 @@ import dj_database_url
 #print("DB URL:", os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi"))
 print("ALL ENV:", os.environ)
 print("======================================================================================")
-DATABASE_URL = os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 print("DB URL DEBUG:", DATABASE_URL)
 
