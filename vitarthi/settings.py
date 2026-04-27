@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'vitarthi.wsgi.application'
 
 if os.getenv('RENDER'):
     DATABASES = {
-        'default': dj_database_url.parse(os.getenv('postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi'))
+        'default': dj_database_url.parse(os.environ.get('postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi'))
     }
 else:
     DATABASES = {
