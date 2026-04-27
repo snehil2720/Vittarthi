@@ -13,7 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-print("DB URL:", os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi"))
+#print("DB URL:", os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi"))
+print("ALL ENV:", os.environ)
+print("======================================================================================")
+DATABASE_URL = os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi")
+
+print("DB URL DEBUG:", DATABASE_URL)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -87,15 +93,15 @@ WSGI_APPLICATION = 'vitarthi.wsgi.application'
 #     }
 # }
 
-if os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi"):
+if DATABASE_URL:
     DATABASES = {
-        "default": dj_database_url.parse(os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi"))
+        "default": dj_database_url.parse(DATABASE_URL)
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 # Password validation
