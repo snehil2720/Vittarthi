@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'vitarthi.wsgi.application'
 #     }
 # }
 
-if os.getenv('RENDER'):
+if os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a/vittarthi"):
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a.virginia-postgres.render.com/vittarthi'))
+        "default": dj_database_url.parse(os.environ.get("postgresql://vittarthi_user:pUjDkaZ3V5UWMGMBKAVDgUhycJrUbi4k@dpg-d7nnvnm7r5hc73avqr40-a/vittarthi"))
     }
 else:
     DATABASES = {
