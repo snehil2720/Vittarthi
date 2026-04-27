@@ -47,5 +47,8 @@ urlpatterns = [
     path('calc-count/', views.calc_count, name='calc_count'),
     path('popular-calculators/', views.popular_calculators, name='popular_calculators'),
 
+    path('add-category/', views.add_category, name='add_category'),
+    path('delete-category/<int:id>/', views.delete_category, name='delete_category'),
+
 ]
 

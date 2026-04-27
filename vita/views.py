@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Blog,Category,CalcUsage
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+import json
 from django.contrib.auth import login, authenticate,logout
 from .models import CustomUser
 from django.contrib import messages
@@ -725,3 +726,43 @@ def popular_calculators(request):
     )
 
     return JsonResponse(list(data), safe=False)
+
+def add_category(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            name = data.get("name")
+
+            if not name:
+                return JsonResponse({"status": "error", "message": "Name required"})
+
+            category, created = Category.objects.get_or_create(name=name)
+
+            return JsonResponse({
+                "status": "success",
+                "id": category.id,
+                "name": category.name
+            })
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)})
+
+    return JsonResponse({"status": "error"})
+
+def delete_category(request, id):
+    if request.method == "POST":
+        try:
+            category = Category.objects.get(id=id)
+
+            if category.blogs.exists():
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Category has blogs, cannot delete"
+                })
+
+            category.delete()
+
+            return JsonResponse({"status": "success"})
+
+        except Category.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Not found"})

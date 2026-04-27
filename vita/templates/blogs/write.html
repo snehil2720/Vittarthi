@@ -125,14 +125,34 @@
                 <div class="input-grid form-group">
                     <div>
                         <label class="form-label">Category</label>
-                        <select name="category" class="custom-select" required>
-                            <option value="" disabled selected>Select a category...</option>
-                            {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
 
+                        <div style="display:flex; gap:10px;">
+                            <select name="category" id="categorySelect" class="custom-select" required>
+                                <option value="" disabled selected>Select a category...</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <!-- ➕ button -->
+                            <button type="button" onclick="openCategoryModal()" class="btn btn-outline-primary">
+                                +
+                            </button>
+                            <button type="button" onclick="deleteCategory()" class="btn btn-outline-danger">🗑</button>
+                        </div>
+                    </div>
+<!-- 🔥 CATEGORY MODAL -->
+<div id="categoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
+    <div style="background:white; padding:20px; max-width:400px; margin:10% auto; border-radius:10px;">
+        <h4>Add Category</h4>
+        <input type="text" id="newCategoryName" class="custom-input" placeholder="Enter category name">
+
+        <div style="margin-top:15px; display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="closeCategoryModal()" class="btn btn-secondary">Cancel</button>
+            <button onclick="saveCategory()" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</div>
                     <div>
                         <label class="form-label">Custom URL Slug (Optional)</label>
                         <input type="text" name="slug" class="custom-input" placeholder="e.g., mutual-funds-beginners">
@@ -215,5 +235,84 @@ document.querySelector("input[name='image']").addEventListener("change", functio
         reader.readAsDataURL(file);
     }
 });
+function openCategoryModal() {
+    document.getElementById("categoryModal").style.display = "block";
+}
+
+function closeCategoryModal() {
+    document.getElementById("categoryModal").style.display = "none";
+}
+
+function saveCategory() {
+    const name = document.getElementById("newCategoryName").value;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (!name) {
+        alert("Enter category name");
+        return;
+    }
+
+    fetch("/add-category/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrf,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name: name })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+
+            let select = document.getElementById("categorySelect");
+
+            let option = document.createElement("option");
+            option.value = data.id;
+            option.text = data.name;
+            option.selected = true;
+
+            select.appendChild(option);
+
+            closeCategoryModal();
+            document.getElementById("newCategoryName").value = "";
+
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error(err));
+}
+function deleteCategory() {
+
+    const select = document.getElementById("categorySelect");
+    const categoryId = select.value;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (!categoryId) {
+        alert("Select category first");
+        return;
+    }
+
+    if (!confirm("Delete this category?")) return;
+
+    fetch(`/delete-category/${categoryId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrf
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+
+            select.querySelector(`option[value="${categoryId}"]`).remove();
+
+            select.value = "";
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error(err));
+}
 </script>
 {% endblock %}
