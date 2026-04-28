@@ -392,7 +392,18 @@ function toggleDark() {
   const dark = document.body.classList.toggle('dark');
   localStorage.setItem('theme', dark ? 'dark' : 'light');
   document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}
+}function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 
 /* Drawer Toggle */
 let drawerOpen = false;
