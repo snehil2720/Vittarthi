@@ -8,13 +8,33 @@ from django.utils.text import slugify
 import re
 from django.utils.html import strip_tags
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+# class Category(models.Model):
+#     name = models.CharField(max_length=100, unique=True)
+#     slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+#     def __str__(self):
+#         return self.name
+class PrimaryCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)  # Blogs, Case Study, News
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
 
+
+class SecondaryCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(blank=True, null=True)
+
+    primary = models.ForeignKey(
+        PrimaryCategory,
+        on_delete=models.CASCADE,
+        related_name='secondary_categories'
+    )
+
+    def __str__(self):
+        return f"{self.primary.name} → {self.name}"
+    
 class Blog(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -24,10 +44,24 @@ class Blog(models.Model):
     title = models.CharField(max_length=200)
     content = RichTextField()
     image = models.ImageField(upload_to='blogs/', default='default.jpg')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
+    #category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
+    primary_category = models.ForeignKey(
+        PrimaryCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    secondary_category = models.ForeignKey(
+        SecondaryCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     slug = models.SlugField(unique=True, blank=True, null=True)
     is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
     summary = models.TextField(blank=True)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title) 
@@ -45,8 +79,11 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     content = RichTextUploadingField()
     likes = models.IntegerField(default=0)
+ 
     def __str__(self):
         return self.title
+
+
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (

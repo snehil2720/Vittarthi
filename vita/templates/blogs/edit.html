@@ -123,23 +123,42 @@
                 </div>
 
                 <!-- CATEGORY + SLUG -->
-                <div class="input-grid form-group">
-                    <div>
-                        <label class="form-label">Category</label>
-                        <select name="category" class="custom-select">
-                            {% for cat in categories %}
-                                <option value="{{ cat.id }}" {% if blog.category.id == cat.id %}selected{% endif %}>
-                                    {{ cat.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+<div class="input-grid form-group">
 
-                    <div>
-                        <label class="form-label">Slug</label>
-                        <input type="text" name="slug" class="custom-input" value="{{ blog.slug }}">
-                    </div>
-                </div>
+    <!-- PRIMARY CATEGORY -->
+    <div>
+        <label class="form-label">Primary Category</label>
+        <select name="primary_category" id="primarySelect" class="custom-select" required>
+            <option value="">Select</option>
+            {% for p in primary_categories %}
+                <option value="{{ p.id }}" 
+                {% if blog.primary_category and blog.primary_category.id == p.id %}selected{% endif %}>
+                    {{ p.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- SECONDARY CATEGORY -->
+    <div>
+        <label class="form-label">Secondary Category</label>
+        <select name="secondary_category" id="secondarySelect" class="custom-select">
+            {% for s in secondary_categories %}
+                <option value="{{ s.id }}" 
+                {% if blog.secondary_category and blog.secondary_category.id == s.id %}selected{% endif %}>
+                    {{ s.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+</div>
+
+<!-- SLUG -->
+<div class="form-group">
+    <label class="form-label">Slug</label>
+    <input type="text" name="slug" class="custom-input" value="{{ blog.slug }}">
+</div>
 
                 <!-- CONTENT (CKEDITOR) -->
                 <div class="form-group">
@@ -236,6 +255,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+});
+// 🔥 PRIMARY → SECONDARY AUTO LOAD
+document.getElementById("primarySelect").addEventListener("change", function() {
+    let primaryId = this.value;
+
+    fetch(`/get-secondary/${primaryId}/`)
+    .then(res => res.json())
+    .then(data => {
+        let secondary = document.getElementById("secondarySelect");
+        secondary.innerHTML = "";
+
+        data.forEach(cat => {
+            let opt = document.createElement("option");
+            opt.value = cat.id;
+            opt.text = cat.name;
+            secondary.appendChild(opt);
+        });
+    });
 });
 </script>
 

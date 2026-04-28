@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Blog, Category
+from .models import Blog,PrimaryCategory,SecondaryCategory
 
-admin.site.register(Category)
-# admin.site.register(Blog)
+admin.site.register(SecondaryCategory)
+admin.site.register(PrimaryCategory)
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):

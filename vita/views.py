@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Blog,Category,CalcUsage
+from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
@@ -115,14 +115,29 @@ def is_writer(user):
 #     }
 #     return render(request, 'blogs/list.html', context)
 
-def blog_list(request):
-    blogs = Blog.objects.filter(status='published').order_by('-created_at')
-    categories = Category.objects.all()
-    context = {
+def blog_list(request, primary_slug):
+    primary = get_object_or_404(PrimaryCategory, slug=primary_slug)
+
+    blogs = Blog.objects.filter(
+        status='published',
+        primary_category=primary
+    ).order_by('-created_at')
+    secondary_slug = request.GET.get('secondary')
+
+    if secondary_slug and secondary_slug != "all":
+        blogs = blogs.filter(secondary_category__slug=secondary_slug)
+
+    secondary_categories = SecondaryCategory.objects.filter(primary=primary)
+
+    return render(request, 'blogs/list.html', {
         'blogs': blogs,
-        'categories': categories # 👈 HTML ko bhej do
-    }
-    return render(request, 'blogs/list.html', context)
+        'primary': primary,
+        'secondary_categories': secondary_categories
+    })
+def get_secondary(request, primary_id):
+    cats = SecondaryCategory.objects.filter(primary_id=primary_id)
+    data = list(cats.values('id', 'name'))
+    return JsonResponse(data, safe=False)
 
 def blog_detail(request, slug):
     blog = get_object_or_404(Blog, slug=slug)
@@ -153,31 +168,37 @@ def generate_unique_slug(title, slug_input):
 def write_blog(request):
     if not is_writer(request.user):
         return redirect('blogs')
-    title=request.POST.get('title')
-    slug_input = request.POST.get("slug")
-    categories = Category.objects.all()
-    slug = generate_unique_slug(title, slug_input)
-    
+
+    primary_categories = PrimaryCategory.objects.all()
+
     if request.method == 'POST':
-        content=request.POST.get('content')
+        title = request.POST.get('title')
+        slug_input = request.POST.get("slug")
+        content = request.POST.get('content')
+
+        slug = generate_unique_slug(title, slug_input)
         summary = generate_ai_summary(content)
+
         Blog.objects.create(
             title=title,
             content=content,
             image=request.FILES.get('image'),
             author=request.user,
             status=request.POST.get('status'),
-            category_id = request.POST.get('category'),
+
+            # 🔥 NEW FIELDS
+            primary_category_id=request.POST.get('primary_category'),
+            secondary_category_id=request.POST.get('secondary_category'),
+
             slug=slug,
             summary=summary
-
         )
-        return redirect('blogs')
-    context = {
-        'categories': categories 
-    }
 
-    return render(request, 'blogs/write.html',context)
+        return redirect('resource_list', primary_slug='blogs')
+
+    return render(request, 'blogs/write.html', {
+        'primary_categories': primary_categories
+    })
 
 @login_required
 def my_blogs(request):
@@ -187,17 +208,28 @@ def my_blogs(request):
 @login_required
 def edit_blog(request, id):
     blog = get_object_or_404(Blog, id=id)
-    categories = Category.objects.all()
+
     if blog.author != request.user:
         return redirect('blogs')
 
+    primary_categories = PrimaryCategory.objects.all()
+    secondary_categories = SecondaryCategory.objects.filter(
+        primary=blog.primary_category
+    ) if blog.primary_category else SecondaryCategory.objects.none()
+
     if request.method == 'POST':
         new_content = request.POST.get("content")
+
         if blog.content != new_content:
             blog.summary = generate_ai_summary(new_content)
+
         blog.title = request.POST.get('title')
         blog.content = new_content
         blog.status = request.POST.get('status')
+
+        # 🔥 NEW CATEGORY UPDATE
+        blog.primary_category_id = request.POST.get('primary_category')
+        blog.secondary_category_id = request.POST.get('secondary_category')
 
         if request.FILES.get('image'):
             blog.image = request.FILES.get('image')
@@ -205,9 +237,10 @@ def edit_blog(request, id):
         blog.save()
         return redirect('my_blogs')
 
-    return render(request, 'blogs/edit.html',{
+    return render(request, 'blogs/edit.html', {
         'blog': blog,
-        'categories': categories
+        'primary_categories': primary_categories,
+        'secondary_categories': secondary_categories
     })
 
 def sip_calculator(request):
@@ -727,42 +760,27 @@ def popular_calculators(request):
 
     return JsonResponse(list(data), safe=False)
 
-def add_category(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            name = data.get("name")
+def add_secondary(request):
+    data = json.loads(request.body)
 
-            if not name:
-                return JsonResponse({"status": "error", "message": "Name required"})
+    name = data.get("name")
+    primary_id = data.get("primary_id")
 
-            category, created = Category.objects.get_or_create(name=name)
+    if not name:
+        return JsonResponse({"status": "error", "message": "Name required"})
 
-            return JsonResponse({
-                "status": "success",
-                "id": category.id,
-                "name": category.name
-            })
+    cat = SecondaryCategory.objects.create(
+        name=name,
+        primary_id=primary_id
+    )
 
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)})
+    return JsonResponse({
+        "status": "success",
+        "id": cat.id,
+        "name": cat.name
+    })
 
-    return JsonResponse({"status": "error"})
 
-def delete_category(request, id):
-    if request.method == "POST":
-        try:
-            category = Category.objects.get(id=id)
-
-            if category.blogs.exists():
-                return JsonResponse({
-                    "status": "error",
-                    "message": "Category has blogs, cannot delete"
-                })
-
-            category.delete()
-
-            return JsonResponse({"status": "success"})
-
-        except Category.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "Not found"})
+def delete_secondary(request, id):
+    SecondaryCategory.objects.filter(id=id).delete()
+    return JsonResponse({"status": "success"})

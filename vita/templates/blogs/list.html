@@ -207,12 +207,15 @@ body.dark-mode.dark{
     </div>
   </header>
 
-  <nav class="category-nav">
-    <a href="javascript:void(0)" class="pill active" onclick="filterCategory('all', this)">All Articles</a>
-    {% for cat in categories %}
-    <a href="javascript:void(0)" class="pill" onclick="filterCategory('{{ cat.name|lower }}', this)">{{ cat.name }}</a>
-    {% endfor %}
-  </nav>
+<nav class="category-nav">
+  <a href="?secondary=all" class="pill active">All</a>
+
+  {% for cat in secondary_categories %}
+    <a href="?secondary={{ cat.slug }}" class="pill">
+      {{ cat.name }}
+    </a>
+  {% endfor %}
+</nav>
 
   <div class="content-layout">
     

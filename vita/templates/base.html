@@ -92,8 +92,9 @@ body {
 }
 .nav-brand img { height: 28px; width: auto; }
 .nav-desktop {
-  display:flex; gap:.15rem; list-style:none;
+  display:flex; gap:-.85rem; list-style:none;
   margin-left:auto; align-items:center;padding-top: 15px;
+  overflow: visible !important;
 }
 .nav-desktop a {
   text-decoration:none; color:var(--muted);
@@ -488,6 +489,56 @@ color: white;
 .tv-ticker-item-tape__short-name {
     color: black !important;
 }
+/* DROPDOWN BASE */
+.dropdown {
+    position: relative;
+}
+
+/* HIDE */
+.dropdown-menu {
+    position: absolute;
+    top: 120%; /* thoda niche for better hover */
+    left: 0;
+
+    background: #fff;
+    min-width: 180px;
+
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 8px 0;
+
+    display: none;  /* 🔥 CHANGE (instead of opacity trick) */
+    z-index: 9999;
+}
+
+/* SHOW */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* ITEMS */
+.dropdown-menu li {
+    list-style: none;
+}
+
+/* LINKS */
+.dropdown-menu li a {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: var(--text);
+}
+
+/* HOVER */
+.dropdown-menu li a:hover {
+    background: #f3f4f6;
+    color: var(--blue);
+}
+
+.nav-desktop li {
+    position: relative;
+    list-style: none;
+}
 </style>
 </head>
 
@@ -503,7 +554,15 @@ color: white;
   <ul class="nav-desktop">
     <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
     <li><a href="/calculators/" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
-    <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li>
+    <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
+<li class="dropdown">
+  <a href="javascript:void(0)">Resources ▾</a> 
+  <ul class="dropdown-menu">
+    <li><a href="/resources/blogs/">Blogs</a></li>
+    <li><a href="/resources/case-study/">Case Study</a></li>
+    <li><a href="/resources/news/">News</a></li>
+  </ul>
+</li>
     <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
 
     <!-- {% if user.is_authenticated %}
