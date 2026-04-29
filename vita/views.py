@@ -158,12 +158,12 @@ def delete_blog(request, slug):
     blog = Blog.objects.get(slug=slug)
     blog.delete()
     return redirect('/blogs/')
-def generate_unique_slug(title, slug_input):
+def generate_unique_slug(title, slug_input=None, instance=None):
     base_slug = slugify(slug_input) if slug_input else slugify(title)
     slug = base_slug
     counter = 1
 
-    while Blog.objects.filter(slug=slug).exists():
+    while Blog.objects.filter(slug=slug).exclude(id=instance.id if instance else None).exists():
         slug = f"{base_slug}-{counter}"
         counter += 1
 
@@ -185,7 +185,10 @@ def write_blog(request):
 
         slug = generate_unique_slug(title, slug_input)
         summary = generate_ai_summary(content)
-
+        if not meta_title:
+            meta_title = f"{title} | Vita₹thi"
+        if not meta_description:
+            meta_description = summary[:160]
         Blog.objects.create(
             title=title,
             content=content,
@@ -200,8 +203,8 @@ def write_blog(request):
             summary=summary,
 
             focus_keyword=request.POST.get('focus_keyword'),
-            meta_title=request.POST.get('meta_title'),
-            meta_description=request.POST.get('meta_description'),
+            meta_title=meta_title,
+            meta_description=meta_description,
         )
 
         return redirect('resource_list', primary_slug='blogs')
@@ -237,9 +240,17 @@ def edit_blog(request, id):
         blog.content = new_content
         blog.status = request.POST.get('status')
 
-        # 🔥 NEW CATEGORY UPDATE
+        # ✅ SLUG UPDATE FIX
+        slug_input = request.POST.get("slug")
+        blog.slug = generate_unique_slug(blog.title, slug_input, instance=blog)
+
+        # ✅ SEO FIX
+        blog.meta_title = request.POST.get("meta_title") or f"{blog.title} | Vita₹thi"
+        blog.meta_description = request.POST.get("meta_description") or blog.summary[:160]
+
+        # ✅ CATEGORY FIX
         blog.primary_category_id = request.POST.get('primary_category')
-        blog.secondary_category_id = request.POST.get('secondary_category')
+        blog.secondary_category_id = request.POST.get('secondary_category') or None
 
         if request.FILES.get('image'):
             blog.image = request.FILES.get('image')

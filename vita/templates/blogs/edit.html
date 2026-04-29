@@ -3,234 +3,378 @@
 
 {% block content %}
 <style>
-    /* ══════════ WRITE BLOG UI ══════════ */
-    .editor-wrapper {
-        max-width: 900px;
-        margin: 2rem auto 4rem;
-        animation: fadeUp 0.5s ease both;
+
+    /* ══════════ LAYOUT ══════════ */
+    .editor-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
     }
-    
-    .editor-header {
-        text-align: center;
-        margin-bottom: 2rem;
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        padding: 15px 24px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    
-    .editor-header h1 {
+
+    .brand {
         font-family: 'DM Serif Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        color: var(--text);
-        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .brand-badge {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        color: #64748b;
+        font-weight: normal;
+    }
+
+    .btn {
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-solid {
+        background: #3b82f6;
+        border: 1px solid #3b82f6;
+        color: #ffffff;
     }
     
-    .editor-header p {
-        color: var(--muted);
-        font-size: 1.05rem;
+    .btn-solid:hover { 
+        background: #2563eb; 
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
     }
 
-    .form-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        padding: clamp(1.5rem, 4vw, 3rem);
-        box-shadow: var(--shadow-lg);
+    /* ══════════ GRID SYSTEM ══════════ */
+    .editor-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        align-items: start;
     }
 
+    @media (max-width: 900px) {
+        .editor-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ══════════ CARDS ══════════ */
+    .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .section-title::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 16px;
+        background-color: #10b981;
+        border-radius: 2px;
+        margin-right: 10px;
+    }
+
+    /* ══════════ INPUTS ══════════ */
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 20px;
     }
 
     .form-label {
-        display: block;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
         font-weight: 600;
-        color: var(--text);
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
+        color: #475569;
+        margin-bottom: 8px;
     }
 
-    .custom-input, .custom-select {
+    .input-control {
         width: 100%;
-        padding: 12px 16px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text);
-        font-family: inherit;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-    }
-
-    .custom-input:focus, .custom-select:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-lt);
-    }
-
-    .custom-file-input {
-        padding: 8px;
-    }
-
-    .custom-file-input::file-selector-button {
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        padding: 8px 16px;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
         border-radius: 6px;
-        color: var(--text);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: #1e293b;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+
+    .input-control:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .title-input {
+        font-family: 'Lora', serif;
+        font-size: 1.5rem;
+        padding: 15px;
+    }
+
+    .flex-row {
+        display: flex;
+        gap: 16px;
+    }
+    
+    .flex-row > * { flex: 1; }
+
+    /* ══════════ DRAG DROP IMAGE ══════════ */
+    .image-drop-zone {
+        border: 2px dashed #e2e8f0;
+        border-radius: 8px;
+        padding: 30px 20px;
+        text-align: center;
+        background: #fafafa;
         cursor: pointer;
-        margin-right: 15px;
+        color: #64748b;
+        font-size: 0.9rem;
         transition: background 0.2s;
+        display: block;
+    }
+    .image-drop-zone:hover { background: #f1f5f9; }
+    .image-drop-zone input[type="file"] { display: none; }
+
+    /* ══════════ SEO SECTION ══════════ */
+    .seo-checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
     }
 
-    .custom-file-input::file-selector-button:hover {
-        background: var(--border);
+    .seo-checklist li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 10px;
     }
 
-    /* Grid for side-by-side inputs on Desktop */
-    .input-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ef4444;
+    }
+    .status-dot.good { background-color: #10b981; }
+
+    .google-preview-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    .submit-btn {
-        width: 100%;
-        padding: 14px;
-        font-size: 1.1rem;
-        margin-top: 1rem;
-    }
+    .g-url { color: #202124; font-size: 13px; margin-bottom: 4px; }
+    .g-title { color: #1a0dab; font-size: 20px; cursor: pointer; margin-bottom: 4px; line-height: 1.3;}
+    .g-title:hover { text-decoration: underline; }
+    .g-desc { color: #4d5156; font-size: 14px; line-height: 1.58; }
 
-    /* Make CKEditor fit theme */
-    .django-ckeditor-widget {
-        width: 100% !important;
-    }
+    .django-ckeditor-widget { width: 100% !important; display: block; }
 </style>
 
-<main class="page">
-    <div class="editor-wrapper">
-        
-        <div class="editor-header">
-            <h1>✏️ Edit Blog</h1>
-            <p>Update your article content and details.</p>
-        </div>
+<div class="editor-container">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-        <div class="form-card">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
+        <div class="editor-grid">
+            
+            <div class="main-column">
+                
+                <div class="card">
+                    <div class="section-title">Article Info</div>
+                    
+                    <div class="form-group">
+                        <input type="text" name="title" value="{{ blog.title }}" class="input-control title-input" placeholder="Enter an engaging title..." required>
+                    </div>
 
-                <!-- TITLE -->
-                <div class="form-group">
-                    <label class="form-label">Article Title</label>
-                    <input type="text" name="title" class="custom-input" value="{{ blog.title }}" required>
+                    <div class="flex-row form-group">
+                        <div>
+                            <label class="form-label">Primary Category</label>
+                            <select name="primary_category" id="primarySelect" class="input-control">
+                                {% for p in primary_categories %}
+                                <option value="{{ p.id }}" {% if blog.primary_category.id == p.id %}selected{% endif %}>
+                                    {{ p.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Secondary Category</label>
+                            <select name="secondary_category" id="secondarySelect" class="input-control">
+                                <option value="">Select (Optional)</option>
+                                {% for s in secondary_categories %}
+                                <option value="{{ s.id }}" {% if blog.secondary_category and blog.secondary_category.id == s.id %}selected{% endif %}>
+                                    {{ s.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex-row">
+                        <div>
+                            <label class="form-label">URL Slug</label>
+                            <input type="text" name="slug" id="slugInputLeft" value="{{ blog.slug }}" class="input-control" placeholder="e.g. my-awesome-post">
+                        </div>
+                        <div>
+                            <label class="form-label">Publish Status</label>
+                            <select name="status" class="input-control">
+                                <option value="draft" {% if blog.status == 'draft' %}selected{% endif %}>📁 Save as Draft</option>
+                                <option value="published" {% if blog.status == 'published' %}selected{% endif %}>🚀 Published</option>
+                            </select>
+                            <hr>
+                            <div>
+                                <button type="submit" class="btn btn-solid">Update Post</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- CATEGORY + SLUG -->
-<div class="input-grid form-group">
-
-    <!-- PRIMARY CATEGORY -->
-    <div>
-        <label class="form-label">Primary Category</label>
-        <select name="primary_category" id="primarySelect" class="custom-select" required>
-            <option value="">Select</option>
-            {% for p in primary_categories %}
-                <option value="{{ p.id }}" 
-                {% if blog.primary_category and blog.primary_category.id == p.id %}selected{% endif %}>
-                    {{ p.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- SECONDARY CATEGORY -->
-    <div>
-        <label class="form-label">Secondary Category</label>
-        <select name="secondary_category" id="secondarySelect" class="custom-select">
-            {% for s in secondary_categories %}
-                <option value="{{ s.id }}" 
-                {% if blog.secondary_category and blog.secondary_category.id == s.id %}selected{% endif %}>
-                    {{ s.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-</div>
-
-<!-- SLUG -->
-<div class="form-group">
-    <label class="form-label">Slug</label>
-    <input type="text" name="slug" class="custom-input" value="{{ blog.slug }}">
-</div>
-
-                <!-- CONTENT (CKEDITOR) -->
-                <div class="form-group">
-                    <label class="form-label">Content</label>
+                <div class="card">
+                    <div class="section-title">Content</div>
                     <textarea name="content" id="editor">{{ blog.content }}</textarea>
                 </div>
 
-                <!-- IMAGE + STATUS -->
-                <div class="input-grid form-group">
-                    <div>
-                        <label class="form-label">Cover Image</label>
-                        <input type="file" name="image" class="custom-input" accept="image/*">
-
-                        {% if blog.image %}
-                        <img src="{{ blog.image.url }}" id="imagePreview" 
-                             style="max-width:100%; margin-top:10px; border-radius:8px;" />
-                        {% else %}
-                        <img id="imagePreview" style="display:none; max-width:100%; margin-top:10px;" />
-                        {% endif %}
+                <div class="card">
+                    <div class="section-title">Cover Image</div>
+                    
+                    {% if blog.image %}
+                    <div style="margin-bottom: 15px;">
+                        <span style="font-size: 0.85rem; color: #64748b; display: block; margin-bottom: 5px;">Current Image:</span>
+                        <img src="{{ blog.image.url }}" style="max-height: 150px; border-radius: 6px; border: 1px solid #e2e8f0;">
                     </div>
+                    {% endif %}
 
-                    <div>
-                        <label class="form-label">Publish Status</label>
-                        <select name="status" class="custom-select">
-                            <option value="draft" {% if blog.status == 'draft' %}selected{% endif %}>
-                                📁 Draft
-                            </option>
-                            <option value="published" {% if blog.status == 'published' %}selected{% endif %}>
-                                🚀 Publish
-                            </option>
-                        </select>
-                    </div>
+                    <label class="image-drop-zone">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
+                        Click to upload new image<br>
+                        <small>PNG, JPG up to 5MB · Recommended 1200 x 630px</small>
+                        <input type="file" name="image" id="imageInput" accept="image/*">
+                    </label>
+                    <img id="imagePreview" style="display:none; max-width:100%; margin-top:15px; border-radius:8px; border:1px solid #e2e8f0;" />
                 </div>
 
-                <button type="submit" class="btn btn-primary submit-btn">
-                    <i class="bi bi-arrow-repeat"></i> Update Blog
-                </button>
+            </div>
 
-            </form>
+            <div class="sidebar">
+
+                <div class="card">
+                    <div class="section-title">SEO Score</div>
+                    <div style="font-size:0.85rem; margin-bottom: 15px; color: #64748b; display:flex; align-items:center; gap:10px;">
+                        <span style="display:inline-block; width:20px; height:2px; background:#10b981;"></span> Live SEO Checklist
+                    </div>
+                    <ul class="seo-checklist">
+                        <li><div class="status-dot" id="check-title-len"></div> Title 30–60 chars</li>
+                        <li><div class="status-dot" id="check-slug"></div> Slug is set</li>
+                        <li><div class="status-dot" id="check-meta"></div> Meta description exists</li>
+                        <li><div class="status-dot" id="check-meta-len"></div> Description 120–160 chars</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">Google Preview</div>
+                    
+                    <div class="google-preview-card">
+                        <div class="g-url">vitarthi.com > blog > <span id="previewUrl">{{ blog.slug|default:"your-slug" }}</span></div>
+                        <div class="g-title" id="previewTitle">{{ blog.meta_title|default:"Your SEO Title" }}</div>
+                        <div class="g-desc" id="previewDesc">{{ blog.meta_description|default:"Meta description will appear here..." }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>SEO Title</span>
+                            <span id="titleCount">0/60</span>
+                        </div>
+                        <input type="text" id="metaTitle" name="meta_title" value="{{ blog.meta_title }}" class="input-control" placeholder="%title% | Vita₹thi">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>Meta Description</span>
+                            <span id="descCount">0/160</span>
+                        </div>
+                        <textarea id="metaDesc" name="meta_description" class="input-control" rows="5" placeholder="Brief summary for search engines...">{{ blog.meta_description }}</textarea>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
-    </div>
-</main>
+    </form>
+</div>
 
-<!-- CKEDITOR -->
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // ✅ CKEDITOR LOAD
+    // 1. Initialize CKEditor
     if (typeof CKEDITOR !== 'undefined') {
         CKEDITOR.replace('editor', {
             height: 350,
             filebrowserUploadUrl: '/ckeditor/upload/',
             filebrowserUploadMethod: 'form',
             uiColor: '#ffffff',
+            removePlugins: 'elementspath',
+            resize_enabled: false
         });
     }
 
-    // ✅ SLUG AUTO UPDATE (only if not manually changed)
+    // 2. DOM Elements for SEO/Preview
     const titleInput = document.querySelector("input[name='title']");
-    const slugInput = document.querySelector("input[name='slug']");
+    const slugInput = document.getElementById("slugInputLeft");
+    const metaTitle = document.getElementById("metaTitle");
+    const metaDesc = document.getElementById("metaDesc");
+
+    // 3. Slug Auto-generation (Only if user hasn't manually typed in the slug)
+    // On edit pages, slug is usually already set, so we mark it manual immediately if it has a value.
+    if(slugInput.value.trim() !== "") {
+        slugInput.dataset.manual = "true";
+    }
 
     titleInput.addEventListener("input", function() {
         if(slugInput.dataset.manual === "true") return;
-
-        let slug = this.value
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-
+        let slug = this.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         slugInput.value = slug;
     });
 
@@ -238,41 +382,77 @@ document.addEventListener("DOMContentLoaded", function() {
         this.dataset.manual = "true";
     });
 
-    // ✅ IMAGE PREVIEW
-    document.querySelector("input[name='image']").addEventListener("change", function(e) {
+    // 4. Image Preview
+    document.getElementById("imageInput").addEventListener("change", function(e) {
         const file = e.target.files[0];
         const preview = document.getElementById("imagePreview");
-
         if (file) {
             const reader = new FileReader();
-
             reader.onload = function(event) {
                 preview.src = event.target.result;
                 preview.style.display = "block";
             };
-
             reader.readAsDataURL(file);
         }
     });
 
-});
-// 🔥 PRIMARY → SECONDARY AUTO LOAD
-document.getElementById("primarySelect").addEventListener("change", function() {
-    let primaryId = this.value;
+    // 5. Dynamic Category Loading
+    const primarySelect = document.getElementById("primarySelect");
+    const secondarySelect = document.getElementById("secondarySelect");
 
-    fetch(`/get-secondary/${primaryId}/`)
-    .then(res => res.json())
-    .then(data => {
-        let secondary = document.getElementById("secondarySelect");
-        secondary.innerHTML = "";
+    primarySelect.addEventListener("change", function(){
+        const primaryId = this.value;
+        if(!primaryId) {
+            secondarySelect.innerHTML = '<option value="">Select (Optional)</option>';
+            return;
+        }
 
-        data.forEach(cat => {
-            let opt = document.createElement("option");
-            opt.value = cat.id;
-            opt.text = cat.name;
-            secondary.appendChild(opt);
+        fetch(`/get-secondary/${primaryId}/`)
+        .then(res => res.json())
+        .then(data => {
+            secondarySelect.innerHTML = '<option value="">Select (Optional)</option>';
+            data.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.name;
+                secondarySelect.appendChild(option);
+            });
         });
     });
+
+    // 6. Real-Time SEO & Preview Engine
+    function updateSEO() {
+        let rawTitle = titleInput.value;
+        let mTitle = metaTitle.value;
+        let slug = slugInput.value;
+        let desc = metaDesc.value;
+
+        // Update Text in Google Card
+        let finalTitle = mTitle || rawTitle || "Your article title";
+        document.getElementById("previewTitle").innerText = finalTitle;
+        document.getElementById("previewUrl").innerText = slug || "your-slug";
+        document.getElementById("previewDesc").innerText = desc || "Meta description will appear here in search results...";
+
+        // Update Counters
+        document.getElementById("titleCount").innerText = `${finalTitle.length}/60`;
+        document.getElementById("descCount").innerText = `${desc.length}/160`;
+
+        // Checklist Logic
+        const toggleDot = (id, condition) => {
+            let el = document.getElementById(id);
+            if(condition) el.classList.add("good");
+            else el.classList.remove("good");
+        };
+
+        toggleDot("check-title-len", finalTitle.length >= 30 && finalTitle.length <= 60);
+        toggleDot("check-slug", slug.length > 3);
+        toggleDot("check-meta", desc.length > 0);
+        toggleDot("check-meta-len", desc.length >= 120 && desc.length <= 160);
+    }
+
+    // Run SEO checks constantly when typing
+    setInterval(updateSEO, 500);
+    updateSEO(); // Run once on load
 });
 </script>
 

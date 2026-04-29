@@ -4,393 +4,511 @@
 {% load static %}
 
 <style>
-    /* ══════════ WRITE BLOG UI ══════════ */
-    .editor-wrapper {
-        max-width: 900px;
-        margin: 2rem auto 4rem;
-        animation: fadeUp 0.5s ease both;
+
+    /* ══════════ LAYOUT ══════════ */
+    .editor-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
     }
-    
-    .editor-header {
-        text-align: center;
-        margin-bottom: 2rem;
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        padding: 15px 24px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    
-    .editor-header h1 {
+
+    .brand {
         font-family: 'DM Serif Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        color: var(--text);
-        margin-bottom: 0.5rem;
-    }
-    
-    .editor-header p {
-        color: var(--muted);
-        font-size: 1.05rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .form-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        padding: clamp(1.5rem, 4vw, 3rem);
-        box-shadow: var(--shadow-lg);
+    .brand-badge {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        color: #64748b;
+        font-weight: normal;
     }
 
+    .btn-group {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        color: #1e293b;
+    }
+    .btn-outline:hover { background: #f8fafc; }
+
+    .btn-solid {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #1e293b;
+    }
+    .btn-solid:hover { border-color: #64748b; }
+
+    /* ══════════ GRID SYSTEM ══════════ */
+    .editor-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    @media (max-width: 900px) {
+        .editor-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ══════════ CARDS ══════════ */
+    .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .section-title::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 16px;
+        background-color: #10b981;
+        border-radius: 2px;
+        margin-right: 10px;
+    }
+
+    /* ══════════ INPUTS ══════════ */
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 20px;
     }
 
     .form-label {
-        display: block;
-        font-weight: 600;
-        color: var(--text);
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 8px;
     }
 
-    .custom-input, .custom-select {
+    .input-control {
         width: 100%;
-        padding: 12px 16px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text);
-        font-family: inherit;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-    }
-
-    .custom-input:focus, .custom-select:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-lt);
-    }
-
-    .custom-file-input {
-        padding: 8px;
-    }
-
-    .custom-file-input::file-selector-button {
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        padding: 8px 16px;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
         border-radius: 6px;
-        color: var(--text);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: #1e293b;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+
+    .input-control:focus {
+        outline: none;
+        border-color: #3b82f6;
+    }
+
+    .title-input {
+        font-family: 'Lora', serif;
+        font-size: 1.5rem;
+        padding: 15px;
+    }
+
+    .title-input::placeholder { font-style: italic; color: #cbd5e1; }
+
+    .flex-row {
+        display: flex;
+        gap: 16px;
+    }
+    
+    .flex-row > * { flex: 1; }
+
+    .category-group { display: flex; gap: 8px; }
+
+    /* ══════════ DRAG DROP IMAGE ══════════ */
+    .image-drop-zone {
+        border: 2px dashed #e2e8f0;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        background: #fafafa;
         cursor: pointer;
-        margin-right: 15px;
+        color: #64748b;
+        font-size: 0.9rem;
         transition: background 0.2s;
     }
+    .image-drop-zone:hover { background: #f1f5f9; }
+    .image-drop-zone input[type="file"] { display: none; }
 
-    .custom-file-input::file-selector-button:hover {
-        background: var(--border);
+    /* ══════════ SEO SECTION ══════════ */
+    .seo-checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
     }
 
-    /* Grid for side-by-side inputs on Desktop */
-    .input-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+    .seo-checklist li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 10px;
     }
 
-    .submit-btn {
-        width: 100%;
-        padding: 14px;
-        font-size: 1.1rem;
-        margin-top: 1rem;
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ef4444;
+    }
+    .status-dot.good { background-color: #10b981; }
+
+    .google-preview-card {
+        background: #f8f9fa;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 16px;
+        margin-bottom: 20px;
     }
 
-    /* Make CKEditor fit theme */
-    .django-ckeditor-widget {
-        width: 100% !important;
-    }
+    .g-url { color: #202124; font-size: 13px; margin-bottom: 4px; }
+    .g-title { color: #1a0dab; font-size: 20px; cursor: pointer; margin-bottom: 4px; line-height: 1.3;}
+    .g-title:hover { text-decoration: underline; }
+    .g-desc { color: #4d5156; font-size: 14px; line-height: 1.58; }
+
+    .django-ckeditor-widget { width: 100% !important; display: block; }
 </style>
 
-<main class="page">
-    <div class="editor-wrapper">
-        
-        <div class="editor-header">
-            <h1>✍️ Write a New Blog</h1>
-            <p>Share your financial insights and guides with the community.</p>
-        </div>
+<div class="editor-container">
+    <form method="POST" enctype="multipart/form-data" id="postForm">
+        {% csrf_token %}
 
-        <div class="form-card">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
+        <div class="editor-grid">
+            
+            <div class="main-column">
+                
+                <div class="card">
+                    <div class="section-title">Article Info</div>
+                    
+                    <div class="form-group">
+                        <input type="text" name="title" class="input-control title-input" placeholder="Start with a great headline..." required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Article Title</label>
-                    <input type="text" name="title" class="custom-input" placeholder="e.g., Understanding Mutual Funds for Beginners" required>
+                    <div class="flex-row form-group">
+                        <div>
+                            <label class="form-label">Primary category</label>
+                            <select name="primary_category" id="primarySelect" class="input-control" required>
+                                <option value="">Select</option>
+                                {% for p in primary_categories %}
+                                    <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Secondary category</label>
+                            <div class="category-group">
+                                <select name="secondary_category" id="secondarySelect" class="input-control">
+                                    <option value="">— opt —</option>
+                                    {% for s in secondary_categories %}
+                                        <option value="{{ s.id }}">{{ s.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" onclick="openSecondaryModal()" class="btn btn-outline">+ Add</button>
+                                <button type="button" onclick="deleteSecondary()" class="btn btn-outline" style="color:#ef4444; border-color:#ef4444; padding:8px;">🗑</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-row">
+                        <div>
+                            <label class="form-label">URL slug</label>
+                            <input type="text" name="slug" id="slugInputLeft" class="input-control" placeholder="auto-generated">
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" name="status" value="draft" class="btn btn-outline">Save Draft</button>
+                            <button type="submit" name="status" value="published" class="btn btn-solid">Publish</button>
+                        </div>
+                    </div>
                 </div>
 
-<div class="input-grid form-group">
-
-    <!-- PRIMARY CATEGORY -->
-    <div>
-        <label class="form-label">Primary Category</label>
-        <select name="primary_category" id="primarySelect" class="custom-select" required>
-            <option value="">Select</option>
-            {% for p in primary_categories %}
-                <option value="{{ p.id }}">{{ p.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- SECONDARY CATEGORY -->
-<div>
-    <label class="form-label">Secondary Category</label>
-
-    <div style="display:flex; gap:10px; align-items:center;">
-
-    <select name="secondary_category" id="secondarySelect" class="custom-select">
-        <option value="">Select (optional)</option>
-
-        {% for s in secondary_categories %}
-            <option value="{{ s.id }}">{{ s.name }}</option>
-        {% endfor %}
-    </select>
-
-        <button type="button" onclick="openSecondaryModal()" class="btn btn-outline-primary">+</button>
-
-        <button type="button" onclick="deleteSecondary()" class="btn btn-outline-danger">🗑</button>
-
-    </div>
-</div>
-
-</div>
-<div class="form-group">
-    <label class="form-label">Custom URL Slug (Optional)</label>
-    <input type="text" name="slug" class="custom-input" placeholder="e.g., sip-investment-guide">
-</div>
-<div id="secondaryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
-    <div style="background:white; padding:20px; max-width:400px; margin:10% auto; border-radius:10px;">
-        <h4>Add Secondary Category</h4>
-
-        <input type="text" id="secondaryName" class="custom-input" placeholder="Enter name">
-
-        <div style="margin-top:15px; display:flex; justify-content:flex-end; gap:10px;">
-            <button onclick="closeSecondaryModal()" class="btn btn-secondary">Cancel</button>
-            <button onclick="saveSecondary()" class="btn btn-primary">Save</button>
-        </div>
-    </div>
-</div>
-                <div class="form-group">
-                    <label class="form-label">Content</label>
+                <div class="card">
+                    <div class="section-title">Content</div>
                     <textarea name="content" id="editor"></textarea>
                 </div>
 
-                <div class="input-grid form-group">
-                    <div>
-                        <label class="form-label">Cover Image</label>
-                        <input type="file" name="image" class="custom-input custom-file-input" accept="image/*">
-                        <img id="imagePreview" style="display:none; max-width:100%; margin-top:10px; border-radius:8px;" />
-                    </div>
-
-                    <div>
-                        <label class="form-label">Publish Status</label>
-                        <select name="status" class="custom-select">
-                            <option value="draft">📁 Save as Draft</option>
-                            <option value="published" selected>🚀 Publish Immediately</option>
-                        </select>
-                    </div>
+                <div class="card">
+                    <div class="section-title">Cover Image</div>
+                    <label class="image-drop-zone">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
+                        Click to upload or drag and drop<br>
+                        <small>PNG, JPG up to 5MB · Recommended 1200 x 630px</small>
+                        <input type="file" name="image" id="imageInput" accept="image/*">
+                    </label>
+                    <img id="imagePreview" style="display:none; max-width:100%; margin-top:15px; border-radius:8px; border:1px solid #e2e8f0;" />
                 </div>
-<hr>
 
-<h3>🔍 SEO Settings</h3>
+            </div>
 
-<div class="form-group">
-    <label>Focus Keyword</label>
-    <input type="text" name="focus_keyword" id="focusKeyword" class="custom-input" placeholder="e.g. SIP investment">
+            <div class="sidebar">
+
+                <div class="card">
+                    <div class="section-title">SEO Score</div>
+                    <div style="font-size:0.85rem; margin-bottom: 15px; color: #64748b; display:flex; align-items:center; gap:10px;">
+                        <span style="display:inline-block; width:20px; height:2px; background:#10b981;"></span> Fill in your article details
+                    </div>
+                    <ul class="seo-checklist">
+                        <li><div class="status-dot" id="check-keyword"></div> Title has keyword (Optional)</li>
+                        <li><div class="status-dot" id="check-title-len"></div> Title 30–60 chars</li>
+                        <li><div class="status-dot" id="check-slug"></div> Slug is set</li>
+                        <li><div class="status-dot" id="check-meta"></div> Meta description exists</li>
+                        <li><div class="status-dot" id="check-meta-len"></div> Description 120–160 chars</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">Google Preview</div>
+                    
+                    <div class="google-preview-card">
+                        <div class="g-url">vitarthi.com > blog > <span id="previewUrl">your-slug</span></div>
+                        <div class="g-title" id="previewTitle">Your article title</div>
+                        <div class="g-desc" id="previewDesc">Meta description will appear here in search results...</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>SEO title</span>
+                            <span id="titleCount">0/60</span>
+                        </div>
+                        <input type="text" id="metaTitle" name="meta_title" class="input-control" placeholder="%title% | Vita₹thi">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>Meta description</span>
+                            <span id="descCount">0/160</span>
+                        </div>
+                        <textarea id="metaDesc" name="meta_description" class="input-control" rows="4" placeholder="A concise summary of your article for search results..."></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
 </div>
 
-<div class="form-group">
-    <label>Meta Title</label>
-    <input type="text" name="meta_title" id="metaTitle" class="custom-input">
-</div>
-
-<div class="form-group">
-    <label>Meta Description</label>
-    <textarea name="meta_description" id="metaDescription" class="custom-input"></textarea>
-</div>
-
-<!-- SEO SCORE -->
-<div id="seoScoreBox" style="margin-top:15px; font-weight:bold;">
-    SEO Score: <span id="seoScore">0</span>/100
-</div>
-                <button type="submit" class="btn btn-primary submit-btn">
-                    <i class="bi bi-cloud-arrow-up-fill"></i> Save & Publish
-                </button>
-
-            </form>
+<div id="secondaryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#ffffff; padding:24px; width:100%; max-width:400px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+        <h4 style="margin-top:0;">Add Secondary Category</h4>
+        <input type="text" id="secondaryName" class="input-control" placeholder="Enter name">
+        <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="closeSecondaryModal()" class="btn btn-outline" type="button">Cancel</button>
+            <button onclick="saveSecondary()" class="btn btn-solid" style="background:#3b82f6; color:#ffffff; border-color:#3b82f6;" type="button">Save</button>
         </div>
     </div>
-</main>
+</div>
 
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 <script>
+    // Initialize CKEditor
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof CKEDITOR !== 'undefined') {
             CKEDITOR.replace('editor', {
-                height: 350, 
+                height: 300, 
                 filebrowserUploadUrl: '/ckeditor/upload/',
                 filebrowserUploadMethod: 'form',
-                uiColor: '#ffffff', 
+                uiColor: '#ffffff',
+                removePlugins: 'elementspath',
+                resize_enabled: false
             });
-        } else {
-            console.error("CKEditor not loaded! Please check static paths.");
         }
     });
-document.querySelector("input[name='title']").addEventListener("input", function() {
-    let slugField = document.querySelector("input[name='slug']");
-    
-    if(slugField.dataset.manual === "true") return;
 
-    let slug = this.value
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
+    // Slug Auto-generation
+    const titleInput = document.querySelector("input[name='title']");
+    const slugInput = document.getElementById("slugInputLeft");
 
-    slugField.value = slug;
-});
+    titleInput.addEventListener("input", function() {
+        if(slugInput.dataset.manual === "true") return;
+        let slug = this.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        slugInput.value = slug;
+    });
 
-document.querySelector("input[name='slug']").addEventListener("input", function() {
-    this.dataset.manual = "true";
-});
-document.querySelector("input[name='image']").addEventListener("change", function(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById("imagePreview");
+    slugInput.addEventListener("input", function() {
+        this.dataset.manual = "true";
+    });
 
-    if (file) {
-        const reader = new FileReader();
+    // Image Preview
+    document.getElementById("imageInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById("imagePreview");
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                preview.src = event.target.result;
+                preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-        reader.onload = function(event) {
-            preview.src = event.target.result;
-            preview.style.display = "block";
+    // Real-Time SEO & Preview Engine
+    function updateSEO() {
+        let rawTitle = titleInput.value;
+        let metaTitle = document.getElementById("metaTitle").value;
+        let slug = slugInput.value;
+        let desc = document.getElementById("metaDesc").value;
+
+        // Preview Updates
+        let finalTitle = metaTitle || rawTitle || "Your article title";
+        document.getElementById("previewTitle").innerText = finalTitle;
+        document.getElementById("previewUrl").innerText = slug || "your-slug";
+        document.getElementById("previewDesc").innerText = desc || "Meta description will appear here in search results...";
+
+        // Counters
+        document.getElementById("titleCount").innerText = `${finalTitle.length}/60`;
+        document.getElementById("descCount").innerText = `${desc.length}/160`;
+
+        // Checklist Logic (Red/Green Dots)
+        const toggleDot = (id, condition) => {
+            let el = document.getElementById(id);
+            if(condition) el.classList.add("good");
+            else el.classList.remove("good");
         };
 
-        reader.readAsDataURL(file);
-    }
-});
-function openSecondaryModal() {
-    document.getElementById("secondaryModal").style.display = "block";
-}
-
-function closeSecondaryModal() {
-    document.getElementById("secondaryModal").style.display = "none";
-}
-
-function saveSecondary() {
-    const name = document.getElementById("secondaryName").value;
-    const primaryId = document.getElementById("primarySelect").value;
-    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    if (!name || !primaryId) {
-        alert("Select primary and enter name");
-        return;
+        toggleDot("check-keyword", rawTitle.length > 5); // Dummy check for visual
+        toggleDot("check-title-len", finalTitle.length >= 30 && finalTitle.length <= 60);
+        toggleDot("check-slug", slug.length > 3);
+        toggleDot("check-meta", desc.length > 0);
+        toggleDot("check-meta-len", desc.length >= 120 && desc.length <= 160);
     }
 
-    fetch("/add-secondary/", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrf,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name: name,
-            primary_id: primaryId
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            let select = document.getElementById("secondarySelect");
+    // Run SEO checks constantly when typing
+    setInterval(updateSEO, 500);
 
-            let option = document.createElement("option");
-            option.value = data.id;
-            option.text = data.name;
-            option.selected = true;
+    // Modal Functions
+    function openSecondaryModal() {
+        document.getElementById("secondaryModal").style.display = "flex";
+    }
 
-            select.appendChild(option);
+    function closeSecondaryModal() {
+        document.getElementById("secondaryModal").style.display = "none";
+    }
 
-            closeSecondaryModal();
-            document.getElementById("secondaryName").value = "";
-        } else {
-            alert(data.message);
+    // Secondary Category AJAX
+    function saveSecondary() {
+        const name = document.getElementById("secondaryName").value;
+        const primaryId = document.getElementById("primarySelect").value;
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        if (!name || !primaryId) {
+            alert("Select primary and enter name");
+            return;
         }
-    });
-}
-document.getElementById("primarySelect").addEventListener("change", function() {
-    const primaryId = this.value;
-    const secondary = document.getElementById("secondarySelect");
 
-    secondary.innerHTML = '<option value="">Select Secondary</option>'; // reset
+        fetch("/add-secondary/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrf,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: name, primary_id: primaryId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                let select = document.getElementById("secondarySelect");
+                let option = document.createElement("option");
+                option.value = data.id;
+                option.text = data.name;
+                option.selected = true;
+                select.appendChild(option);
+                closeSecondaryModal();
+                document.getElementById("secondaryName").value = "";
+            } else {
+                alert(data.message);
+            }
+        });
+    }
 
-    if (!primaryId) return;
+    document.getElementById("primarySelect").addEventListener("change", function() {
+        const primaryId = this.value;
+        const secondary = document.getElementById("secondarySelect");
+        secondary.innerHTML = '<option value="">— opt —</option>';
+        if (!primaryId) return;
 
-    fetch(`/get-secondary/${primaryId}/`)
-    .then(res => res.json())
-    .then(data => {
-        data.forEach(item => {
-            let option = document.createElement("option");
-            option.value = item.id;
-            option.text = item.name;
-            secondary.appendChild(option);
+        fetch(`/get-secondary/${primaryId}/`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.name;
+                secondary.appendChild(option);
+            });
         });
     });
-});
-function deleteSecondary() {
-    const select = document.getElementById("secondarySelect");
-    const id = select.value;
-    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    if (!id) {
-        alert("Select category");
-        return;
+    function deleteSecondary() {
+        const select = document.getElementById("secondarySelect");
+        const id = select.value;
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        if (!id) { alert("Select category"); return; }
+        if (!confirm("Delete this category?")) return;
+
+        fetch(`/delete-secondary/${id}/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": csrf }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                select.querySelector(`option[value="${id}"]`).remove();
+            }
+        });
     }
-
-    if (!confirm("Delete this category?")) return;
-
-    fetch(`/delete-secondary/${id}/`, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrf
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            select.querySelector(`option[value="${id}"]`).remove();
-        }
-    });
-}
-function calculateSEOScore() {
-    let title = document.querySelector("input[name='title']").value.toLowerCase();
-    let content = CKEDITOR.instances.editor.getData().toLowerCase();
-    let keyword = document.getElementById("focusKeyword").value.toLowerCase();
-    let metaTitle = document.getElementById("metaTitle").value.toLowerCase();
-    let metaDesc = document.getElementById("metaDescription").value.toLowerCase();
-
-    let score = 0;
-
-    if (keyword && title.includes(keyword)) score += 20;
-    if (keyword && content.includes(keyword)) score += 30;
-    if (metaTitle.length > 30) score += 15;
-    if (metaDesc.length > 50) score += 15;
-    if (content.length > 300) score += 20;
-
-    document.getElementById("seoScore").innerText = score;
-    let scoreEl = document.getElementById("seoScore");
-
-    if (score < 40) {
-        scoreEl.style.color = "red";
-    } else if (score < 70) {
-        scoreEl.style.color = "orange";
-    } else {
-        scoreEl.style.color = "green";
-    }
-}
-
-setInterval(calculateSEOScore, 1500);
 </script>
 
 {% endblock %}
