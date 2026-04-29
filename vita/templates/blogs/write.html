@@ -141,9 +141,13 @@
 
     <div style="display:flex; gap:10px; align-items:center;">
 
-        <select name="secondary_category" id="secondarySelect" class="custom-select">
-            <option value="">-- No Secondary Category --</option>
-        </select>
+    <select name="secondary_category" id="secondarySelect" class="custom-select">
+        <option value="">Select (optional)</option>
+
+        {% for s in secondary_categories %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
 
         <button type="button" onclick="openSecondaryModal()" class="btn btn-outline-primary">+</button>
 
@@ -293,6 +297,25 @@ function saveSecondary() {
         }
     });
 }
+document.getElementById("primarySelect").addEventListener("change", function() {
+    const primaryId = this.value;
+    const secondary = document.getElementById("secondarySelect");
+
+    secondary.innerHTML = '<option value="">Select Secondary</option>'; // reset
+
+    if (!primaryId) return;
+
+    fetch(`/get-secondary/${primaryId}/`)
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(item => {
+            let option = document.createElement("option");
+            option.value = item.id;
+            option.text = item.name;
+            secondary.appendChild(option);
+        });
+    });
+});
 function deleteSecondary() {
     const select = document.getElementById("secondarySelect");
     const id = select.value;

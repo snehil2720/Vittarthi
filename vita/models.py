@@ -32,8 +32,10 @@ class SecondaryCategory(models.Model):
         related_name='secondary_categories'
     )
 
-    def __str__(self):
-        return f"{self.primary.name} → {self.name}"
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
 class Blog(models.Model):
     STATUS_CHOICES = (

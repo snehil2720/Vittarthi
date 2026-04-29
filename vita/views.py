@@ -176,6 +176,9 @@ def write_blog(request):
         slug_input = request.POST.get("slug")
         content = request.POST.get('content')
 
+        primary_id = request.POST.get('primary_category')
+        secondary_id = request.POST.get('secondary_category') or None
+
         slug = generate_unique_slug(title, slug_input)
         summary = generate_ai_summary(content)
 
@@ -186,9 +189,8 @@ def write_blog(request):
             author=request.user,
             status=request.POST.get('status'),
 
-            # 🔥 NEW FIELDS
-            primary_category_id=request.POST.get('primary_category'),
-            secondary_category_id=request.POST.get('secondary_category'),
+            primary_category_id=primary_id,
+            secondary_category_id=secondary_id,  # 🔥 optional
 
             slug=slug,
             summary=summary
@@ -766,12 +768,17 @@ def add_secondary(request):
     name = data.get("name")
     primary_id = data.get("primary_id")
 
-    if not name:
-        return JsonResponse({"status": "error", "message": "Name required"})
+    if not name or not primary_id:
+        return JsonResponse({"status": "error", "message": "Name & Primary required"})
+
+    try:
+        primary = PrimaryCategory.objects.get(id=primary_id)
+    except PrimaryCategory.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Invalid primary"})
 
     cat = SecondaryCategory.objects.create(
         name=name,
-        primary_id=primary_id
+        primary=primary   
     )
 
     return JsonResponse({

@@ -51,6 +51,7 @@ urlpatterns = [
     path('delete-secondary/<int:id>/', views.delete_secondary),
 
     path('resources/<slug:primary_slug>/', views.blog_list, name='resource_list'),
+    path('get-secondary/<int:primary_id>/', views.get_secondary),
 
 ]
 
