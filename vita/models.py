@@ -63,13 +63,22 @@ class Blog(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
     summary = models.TextField(blank=True)
+    meta_title = models.CharField(max_length=200, blank=True, null=True)
+    meta_description = models.TextField(blank=True, null=True)
+    focus_keyword = models.CharField(max_length=100, blank=True, null=True)
 
+    seo_score = models.IntegerField(default=0)  
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title) 
         if self.is_featured:
             Blog.objects.filter(is_featured=True).exclude(id=self.id).update(is_featured=False)
         self.summary = generate_clean_summary(self.content)
+        if not self.meta_title:
+            self.meta_title = self.title[:60]
+
+        if not self.meta_description:
+            self.meta_description = self.summary[:160]
         super().save(*args, **kwargs)
 
     #author = models.ForeignKey(User, on_delete=models.CASCADE)

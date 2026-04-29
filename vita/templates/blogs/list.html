@@ -229,7 +229,7 @@ body.dark-mode.dark{
             
             {% if blog.image %}
             <div class="img-wrapper">
-              <a href="{% url 'blog_detail' blog.slug %}">
+              <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}">
                 <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-img">
               </a>
             </div>
@@ -238,13 +238,13 @@ body.dark-mode.dark{
             <div class="blog-body">
               <div class="cat-tag">🏆 {% if blog.is_featured %}Featured{% else %}{{ blog.category.name|default:"General" }}{% endif %}</div>
               
-              <a href="{% url 'blog_detail' blog.slug %}" style="text-decoration:none;">
+              <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" style="text-decoration:none;">
                   <h3 class="blog-title">{{ blog.title }}</h3>
               </a>
               
               <p class="blog-desc">
                   {{ blog.summary }}... 
-                  <a href="{% url 'blog_detail' blog.slug %}" style="color: var(--blue); font-weight: 600; text-decoration: none;">Read more</a>
+                  <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" style="color: var(--blue); font-weight: 600; text-decoration: none;">Read more</a>
               </p>
               
               <div class="blog-footer">
@@ -280,7 +280,7 @@ body.dark-mode.dark{
             
             {% if blog.image %}
             <div class="img-wrapper">
-              <a href="{% url 'blog_detail' blog.slug %}">
+              <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}">
                 <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-img">
               </a>
             </div>
@@ -289,13 +289,13 @@ body.dark-mode.dark{
             <div class="blog-body">
               <div class="cat-tag">{{ blog.category.name|default:"General" }}</div>
               
-              <a href="{% url 'blog_detail' blog.slug %}" style="text-decoration:none;">
+              <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" style="text-decoration:none;">
                   <h2 class="blog-title">{{ blog.title }}</h2>
               </a>
               
               <p class="blog-desc">
                   {{ blog.content|striptags|truncatechars:120 }}...
-                  <a href="{% url 'blog_detail' blog.slug %}" style="color: var(--blue); font-weight: 600; text-decoration: none;">Read more</a>
+                  <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" style="color: var(--blue); font-weight: 600; text-decoration: none;">Read more</a>
               </p>
               
               <div class="blog-footer">
@@ -354,7 +354,7 @@ body.dark-mode.dark{
         <ul class="popular-list" style="padding:0;">
           {% for blog in blogs|slice:":4" %}
           <li style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-            <a href="{% url 'blog_detail' blog.slug %}" style="display: flex; flex-direction: column; gap: 5px; text-decoration: none;">
+            <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" style="display: flex; flex-direction: column; gap: 5px; text-decoration: none;">
               <span class="cat-tag" style="font-size: 0.7rem; margin: 0;">{{ blog.category.name|default:"General" }}</span>
               <div class="pop-title" style="font-size: 1rem; color: var(--text); font-weight: 600;">{{ blog.title }}</div>
             </a>

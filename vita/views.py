@@ -139,8 +139,12 @@ def get_secondary(request, primary_id):
     data = list(cats.values('id', 'name'))
     return JsonResponse(data, safe=False)
 
-def blog_detail(request, slug):
-    blog = get_object_or_404(Blog, slug=slug)
+def blog_detail(request, primary_slug,slug):
+    blog = get_object_or_404(
+        Blog,
+        slug=slug,
+        primary_category__slug=primary_slug  
+    )
     text = re.sub('<[^<]+?>', '', blog.content)
     words = len(text.split())
     read_time = math.ceil(words / 200)
@@ -193,7 +197,11 @@ def write_blog(request):
             secondary_category_id=secondary_id,  # 🔥 optional
 
             slug=slug,
-            summary=summary
+            summary=summary,
+
+            focus_keyword=request.POST.get('focus_keyword'),
+            meta_title=request.POST.get('meta_title'),
+            meta_description=request.POST.get('meta_description'),
         )
 
         return redirect('resource_list', primary_slug='blogs')

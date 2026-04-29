@@ -28,7 +28,8 @@ urlpatterns = [
     path('blogs/write/', views.write_blog, name='write_blog'),
     path('blogs/my-blogs/', views.my_blogs, name='my_blogs'),
     path('blogs/edit/<int:id>/', views.edit_blog, name='edit_blog'),
-    path('blogs/<slug:slug>/', views.blog_detail, name='blog_detail'),
+    #path('blogs/<slug:slug>/', views.blog_detail, name='blog_detail'),
+    path('resources/<slug:primary_slug>/<slug:slug>/', views.blog_detail, name='blog_detail'),
 
     #path('ckeditor/', include('ckeditor_uploader.urls')),
     path('ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),

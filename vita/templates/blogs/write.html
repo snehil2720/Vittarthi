@@ -193,7 +193,29 @@
                         </select>
                     </div>
                 </div>
+<hr>
 
+<h3>🔍 SEO Settings</h3>
+
+<div class="form-group">
+    <label>Focus Keyword</label>
+    <input type="text" name="focus_keyword" id="focusKeyword" class="custom-input" placeholder="e.g. SIP investment">
+</div>
+
+<div class="form-group">
+    <label>Meta Title</label>
+    <input type="text" name="meta_title" id="metaTitle" class="custom-input">
+</div>
+
+<div class="form-group">
+    <label>Meta Description</label>
+    <textarea name="meta_description" id="metaDescription" class="custom-input"></textarea>
+</div>
+
+<!-- SEO SCORE -->
+<div id="seoScoreBox" style="margin-top:15px; font-weight:bold;">
+    SEO Score: <span id="seoScore">0</span>/100
+</div>
                 <button type="submit" class="btn btn-primary submit-btn">
                     <i class="bi bi-cloud-arrow-up-fill"></i> Save & Publish
                 </button>
@@ -341,6 +363,34 @@ function deleteSecondary() {
         }
     });
 }
+function calculateSEOScore() {
+    let title = document.querySelector("input[name='title']").value.toLowerCase();
+    let content = CKEDITOR.instances.editor.getData().toLowerCase();
+    let keyword = document.getElementById("focusKeyword").value.toLowerCase();
+    let metaTitle = document.getElementById("metaTitle").value.toLowerCase();
+    let metaDesc = document.getElementById("metaDescription").value.toLowerCase();
+
+    let score = 0;
+
+    if (keyword && title.includes(keyword)) score += 20;
+    if (keyword && content.includes(keyword)) score += 30;
+    if (metaTitle.length > 30) score += 15;
+    if (metaDesc.length > 50) score += 15;
+    if (content.length > 300) score += 20;
+
+    document.getElementById("seoScore").innerText = score;
+    let scoreEl = document.getElementById("seoScore");
+
+    if (score < 40) {
+        scoreEl.style.color = "red";
+    } else if (score < 70) {
+        scoreEl.style.color = "orange";
+    } else {
+        scoreEl.style.color = "green";
+    }
+}
+
+setInterval(calculateSEOScore, 1500);
 </script>
 
 {% endblock %}

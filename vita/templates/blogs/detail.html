@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<head>
+  <title>{{ blog.meta_title|default:blog.title }}</title>
+  <meta name="description" content="{{ blog.meta_description|default:blog.summary }}">
+  <meta name="keywords" content="{{ blog.focus_keyword }}">
+
 <style>
   /* ══════════ PROGRESS BAR ══════════ */
   #progressBar {
@@ -243,6 +248,7 @@
     transition: 0.3s;
 }
 </style>
+</head>
 
 <div id="progressBar"></div>
 
