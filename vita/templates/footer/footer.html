@@ -312,7 +312,7 @@
       <div>
         <h3 class="vt-col-heading">Calculators</h3>
         <ul class="vt-links">
-          <li><a href="/sip/">SIP <span class="vt-badge">New</span></a></li>
+          <li><a href="/sip/">SIP <span class="vt-badge"></span></a></li>
           <li><a href="/emi/">EMI</a></li>
           <li><a href="/loan/home/">Home Loan</a></li>
           <li><a href="/loan/car/">Car Loan</a></li>
@@ -331,11 +331,11 @@
       <div>
         <h3 class="vt-col-heading">Knowledge Hub</h3>
         <ul class="vt-links">
-          <li><a href="/blogs/">Blog</a></li>
-          <li><a href="/case-studies/">Case Studies</a></li>
-          <li><a href="/news/">News</a></li>
-          <li><a href="#">Finance Glossary</a></li>
-          <li><a href="#">Beginner Guides</a></li>
+        <li><a href="{% url 'resource_list' 'blogs' %}">Blog</a></li>
+        <li><a href="{% url 'resource_list' 'case-study' %}">Case Studies</a></li>
+        <li><a href="{% url 'resource_list' 'news' %}">News</a></li>
+        <li><a href="#">Finance Glossary</a></li>
+        <li><a href="#">Beginner Guides</a></li>
         </ul>
 
         <h3 class="vt-col-heading" style="margin-top:1.3rem;">Company</h3>
