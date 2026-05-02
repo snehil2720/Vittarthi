@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'vita.context_processors.global_categories',
+                'vita.context_processors.site_stats',
             ],
         },
     },

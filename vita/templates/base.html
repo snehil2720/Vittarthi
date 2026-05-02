@@ -581,7 +581,7 @@ color: white;
     <li><a href="/resources/news/">News</a></li>
   </ul>
 </li>
-    <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
+    <!-- <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li> -->
 
     <!-- {% if user.is_authenticated %}
         <li>
@@ -627,7 +627,7 @@ color: white;
       </div>
 
     </div>
-      <a href="/contact/">Contact</a>
+      <!-- <a href="/contact/">Contact</a> -->
 
     {% if user.is_authenticated %}
         <div style="padding:.5rem .8rem; font-weight:600;">
@@ -646,8 +646,11 @@ color: white;
     {% block content %}
     {% endblock %}
 </div>
-
+{% include "footer/footer.html" %}
 <script>
+  function comingSoon() {
+    alert("🚀 Coming Soon!");
+}
 function toggleResources() {
     const menu = document.getElementById("resourcesMenu");
     const arrow = document.getElementById("arrow");

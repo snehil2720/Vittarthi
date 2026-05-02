@@ -244,10 +244,10 @@ details[open] summary::after { transform:rotate(180deg); color:var(--accent); }
 .faq-content { padding:0 1.5rem 1.2rem; color:var(--muted); font-size:.95rem; line-height:1.6; }
 
 /* Footer */
-footer {
+/* footer {
   text-align:center; padding:2rem var(--pad); color:var(--muted);
   font-size:.8rem; border-top:1px solid var(--border); margin-top:4rem; line-height: 1.5;
-}
+} */
 
 /* Animations */
 @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
@@ -489,7 +489,11 @@ footer {
 
 <div class="grid-3" style="grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));">
   {% for blog in latestblogs %}
-  <a href="/blogs/{{ blog.slug }}/" class="blog-card">
+    {% if blog.primary_category %}
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="blog-card">
+    {% else %}
+    <a href="#" class="blog-card">
+    {% endif %}
 
     {% if blog.image %}
       <img src="{{ blog.image.url }}" alt="Blog Image" class="blog-img"
@@ -545,10 +549,6 @@ footer {
   </section>
 
 </main>
-
-<footer>
-  All calculations are indicative and based on assumed rates. Actual returns and loan terms may vary. Please consult a financial advisor before making investment or borrowing decisions.
-</footer>
 
 <script>
 /* Dark Mode */
