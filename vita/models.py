@@ -15,7 +15,7 @@ from django.utils.html import strip_tags
 #     def __str__(self):
 #         return self.name
 class PrimaryCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)  # Blogs, Case Study, News
+    name = models.CharField(max_length=250, unique=True)  # Blogs, Case Study, News
     slug = models.SlugField(unique=True)
 
     def __str__(self):
@@ -63,9 +63,9 @@ class Blog(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
     summary = models.TextField(blank=True)
-    meta_title = models.CharField(max_length=200, blank=True, null=True)
+    meta_title = models.CharField(max_length=250, blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
-    focus_keyword = models.CharField(max_length=100, blank=True, null=True)
+    focus_keyword = models.CharField(max_length=250, blank=True, null=True)
 
     seo_score = models.IntegerField(default=0)  
     def save(self, *args, **kwargs):
@@ -75,10 +75,10 @@ class Blog(models.Model):
             Blog.objects.filter(is_featured=True).exclude(id=self.id).update(is_featured=False)
         self.summary = generate_clean_summary(self.content)
         if not self.meta_title:
-            self.meta_title = self.title[:60]
+            self.meta_title = self.title[:200]
 
         if not self.meta_description:
-            self.meta_description = self.summary[:160]
+            self.meta_description = self.summary[:250]
         super().save(*args, **kwargs)
 
     #author = models.ForeignKey(User, on_delete=models.CASCADE)
