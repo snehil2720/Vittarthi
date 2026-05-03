@@ -169,27 +169,36 @@ def generate_unique_slug(title, slug_input=None, instance=None):
 
     return slug
 @login_required
+@login_required
 def write_blog(request):
     if not is_writer(request.user):
         return redirect('blogs')
 
     primary_categories = PrimaryCategory.objects.all()
+    secondary_categories = SecondaryCategory.objects.none()
 
     if request.method == 'POST':
         title = request.POST.get('title')
         slug_input = request.POST.get("slug")
         content = request.POST.get('content')
+
+        primary_id = request.POST.get('primary_category')
+        secondary_id = request.POST.get('secondary_category')
+
+        # ✅ SAFE CAST
+        primary_id = int(primary_id) if primary_id else None
+        secondary_id = int(secondary_id) if secondary_id else None
+
         meta_title = request.POST.get("meta_title")
         meta_description = request.POST.get("meta_description")
-        primary_id = request.POST.get('primary_category')
-        secondary_id = request.POST.get('secondary_category') or None
 
-        slug = generate_unique_slug(title, slug_input)
+        slug = generate_unique_slug(title, slug_input)[:200]
         summary = generate_ai_summary(content)
-        if not meta_title:
-            meta_title = f"{title} | Vita₹thi"
-        if not meta_description:
-            meta_description = summary[:160]
+
+        # ✅ SAFE SEO
+        meta_title = (meta_title or f"{title} | Vita₹thi")[:200]
+        meta_description = (meta_description or summary[:160])[:160]
+
         Blog.objects.create(
             title=title,
             content=content,
@@ -198,7 +207,7 @@ def write_blog(request):
             status=request.POST.get('status'),
 
             primary_category_id=primary_id,
-            secondary_category_id=secondary_id,  # 🔥 optional
+            secondary_category_id=secondary_id,
 
             slug=slug,
             summary=summary,
@@ -211,7 +220,8 @@ def write_blog(request):
         return redirect('resource_list', primary_slug='blogs')
 
     return render(request, 'blogs/write.html', {
-        'primary_categories': primary_categories
+        'primary_categories': primary_categories,
+        'secondary_categories': secondary_categories
     })
 
 @login_required

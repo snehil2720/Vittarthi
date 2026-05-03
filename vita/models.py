@@ -76,7 +76,6 @@ class Blog(models.Model):
         self.summary = generate_clean_summary(self.content)
         if not self.meta_title:
             self.meta_title = self.title[:200]
-
         if not self.meta_description:
             self.meta_description = self.summary[:250]
         super().save(*args, **kwargs)
@@ -93,8 +92,6 @@ class Blog(models.Model):
  
     def __str__(self):
         return self.title
-
-
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
