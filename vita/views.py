@@ -179,7 +179,8 @@ def write_blog(request):
         title = request.POST.get('title')
         slug_input = request.POST.get("slug")
         content = request.POST.get('content')
-
+        meta_title = request.POST.get("meta_title")
+        meta_description = request.POST.get("meta_description")
         primary_id = request.POST.get('primary_category')
         secondary_id = request.POST.get('secondary_category') or None
 
