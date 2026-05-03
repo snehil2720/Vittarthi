@@ -60,7 +60,7 @@ class Blog(models.Model):
         null=True,
         blank=True
     )
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(max_length=250,unique=True, blank=True)
     is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
     summary = models.TextField(blank=True)
     meta_title = models.CharField(max_length=250, blank=True, null=True)
