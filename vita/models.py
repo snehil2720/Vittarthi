@@ -23,7 +23,7 @@ class PrimaryCategory(models.Model):
 
 
 class SecondaryCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=250)
     slug = models.SlugField(blank=True, null=True)
 
     primary = models.ForeignKey(
@@ -43,8 +43,8 @@ class Blog(models.Model):
         ('published', 'Published'),
     )
 
-    title = models.CharField(max_length=200)
-    content = RichTextField()
+    title = models.CharField(max_length=250)
+    content = RichTextUploadingField()
     image = models.ImageField(upload_to='blogs/', default='default.jpg')
     #category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
     primary_category = models.ForeignKey(
@@ -60,7 +60,7 @@ class Blog(models.Model):
         null=True,
         blank=True
     )
-    slug = models.SlugField(unique=True, blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True)
     is_featured = models.BooleanField(default=False, help_text="Check this to show at the top")
     summary = models.TextField(blank=True)
     meta_title = models.CharField(max_length=250, blank=True, null=True)
@@ -75,9 +75,9 @@ class Blog(models.Model):
             Blog.objects.filter(is_featured=True).exclude(id=self.id).update(is_featured=False)
         self.summary = generate_clean_summary(self.content)
         if not self.meta_title:
-            self.meta_title = self.title[:200]
+            self.meta_title = self.title[:250]
         if not self.meta_description:
-            self.meta_description = self.summary[:250]
+            self.meta_description = self.summary[:160]
         super().save(*args, **kwargs)
 
     #author = models.ForeignKey(User, on_delete=models.CASCADE)
