@@ -392,7 +392,9 @@ document.addEventListener("DOMContentLoaded", function() {
   "@type": "BlogPosting",
   "headline": "{{ blog.meta_title|default:blog.title|escapejs }}",
   "description": "{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
+  {% if blog.image %}
   "image": "{{ blog.image.url }}",
+  {% endif %}
   "author": {
     "@type": "Person",
     "name": "{{ blog.author.username }}"
