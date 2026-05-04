@@ -386,4 +386,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ blog.meta_title|default:blog.title|escapejs }}",
+  "description": "{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
+  "image": "{{ blog.image.url }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ blog.author.username }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Vita₹thi"
+  },
+  "datePublished": "{{ blog.created_at|date:'c' }}",
+  "dateModified": "{{ blog.updated_at|date:'c' }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.build_absolute_uri }}"
+  }
+}
+</script>
 {% endblock %}
