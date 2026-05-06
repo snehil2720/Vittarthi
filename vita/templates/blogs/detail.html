@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
+{% block title %}
+    {{ blog.meta_title|default:blog.title }} | Vita₹thi
+{% endblock %}
 
+{% block meta_description %}
+    {{ blog.meta_description|default:blog.summary|truncatechars:160 }}
+{% endblock %}
+
+{% block meta_keywords %}
+    {{ blog.focus_keyword }}
+{% endblock %}
 {% block content %}
-<head>
-  <title>{{ blog.meta_title|default:blog.title }}</title>
-  <meta name="description" content="{{ blog.meta_description|default:blog.summary }}">
-  <meta name="keywords" content="{{ blog.focus_keyword }}">
+
 
 <style>
   /* ══════════ PROGRESS BAR ══════════ */
@@ -248,7 +255,7 @@
     transition: 0.3s;
 }
 </style>
-</head>
+
 
 <div id="progressBar"></div>
 
