@@ -1,0 +1,67 @@
+1. PostgreSQL install
+sudo apt install postgresql postgresql-contrib -y
+2. PostgreSQL login
+sudo -u postgres psql
+3. Database create
+CREATE DATABASE vittarthi;
+4. User create
+CREATE USER vittarthiuser WITH PASSWORD 'strongpassword';
+5. Permissions
+ALTER ROLE vittarthiuser SET client_encoding TO 'utf8';
+ALTER ROLE vittarthiuser SET default_transaction_isolation TO 'read committed';
+ALTER ROLE vittarthiuser SET timezone TO 'UTC';
+
+GRANT ALL PRIVILEGES ON DATABASE vittarthi TO vittarthiuser;
+6. Exit
+\q
+
+
+🚀 Ab NGINX properly setup karte hain
+STEP 1 — Create nginx config
+sudo nano /etc/nginx/sites-available/vittarthi
+🚀 Paste THIS
+
+⚠️ PUBLIC_IP ko apne actual IP se replace kar.
+
+server {
+    listen 80;
+    server_name PUBLIC_IP;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        root /home/ubuntu/Vittarthi;
+    }
+
+    location /media/ {
+        root /home/ubuntu/Vittarthi;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/Vittarthi/gunicorn.sock;
+    }
+}
+🚀 Save
+CTRL + O
+ENTER
+CTRL + X
+🚀 STEP 2 — Enable config
+sudo ln -s /etc/nginx/sites-available/vittarthi /etc/nginx/sites-enabled
+🚀 STEP 3 — Remove default config
+sudo rm /etc/nginx/sites-enabled/default
+🚀 STEP 4 — Test nginx config
+sudo nginx -t
+
+👉 should show:
+
+syntax is ok
+test is successful
+🚀 STEP 5 — Restart nginx
+sudo systemctl restart nginx
+🚀 STEP 6 — Ensure gunicorn running
+sudo systemctl status gunicorn
+
+👉 should show:
+
+active (running)
