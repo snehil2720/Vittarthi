@@ -11,8 +11,17 @@
     {{ blog.focus_keyword }}
 {% endblock %}
 {% block content %}
-
-
+<head>
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{{ blog.meta_title }}">
+<meta property="og:description" content="{{ blog.meta_description }}">
+{% if blog.image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
+{% endif %}
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:type" content="article">
+</head>
 <style>
   /* ══════════ PROGRESS BAR ══════════ */
   #progressBar {
@@ -79,7 +88,7 @@
   .blog-cover {
     width: 100%;
     height: clamp(250px, 40vw, 400px);
-    object-fit: cover;
+    object-fit: contain;
     border-radius: var(--r);
     margin-bottom: 2rem;
     border: 1px solid var(--border);
