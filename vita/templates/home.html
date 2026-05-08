@@ -565,6 +565,18 @@ function toggleDrawer() {
   document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
   document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
 }
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 function closeOnOverlay(e) {
   if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
 }
