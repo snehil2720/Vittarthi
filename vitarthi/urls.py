@@ -30,3 +30,7 @@ urlpatterns = [
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+handler404 = 'vita.views.custom_404'
+handler500 = 'vita.views.custom_500'
+handler403 = 'vita.views.custom_403'
+handler400 = 'vita.views.custom_400'

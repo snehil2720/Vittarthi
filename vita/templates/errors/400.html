@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="error-page-container">
+    <div class="error-content-wrapper">
+        <div class="svg-illustration">
+            <svg width="100%" height="auto" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="250" cy="175" r="130" fill="#F8FAFC" />
+                <circle cx="90" cy="90" r="40" fill="#F5F3FF" />
+                <rect x="380" y="230" width="60" height="60" rx="16" transform="rotate(15 380 230)" fill="#FDF2F8" />
+                
+                <g class="hover-document">
+                    <rect x="175" y="80" width="150" height="190" rx="16" fill="#ffffff" stroke="#CBD5E1" stroke-width="4" />
+                    <line x1="200" y1="115" x2="300" y2="115" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round" />
+                    <line x1="200" y1="135" x2="270" y2="135" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round" />
+                    <line x1="200" y1="155" x2="240" y2="155" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round" />
+                    
+                    <circle cx="250" cy="210" r="35" fill="#FEF2F2" />
+                    <path d="M235 195 L265 225 M265 195 L235 225" stroke="#F43F5E" stroke-width="5" stroke-linecap="round" />
+                </g>
+
+                <g class="float-element">
+                    <text x="110" y="160" font-family="Poppins, sans-serif" font-weight="800" font-size="50" fill="#8B5CF6" opacity="0.8">?</text>
+                </g>
+                <g class="float-element-delayed">
+                    <text x="350" y="120" font-family="Poppins, sans-serif" font-weight="800" font-size="35" fill="#EC4899" opacity="0.6">?</text>
+                </g>
+                <g class="float-element">
+                    <text x="360" y="200" font-family="Poppins, sans-serif" font-weight="800" font-size="20" fill="#6366F1" opacity="0.5">?</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="text-content">
+            <h1 class="gradient-text-400">400</h1>
+            <h2>Bad Request!</h2>
+            <p>
+                Hold up! The server couldn't understand your request. This usually happens if the link is broken, typed incorrectly, or the data is invalid.
+            </p>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="history.back()" class="home-btn-modern primary-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Go Back
+            </button>
+            <a href="/" class="home-btn-modern secondary-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@700;800&display=swap');
+
+.error-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding-bottom: 10px;
+    font-family: 'Inter', sans-serif;
+}
+.mt-4 {
+    margin-top: 0px !important;
+    padding: 0px;
+}
+.error-content-wrapper {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* SVG Styling & Animations */
+.svg-illustration {
+    max-width: 450px;
+    margin: 0 auto 30px auto;
+}
+
+.hover-document {
+    animation: gentleFloat 6s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.float-element {
+    animation: floatUp 3s ease-in-out infinite alternate;
+}
+
+.float-element-delayed {
+    animation: floatUp 4s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes gentleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0px) rotate(-5deg); }
+    100% { transform: translateY(-15px) rotate(5deg); }
+}
+
+/* Text Styling */
+.gradient-text-400 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    /* Cyber/Creative Gradient (Indigo/Purple to Pink) */
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -4px;
+}
+
+.text-content h2 {
+    color: #1e293b;
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.text-content p {
+    color: #64748b;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+/* Sleek Modern Buttons */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.home-btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Primary Button (Go Back) */
+.primary-btn {
+    background: #1e293b;
+    color: #ffffff;
+    box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.2);
+}
+
+.primary-btn:hover {
+    background: #0f172a;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(30, 41, 59, 0.3);
+}
+
+.primary-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.primary-btn:hover svg {
+    transform: translateX(-4px);
+}
+
+/* Secondary Button (Home) */
+.secondary-btn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.secondary-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-3px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .gradient-text-400 { font-size: 90px; }
+    .text-content h2 { font-size: 28px; }
+    .error-content-wrapper { padding: 0 10px; }
+    .svg-illustration { max-width: 320px; }
+    .action-buttons { flex-direction: column; padding: 0 20px; }
+    .home-btn-modern { justify-content: center; width: 100%; box-sizing: border-box; }
+}
+</style>
+{% endblock %}

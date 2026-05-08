@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="error-page-container">
+    <div class="error-content-wrapper">
+        <div class="svg-illustration">
+            <svg width="100%" height="auto" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="250" cy="175" r="120" fill="#FFF1F2" />
+                <rect x="380" y="60" width="60" height="60" rx="16" transform="rotate(25 380 60)" fill="#FEF2F2" />
+                <circle cx="80" cy="250" r="20" fill="#FFF7ED" />
+
+                <rect x="140" y="100" width="220" height="40" rx="8" fill="#F1F5F9" />
+                <circle cx="165" cy="120" r="5" fill="#CBD5E1" />
+                <circle cx="185" cy="120" r="5" fill="#10B981" /> <line x1="215" y1="120" x2="335" y2="120" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round" />
+
+                <g class="glitch-server">
+                    <rect x="130" y="155" width="240" height="45" rx="8" fill="#FEF2F2" stroke="#FDA4AF" stroke-width="2" />
+                    <circle cx="165" cy="177" r="5" fill="#EF4444" class="blinking-light" /> <path d="M240 160 L225 177 L245 177 L230 195" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="265" y1="177" x2="345" y2="177" stroke="#FECDD3" stroke-width="6" stroke-linecap="round" />
+                </g>
+
+                <rect x="140" y="215" width="220" height="40" rx="8" fill="#F1F5F9" />
+                <circle cx="165" cy="235" r="5" fill="#CBD5E1" />
+                <circle cx="185" cy="235" r="5" fill="#10B981" /> <line x1="215" y1="235" x2="335" y2="235" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round" />
+                
+                <g class="floating-badge">
+                    <circle cx="370" cy="240" r="30" fill="#F43F5E" />
+                    <text x="348" y="247" font-family="Poppins, sans-serif" font-weight="800" font-size="20" fill="#ffffff">500</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="text-content">
+            <h1 class="gradient-text-500">500</h1>
+            <h2>Server Having a Moment!</h2>
+            <p>
+                Looks like our servers encountered an unexpected glitch. Don't worry, our engineers are already working on fixing it.
+            </p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="javascript:location.reload();" class="home-btn-modern primary-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Refresh Page
+            </a>
+            <a href="/" class="home-btn-modern secondary-btn">
+                Back To Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@700;800&display=swap');
+
+.error-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding-bottom: 10px;
+    font-family: 'Inter', sans-serif;
+}
+.mt-4 {
+    margin-top: 0px !important;
+    padding: 0px;
+}
+.error-content-wrapper {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* SVG Styling & Animations */
+.svg-illustration {
+    max-width: 450px;
+    margin: 0 auto 30px auto;
+}
+
+.floating-badge {
+    animation: floatBadge 4s ease-in-out infinite;
+}
+
+.blinking-light {
+    animation: blinkLight 1s step-end infinite;
+}
+
+.glitch-server {
+    animation: serverShake 5s ease-in-out infinite;
+}
+
+@keyframes floatBadge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes blinkLight {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes serverShake {
+    0%, 96%, 100% { transform: translateX(0); }
+    97% { transform: translateX(-2px); }
+    98% { transform: translateX(2px); }
+    99% { transform: translateX(-2px); }
+}
+
+/* Text Styling */
+.gradient-text-500 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    /* Alert/Error Gradient (Red to Orange) */
+    background: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -4px;
+}
+
+.text-content h2 {
+    color: #1e293b;
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.text-content p {
+    color: #64748b;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+/* Sleek Modern Buttons */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.home-btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Primary Button (Refresh) */
+.primary-btn {
+    background: #1e293b;
+    color: #ffffff;
+    box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.2);
+}
+
+.primary-btn:hover {
+    background: #0f172a;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(30, 41, 59, 0.3);
+}
+
+.primary-btn svg {
+    transition: transform 0.5s ease;
+}
+
+.primary-btn:hover svg {
+    transform: rotate(180deg);
+}
+
+/* Secondary Button (Home) */
+.secondary-btn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.secondary-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-3px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .gradient-text-500 { font-size: 90px; }
+    .text-content h2 { font-size: 28px; }
+    .error-content-wrapper { padding: 0 10px; }
+    .svg-illustration { max-width: 320px; }
+    .action-buttons { flex-direction: column; padding: 0 20px; }
+    .home-btn-modern { justify-content: center; width: 100%; box-sizing: border-box; }
+}
+</style>
+{% endblock %}

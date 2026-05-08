@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="error-page-container">
+    <div class="error-content-wrapper">
+        <div class="svg-illustration">
+            <svg width="100%" height="auto" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="430" cy="80" r="50" fill="#F0FDF4" />
+                <rect x="20" y="250" width="80" height="80" rx="16" transform="rotate(-15 20 250)" fill="#EFF6FF" />
+                
+                <path d="M150 280 C 180 220, 250 250, 300 180 S 380 200, 420 120" stroke="#00d084" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 12"/>
+                <circle cx="150" cy="280" r="10" fill="#00d084"/>
+                
+                <rect x="180" y="160" width="100" height="20" rx="10" fill="#e2e8f0"/>
+                <circle cx="230" cy="120" r="25" fill="#f1f5f9"/>
+                <rect x="215" y="145" width="30" height="40" rx="8" fill="#cbd5e1"/>
+                <path d="M225 105 L235 115 M235 105 L225 115" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+                
+                <g class="gateway">
+                    <path d="M350 150 L380 100 L410 150 Z" fill="#0ea5e9" opacity="0.8"/>
+                    <rect x="360" y="160" width="40" height="80" rx="4" fill="#0ea5e9" opacity="0.6"/>
+                    <circle cx="430" y="190" r="20" fill="#0ea5e9" opacity="0.4"/>
+                    
+                    <text x="355" y="140" font-family="Poppins, sans-serif" font-weight="800" font-size="24" fill="#fff">4</text>
+                    <text x="375" y="195" font-family="Poppins, sans-serif" font-weight="800" font-size="28" fill="#fff">0</text>
+                    <text x="415" y="195" font-family="Poppins, sans-serif" font-weight="800" font-size="20" fill="#fff">4</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="text-content">
+            <h1 class="gradient-text">404</h1>
+            <h2>Oops! Page Vanished.</h2>
+            <p>
+                We've searched high and low, but this page seems to have taken a permanent vacation. Let’s get you back on track.
+            </p>
+        </div>
+
+        <a href="/" class="home-btn-modern">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back To Home
+        </a>
+    </div>
+</div>
+
+<style>
+/* Modern Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@700;800&display=swap');
+
+.error-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff; /* pure white background */
+    padding-bottom: 10px;
+    font-family: 'Inter', sans-serif;
+}
+
+.error-content-wrapper {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* SVG Styling & Animation */
+.svg-illustration {
+    max-width: 450px;
+    margin: 0 auto 30px auto;
+}
+
+.gateway {
+    animation: gatewayPulse 4s ease-in-out infinite;
+}
+
+@keyframes gatewayPulse {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-10px); opacity: 0.9; }
+}
+
+/* Text Styling */
+.gradient-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    background: linear-gradient(135deg, #00d084 0%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -4px;
+}
+
+.text-content h2 {
+    color: #1e293b;
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.text-content p {
+    color: #64748b;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+/* Sleek Modern Button */
+.home-btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 36px;
+    background: #1e293b; /* Dark text matching button */
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.2);
+}
+
+.home-btn-modern:hover {
+    background: #0f172a;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(30, 41, 59, 0.3);
+}
+
+.home-btn-modern svg {
+    transition: transform 0.3s ease;
+}
+
+.home-btn-modern:hover svg {
+    transform: translateX(-3px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .gradient-text { font-size: 90px; }
+    .text-content h2 { font-size: 28px; }
+    .error-content-wrapper { padding: 0 10px; }
+    .svg-illustration { max-width: 320px; }
+}
+.mt-4 {
+    margin-top: 0px !important;
+    padding: 0px;
+}
+</style>
+{% endblock %}
