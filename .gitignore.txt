@@ -4,4 +4,4 @@ __pycache__/
 .env
 venv/
 media/
-settings.py
+vitarthi/settings.py
