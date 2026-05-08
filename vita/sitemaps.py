@@ -13,6 +13,17 @@ class StaticViewSitemap(Sitemap):
             'home',
             'calculators',
             'contact',
+            'sip',
+            'emi',
+            'home_loan',
+            'car_loan',
+            'personal_loan',
+            'ppf',
+            'nps',
+            'retirement',
+            'salary',
+            'pf',
+            'eligibility',
         ]
 
     def location(self, item):
