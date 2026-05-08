@@ -162,5 +162,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'snehilsingh7800m@gmail.com' 
-EMAIL_HOST_PASSWORD = 'pgcgfnrcwudogwbp'
+EMAIL_HOST_USER = 'vittarthi2026@gmail.com' 
+EMAIL_HOST_PASSWORD = 'itemiizxcssspsbn'
