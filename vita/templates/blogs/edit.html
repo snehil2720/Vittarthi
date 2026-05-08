@@ -359,6 +359,9 @@ document.addEventListener("DOMContentLoaded", function() {
             resize_enabled: false
         });
     }
+    if (CKEDITOR) {
+        CKEDITOR.config.versionCheck = false;
+    }
 
     // 2. DOM Elements for SEO/Preview
     const titleInput = document.querySelector("input[name='title']");
