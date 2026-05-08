@@ -364,6 +364,9 @@
                 resize_enabled: false
             });
         }
+        if (CKEDITOR) {
+        CKEDITOR.config.versionCheck = false;
+    }
     });
 
     // Slug Auto-generation
