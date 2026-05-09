@@ -1,471 +1,769 @@
 {% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="Access free financial calculators for EMI, SIP, Home Loans, Taxes, and Retirement. Plan your wealth and manage debt with instant, accurate tools.">
-<title>Financial Calculators — Vita₹thi</title>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 {% block content %}
 <style>
-/* ═══════════ TOKENS ═══════════ */
-:root{
-  --paper:#f6f4ef;
-  --surface:#fff;
-  --surface2:#f1eee7;
-  --surface3:#e5e1d7;
-  --ink:#111827;
-  --ink-muted:#5f6775;
-  --ink-faint:#8b93a1;
 
-  --green:#1a6b4a;
-  --green-mid:#cfe8dc;
-  --green-lt:#e8f5ef;
-
-  --blue:#2563eb;
-  --blue-lt:#dbeafe;
-
-  --gold:#c9860a;
-  --gold-lt:#fff4d6;
-
-  --border:rgba(0,0,0,.08);
-
-  --shadow:0 6px 20px rgba(0,0,0,.06);
-  --shadow-lg:0 10px 40px rgba(0,0,0,.08);
-
-  --r:18px;
-  --r-sm:12px;
-
-  --max:1280px;
-  --pad:clamp(1rem,4vw,2rem);
-
-  --nav-h:64px;
+/* ═══════════════════════════════════
+   RESET
+═══════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--paper);color:var(--ink);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s,color .3s;
+  overflow-x:hidden;
 }
-.dark {
-  --bg:         #0e1018;
-  --surface:    #181c27;
-  --surface2:   #222636;
-  --text:       #e6e3dc;
-  --muted:      #7a8090;
-  --accent:     #34d399;
-  --accent-lt:  #064e3b;
-  --blue:       #60a5fa;
-  --blue-lt:    #1e3a5f;
-  --gold:       #fbbf24;
-  --gold-lt:    #78350f;
-  --red:        #f87171;
-  --red-lt:     #7f1d1d;
-  --purple:     #a78bfa;
-  --purple-lt:  #4c1d95;
-  --border:     rgba(255,255,255,0.07);
-  --shadow:     0 2px 15px rgba(0,0,0,0.3);
-  --shadow-lg:  0 8px 30px rgba(0,0,0,0.4);
-}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+button{font-family:inherit;cursor:pointer;}
 
-/* ═══════════ BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text);
-  min-height:100vh; line-height:1.6; -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
+/* ═══════════════════════════════════
+   HERO
+═══════════════════════════════════ */
+.hero{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:clamp(1.5rem,6vw,2.5rem) var(--pad) clamp(1rem,4vw,1.5rem);
+  position:relative;overflow:hidden;
+  border-radius: 35px;
 }
-
-/* ═══════════ NAVBAR ═══════════ */
-
-.ham-btn { display:none; }
-
-/* Mobile drawer */
-.drawer { display:none; position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; z-index:190; }
-.drawer.open { display:block; }
-.drawer-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45); }
-.drawer-panel {
-  position:absolute; top:0; right:0; width:min(260px, 80vw); height:100%;
-  background:var(--surface); border-left:1px solid var(--border); padding:1.25rem 1rem; box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem; overflow-y:auto;
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);
+  background-size:24px 24px;opacity:.7;pointer-events:none;
 }
-.drawer-panel a { display:block; text-decoration:none; color:var(--muted); font-size:.9rem; font-weight:500; padding:.55rem .85rem; border-radius:8px; }
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page { max-width:1200px; margin:0 auto; padding:0 var(--pad) 4rem; }
-
-/* ═══════════ UTILITY HEADER & SEARCH ═══════════ */
-.index-hero {
-  text-align:center; 
-  /* padding:clamp(2.5rem, 6vw, 4rem) 0 clamp(1.5rem, 4vw, 2.5rem); */
-  animation:fadeUp .5s ease both;
+.hero::after{
+  content:'';position:absolute;
+  top:-160px;right:-120px;
+  width:560px;height:560px;border-radius:50%;
+  background:var(--green-lt);opacity:.55;
+  pointer-events:none;
 }
-.index-hero h1 {
-  font-family:'DM Serif Display',serif; font-size:clamp(2rem, 5vw, 3rem);
-  line-height:1.1; color:var(--text); margin-bottom:1rem;
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  position:relative;z-index:1;
 }
-.index-hero p { color:var(--muted); font-size:1.05rem; max-width:600px; margin:0 auto 2rem; }
-
-.search-container {
-  max-width: 600px; margin: 0 auto; position: relative;
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.7rem;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--green);
+  background:var(--green-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1.1rem;
 }
-.search-container i {
-  position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-  color: var(--muted); font-size: 1.2rem;
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,5vw,3.4rem);
+  font-weight:700;line-height:1.1;
+  letter-spacing:-.4px;color:var(--ink);margin-bottom:.85rem;
 }
-.search-input {
-  width: 100%; padding: 16px 20px 16px 50px; font-size: 1.05rem;
-  border-radius: 100px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--text); font-family: inherit;
-  box-shadow: var(--shadow); outline: none; transition: all 0.2s;
-}
-.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-lt); }
-
-/* ═══════════ POPULAR SECTION ═══════════ */
-.section-title {
-  font-size: 1rem; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 1px; color: var(--muted); margin-bottom: 1.2rem;
-  display: flex; align-items: center; gap: 8px;
-}
-.popular-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem; margin-bottom: 4rem; animation:fadeUp .5s .1s ease both;
+.hero h1 em{font-style:italic;color:var(--green);}
+.hero-sub{
+  font-size:clamp(.9rem,1.8vw,1.05rem);
+  color:var(--ink-2);line-height:1.75;
+  max-width:580px;margin-bottom:1.75rem;
 }
 
-/* ═══════════ SMART FILTERS ═══════════ */
-.filter-bar {
-  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 1rem;
-  margin-bottom: 1rem; scrollbar-width: none; animation:fadeUp .5s .2s ease both;
+.hero-search{
+  display:flex;align-items:center;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:100px;
+  padding:.45rem .5rem .45rem 1.1rem;
+  max-width:480px;
+  box-shadow:var(--shadow);
+  transition:border-color .2s,box-shadow .2s;
+  gap:.5rem;
 }
-.filter-bar::-webkit-scrollbar { display: none; }
-.filter-btn {
-  padding: 8px 18px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 100px; color: var(--muted); font-size: 0.9rem; font-weight: 500;
-  cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: inherit;
+.hero-search:focus-within{
+  border-color:var(--green);
+  box-shadow:0 0 0 4px var(--green-lt),var(--shadow);
 }
-.filter-btn:hover { background: var(--surface2); color: var(--text); }
-.filter-btn.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+.hero-search-input{
+  flex:1;border:none;outline:none;
+  font-size:.9rem;font-family:'DM Sans',sans-serif;
+  background:transparent;color:var(--ink);
+}
+.hero-search-input::placeholder{color:var(--ink-3);}
+.hero-search-btn{
+  background:var(--green);color:#fff;
+  border:none;border-radius:100px;
+  padding:.45rem 1.1rem;font-size:.84rem;font-weight:600;
+  font-family:inherit;transition:opacity .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;
+}
+.hero-search-btn:hover{opacity:.88;}
 
-/* ═══════════ CALCULATOR GRID & CARDS ═══════════ */
-.calc-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem; animation:fadeUp .5s .3s ease both;
+/* ═══════════════════════════════════
+   MOST POPULAR STRIP
+═══════════════════════════════════ */
+.popular-section{
+  background:var(--green);
+  padding:clamp(.75rem,4vw,1.3rem) var(--pad);
+  border-radius: 35px;
+}
+.popular-inner{max-width:var(--max);margin:0 auto;}
+.popular-label{
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,.65);
+  margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem;
+}
+.popular-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.2);}
+.popular-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1rem;
+}
+.popular-card{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--r);
+  padding:1.4rem 1.5rem;
+  backdrop-filter:blur(6px);
+  transition:background .2s,transform .2s;
+  display:block;
+  position:relative;overflow:hidden;
+}
+.popular-card::before{
+  content:'';position:absolute;
+  top:0;right:0;bottom:0;
+  width:3px;background:rgba(255,255,255,.35);
+  border-radius:0 var(--r) var(--r) 0;
+  transform:scaleY(0);transform-origin:center;
+  transition:transform .25s;
+}
+.popular-card:hover{background:rgba(255,255,255,.18);transform:translateY(-2px);}
+.popular-card:hover::before{transform:scaleY(1);}
+.popular-card-icon{
+  width:38px;height:38px;border-radius:9px;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#fff;margin-bottom:.85rem;
+}
+.popular-card-name{
+  font-size:1rem;font-weight:600;color:#fff;margin-bottom:.35rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.popular-card-name i{font-size:12px;opacity:.6;}
+.popular-card-desc{font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.55;margin-bottom:.9rem;}
+.popular-card-inputs{
+  display:flex;gap:.4rem;flex-wrap:wrap;
+}
+.popular-chip{
+  font-size:.62rem;font-weight:500;
+  background:rgba(255,255,255,.15);
+  color:rgba(255,255,255,.85);
+  padding:2px 8px;border-radius:100px;
+}
+.popular-cta{
+  margin-top:1rem;
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.78rem;font-weight:600;color:#fff;
+  opacity:.85;transition:opacity .18s;
+}
+.popular-card:hover .popular-cta{opacity:1;}
+
+/* ═══════════════════════════════════
+   ALL TOOLS SECTION
+═══════════════════════════════════ */
+.tools-section{
+  padding:clamp(1.5rem,5vw,1rem) var(--pad);
+}
+.tools-inner{max-width:var(--max);margin:0 auto;}
+
+.tabs-row{
+  display:flex;gap:.4rem;flex-wrap:wrap;
+  margin-bottom:2.25rem;
+}
+.tab-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:100px;
+  padding:.42rem 1rem;
+  font-size:.82rem;font-weight:500;
+  color:var(--ink-2);
+  transition:all .2s;
+}
+.tab-pill.active{
+  background:var(--green);color:#fff;
+  border-color:var(--green);
+  box-shadow:0 2px 12px rgba(26,107,74,.3);
+}
+.tab-pill:hover:not(.active){
+  background:var(--surface-2);
+  border-color:var(--border);color:var(--ink);
 }
 
-/* The Card Anatomy */
-.calc-card {
-  display: flex; flex-direction: column; background: var(--surface);
-  border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem;
-  text-decoration: none; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  height: 100%; box-shadow: var(--shadow);
+.calc-group{margin-bottom:2.75rem;}
+.calc-group:last-child{margin-bottom:0;}
+.group-header{
+  display:flex;align-items:center;gap:.75rem;
+  margin-bottom:1.1rem;
 }
-.calc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
-
-.card-hdr { display: flex; align-items: center; gap: 15px; margin-bottom: 1rem; }
-.card-icon {
-  width: 48px; height: 48px; border-radius: 12px; display: flex;
-  align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+.group-icon{
+  width:34px;height:34px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
 }
-.card-hdr h3 { font-size: 1.15rem; color: var(--text); margin: 0; line-height: 1.2; }
-.card-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
-
-.card-inputs {
-  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.5px; color: var(--muted); background: var(--surface2);
-  padding: 8px 12px; border-radius: 8px; margin-bottom: 1.5rem;
-  display: flex; align-items: center; gap: 6px;
+.group-icon.loans  {background:var(--rose-lt);color:var(--rose);}
+.group-icon.invest {background:var(--green-lt);color:var(--green);}
+.group-icon.income {background:var(--gold-lt);color:var(--gold);}
+.group-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:500;color:var(--ink);
 }
-.card-inputs i { color: var(--text); font-size: 0.9rem; }
+.group-line{flex:1;height:1px;background:var(--border);}
 
-.card-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 10px; background: transparent; border: 1px solid var(--border);
-  border-radius: 8px; color: var(--text); font-size: 0.9rem; font-weight: 600;
-  transition: background 0.2s;
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:.85rem;
 }
-.calc-card:hover .card-btn { background: var(--surface2); }
-
-/* Card Theme Colors */
-.theme-green .card-icon { background: var(--accent-lt); color: var(--accent); }
-.calc-card.theme-green:hover { border-color: var(--accent); }
-
-.theme-blue .card-icon { background: var(--blue-lt); color: var(--blue); }
-.calc-card.theme-blue:hover { border-color: var(--blue); }
-
-.theme-gold .card-icon { background: var(--gold-lt); color: var(--gold); }
-.calc-card.theme-gold:hover { border-color: var(--gold); }
-
-.theme-red .card-icon { background: var(--red-lt); color: var(--red); }
-.calc-card.theme-red:hover { border-color: var(--red); }
-
-.theme-purple .card-icon { background: var(--purple-lt); color: var(--purple); }
-.calc-card.theme-purple:hover { border-color: var(--purple); }
-
-/* ═══════════ SEO CONTEXT BLOCK ═══════════ */
-.seo-context {
-  margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--border);
-  max-width: 800px;
+.calc-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1.3rem 1.4rem;
+  display:flex;flex-direction:column;gap:.7rem;
+  transition:box-shadow .25s,transform .25s,border-color .25s;
+  position:relative;overflow:hidden; height: 100%;
 }
-.seo-context h2 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); margin-bottom: 1rem; }
-.seo-context p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
-.seo-context a { color: var(--accent); font-weight: 500; text-decoration: none; }
-.seo-context a:hover { text-decoration: underline; }
-
-/* ═══════════ FOOTER ═══════════ */
-/* footer { text-align:center; padding:2rem var(--pad); color:var(--muted); font-size:.8rem; border-top:1px solid var(--border); margin-top:4rem; } */
-
-/* ═══════════ RESPONSIVE ═══════════ */
-@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn { display:flex; }
-  .nav-desktop { display:none; }
-  .popular-row { grid-template-columns: 1fr; }
-  .calc-grid { grid-template-columns: 1fr; }
+.calc-card::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:3px;
+  border-radius:0 0 var(--r) var(--r);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
 }
+.calc-card.loans-card::after  {background:var(--rose);}
+.calc-card.invest-card::after {background:var(--green);}
+.calc-card.income-card::after {background:var(--gold);}
+.calc-card:hover{
+  box-shadow:var(--shadow);
+  transform:translateY(-3px);
+  border-color:var(--surface-3);
+}
+.calc-card:hover::after{transform:scaleX(1);}
+.calc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+.calc-card-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.loans-card  .calc-card-icon{background:var(--rose-lt);color:var(--rose);}
+.invest-card .calc-card-icon{background:var(--green-lt);color:var(--green);}
+.income-card .calc-card-icon{background:var(--gold-lt);color:var(--gold);}
+.calc-card-arrow{
+  font-size:13px;color:var(--ink-3);
+  transition:color .2s,transform .2s;margin-top:2px;
+}
+.calc-card:hover .calc-card-arrow{color:var(--green);transform:translate(2px,-2px);}
+.calc-card-name{
+  font-size:.96rem;font-weight:600;color:var(--ink);
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.calc-card-desc{
+  font-size:.78rem;color:var(--ink-2);line-height:1.6;
+  flex:1;
+}
+.calc-chips{display:flex;gap:.35rem;flex-wrap:wrap;}
+.chip{
+  font-size:.62rem;color:var(--ink-3);
+  background:var(--surface-2);
+  padding:2px 8px;border-radius:100px;
+  display:inline-flex;align-items:center;gap:3px;
+}
+.chip i{font-size:9px;}
+.calc-cta{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.78rem;font-weight:600;
+  color:var(--green);
+  padding:.42rem .85rem;border-radius:var(--r-xs);
+  background:var(--green-lt);
+  transition:background .2s;align-self:flex-start;
+  margin-top:.1rem;
+}
+
+.editorial{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:clamp(1.5rem,4vw,1rem) var(--pad);
+  border-radius: 35px;
+}
+.editorial-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+}
+.editorial-label{
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--green);
+  background:var(--green-lt);display:inline-flex;
+  padding:3px 11px;border-radius:100px;margin-bottom:.9rem;
+}
+.editorial h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.5rem);
+  font-weight:700;line-height:1.15;
+  color:var(--ink);margin-bottom:.85rem;
+  letter-spacing:-.3px;
+}
+.editorial p{
+  font-size:.9rem;color:var(--ink-2);line-height:1.8;margin-bottom:1.25rem;
+}
+.editorial a{color:var(--green);font-weight:500;}
+.editorial a:hover{text-decoration:underline;}
+.editorial-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+}
+.e-stat{
+  background:var(--surface-2);border-radius:var(--r-sm);
+  padding:1rem 1.1rem;
+  border-left:3px solid var(--green);
+}
+.e-stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--green);line-height:1;
+}
+.e-stat-lbl{font-size:.75rem;color:var(--ink-2);margin-top:3px;}
+
+/* ═══════════════════════════════════
+   CTA BANNER
+═══════════════════════════════════ */
+.cta-banner{
+  background:linear-gradient(135deg,var(--green) 0%,var(--green-2) 100%);
+  padding:clamp(1.5rem,5vw,3rem) var(--pad);
+  text-align:center;
+  position:relative;overflow:hidden;
+  border-radius: 35px;
+}
+.cta-banner::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.cta-banner-inner{position:relative;z-index:1;}
+.cta-banner h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,4vw,2.6rem);
+  font-weight:700;color:#fff;margin-bottom:.65rem;letter-spacing:-.3px;
+}
+.cta-banner p{
+  font-size:.95rem;color:rgba(255,255,255,.8);
+  max-width:460px;margin:0 auto 1.75rem;line-height:1.7;
+}
+.cta-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-white{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--green);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;
+  transition:opacity .2s;
+}
+.btn-white:hover{opacity:.9;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.4);
+  transition:border-color .2s,background .2s;
+}
+.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══════════════════════════════════
+   DISCLAIMER
+═══════════════════════════════════ */
+.disc-bar{
+  padding:.9rem var(--pad);
+  border-top:1px solid var(--border);
+  background:var(--paper);
+}
+.disc-bar-inner{
+  max-width:var(--max);margin:0 auto;
+  display:flex;align-items:flex-start;gap:.6rem;
+}
+.disc-icon{color:var(--ink-3);font-size:13px;flex-shrink:0;margin-top:2px;}
+.disc-text{font-size:.72rem;color:var(--ink-3);line-height:1.6;}
+
+
 </style>
-</head>
-<body>
 
 <main class="page">
   
-  <header class="index-hero">
-    <h1>Financial Calculators</h1>
-    <p>Find the right tool to plan your investments, estimate loan payments, and calculate tax liabilities instantly.</p>
-    <div class="search-container">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchCalc" class="search-input" placeholder="Search for 'EMI', 'SIP', or 'Tax'..." onkeyup="filterCalculators()">
-    </div>
-  </header>
-
-  <div class="section-title"><i class="bi bi-star-fill" style="color:var(--gold);"></i> Most Popular</div>
-  <div class="popular-row">
-    
-    <a href="/sip/" class="calc-card theme-green">
-      <div class="card-hdr">
-        <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-        <h3>SIP Calculator</h3>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><i class="bi bi-calculator"></i> {{ total_calculators }} Free Calculators · No sign-up needed</div>
+    <h1>Financial Calculators for<br><em>Smarter Planning</em></h1>
+    <p class="hero-sub">Find the right tool to plan your investments, estimate loan payments, and understand your income structure — instantly, with no sign-up required.</p>
+      
+      <div class="search-container">
+        <div class="hero-search">
+          <i class="bi bi-search" style="color:var(--ink-3);"></i>
+          <input type="text" id="searchCalc" class="hero-search-input" placeholder="Search for 'EMI', 'SIP', or 'Tax'..." onkeyup="filterCalculators()">
+          <button class="hero-search-btn">Search</button>
+        </div>
       </div>
-      <p class="card-desc">Estimate wealth creation over time through systematic mutual fund investments.</p>
-      <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Monthly Amt, Rate, Years</div>
-      <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-    </a>
+    </div>
+  </section>
 
-    <a href="/emi/" class="calc-card theme-blue">
-      <div class="card-hdr">
-        <div class="card-icon"><i class="bi bi-credit-card"></i></div>
-        <h3>EMI Calculator</h3>
+  <section class="popular-section">
+    <div class="popular-inner">
+      <div class="popular-label"><i class="bi bi-star-fill" style="color:var(--gold);"></i> Most Popular</div>
+      <div class="popular-grid">
+        
+        <a href="/sip/" class="popular-card">
+          <div class="popular-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="popular-card-name">SIP Calculator <i class="bi bi-arrow-up-right"></i></div>
+          <p class="popular-card-desc">Estimate wealth creation over time through systematic mutual fund investments.</p>
+          <div class="popular-card-inputs">
+            <span class="popular-chip">Monthly Amt</span>
+            <span class="popular-chip">Rate</span>
+            <span class="popular-chip">Years</span>
+          </div>
+          <div class="popular-cta">Use Tool <i class="bi bi-arrow-right"></i></div>
+        </a>
+
+        <a href="/emi/" class="popular-card">
+          <div class="popular-card-icon"><i class="bi bi-credit-card"></i></div>
+          <div class="popular-card-name">EMI Calculator <i class="bi bi-arrow-up-right"></i></div>
+          <p class="popular-card-desc">Calculate monthly payments, total interest, and view your amortization schedule.</p>
+          <div class="popular-card-inputs">
+            <span class="popular-chip">Principal</span>
+            <span class="popular-chip">Rate</span>
+            <span class="popular-chip">Tenure</span>
+          </div>
+          <div class="popular-cta">Use Tool <i class="bi bi-arrow-right"></i></div>
+        </a>
+
+        <a href="/retirement/" class="popular-card">
+          <div class="popular-card-icon"><i class="bi bi-clock-history"></i></div>
+          <div class="popular-card-name">Retirement Planner <i class="bi bi-arrow-up-right"></i></div>
+          <p class="popular-card-desc">Determine the corpus required to maintain your lifestyle after you stop working.</p>
+          <div class="popular-card-inputs">
+            <span class="popular-chip">Current Age</span>
+            <span class="popular-chip">Savings</span>
+            <span class="popular-chip">Expenses</span>
+          </div>
+          <div class="popular-cta">Use Tool <i class="bi bi-arrow-right"></i></div>
+        </a>
+
       </div>
-      <p class="card-desc">Calculate monthly payments, total interest, and view your amortization schedule.</p>
-      <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Principal, Rate, Tenure</div>
-      <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-    </a>
+    </div>
+  </section>
 
-    <a href="/retirement/" class="calc-card theme-gold">
-      <div class="card-hdr">
-        <div class="card-icon"><i class="bi bi-clock-history"></i></div>
-        <h3>Retirement Planner</h3>
+<section class="tools-section">
+  <div class="tools-inner">
+
+    <!-- Tab bar -->
+    <div class="tabs-row">
+      <button class="tab-pill active" onclick="switchTab('all',this)">
+        <i class="bi bi-grid"></i> All Tools <span class="tab-count"> {{ total_calculators }}</span>
+      </button>
+      <button class="tab-pill" onclick="switchTab('loans',this)">
+        <i class="bi bi-bank"></i> Loans &amp; Borrowing <span class="tab-count"></span>
+      </button>
+      <button class="tab-pill" onclick="switchTab('invest',this)">
+        <i class="bi bi-graph-up-arrow"></i> Invest &amp; Save <span class="tab-count"></span>
+      </button>
+      <button class="tab-pill" onclick="switchTab('income',this)">
+        <i class="bi bi-person-check"></i> Tax &amp; Income <span class="tab-count"></span>
+      </button>
+    </div>
+
+    <!-- LOANS GROUP -->
+    <div class="calc-group fade-up" id="group-loans" data-group="loans">
+      <div class="group-header">
+        <div class="group-icon loans"><i class="bi bi-bank"></i></div>
+        <div class="group-title">Loans &amp; Borrowing</div>
+        <div class="group-line"></div>
       </div>
-      <p class="card-desc">Determine the corpus required to maintain your lifestyle after you stop working.</p>
-      <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Current Age, Savings, Expenses</div>
-      <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-    </a>
+      <div class="calc-grid">
+        <a href="/loan/home/" class="calc-card loans-card" data-search="home loan housing mortgage property">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-house-door"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Home Loan</div>
+          <div class="calc-card-desc">Plan long-term housing debt and understand the impact of down payments on total interest paid.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Property Value</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
+          </div>
+          <a href="/loan/home/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/loan/car/" class="calc-card loans-card" data-search="car loan vehicle auto">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-car-front"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Car Loan</div>
+          <div class="calc-card-desc">Calculate EMIs for your new or used vehicle with specific auto loan interest rates.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Vehicle Cost</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
+          </div>
+          <a href="/loan/car/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/loan/personal/" class="calc-card loans-card" data-search="personal loan credit unsecured">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-person"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Personal Loan</div>
+          <div class="calc-card-desc">Analyze short-term credit planning and uncollateralized loan burden across different tenures.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Amount</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Months</span>
+          </div>
+          <a href="/loan/personal/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/eligibility/" class="calc-card loans-card" data-search="loan eligibility income borrowing capacity">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-check-circle"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Loan Eligibility</div>
+          <div class="calc-card-desc">Check your maximum borrowing capacity based on your income and existing debt obligations.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Income</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Existing EMIs</span>
+          </div>
+          <a href="/eligibility/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+      </div>
+    </div>
+
+    <!-- INVEST GROUP -->
+    <div class="calc-group fade-up" id="group-invest" data-group="invest">
+      <div class="group-header">
+        <div class="group-icon invest"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="group-title">Invest &amp; Save</div>
+        <div class="group-line"></div>
+      </div>
+      <div class="calc-grid">
+        <a href="/sip/" class="calc-card invest-card" data-search="sip mutual fund investment monthly">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">SIP Calculator <span class="badge-hot">Hot</span></div>
+          <div class="calc-card-desc">Estimate wealth creation through systematic mutual fund investments using compounding growth.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Monthly Amount</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Years</span>
+          </div>
+          <a href="/sip/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/ppf/" class="calc-card invest-card" data-search="ppf public provident fund government savings">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-piggy-bank"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">PPF Calculator</div>
+          <div class="calc-card-desc">Project returns for government-backed, tax-free long-term savings under Section 80C.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Yearly Deposit</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> 15+ Years</span>
+          </div>
+          <a href="/ppf/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/nps/" class="calc-card invest-card" data-search="nps national pension system retirement corpus">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-shield-check"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">NPS Calculator</div>
+          <div class="calc-card-desc">Estimate your pension and lump sum withdrawal at retirement based on monthly contributions.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Monthly Contribution</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Age</span>
+          </div>
+          <a href="/nps/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+      </div>
+    </div>
+
+    <!-- INCOME GROUP -->
+    <div class="calc-group fade-up" id="group-income" data-group="income">
+      <div class="group-header">
+        <div class="group-icon income"><i class="bi bi-cash-stack"></i></div>
+        <div class="group-title">Tax &amp; Income</div>
+        <div class="group-line"></div>
+      </div>
+      <div class="calc-grid">
+        <a href="/pf/" class="calc-card income-card" data-search="epf pf provident fund employee">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-briefcase"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">EPF Calculator</div>
+          <div class="calc-card-desc">Calculate your Employee Provident Fund accumulation including employer match over time.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Basic Salary</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> VPF %</span>
+          </div>
+          <a href="/pf/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/salary/" class="calc-card income-card" data-search="salary ctc take home income tax">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-cash-stack"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Salary Calculator <span class="badge-new">New</span></div>
+          <div class="calc-card-desc">Break down your CTC to calculate actual take-home pay and understand tax deductions.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> CTC</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Allowances</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Regime</span>
+          </div>
+          <a href="/salary/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/retirement/" class="calc-card income-card" data-search="retirement corpus planning future savings">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-clock-history"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">Retirement Calculator</div>
+          <div class="calc-card-desc">Determine the corpus required to maintain your lifestyle after you stop working.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Current Age</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Savings</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Expenses</span>
+          </div>
+          <a href="/retirement/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+        <a href="/emi/" class="calc-card income-card" data-search="emi loan repayment monthly installment">
+          <div class="calc-card-top">
+            <div class="calc-card-icon"><i class="bi bi-credit-card"></i></div>
+            <i class="bi bi-arrow-up-right calc-card-arrow"></i>
+          </div>
+          <div class="calc-card-name">EMI Calculator</div>
+          <div class="calc-card-desc">Calculate monthly loan repayments and view a full amortization schedule with interest breakup.</div>
+          <div class="calc-chips">
+            <span class="chip"><i class="bi bi-input-cursor"></i> Principal</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
+            <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
+          </div>
+          <a href="/emi/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+        </a>
+      </div>
+    </div>
+
+    <!-- No results -->
+    <div id="noResults" style="display:none;text-align:center;padding:3rem 1rem;color:var(--ink-3);">
+      <i class="bi bi-search" style="font-size:2rem;display:block;margin-bottom:.75rem;"></i>
+      <div style="font-size:.9rem;">No calculators match your search. Try "SIP", "EMI", or "salary".</div>
+    </div>
 
   </div>
+</section>
 
-  <div class="filter-bar" id="filterBar">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All Tools</button>
-    <button class="filter-btn" data-filter="borrow" onclick="setFilter('borrow', this)">Loans & Borrowing</button>
-    <button class="filter-btn" data-filter="invest" onclick="setFilter('invest', this)">Invest & Save</button>
-    <button class="filter-btn" data-filter="tax" onclick="setFilter('tax', this)">Tax & Income</button>
+<!-- ═══ EDITORIAL ═══ -->
+<section class="editorial fade-up">
+  <div class="editorial-inner">
+    <div>
+      <span class="editorial-label"><i class="bi bi-lightbulb"></i> About these tools</span>
+      <h2>Planning Made Simple</h2>
+      <p>Financial calculators bridge the gap between abstract planning and actual numbers. Whether you are trying to understand the total interest burden of a home loan or projecting the future value of a mutual fund SIP, these tools provide instant clarity.</p>
+      <p>All calculations use standard financial formulas. To understand the math behind these numbers or learn how to optimize your inputs, read our <a href="/resources/blogs/">guides on financial planning</a>.</p>
+    </div>
+    <div class="editorial-stats">
+      <div class="e-stat">
+        <div class="e-stat-num">{{ total_calculators }}</div>
+        <div class="e-stat-lbl">Free calculators</div>
+      </div>
+      <div class="e-stat">
+        <div class="e-stat-num">100%</div>
+        <div class="e-stat-lbl">No sign-up needed</div>
+      </div>
+      <div class="e-stat">
+        <div class="e-stat-num">{{ monthly_users }}</div>
+        <div class="e-stat-lbl">Monthly users</div>
+      </div>
+      <div class="e-stat">
+        <div class="e-stat-num">0</div>
+        <div class="e-stat-lbl">Hidden charges</div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="calc-grid" id="calcGrid">
-    
-    <div class="calc-wrap" data-title="home loan calculator" data-cat="borrow">
-      <a href="/loan/home/" class="calc-card theme-blue">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-house"></i></div>
-          <h3>Home Loan</h3>
-        </div>
-        <p class="card-desc">Plan long-term housing debt and understand the impact of down payments.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Property Value, Rate, Tenure</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
+<!-- ═══ CTA ═══ -->
+<section class="cta-banner fade-up">
+  <div class="cta-banner-inner">
+    <h2>Not sure which calculator to use?</h2>
+    <p>Start with the SIP Calculator to see how compounding works, then explore EMI for loan planning — most users start there.</p>
+    <div class="cta-btns">
+      <a href="/sip/" class="btn-white"><i class="bi bi-graph-up-arrow"></i> Try SIP Calculator</a>
+      <a href="/resources/blogs/" class="btn-ghost"><i class="bi bi-book"></i> Read the Guides</a>
     </div>
-
-    <div class="calc-wrap" data-title="car auto loan calculator" data-cat="borrow">
-      <a href="/loan/car/" class="calc-card theme-red">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-car-front"></i></div>
-          <h3>Car Loan</h3>
-        </div>
-        <p class="card-desc">Calculate EMIs for your new or used vehicle with specific auto loan rates.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Vehicle Cost, Rate, Tenure</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="personal loan calculator" data-cat="borrow">
-      <a href="/loan/personal/" class="calc-card theme-purple">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-person"></i></div>
-          <h3>Personal Loan</h3>
-        </div>
-        <p class="card-desc">Analyze short-term credit planning and uncollateralized loan burdens.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Amount, Rate, Months</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="loan eligibility calculator" data-cat="borrow">
-      <a href="/eligibility/" class="calc-card theme-blue">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-check-circle"></i></div>
-          <h3>Loan Eligibility</h3>
-        </div>
-        <p class="card-desc">Check your maximum borrowing capacity based on your income and existing debt.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Income, Existing EMIs</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="ppf public provident fund calculator" data-cat="invest">
-      <a href="/ppf/" class="calc-card theme-green">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-piggy-bank"></i></div>
-          <h3>PPF Calculator</h3>
-        </div>
-        <p class="card-desc">Project returns for government-backed, tax-free long-term savings.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Yearly Deposit, 15+ Yrs</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="nps national pension scheme calculator" data-cat="invest tax">
-      <a href="/nps/" class="calc-card theme-gold">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-shield-check"></i></div>
-          <h3>NPS Calculator</h3>
-        </div>
-        <p class="card-desc">Estimate your pension and lump sum withdrawal at retirement age.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Monthly Contribution, Age</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="pf epf provident fund calculator" data-cat="invest">
-      <a href="/pf/" class="calc-card theme-green">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-briefcase"></i></div>
-          <h3>EPF Calculator</h3>
-        </div>
-        <p class="card-desc">Calculate your Employee Provident Fund accumulation including employer match.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: Basic Salary, VPF %</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
-    <div class="calc-wrap" data-title="salary take home tax calculator" data-cat="tax">
-      <a href="/salary/" class="calc-card theme-purple">
-        <div class="card-hdr">
-          <div class="card-icon"><i class="bi bi-cash-stack"></i></div>
-          <h3>Salary Calculator</h3>
-        </div>
-        <p class="card-desc">Break down your CTC to calculate actual take-home pay and tax deductions.</p>
-        <div class="card-inputs"><i class="bi bi-sliders"></i> Inputs: CTC, Allowances, Regime</div>
-        <div class="card-btn">Use Calculator <i class="bi bi-arrow-right-short"></i></div>
-      </a>
-    </div>
-
   </div>
+</section>
 
-  <div class="seo-context">
-    <h2>Planning Made Simple</h2>
-    <p>Financial calculators bridge the gap between abstract planning and actual numbers. Whether you are trying to understand the total interest burden of a home loan or projecting the future value of a mutual fund SIP, these tools provide instant clarity.</p>
-    <p>All calculations use standard financial formulas. To understand the math behind these numbers or learn how to optimize your inputs, read our <a href="/blogs/">guides on financial planning</a>.</p>
+<!-- ═══ DISCLAIMER ═══ -->
+<div class="disc-bar">
+  <div class="disc-bar-inner">
+    <i class="bi bi-info-circle disc-icon"></i>
+    <p class="disc-text">These calculators provide estimated values based on standard financial formulas. Actual results may vary depending on interest rates, policy changes, and financial institution terms. Not financial advice.</p>
   </div>
+</div>
 
 </main>
 
-<!-- <footer>
-  &copy; 2026 Vita₹thi &nbsp;·&nbsp; Build your financial future.
-</footer> -->
-
 <script>
-/* Theme Toggle */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
-
-    menu.classList.toggle("open");
-
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
-    }
-} 
-
-/* Drawer Toggle */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
-}
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
-}
-
-/* Smart Filter & Search Logic */
+/* Smart Filter & Search Logic for New UI */
 let currentFilter = 'all';
 
 function setFilter(filter, btn) {
   currentFilter = filter;
-  // Update active button state
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  
+  // Update active pill state
+  document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  
   // Trigger filter
   filterCalculators();
 }
 
 function filterCalculators() {
   const query = document.getElementById('searchCalc').value.toLowerCase().trim();
-  const wraps = document.querySelectorAll('.calc-wrap');
+  const groups = document.querySelectorAll('.calc-group');
 
-  wraps.forEach(wrap => {
-    const title = wrap.getAttribute('data-title');
-    const cat = wrap.getAttribute('data-cat');
-    
-    const matchesSearch = title.includes(query);
-    const matchesFilter = (currentFilter === 'all' || cat.includes(currentFilter));
+  groups.forEach(group => {
+    const wraps = group.querySelectorAll('.calc-wrap');
+    let hasVisibleCard = false;
 
-    if (matchesSearch && matchesFilter) {
-      wrap.style.display = 'block';
+    wraps.forEach(wrap => {
+      const title = wrap.getAttribute('data-title');
+      const cat = wrap.getAttribute('data-cat');
+      
+      const matchesSearch = title.includes(query);
+      const matchesFilter = (currentFilter === 'all' || cat.includes(currentFilter));
+
+      if (matchesSearch && matchesFilter) {
+        wrap.style.display = 'block';
+        hasVisibleCard = true;
+      } else {
+        wrap.style.display = 'none';
+      }
+    });
+
+    // Hide the entire group section (like "Loans & Borrowing" header) if no cards match inside it
+    if (hasVisibleCard) {
+      group.style.display = 'block';
     } else {
-      wrap.style.display = 'none';
+      group.style.display = 'none';
     }
   });
 }
-
-/* Initialization */
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
-  }
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
-  });
-});
 </script>
-</body>
-</html>
 {% endblock %}
