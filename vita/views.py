@@ -73,12 +73,33 @@ def signout(request):
     return redirect("home")
 
 
-
+from django.db.models import Q
 def home(request):
-    blogs = Blog.objects.all().order_by('-id')
+    #blogs = Blog.objects.all().order_by('-id')
+    blogs = Blog.objects.filter(
+        Q(primary_category__slug='blogs') |
+        Q(secondary_category__slug='blogs')
+    ).distinct()[:3]
+
+    news = Blog.objects.filter(
+        Q(primary_category__slug='news') |
+        Q(secondary_category__slug='news')
+    ).distinct()[:3]
+
+    case_studies = Blog.objects.filter(
+        Q(primary_category__slug='case-study') |
+        Q(secondary_category__slug='case-study')
+    ).distinct()[:3]
     market = get_market_data()
     latestblogs = Blog.objects.order_by('-created_at')[:3]
-    return render(request, 'home.html', {'blogs': blogs,"market": market, "latestblogs":latestblogs})
+    context = {
+        "market": market,
+        'latestblogs': latestblogs,
+        'blogs_data': blogs,
+        'news_data': news,
+        'case_data': case_studies,
+    }
+    return render(request, 'home.html', context)
 
 def calculators(request):
     return render(request, 'calculators.html')

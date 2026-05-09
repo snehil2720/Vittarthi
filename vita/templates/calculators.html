@@ -13,29 +13,37 @@
 {% block content %}
 <style>
 /* ═══════════ TOKENS ═══════════ */
-:root {
-  --bg:         #f7f5f0;
-  --surface:    #ffffff;
-  --surface2:   #f0ede8;
-  --text:       #1a1a18;
-  --muted:      #7a7870;
-  --accent:     #1a6b4a;
-  --accent-lt:  #d6efe5;
-  --blue:       #2563eb;
-  --blue-lt:    #dbeafe;
-  --gold:       #d97706;
-  --gold-lt:    #fef3c7;
-  --red:        #ef4444;
-  --red-lt:     #fee2e2;
-  --purple:     #8b5cf6;
-  --purple-lt:  #ede9fe;
-  --border:     rgba(0,0,0,0.08);
-  --shadow:     0 2px 15px rgba(0,0,0,0.05);
-  --shadow-lg:  0 8px 30px rgba(0,0,0,0.08);
-  --r:          16px;
-  --r-sm:       10px;
-  --nav-h:      60px;
-  --pad:        clamp(1rem, 4vw, 2rem);
+:root{
+  --paper:#f6f4ef;
+  --surface:#fff;
+  --surface2:#f1eee7;
+  --surface3:#e5e1d7;
+  --ink:#111827;
+  --ink-muted:#5f6775;
+  --ink-faint:#8b93a1;
+
+  --green:#1a6b4a;
+  --green-mid:#cfe8dc;
+  --green-lt:#e8f5ef;
+
+  --blue:#2563eb;
+  --blue-lt:#dbeafe;
+
+  --gold:#c9860a;
+  --gold-lt:#fff4d6;
+
+  --border:rgba(0,0,0,.08);
+
+  --shadow:0 6px 20px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.08);
+
+  --r:18px;
+  --r-sm:12px;
+
+  --max:1280px;
+  --pad:clamp(1rem,4vw,2rem);
+
+  --nav-h:64px;
 }
 .dark {
   --bg:         #0e1018;

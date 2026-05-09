@@ -1,54 +1,45 @@
 {% extends 'base.html' %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="Plan your money with clarity using simple, reliable financial calculators. From SIP investments to loan EMIs and retirement planning.">
-<title>Financial Calculators for Smart Money Decisions — Vita₹thi</title>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% load static %}
 {% block content %}
-<style>
-/* ═══════════ TOKENS ═══════════ */
-/* :root {
-  --bg:         #f7f5f0;
-  --surface:    #ffffff;
-  --surface2:   #f0ede8;
-  --text:       #1a1a18;
-  --muted:      #7a7870;
-  --accent:     #1a6b4a;
-  --accent-lt:  #d6efe5;
-  --blue:       #2563eb;
-  --blue-lt:    #dbeafe;
-  --gold:       #d97706;
-  --border:     rgba(0,0,0,0.08);
-  --shadow:     0 1px 12px rgba(0,0,0,0.06);
-  --shadow-lg:  0 6px 32px rgba(0,0,0,0.10);
-  --r:          16px;
-  --r-sm:       10px;
-  --nav-h:      60px;
-  --pad:        clamp(1rem, 4vw, 2rem);
-}
-.dark {
-  --bg:         #0e1018;
-  --surface:    #181c27;
-  --surface2:   #222636;
-  --text:       #e6e3dc;
-  --muted:      #7a8090;
-  --accent:     #34d399;
-  --accent-lt:  #064e3b;
-  --blue:       #60a5fa;
-  --blue-lt:    #1e3a5f;
-  --gold:       #fbbf24;
-  --border:     rgba(255,255,255,0.07);
-  --shadow:     0 1px 12px rgba(0,0,0,0.35);
-  --shadow-lg:  0 6px 32px rgba(0,0,0,0.5);
-}
 
-/* ═══════════ RESET & BASE ═══════════ */
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+/* RESET */
+:root{
+  --paper:#f6f4ef;
+  --surface:#fff;
+  --surface2:#f1eee7;
+  --surface3:#e5e1d7;
+  --ink:#111827;
+  --ink-muted:#5f6775;
+  --ink-faint:#8b93a1;
+
+  --green:#1a6b4a;
+  --green-mid:#cfe8dc;
+  --green-lt:#e8f5ef;
+
+  --blue:#2563eb;
+  --blue-lt:#dbeafe;
+
+  --gold:#c9860a;
+  --gold-lt:#fff4d6;
+
+  --border:rgba(0,0,0,.08);
+
+  --shadow:0 6px 20px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.08);
+
+  --r:18px;
+  --r-sm:12px;
+
+  --max:1280px;
+  --pad:clamp(1rem,4vw,2rem);
+
+  --nav-h:64px;
+}
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { scroll-behavior:smooth; }
 body {
@@ -59,275 +50,720 @@ body {
   transition:background .3s, color .3s;
 }
 
-/* ═══════════ NAVBAR ═══════════ */
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block}
 
-.icon-btn {
-  background:none; border:none; cursor:pointer;
-  color:var(--muted); font-size:1.1rem;
-  padding:7px; border-radius:8px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  transition:background .2s, color .2s;
-}
-.icon-btn:hover { background:var(--surface2); color:var(--text); }
-.ham-btn { display:none; }
+/* TOP FINANCE BAR */
 
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; z-index:190;
+.finance-bar{
+  position:sticky;
+  top:65px;
+  z-index:99;
+  backdrop-filter:blur(14px);
+  background:rgba(17,17,17,.86);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  border-radius: 35px;
 }
-.drawer.open { display:block; }
-.drawer-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45); }
-.drawer-panel {
-  position:absolute; top:0; right:0; width:min(260px, 80vw); height:100%;
-  background:var(--surface); border-left:1px solid var(--border);
-  padding:1.25rem 1rem; box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem; overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500; padding:.55rem .85rem; border-radius:8px;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
 
-/* ═══════════ PAGE SHELL ═══════════ */
-/* .page { max-width:1140px; margin:0 auto; padding:0 var(--pad) 4rem; } */
-.page {
-  max-width:1400px;
+.finance-inner{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:2px 5px;
+}
+
+.finance-label span{
+  background:linear-gradient(45deg,#4ade80,#22c55e);
+  color:#fff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:100px;
+  font-weight:600;
+}
+
+.finance-ticker{
+  flex:1;
+  overflow:hidden;
+}
+
+.tv-ticker-item-tape,
+.tv-ticker-item-tape__short-name{
+  color:#000 !important;
+}
+
+/* HERO */
+
+.hero{
+  padding:clamp(2rem,1vw,1rem) var(--pad);
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+  position:relative;
+  overflow:hidden;
+  border-radius: 35px;
+}
+
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);
+  background-size:26px 26px;
+  opacity:.6;
+}
+
+.hero::after{
+  content:'';
+  position:absolute;
+  top:-120px;
+  right:-100px;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  background:var(--green-lt);
+  opacity:.7;
+}
+
+.hero-inner{
+  max-width:var(--max);
   margin:auto;
-  /* padding:2rem var(--pad); */
+  display:grid;
+  grid-template-columns:1fr 440px;
+  gap:clamp(2rem,5vw,5rem);
+  align-items:center;
+  position:relative;
+  z-index:2;
 }
-/* ═══════════ HERO ═══════════ */
-.hero {
+
+.hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--green-lt);
+  color:var(--green);
+  padding:3px 8px;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:1.3rem;
+}
+
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,5vw,4rem);
+  line-height:1.08;
+  margin-bottom:1rem;
+}
+
+.hero h1 em{
+  color:var(--green);
+  font-style:italic;
+}
+
+.hero-sub{
+  color:var(--ink-muted);
+  font-size:1.05rem;
+  line-height:1.8;
+  max-width:560px;
+  margin-bottom:2rem;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.btn-primary,
+.btn-secondary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:.6rem .6rem;
+  border-radius:12px;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-primary{
+  background:var(--green);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+}
+
+.btn-secondary{
+  border:1px solid var(--border);
+  background:#fff;
+}
+
+.btn-secondary:hover{
+  background:var(--surface2);
+}
+
+/* SIP CARD */
+
+.sip-card{
+  background:#fff;
+  border-radius:24px;
+  padding:0.8rem;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+}
+
+.sip-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:1.5rem;
+}
+
+.sip-card-title{
+  font-size:.8rem;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--ink-muted);
+}
+
+.sip-result-pill{
+  background:var(--green-lt);
+  color:var(--green);
+  padding:2px 6px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:700;
+}
+
+.sip-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:1.4rem;
+}
+
+.sip-metric{
+  background:var(--surface2);
+  border-radius:12px;
+  padding:.8rem;
   text-align:center;
-  /* padding:clamp(3rem,6vw,5rem) 0 clamp(2rem,4vw,3rem); */
-  animation:fadeUp .5s ease both;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(2rem, 5vw, 3.8rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:1rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:1.05rem; max-width:650px; margin:0 auto 2rem; line-height:1.6; }
-
-/* Buttons & Inputs */
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  font-family:inherit; font-weight:600; font-size:.95rem;
-  padding:12px 24px; border-radius:10px; border:none; cursor:pointer;
-  transition:all .2s; text-decoration:none; white-space:nowrap;
-}
-.btn-primary { background:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(26,107,74,0.3); }
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,107,74,0.4); }
-.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
-.btn-outline:hover, .btn-outline.active { background:var(--surface2); border-color:var(--muted); }
-
-.input-txt {
-  width:100%; padding:12px 16px; border-radius:8px;
-  border:1px solid var(--border); background:var(--surface2);
-  color:var(--text); font-family:inherit; font-size:.95rem;
-  outline:none; transition:border-color .2s;
-}
-.input-txt:focus { border-color:var(--accent); background:var(--surface); }
-
-/* Quick SIP Card */
-.quick-sip {
-  max-width:700px; margin:2.5rem auto 0;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r); padding:1.5rem; box-shadow:var(--shadow-lg);
-}
-.quick-sip-row { display:flex; gap:1rem; align-items:center; }
-.quick-sip-row > * { flex:1; }
-.qs-result { margin-top:1rem; font-weight:600; color:var(--accent); font-size:1.1rem; min-height:1.5rem; }
-
-/* ═══════════ SECTION LAYOUTS ═══════════ */
-.section { margin-top:clamp(4rem, 8vw, 6rem); animation:fadeUp .5s .15s ease both; }
-.sec-title {
-  text-align:center; font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 4vw, 2.4rem); margin-bottom:2rem;
 }
 
-/* Grids */
-.grid-3 { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; }
-.grid-2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:2rem; }
-
-/* Cards */
-.card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r); padding:2rem; text-align:center;
-  box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s, border-color .3s;
-  text-decoration:none; display:flex; flex-direction:column; align-items:center;
-  height: 100%;
-}
-.card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.card-icon {
-  width:56px; height:56px; border-radius:14px; background:var(--accent-lt);
-  color:var(--accent); display:flex; align-items:center; justify-content:center;
-  font-size:1.6rem; margin-bottom:1.2rem; transition:background .3s, color .3s;
-}
-.card:hover .card-icon { background:var(--accent); color:#fff; }
-.card h3 { font-size:1.1rem; color:var(--text); margin-bottom:.5rem; }
-.card p { color:var(--muted); font-size:.85rem; line-height:1.5; margin-bottom:1.5rem; flex:1; }
-
-/* Live Metrics */
-.metric {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:1.5rem; text-align:center;
-  box-shadow:var(--shadow); position:relative; overflow:hidden;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-}
-.metric-val { font-family:'DM Serif Display',serif; font-size:2.2rem; color:var(--text); line-height:1; margin-bottom:.5rem; }
-.metric-lbl { font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
-
-/* Compare Section */
-.compare-box {
-  max-width:600px; margin:0 auto; background:var(--surface);
-  border:1px solid var(--border); border-radius:var(--r); padding:2rem;
-  box-shadow:var(--shadow); text-align:center;
-}
-.compare-tabs { display:flex; justify-content:center; gap:10px; margin-bottom:1.5rem; flex-wrap:wrap; }
-.compare-res { font-size:1.1rem; color:var(--accent); font-weight:500; min-height:1.5rem; }
-
-/* Blog Cards */
-.blog-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r); overflow:hidden; text-decoration:none;
-  box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s;
-  display:flex; flex-direction:column;
-}
-.blog-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
-.blog-img { width:100%; height:200px; object-fit:contain; border-bottom:1px solid var(--border); }
-.blog-body { padding:1.5rem; display:flex; flex-direction:column; flex:1; }
-.blog-title { font-size:1.05rem; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:1rem; }
-.blog-link { margin-top:auto; font-size:.85rem; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:1px; }
-
-/* CTA Banner */
-.cta-banner {
-  background:linear-gradient(135deg, var(--accent), #059669);
-  border-radius:var(--r); padding:clamp(2rem, 5vw, 4rem); text-align:center;
-  color:#fff; box-shadow:var(--shadow-lg); margin-top:clamp(4rem, 8vw, 6rem);
-}
-.cta-banner h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem, 4vw, 2.5rem); margin-bottom:1rem; }
-.cta-banner p { font-size:1.05rem; opacity:0.9; margin-bottom:2rem; }
-.cta-banner .btn { background:#fff; color:var(--accent); }
-.cta-banner .btn:hover { box-shadow:0 10px 25px rgba(0,0,0,0.2); }
-
-/* Feature Check Lists */
-.feature-box { background:var(--surface); border:1px solid var(--border); padding:2rem; border-radius:var(--r); box-shadow:var(--shadow); }
-.feature-box h2 { font-family:'DM Serif Display',serif; font-size:1.6rem; margin-bottom:1.2rem; }
-.feature-box p { color:var(--muted); margin-bottom:1.5rem; line-height:1.6; font-size:.95rem; }
-.check-list { list-style:none; padding:0; }
-.check-list li { display:flex; align-items:flex-start; gap:12px; margin-bottom:1rem; font-size:.95rem; color:var(--text); line-height:1.5; }
-.check-list i { color:var(--accent); font-size:1.2rem; margin-top:-2px; flex-shrink:0; }
-
-/* SEO Content Blocks */
-.content-block { max-width:800px; margin:0 auto; padding-top:4rem; }
-.content-block h2 { font-family:'DM Serif Display',serif; font-size:1.8rem; margin-bottom:1rem; margin-top:2.5rem; color:var(--text); }
-.content-block p { color:var(--muted); line-height:1.7; font-size:1.05rem; margin-bottom:1.5rem; }
-
-/* FAQ Accordion */
-.faq-box { max-width:800px; margin:0 auto; }
-details { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:1rem; overflow:hidden; transition:box-shadow .2s; }
-details:hover { box-shadow:var(--shadow); }
-summary {
-  padding:1.2rem 1.5rem; font-weight:600; cursor:pointer; list-style:none;
-  display:flex; justify-content:space-between; align-items:center; color:var(--text);
-}
-summary::-webkit-details-marker { display:none; }
-summary::after { content:'\F282'; font-family:'bootstrap-icons'; font-size:1rem; transition:transform 0.3s; color:var(--muted); }
-details[open] summary::after { transform:rotate(180deg); color:var(--accent); }
-.faq-content { padding:0 1.5rem 1.2rem; color:var(--muted); font-size:.95rem; line-height:1.6; }
-
-/* Footer */
-/* footer {
-  text-align:center; padding:2rem var(--pad); color:var(--muted);
-  font-size:.8rem; border-top:1px solid var(--border); margin-top:4rem; line-height: 1.5;
-} */
-
-/* Animations */
-@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-
-/* Responsive Constraints */
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn { display:flex; }
-  .nav-desktop { display:none; }
-  .quick-sip-row { flex-direction:column; }
-  .quick-sip-row > * { width:100%; }
-} 
-.finance-bar {
-  position: sticky;
-  top: 65px;
-  z-index: 99;
-  backdrop-filter: blur(12px);
-  background: rgba(19, 19, 19, 0.788);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  border-radius: 15px;
-}
-.tv-ticker-item-tape {
-  color: black !important;
+.sip-metric-lbl{
+  font-size:.65rem;
+  color:var(--ink-faint);
+  text-transform:uppercase;
+  margin-bottom:4px;
 }
 
-.finance-inner {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 6px 20px;
+.sip-metric-val{
+  font-weight:700;
 }
 
-.finance-label {
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
+.green{color:var(--green)}
+
+.sip-field{
+  margin-bottom:1rem;
 }
 
-.finance-label span {
-  background: linear-gradient(45deg, #4ade80, #22c55e);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+.sip-field-hdr{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:.5rem;
 }
 
-.finance-ticker {
-  flex: 1;
-  overflow: hidden;
+.sip-field-lbl{
+  font-size:.8rem;
+  color:var(--ink-muted);
 }
 
-/* remove extra spacing from widget */
-.tradingview-widget-container {
-  height: 40px !important;
+.sip-field-val{
+  background:var(--surface2);
+  padding:2px 8px;
+  border-radius:6px;
+  font-size:.8rem;
+  font-weight:600;
 }
 
-@media (max-width: 768px) {
-  .finance-label {
-    display: none;
+input[type=range]{
+  width:100%;
+  accent-color:var(--green);
+}
+
+.sip-donut-row{
+  display:flex;
+  gap:1rem;
+  align-items:center;
+  padding-top:.7rem;
+  border-top:1px solid var(--border);
+}
+
+.sip-leg{
+  flex:1;
+}
+
+.sip-leg-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:7px;
+}
+
+.sip-leg-dot{
+  width:8px;
+  height:8px;
+  border-radius:2px;
+}
+
+.sip-leg-lbl{
+  flex:1;
+  font-size:.78rem;
+  color:var(--ink-muted);
+}
+
+.sip-leg-val{
+  font-size:.8rem;
+  font-weight:700;
+}
+
+/* TRUST BAR */
+
+.trust-bar{
+  background:var(--green);
+  padding:0.8rem var(--pad);
+  border-radius: 35px;
+}
+
+.trust-bar-inner{
+  max-width:var(--max);
+  margin:auto;
+  display:flex;
+  justify-content:space-around;
+  flex-wrap:wrap;
+  gap:1rem;
+}
+
+.trust-stat{
+  text-align:center;
+}
+
+.trust-stat-num{
+  font-family:'Playfair Display',serif;
+  color:#fff;
+  font-size:2rem;
+}
+
+.trust-stat-lbl{
+  color:rgba(255,255,255,.8);
+  font-size:.75rem;
+}
+
+/* COMMON SECTION */
+
+.section{
+  padding:clamp(1rem,7vw,2rem) var(--pad);
+}
+
+.section-inner{
+  max-width:var(--max);
+  margin:auto;
+}
+
+.section-hdr{
+  margin-bottom:2.5rem;
+}
+
+.section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  background:var(--green-lt);
+  color:var(--green);
+  padding:5px 12px;
+  border-radius:999px;
+  font-size:.7rem;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:700;
+  margin-bottom:1rem;
+}
+
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:.8rem;
+}
+
+.section-sub{
+  max-width:auto;
+  color:var(--ink-muted);
+  line-height:1.8;
+}
+
+/* CALCULATORS */
+
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1rem;
+}
+
+.calc-card{
+  background:#fff;
+  border-radius:18px;
+  border:1px solid var(--border);
+  padding:1.3rem;
+  display:flex;
+  gap:1rem;
+  transition:.25s;
+}
+
+.calc-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow);
+}
+
+.calc-icon{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:var(--green-lt);
+  color:var(--green);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+}
+
+.calc-name{
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.calc-desc{
+  font-size:.82rem;
+  color:var(--ink-muted);
+  line-height:1.6;
+}
+
+/* RESOURCES */
+
+.hub-section{
+  background:#fff;
+  border-top:1px solid var(--border);
+  border-radius: 35px;
+}
+
+.hub-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:1.3rem;
+}
+
+.hub-card{
+  background:var(--surface2);
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  transition:.25s;
+}
+
+.hub-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow);
+}
+
+.hub-img-wrap{
+  height:220px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.hub-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.hub-body{
+  padding:1.2rem;
+}
+
+.hub-tag{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.65rem;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:.8rem;
+}
+
+.hub-tag.blog{
+  background:var(--green-lt);
+  color:var(--green);
+}
+
+.hub-title{
+  font-size:1rem;
+  line-height:1.5;
+  margin-bottom:.7rem;
+}
+
+.hub-excerpt{
+  font-size:.82rem;
+  line-height:1.7;
+  color:var(--ink-muted);
+}
+
+/* FAQ */
+
+.faq-box{
+  max-width:900px;
+  margin:auto;
+}
+
+details{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin-bottom:1rem;
+  overflow:hidden;
+}
+
+summary{
+  padding:1.2rem 1.4rem;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.faq-content{
+  padding:0 1.4rem 1.3rem;
+  color:var(--ink-muted);
+  line-height:1.7;
+}
+
+/* CTA */
+
+.cta-banner{
+  background:linear-gradient(135deg,var(--green),#1f8a5d);
+  border-radius:30px;
+  padding:1rem 1rem;
+  text-align:center;
+  color:#fff;
+}
+
+.cta-banner h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:1rem;
+}
+
+.cta-banner p{
+  max-width:650px;
+  margin:auto;
+  margin-bottom:2rem;
+  opacity:.9;
+}
+
+.btn-white{
+  background:#fff;
+  color:var(--green);
+  padding:.9rem 1.5rem;
+  border-radius:12px;
+  display:inline-flex;
+  font-weight:700;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .hero-inner{
+    grid-template-columns:1fr;
+  }
+
+  .hero-right{
+    order:-1;
   }
 }
-.tv-ticker-item-tape__short-name {
-    color: black !important;
+
+@media(max-width:600px){
+
+  .sip-metrics{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .sip-metric:last-child{
+    grid-column:1/-1;
+  }
 }
+.hub-filters{
+  display:flex;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-bottom:2rem;
+}
+
+.hub-filter{
+  border:none;
+  background:var(--surface2);
+  color:var(--ink-muted);
+  padding:.65rem 1rem;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:.82rem;
+  transition:.2s;
+}
+
+.hub-filter:hover{
+  background:var(--green-lt);
+  color:var(--green);
+}
+
+.hub-filter.active{
+  background:var(--green);
+  color:#fff;
+}
+
+.hub-tag.news{
+  background:var(--gold-lt);
+  color:var(--gold);
+}
+
+.hub-tag.case{
+  background:var(--blue-lt);
+  color:var(--blue);
+}
+.calc-section { background:var(--paper); }
+.calc-group { margin-bottom:2.5rem; }
+.calc-group:last-child { margin-bottom:0; }
+.calc-group-label {
+  font-size:.7rem; font-weight:600; letter-spacing:1.2px;
+  text-transform:uppercase; color:var(--ink-faint);
+  margin-bottom:1rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.calc-group-label::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+.calc-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:.85rem;
+}
+.calc-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1.25rem 1.4rem;
+  display:flex; align-items:flex-start; gap:.85rem;
+  transition:box-shadow .25s, transform .25s, border-color .25s;
+  cursor:pointer; text-decoration:none; color:inherit;
+  position:relative; overflow:hidden;
+}
+.calc-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--green); border-radius:3px 0 0 3px;
+  transform:scaleY(0); transform-origin:center;
+  transition:transform .25s;
+}
+.calc-card:hover { box-shadow:var(--shadow); transform:translateY(-3px); border-color:var(--green-mid); }
+.calc-card:hover::before { transform:scaleY(1); }
+.calc-icon {
+  width:42px; height:42px; border-radius:10px;
+  background:var(--green-lt);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; font-size:18px; color:var(--green);
+  transition:background .25s;
+}
+.calc-card:hover .calc-icon { background:var(--green-mid); }
+.calc-info { flex:1; min-width:0; }
+.calc-name {
+  font-size:.9rem; font-weight:600; color:var(--ink);
+  margin-bottom:4px; display:flex; align-items:center; gap:6px;
+}
+.calc-desc { font-size:.78rem; color:var(--ink-muted); line-height:1.55; }
+.calc-arrow {
+  font-size:12px; color:var(--ink-faint);
+  transition:color .2s, transform .2s;
+  margin-top:2px;
+}
+.calc-card:hover .calc-arrow { color:var(--green); transform:translate(2px,-2px); }
+.badge-new {
+  font-size:.55rem; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; background:var(--green); color:#fff;
+  padding:1px 6px; border-radius:4px;
+}
+/* ════════════════════════════════════════════
+   WHY USE SECTION
+════════════════════════════════════════════ */
+.why-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); border-radius: 35px;}
+.why-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+  gap:1.25rem;
+}
+.why-card {
+  background:var(--surface2);
+  border-radius:var(--r);
+  padding:1.5rem;
+  transition:transform .2s;
+}
+.why-card:hover { transform:translateY(-3px); }
+.why-icon-wrap {
+  width:48px; height:48px; border-radius:12px;
+  background:var(--green-lt);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; color:var(--green);
+  margin-bottom:1rem;
+}
+.why-title { font-size:.95rem; font-weight:600; color:var(--ink); margin-bottom:.4rem; }
+.why-desc  { font-size:.8rem; color:var(--ink-muted); line-height:1.6; }
+
+/* ════════════════════════════════════════════
+   HOW IT HELPS — STEPS
+════════════════════════════════════════════ */
+.how-section { background:var(--paper); }
+.how-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2rem; position:relative;
+}
+.how-grid::before {
+  content:'';
+  position:absolute; top:28px; left:calc(33.3% - 8px); right:calc(33.3% - 8px);
+  height:1px; background:var(--border);
+  pointer-events:none;
+}
+.how-step { text-align:center; padding:1rem; }
+.how-num {
+  width:56px; height:56px; border-radius:50%;
+  background:var(--green); color:#fff;
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1.1rem;
+  box-shadow:0 0 0 8px var(--green-lt);
+}
+.how-title { font-size:1rem; font-weight:600; color:var(--ink); margin-bottom:.5rem; }
+.how-desc  { font-size:.82rem; color:var(--ink-muted); line-height:1.65; }
+
 </style>
-</head>
-<body>
 
-
-<main class="page">
-<!-- TOP FINANCE BAR -->
+<!-- FINANCE BAR -->
 <div class="finance-bar">
   <div class="finance-inner">
 
-    <!-- LEFT TITLE -->
     <div class="finance-label">
       <span>📊 Live Markets</span>
     </div>
 
-    <!-- TRADINGVIEW WIDGET -->
     <div class="finance-ticker">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -351,312 +787,762 @@ details[open] summary::after { transform:rotate(180deg); color:var(--accent); }
 
   </div>
 </div>
-  <header class="hero">
-    <h1>Financial Calculators for <br><em>Smart Money Decisions</em></h1>
-    <p>Plan your money with clarity using simple, reliable financial calculators. From SIP investments to loan EMIs and retirement planning, each tool is designed to show clear results without unnecessary steps. Enter your numbers, adjust the sliders, and understand your financial future in seconds.</p>
 
-    <div class="quick-sip">
-      <div class="quick-sip-row">
-        <input type="number" id="sip_amount" class="input-txt" placeholder="Monthly SIP (₹)">
-        <input type="number" id="sip_years" class="input-txt" placeholder="Duration (Years)">
-        <button onclick="quickSIP()" class="btn btn-primary" style="width:100%;">Quick Calc</button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+
+    <div>
+      <div class="hero-eyebrow">
+        <i class="bi bi-graph-up-arrow"></i>
+        Free · No sign-up required
       </div>
-      <div class="qs-result" id="sip_result"></div>
-    </div>
-  </header>
 
-  <section class="section">
-    <h2 class="sec-title">📊 Live Insights</h2>
-    <div class="grid-3">
-      <div class="metric">
-        <div class="metric-val" id="calc_count">0</div>
-        <div class="metric-lbl">Calculations Done</div>
+      <h1>
+        Make <em>smarter</em><br>
+        financial decisions
+      </h1>
+
+      <p class="hero-sub">
+        Plan your loans, investments, and future income with practical financial calculators.
+        Get quick estimates and understand different scenarios before committing.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/calculators/" class="btn-primary">
+          <i class="bi bi-calculator"></i>
+          Explore All Calculators
+        </a>
+
+        <a href="resources/blogs/" class="btn-secondary">
+          <i class="bi bi-book"></i>
+          Resources
+        </a>
       </div>
-      <div class="metric">
-        <div class="metric-val" style="color:var(--blue);">100%</div>
-        <div class="metric-lbl">Free Tools</div>
+    </div>
+
+    <!-- SIP CARD -->
+
+    <div class="sip-card">
+
+      <div class="sip-card-head">
+        <span class="sip-card-title">SIP Calculator</span>
+        <span class="sip-result-pill">12% p.a.</span>
       </div>
-      <div class="metric">
-        <div class="metric-val" style="color:var(--gold);">Live</div>
-        <div class="metric-lbl">Instant Results</div>
+
+      <div class="sip-metrics">
+
+        <div class="sip-metric">
+          <div class="sip-metric-lbl">Total Corpus</div>
+          <div class="sip-metric-val green" id="h-total">₹0</div>
+        </div>
+
+        <div class="sip-metric">
+          <div class="sip-metric-lbl">Invested</div>
+          <div class="sip-metric-val" id="h-invested">₹0</div>
+        </div>
+
+        <div class="sip-metric">
+          <div class="sip-metric-lbl">Returns</div>
+          <div class="sip-metric-val" id="h-profit">₹0</div>
+        </div>
+
       </div>
-    </div>
-  </section>
 
-  <section class="section">
-    <h2 class="sec-title" style="margin-bottom:0.5rem;">Popular Calculators</h2>
-    <p style="text-align:center; color:var(--muted); margin-bottom:2.5rem; max-width:600px; margin-inline:auto;">Explore the most used financial calculators to plan investments, manage loans, and estimate future savings.</p>
-    
-    <div class="grid-3">
-      <a href="/sip/" class="card">
-        <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-        <h3>SIP Calculator <span id="sip_count"></span></h3>
-        <p>Estimate how your monthly investments grow over time with compound returns.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
-      
-      <a href="/emi/" class="card">
-        <div class="card-icon" style="background:var(--blue-lt); color:var(--blue);"><i class="bi bi-credit-card"></i></div>
-        <h3>EMI Calculator <span id="emi_count"></span></h3>
-        <p>Calculate monthly loan payments, total interest, and repayment schedule instantly.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
-      
-      <a href="/loan/home/" class="card">
-        <div class="card-icon" style="background:#fef3c7; color:var(--gold);"><i class="bi bi-house"></i></div>
-        <h3>Home Loan Calculator <span id="home_loan_count"></span></h3>
-        <p>Understand long-term housing loan costs, EMIs, and total interest outflow.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
+      <div class="sip-field">
+        <div class="sip-field-hdr">
+          <span class="sip-field-lbl">Monthly Investment</span>
+          <span class="sip-field-val" id="h-lbl-amt">₹5,000</span>
+        </div>
 
-      <!-- <a href="/lumpsum/" class="card">
-        <div class="card-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="bi bi-piggy-bank"></i></div>
-        <h3>Lumpsum Calculator</h3>
-        <p>See how a one-time investment grows with compounding over time.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a> -->
-
-      <a href="/ppf/" class="card">
-        <div class="card-icon" style="background:#dcfce7; color:#16a34a;"><i class="bi bi-shield-check"></i></div>
-        <h3>PPF Calculator <span id="ppf_count"></span></h3>
-        <p>Project returns on Public Provident Fund investments with long-term tax benefits.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
-
-      <a href="/nps/" class="card">
-        <div class="card-icon" style="background:#fce7f3; color:#db2777;"><i class="bi bi-umbrella"></i></div>
-        <h3>NPS Calculator <span id="nps_count"></span></h3>
-        <p>Estimate retirement corpus and pension based on your contributions.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
-
-      <a href="/retirement/" class="card">
-        <div class="card-icon" style="background:#ffedd5; color:#ea580c;"><i class="bi bi-clock-history"></i></div>
-        <h3>Retirement Calculator <span id="retirement_count"></span></h3>
-        <p>Plan how much you need to save today for a financially stable retirement.</p>
-        <span class="btn btn-outline" style="padding:8px 16px; font-size:.8rem;">Calculate Now</span>
-      </a>
-    </div>
-  </section>
-
-  <!-- <section class="section">
-    <h2 class="sec-title">⚖️ Compare Strategies</h2>
-    <div class="compare-box">
-      <div class="compare-tabs">
-        <button class="btn btn-outline" onclick="compare('sip', this)">Mutual Fund SIP</button>
-        <button class="btn btn-outline" onclick="compare('fd', this)">Fixed Deposit (FD)</button>
-        <button class="btn btn-outline" onclick="compare('emi', this)">Loan EMI</button>
+        <input type="range" id="h-sl-amt" min="500" max="100000" step="500" value="5000" oninput="updateHeroCalc()">
       </div>
-      <div class="compare-res" id="compare_result">Select an option to see the insight.</div>
+
+      <div class="sip-field">
+        <div class="sip-field-hdr">
+          <span class="sip-field-lbl">Return Rate</span>
+          <span class="sip-field-val" id="h-lbl-rate">12%</span>
+        </div>
+
+        <input type="range" id="h-sl-rate" min="1" max="30" step="0.5" value="12" oninput="updateHeroCalc()">
+      </div>
+
+      <div class="sip-field">
+        <div class="sip-field-hdr">
+          <span class="sip-field-lbl">Time Period</span>
+          <span class="sip-field-val" id="h-lbl-time">10 yrs</span>
+        </div>
+
+        <input type="range" id="h-sl-time" min="1" max="40" step="1" value="10" oninput="updateHeroCalc()">
+      </div>
+
+      <div class="sip-donut-row">
+
+        <canvas id="heroDonut" width="96" height="96"></canvas>
+
+        <div class="sip-leg">
+
+          <div class="sip-leg-row">
+            <span class="sip-leg-dot" style="background:#1a6b4a"></span>
+            <span class="sip-leg-lbl">Invested</span>
+            <span class="sip-leg-val" id="h-leg-inv"></span>
+          </div>
+
+          <div class="sip-leg-row">
+            <span class="sip-leg-dot" style="background:#c9860a"></span>
+            <span class="sip-leg-lbl">Returns</span>
+            <span class="sip-leg-val" id="h-leg-ret"></span>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-  </section> -->
 
-  <section class="section grid-2">
-    <div class="feature-box">
-      <h2>Why Use Our Calculators</h2>
-      <p>Financial planning should be straightforward. These calculators are built to simplify decisions without hidden assumptions.</p>
-      <ul class="check-list">
-        <li><i class="bi bi-check-circle-fill"></i> Uses standard financial formulas</li>
-        <li><i class="bi bi-check-circle-fill"></i> No login or personal data required</li>
-        <li><i class="bi bi-check-circle-fill"></i> Instant and accurate results</li>
-        <li><i class="bi bi-check-circle-fill"></i> Designed for Indian financial scenarios</li>
-        <li><i class="bi bi-check-circle-fill"></i> Works seamlessly across mobile and desktop</li>
-      </ul>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+
+    <div class="trust-stat">
+      <div class="trust-stat-num" id="calc_count">0</div>
+      <div class="trust-stat-lbl">Calculations Done</div>
     </div>
 
-    <div class="feature-box">
-      <h2>How These Calculators Help</h2>
-      <p>Financial decisions often involve uncertainty. These tools reduce that uncertainty by showing clear projections.</p>
-      <ul class="check-list">
-        <li><i class="bi bi-check-circle-fill"></i> Understand how compounding builds wealth over time</li>
-        <li><i class="bi bi-check-circle-fill"></i> Compare loan options before committing</li>
-        <li><i class="bi bi-check-circle-fill"></i> Plan investments with realistic return expectations</li>
-        <li><i class="bi bi-check-circle-fill"></i> Estimate future financial goals such as retirement or home purchase</li>
-      </ul>
+    <div class="trust-stat">
+      <div class="trust-stat-num">{{ total_calculators }}</div>
+      <div class="trust-stat-lbl">Free Calculators</div>
     </div>
-  </section>
 
-  <section class="content-block">
-    <h2>Investment Planning Made Simple</h2>
-    <p>Consistent investing, even in small amounts, can lead to meaningful long-term growth. Tools like the SIP and Lumpsum calculators help visualize this growth and adjust expectations based on time and return rates.</p>
-
-    <h2>Loan Planning and EMI Insights</h2>
-    <p>Before taking a loan, it is important to understand the total cost, not just the monthly EMI. Loan calculators provide a clear breakdown of principal and interest, helping you choose a manageable repayment plan.</p>
-
-    <h2>Retirement and Long-Term Goals</h2>
-    <p>Planning for retirement requires estimating future expenses and building a sufficient corpus. Retirement and NPS calculators help bridge the gap between current savings and future needs.</p>
-  </section>
-
-<div class="grid-3" style="grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));">
-  {% for blog in latestblogs %}
-    {% if blog.primary_category %}
-    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="blog-card">
-    {% else %}
-    <a href="#" class="blog-card">
-    {% endif %}
-
-    {% if blog.image %}
-      <img src="{{ blog.image.url }}" alt="Blog Image" class="blog-img"
-           onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80'">
-    {% else %}
-      <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80"
-           class="blog-img">
-    {% endif %}
-
-    <div class="blog-body">
-      <h3 class="blog-title">{{ blog.title }}</h3>
-        <p class="blog-desc">
-          <!-- {{ blog.content|striptags|truncatewords:25|cut:"{"|cut:"}" }} -->
-            {{ blog.summary }}
-        </p>
-      <span class="blog-link">Read Article <i class="bi bi-arrow-right-short"></i></span>
+    <div class="trust-stat">
+      <div class="trust-stat-num">100%</div>
+      <div class="trust-stat-lbl">Free Access</div>
     </div>
-  </a>
-  {% endfor %}
+
+  </div>
 </div>
 
-  <section class="section">
-    <h2 class="sec-title">Frequently Asked Questions</h2>
+<!-- CALCULATORS -->
+
+<section class="section calc-section">
+  <div class="section-inner">
+    <div class="section-hdr fade-up">
+      <div class="section-label"><i class="bi bi-calculator"></i> Tools</div>
+      <h2 class="section-title">Online Financial Calculators for Smarter Planning</h2>
+      <p class="section-sub">Plan your investments and future income with practical calculators. Get quick estimates and adjust values to understand different scenarios before making decisions.</p>
+    </div>
+
+    <!-- Investment Calculators -->
+    <div class="calc-group fade-up">
+      <div class="calc-group-label"><i class="bi bi-graph-up-arrow"></i> Investment Calculators</div>
+      <div class="calc-grid">
+        <a href="/sip/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">SIP Calculator <span class="badge-new">New</span></div>
+            <div class="calc-desc">Estimate the future value of your monthly investments and understand long-term growth through compounding.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+        <a href="/ppf/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-piggy-bank"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">PPF Calculator</div>
+            <div class="calc-desc">Calculate maturity value and yearly returns on your Public Provident Fund contributions.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+        <a href="/nps/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-shield-check"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">NPS Calculator</div>
+            <div class="calc-desc">Project your retirement corpus based on National Pension System contributions and expected returns.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Loan Calculators -->
+    <div class="calc-group fade-up">
+      <div class="calc-group-label"><i class="bi bi-credit-card"></i> Loan Calculators</div>
+      <div class="calc-grid">
+        <a href="/emi/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-credit-card"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">EMI Calculator</div>
+            <div class="calc-desc">Calculate your monthly loan repayment based on loan amount, interest rate, and tenure.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+        <a href="/eligibility/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-check-circle"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">Loan Eligibility</div>
+            <div class="calc-desc">Check how much loan amount you may qualify for based on your income and existing obligations.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Income & Retirement -->
+    <div class="calc-group fade-up">
+      <div class="calc-group-label"><i class="bi bi-person-check"></i> Income & Retirement Calculators</div>
+      <div class="calc-grid">
+        <a href="/salary/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-cash-stack"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">Salary Calculator</div>
+            <div class="calc-desc">Estimate your in-hand salary after deductions and understand your full salary structure.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+        <a href="/pf/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-briefcase"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">PF Calculator</div>
+            <div class="calc-desc">Calculate your Employees' Provident Fund balance and interest earned over time.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+        <a href="/retirement/" class="calc-card">
+          <div class="calc-icon"><i class="bi bi-clock-history"></i></div>
+          <div class="calc-info">
+            <div class="calc-name">Retirement Calculator</div>
+            <div class="calc-desc">Estimate how much you need to save to maintain your lifestyle after retirement.</div>
+          </div>
+          <i class="bi bi-arrow-up-right calc-arrow"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHY USE ════════ -->
+<section class="section why-section">
+  <div class="section-inner">
+    <div class="section-hdr fade-up" style="text-align:center;">
+      <div class="section-label" style="margin:0 auto 1rem;"><i class="bi bi-stars"></i> Why Vita₹thi</div>
+      <h2 class="section-title" style="margin:0 auto .8rem;">Why Use These Financial Calculators</h2>
+      <p class="section-sub" style="margin:0 auto;">Built for India's real financial planning needs — simple inputs, instant answers, zero jargon.</p>
+    </div>
+    <div class="why-grid fade-up">
+      <div class="why-card">
+        <div class="why-icon-wrap"><i class="bi bi-lightning-charge-fill"></i></div>
+        <div class="why-title">Instant estimates</div>
+        <div class="why-desc">Get results immediately without manual calculations or spreadsheets. Adjust sliders and see numbers change live.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon-wrap"><i class="bi bi-diagram-3"></i></div>
+        <div class="why-title">Scenario planning</div>
+        <div class="why-desc">Understand how different interest rates, tenures, or investment amounts affect your final outcome before committing.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon-wrap"><i class="bi bi-arrow-left-right"></i></div>
+        <div class="why-title">Compare with ease</div>
+        <div class="why-desc">Open multiple calculators side by side to compare EMI options, SIP returns, or retirement scenarios at once.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon-wrap"><i class="bi bi-bullseye"></i></div>
+        <div class="why-title">Short & long-term goals</div>
+        <div class="why-desc">Whether planning a 2-year FD or a 30-year retirement, each calculator is designed to support your specific goal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ HOW IT HELPS ════════ -->
+<section class="section how-section">
+  <div class="section-inner">
+    <div class="section-hdr fade-up" style="text-align:center;">
+      <div class="section-label" style="margin:0 auto 1rem;"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="section-title" style="margin:0 auto .8rem;">How These Calculators Help</h2>
+      <p class="section-sub" style="margin:0 auto;">From complex formulas to clear, actionable numbers — in three simple steps.</p>
+    </div>
+    <div class="how-grid fade-up">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-title">Choose your calculator</div>
+        <div class="how-desc">Pick the tool that matches your goal — EMI for a loan, SIP for investments, or Retirement for long-term planning.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-title">Enter your numbers</div>
+        <div class="how-desc">Input amount, rate, and duration using simple sliders or fields. No finance degree needed — everything is clearly labelled.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-title">Get instant clarity</div>
+        <div class="how-desc">See your results in charts and tables instantly. Adjust and compare scenarios to find the option that suits you best.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- RESOURCES -->
+
+<!-- RESOURCES -->
+
+<section class="section hub-section">
+  <div class="section-inner">
+
+    <!-- HEADER -->
+
+    <div class="section-hdr">
+
+      <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:1rem;
+      flex-wrap:wrap;">
+
+        <div>
+
+          <div class="section-label">
+            <i class="bi bi-journal-text"></i>
+            Resources
+          </div>
+
+          <h2 class="section-title">
+            Latest Financial Guides & Insights
+          </h2>
+
+          <p class="section-sub">
+            Explore blogs, market news, and practical case studies
+            to improve your financial understanding.
+          </p>
+
+        </div>
+
+        <a href="{% url 'resource_list' 'blogs' %}" id="resourceLink" style="
+        color:var(--green);
+        font-weight:700;
+        font-size:.9rem;
+        white-space:nowrap;">
+          View All Articles →
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- FILTERS -->
+
+    <div class="hub-filters">
+
+      <button class="hub-filter active"
+      onclick="filterResources('all', this)">
+        All
+      </button>
+
+      <button class="hub-filter"
+      onclick="filterResources('blog', this)">
+        Blogs
+      </button>
+
+      <button class="hub-filter"
+      onclick="filterResources('news', this)">
+        News
+      </button>
+
+      <button class="hub-filter"
+      onclick="filterResources('case-study', this)">
+        Case Study
+      </button>
+
+    </div>
+
+    <!-- GRID -->
+
+<div class="hub-grid" id="resourceGrid">
+
+  <!-- DEFAULT ALL -->
+
+  {% for blog in latestblogs %}
+
+  <a
+  href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+  class="hub-card resource-card"
+  data-type="all">
+
+    <div class="hub-img-wrap">
+
+      {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="hub-img">
+      {% endif %}
+
+    </div>
+
+    <div class="hub-body">
+
+      <span class="hub-tag blog">
+        {{ blog.primary_category.name }}
+      </span>
+
+      <h3 class="hub-title">
+        {{ blog.title }}
+      </h3>
+
+      <p class="hub-excerpt">
+        {{ blog.summary|truncatewords:24 }}
+      </p>
+
+    </div>
+
+  </a>
+
+  {% endfor %}
+
+</div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+
+<section class="section">
+  <div class="section-inner">
+
+    <div class="section-hdr" style="text-align:center">
+      <div class="section-label">
+        <i class="bi bi-question-circle"></i>
+        FAQ
+      </div>
+
+      <h2 class="section-title">
+        Frequently Asked Questions
+      </h2>
+    </div>
+
     <div class="faq-box">
-      
-      <details name="faq">
+
+      <details>
         <summary>What is a financial calculator?</summary>
-        <div class="faq-content">A financial calculator helps estimate investment growth, loan repayments, and savings outcomes using mathematical formulas.</div>
-      </details>
-      
-      <details name="faq">
-        <summary>Are these calculators accurate?</summary>
-        <div class="faq-content">They use standard formulas. Results are indicative and depend on actual market conditions and interest rates.</div>
+        <div class="faq-content">
+          A financial calculator helps estimate investments,
+          loans, EMIs, and retirement savings using standard formulas.
+        </div>
       </details>
 
-      <details name="faq">
-        <summary>Do I need to sign up to use these tools?</summary>
-        <div class="faq-content">No. All calculators are free to use and do not require login.</div>
+      <details>
+        <summary>Are these calculators free?</summary>
+        <div class="faq-content">
+          Yes. All calculators are completely free and do not require sign-up.
+        </div>
       </details>
 
-      <details name="faq">
-        <summary>Can I use these calculators on mobile?</summary>
-        <div class="faq-content">Yes. The calculators are responsive and work on all screen sizes.</div>
+      <details>
+        <summary>Are results accurate?</summary>
+        <div class="faq-content">
+          The tools use industry-standard formulas. Actual results may vary depending on market conditions.
+        </div>
       </details>
 
     </div>
-  </section>
 
-  <section class="cta-banner">
-    <h2>Calculate Before You Invest 💡</h2>
-    <p>Make smarter financial decisions using real data and predictive planning.</p>
-    <a href="/calculators/" class="btn">Explore All Calculators</a>
-  </section>
+  </div>
+</section>
 
-</main>
+<!-- CTA -->
+
+<section class="section">
+  <div class="section-inner">
+
+    <div class="cta-banner">
+
+      <h2>
+        Calculate Before You Invest 💡
+      </h2>
+
+      <p>
+        Make smarter financial decisions using real projections,
+        instant calculators, and practical planning tools.
+      </p>
+
+      <a href="/calculators/" class="btn-white">
+        Explore All Calculators
+      </a>
+
+    </div>
+
+  </div>
+</section>
 
 <script>
-/* Dark Mode */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+
+let heroChart;
+
+function formatINR(num){
+  return "₹" + Math.round(num).toLocaleString('en-IN');
 }
 
-/* Mobile Drawer */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+function updateHeroCalc(){
+
+  let amt  = +document.getElementById('h-sl-amt').value;
+  let rate = +document.getElementById('h-sl-rate').value;
+  let time = +document.getElementById('h-sl-time').value;
+
+  document.getElementById('h-lbl-amt').innerText = formatINR(amt);
+  document.getElementById('h-lbl-rate').innerText = rate + "%";
+  document.getElementById('h-lbl-time').innerText = time + " yrs";
+
+  let r = rate / 12 / 100;
+  let n = time * 12;
+
+  let future = amt * (((Math.pow(1+r,n))-1)/r)*(1+r);
+
+  let invested = amt * n;
+  let profit = future - invested;
+
+  document.getElementById('h-total').innerText = formatINR(future);
+  document.getElementById('h-invested').innerText = formatINR(invested);
+  document.getElementById('h-profit').innerText = formatINR(profit);
+
+  document.getElementById('h-leg-inv').innerText = formatINR(invested);
+  document.getElementById('h-leg-ret').innerText = formatINR(profit);
+
+  if(heroChart){
+    heroChart.data.datasets[0].data = [invested,profit];
+    heroChart.update();
+  }
 }
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
 
-    menu.classList.toggle("open");
+window.addEventListener('DOMContentLoaded',()=>{
 
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
+  let ctx = document.getElementById('heroDonut');
+
+  heroChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['Invested','Returns'],
+      datasets:[{
+        data:[1,1],
+        backgroundColor:['#1a6b4a','#c9860a'],
+        borderWidth:0
+      }]
+    },
+    options:{
+      responsive:false,
+      cutout:'72%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:false}
+      }
     }
-} 
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
-}
-
-/* Quick SIP Widget */
-function quickSIP() {
-  const amount = document.getElementById("sip_amount").value;
-  const years = document.getElementById("sip_years").value;
-  const resEl = document.getElementById("sip_result");
-
-  if (!amount || !years) {
-      resEl.innerHTML = "<span style='color:var(--bal);'>Please enter both amount and years.</span>";
-      return;
-  }
-  
-  const r = 0.12 / 12; 
-  const n = years * 12;
-  const future = amount * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
-  
-  resEl.innerHTML = "Estimated Value: ₹" + Math.round(future).toLocaleString('en-IN');
-}
-
-/* Animated Counter */
-let count = 0;
-const interval = setInterval(() => {
-  count += 5;
-  const el = document.getElementById("calc_count");
-  if (el) el.innerText = count.toLocaleString('en-IN');
-  if (count >= 500) clearInterval(interval);
-}, 25);
-
-/* Compare Widget */
-function compare(type, btn) {
-  // UI Tabs update
-  document.querySelectorAll('.compare-tabs .btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  // Text update
-  let text = "";
-  if (type === "sip") text = "SIP gives higher returns in long term due to compound interest 📈";
-  if (type === "fd")  text = "FD is safe with guaranteed returns, but struggles to beat inflation 🏦";
-  if (type === "emi") text = "EMIs help manage large payments, but pre-payments save you heavy interest 💳";
-  
-  document.getElementById("compare_result").innerText = text;
-}
-
-/* Init */
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
-  }
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
   });
+
+  updateHeroCalc();
+
 });
+
+/* LIVE COUNT */
+
 function loadCalcCount() {
-    fetch('/calc-count/')
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('calc_count').innerText = data.count;
-    });
+  fetch('/calc-count/')
+  .then(res => res.json())
+  .then(data => {
+      document.getElementById('calc_count').innerText = data.count;
+  });
 }
 
-// page load pe
 loadCalcCount();
 setInterval(loadCalcCount, 5000);
+
+/* POPULAR CALCULATORS */
 
 fetch('/popular-calculators/')
 .then(res => res.json())
 .then(data => {
+
     data.forEach(item => {
+
         let id = item.name.toLowerCase() + "_count";
+
         let el = document.getElementById(id);
+
         if(el){
             el.innerText = `(${item.total})`;
         }
     });
+
 });
+function toggleDark() {
+    document.body.classList.toggle("dark-mode");
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+function filterResources(type, btn){
+  const link = document.getElementById('resourceLink');
+  document.querySelectorAll('.hub-filter')
+  .forEach(b => b.classList.remove('active'));
+
+  btn.classList.add('active');
+
+  const grid = document.getElementById('resourceGrid');
+
+  let html = '';
+
+  // BLOGS
+
+  if(type === 'blog'){
+
+    link.href = "{% url 'resource_list' 'blogs' %}";
+    link.innerText = 'View All Blogs →';
+
+    {% for blog in blogs_data %}
+
+    html += `
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+    class="hub-card">
+
+      <div class="hub-img-wrap">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="hub-img">
+        {% endif %}
+      </div>
+
+      <div class="hub-body">
+        <span class="hub-tag blog">Blog</span>
+
+        <h3 class="hub-title">
+          {{ blog.title|escapejs }}
+        </h3>
+
+        <p class="hub-excerpt">
+          {{ blog.summary|truncatewords:24|escapejs }}
+        </p>
+      </div>
+
+    </a>
+    `;
+
+    {% endfor %}
+  }
+
+  // NEWS
+
+  else if(type === 'news'){
+
+    link.href = "{% url 'resource_list' 'news' %}";
+    link.innerText = 'View All News →';
+
+    {% for blog in news_data %}
+
+    html += `
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+    class="hub-card">
+
+      <div class="hub-img-wrap">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="hub-img">
+        {% endif %}
+      </div>
+
+      <div class="hub-body">
+        <span class="hub-tag news">News</span>
+
+        <h3 class="hub-title">
+          {{ blog.title|escapejs }}
+        </h3>
+
+        <p class="hub-excerpt">
+          {{ blog.summary|truncatewords:24|escapejs }}
+        </p>
+      </div>
+
+    </a>
+    `;
+
+    {% endfor %}
+  }
+
+  // CASE STUDIES
+
+  else if(type === 'case-study'){
+
+    link.href = "{% url 'resource_list' 'case-study' %}";
+    link.innerText = 'View All Case Studies →';
+
+    {% for blog in case_data %}
+
+    html += `
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+    class="hub-card">
+
+      <div class="hub-img-wrap">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="hub-img">
+        {% endif %}
+      </div>
+
+      <div class="hub-body">
+        <span class="hub-tag case">Case Study</span>
+
+        <h3 class="hub-title">
+          {{ blog.title|escapejs }}
+        </h3>
+
+        <p class="hub-excerpt">
+          {{ blog.summary|truncatewords:24|escapejs }}
+        </p>
+      </div>
+
+    </a>
+    `;
+
+    {% endfor %}
+  }
+
+  // ALL
+
+  else{
+
+    link.href = "{% url 'resource_list' 'blogs' %}";
+    link.innerText = 'View All Articles →';
+
+    {% for blog in latestblogs %}
+
+    html += `
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+    class="hub-card">
+
+      <div class="hub-img-wrap">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="hub-img">
+        {% endif %}
+      </div>
+
+      <div class="hub-body">
+        <span class="hub-tag blog">
+          {{ blog.primary_category.name|escapejs }}
+        </span>
+
+        <h3 class="hub-title">
+          {{ blog.title|escapejs }}
+        </h3>
+
+        <p class="hub-excerpt">
+          {{ blog.summary|truncatewords:24|escapejs }}
+        </p>
+      </div>
+
+    </a>
+    `;
+
+    {% endfor %}
+  }
+
+  grid.innerHTML = html;
+
+}
 </script>
-</body>
-</html>
+
 {% endblock %}
