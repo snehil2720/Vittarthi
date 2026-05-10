@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Free Financial Calculators for EMI, SIP & Taxes | Vita₹thi
+{% endblock %}
+
+{% block meta_description %}
+Use Vita₹thi's free financial calculators to calculate EMI, SIP returns, home loans, taxes, and investment plans instantly.
+{% endblock %}
+
 {% block content %}
 <style>
 
@@ -416,7 +424,7 @@ button{font-family:inherit;cursor:pointer;}
       <div class="popular-label"><i class="bi bi-star-fill" style="color:var(--gold);"></i> Most Popular</div>
       <div class="popular-grid">
         
-        <a href="/sip/" class="popular-card">
+        <a href="/calculators/sip" class="popular-card">
           <div class="popular-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
           <div class="popular-card-name">SIP Calculator <i class="bi bi-arrow-up-right"></i></div>
           <p class="popular-card-desc">Estimate wealth creation over time through systematic mutual fund investments.</p>
@@ -428,7 +436,7 @@ button{font-family:inherit;cursor:pointer;}
           <div class="popular-cta">Use Tool <i class="bi bi-arrow-right"></i></div>
         </a>
 
-        <a href="/emi/" class="popular-card">
+        <a href="/calculators/emi" class="popular-card">
           <div class="popular-card-icon"><i class="bi bi-credit-card"></i></div>
           <div class="popular-card-name">EMI Calculator <i class="bi bi-arrow-up-right"></i></div>
           <p class="popular-card-desc">Calculate monthly payments, total interest, and view your amortization schedule.</p>
@@ -440,7 +448,7 @@ button{font-family:inherit;cursor:pointer;}
           <div class="popular-cta">Use Tool <i class="bi bi-arrow-right"></i></div>
         </a>
 
-        <a href="/retirement/" class="popular-card">
+        <a href="/calculators/retirement" class="popular-card">
           <div class="popular-card-icon"><i class="bi bi-clock-history"></i></div>
           <div class="popular-card-name">Retirement Planner <i class="bi bi-arrow-up-right"></i></div>
           <p class="popular-card-desc">Determine the corpus required to maintain your lifestyle after you stop working.</p>
@@ -483,7 +491,7 @@ button{font-family:inherit;cursor:pointer;}
         <div class="group-line"></div>
       </div>
       <div class="calc-grid">
-        <a href="/loan/home/" class="calc-card loans-card" data-search="home loan housing mortgage property">
+        <a href="/calculators/home-loan" class="calc-card loans-card" data-search="home loan housing mortgage property">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-house-door"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -495,9 +503,9 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
           </div>
-          <a href="/loan/home/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/home-loan" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/loan/car/" class="calc-card loans-card" data-search="car loan vehicle auto">
+        <a href="/calculators/car-loan" class="calc-card loans-card" data-search="car loan vehicle auto">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-car-front"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -509,9 +517,9 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
           </div>
-          <a href="/loan/car/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/car-loan" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/loan/personal/" class="calc-card loans-card" data-search="personal loan credit unsecured">
+        <a href="/calculators/personal-loan" class="calc-card loans-card" data-search="personal loan credit unsecured">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-person"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -523,9 +531,9 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Months</span>
           </div>
-          <a href="/loan/personal/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/personal-loan" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/eligibility/" class="calc-card loans-card" data-search="loan eligibility income borrowing capacity">
+        <a href="/calculators/loan-eligibility" class="calc-card loans-card" data-search="loan eligibility income borrowing capacity">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-check-circle"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -536,7 +544,7 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Income</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Existing EMIs</span>
           </div>
-          <a href="/eligibility/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/loan-eligibility" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
       </div>
     </div>
@@ -549,21 +557,21 @@ button{font-family:inherit;cursor:pointer;}
         <div class="group-line"></div>
       </div>
       <div class="calc-grid">
-        <a href="/sip/" class="calc-card invest-card" data-search="sip mutual fund investment monthly">
+        <a href="/calculators/sip" class="calc-card invest-card" data-search="sip mutual fund investment monthly">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
           </div>
-          <div class="calc-card-name">SIP Calculator <span class="badge-hot">Hot</span></div>
+          <div class="calc-card-name">SIP Calculator </div>
           <div class="calc-card-desc">Estimate wealth creation through systematic mutual fund investments using compounding growth.</div>
           <div class="calc-chips">
             <span class="chip"><i class="bi bi-input-cursor"></i> Monthly Amount</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Years</span>
           </div>
-          <a href="/sip/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/sip" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/ppf/" class="calc-card invest-card" data-search="ppf public provident fund government savings">
+        <a href="/calculators/ppf" class="calc-card invest-card" data-search="ppf public provident fund government savings">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-piggy-bank"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -574,9 +582,9 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Yearly Deposit</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> 15+ Years</span>
           </div>
-          <a href="/ppf/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/ppf" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/nps/" class="calc-card invest-card" data-search="nps national pension system retirement corpus">
+        <a href="/calculators/nps" class="calc-card invest-card" data-search="nps national pension system retirement corpus">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-shield-check"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -587,7 +595,7 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Monthly Contribution</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Age</span>
           </div>
-          <a href="/nps/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/nps" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
       </div>
     </div>
@@ -600,7 +608,7 @@ button{font-family:inherit;cursor:pointer;}
         <div class="group-line"></div>
       </div>
       <div class="calc-grid">
-        <a href="/pf/" class="calc-card income-card" data-search="epf pf provident fund employee">
+        <a href="/calculators/pf" class="calc-card income-card" data-search="epf pf provident fund employee">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-briefcase"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -611,23 +619,23 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Basic Salary</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> VPF %</span>
           </div>
-          <a href="/pf/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/pf" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/salary/" class="calc-card income-card" data-search="salary ctc take home income tax">
+        <a href="/calculators/salary" class="calc-card income-card" data-search="salary ctc take home income tax">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-cash-stack"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
           </div>
-          <div class="calc-card-name">Salary Calculator <span class="badge-new">New</span></div>
+          <div class="calc-card-name">Salary Calculator </div>
           <div class="calc-card-desc">Break down your CTC to calculate actual take-home pay and understand tax deductions.</div>
           <div class="calc-chips">
             <span class="chip"><i class="bi bi-input-cursor"></i> CTC</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Allowances</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Regime</span>
           </div>
-          <a href="/salary/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/salary" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/retirement/" class="calc-card income-card" data-search="retirement corpus planning future savings">
+        <a href="/calculators/retirement" class="calc-card income-card" data-search="retirement corpus planning future savings">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-clock-history"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -639,9 +647,9 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Savings</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Expenses</span>
           </div>
-          <a href="/retirement/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/retirement" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
-        <a href="/emi/" class="calc-card income-card" data-search="emi loan repayment monthly installment">
+        <a href="/calculators/emi" class="calc-card income-card" data-search="emi loan repayment monthly installment">
           <div class="calc-card-top">
             <div class="calc-card-icon"><i class="bi bi-credit-card"></i></div>
             <i class="bi bi-arrow-up-right calc-card-arrow"></i>
@@ -653,7 +661,7 @@ button{font-family:inherit;cursor:pointer;}
             <span class="chip"><i class="bi bi-input-cursor"></i> Rate</span>
             <span class="chip"><i class="bi bi-input-cursor"></i> Tenure</span>
           </div>
-          <a href="/emi/" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
+          <a href="/calculators/emi" class="calc-cta">Use Calculator <i class="bi bi-arrow-right"></i></a>
         </a>
       </div>
     </div>
@@ -703,7 +711,7 @@ button{font-family:inherit;cursor:pointer;}
     <h2>Not sure which calculator to use?</h2>
     <p>Start with the SIP Calculator to see how compounding works, then explore EMI for loan planning — most users start there.</p>
     <div class="cta-btns">
-      <a href="/sip/" class="btn-white"><i class="bi bi-graph-up-arrow"></i> Try SIP Calculator</a>
+      <a href="/calculators/sip" class="btn-white"><i class="bi bi-graph-up-arrow"></i> Try SIP Calculator</a>
       <a href="/resources/blogs/" class="btn-ghost"><i class="bi bi-book"></i> Read the Guides</a>
     </div>
   </div>
@@ -723,7 +731,7 @@ button{font-family:inherit;cursor:pointer;}
 /* Smart Filter & Search Logic for New UI */
 let currentFilter = 'all';
 
-function setFilter(filter, btn) {
+function switchTab(filter, btn) {
   currentFilter = filter;
   
   // Update active pill state
@@ -739,30 +747,35 @@ function filterCalculators() {
   const groups = document.querySelectorAll('.calc-group');
 
   groups.forEach(group => {
-    const wraps = group.querySelectorAll('.calc-wrap');
+    const cards = group.querySelectorAll('.calc-card');
     let hasVisibleCard = false;
 
-    wraps.forEach(wrap => {
-      const title = wrap.getAttribute('data-title');
-      const cat = wrap.getAttribute('data-cat');
-      
-      const matchesSearch = title.includes(query);
-      const matchesFilter = (currentFilter === 'all' || cat.includes(currentFilter));
+    cards.forEach(card => {
+      const searchData = card.getAttribute('data-search').toLowerCase();
+
+      const matchesSearch = searchData.includes(query);
+
+      let matchesFilter = false;
+
+      if (currentFilter === 'all') {
+        matchesFilter = true;
+      } else if (currentFilter === 'loans') {
+        matchesFilter = card.classList.contains('loans-card');
+      } else if (currentFilter === 'invest') {
+        matchesFilter = card.classList.contains('invest-card');
+      } else if (currentFilter === 'income') {
+        matchesFilter = card.classList.contains('income-card');
+      }
 
       if (matchesSearch && matchesFilter) {
-        wrap.style.display = 'block';
+        card.style.display = 'flex';
         hasVisibleCard = true;
       } else {
-        wrap.style.display = 'none';
+        card.style.display = 'none';
       }
     });
 
-    // Hide the entire group section (like "Loans & Borrowing" header) if no cards match inside it
-    if (hasVisibleCard) {
-      group.style.display = 'block';
-    } else {
-      group.style.display = 'none';
-    }
+    group.style.display = hasVisibleCard ? 'block' : 'none';
   });
 }
 </script>

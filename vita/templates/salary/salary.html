@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Salary & CTC Calculator — Vitarthi</title>
+{% block title %}
+Salary Calculator | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Use the Vittarthi Salary Calculator to estimate in-hand salary, deductions, annual income, and take-home pay accurately.
+{% endblock %}
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -453,31 +454,8 @@ details[open] summary::after {
   .tip:hover, .metric:hover { transform:none; }
 }
 </style>
-</head>
-<body>
 
-<div class="drawer" id="navDrawer" onclick="closeOnOverlay(event)">
-  <div class="drawer-overlay"></div>
-  <div class="drawer-panel">
-    <a href="/">Home</a>
-    <a href="/calculators/" class="active">Calculators</a>
-    <a href="/blogs/">Blogs</a>
-    <a href="/contact/">Contact</a>
-    <a href="/login/">Sign In</a>
-    <hr class="drawer-divider">
-    <a href="/sip/"><i class="bi bi-graph-up-arrow"></i> SIP Calculator</a>
-    <a href="/emi/"><i class="bi bi-credit-card"></i> EMI Calculator</a>
-    <a href="/loan/home/"><i class="bi bi-house"></i> Home Loan</a>
-    <a href="/loan/car/"><i class="bi bi-car-front"></i> Car Loan</a>
-    <a href="/loan/personal/"><i class="bi bi-person"></i> Personal Loan</a>
-    <a href="/nps/"><i class="bi bi-shield-check"></i> NPS</a>
-    <a href="/ppf"><i class="bi bi-piggy-bank"></i> PPF</a>
-    <a href="/pf/"><i class="bi bi-briefcase"></i> PF</a>
-    <a href="/retirement/"><i class="bi bi-clock-history"></i> Retirement</a>
-    <a href="/salary/" class="active"><i class="bi bi-cash-stack"></i> Salary</a>
-    <a href="/eligibility/"><i class="bi bi-check-circle"></i> Eligibility</a>
-  </div>
-</div>
+<body>
 
 <div class="page">
 
@@ -634,17 +612,17 @@ details[open] summary::after {
       <div class="card">
         <div class="sb-title">Calculators</div>
         <div class="sb-links">
-          <a href="/sip/"><i class="bi bi-graph-up-arrow"></i>SIP</a>
-          <a href="/emi/"><i class="bi bi-credit-card"></i>EMI</a>
-          <a href="/loan/home/"><i class="bi bi-house"></i>Home Loan</a>
-          <a href="/loan/car/"><i class="bi bi-car-front"></i>Car Loan</a>
-          <a href="/loan/personal/"><i class="bi bi-person"></i>Personal Loan</a>
-          <a href="/nps/"><i class="bi bi-shield-check"></i>NPS</a>
-          <a href="/ppf"><i class="bi bi-piggy-bank"></i>PPF</a>
-          <a href="/pf/"><i class="bi bi-briefcase"></i>PF</a>
-          <a href="/retirement/"><i class="bi bi-clock-history"></i>Retirement</a>
-          <a href="/salary/" class="active"><i class="bi bi-cash-stack"></i>Salary</a>
-          <a href="/eligibility/"><i class="bi bi-check-circle"></i>Eligibility</a>
+          <a href="/calculators/sip"><i class="bi bi-graph-up-arrow"></i>SIP</a>
+          <a href="/calculators/emi"><i class="bi bi-credit-card"></i>EMI</a>
+          <a href="/calculators/home-loan"><i class="bi bi-house"></i>Home Loan</a>
+          <a href="/calculators/car-loan"><i class="bi bi-car-front"></i>Car Loan</a>
+          <a href="/calculators/personal-loan"><i class="bi bi-person"></i>Personal Loan</a>
+          <a href="/calculators/nps"><i class="bi bi-shield-check"></i>NPS</a>
+          <a href="/calculators/ppf"><i class="bi bi-piggy-bank"></i>PPF</a>
+          <a href="/calculators/pf"><i class="bi bi-briefcase"></i>PF</a>
+          <a href="/calculators/retirement"><i class="bi bi-clock-history"></i>Retirement</a>
+          <a href="/calculators/salary" class="active"><i class="bi bi-cash-stack"></i>Salary</a>
+          <a href="/calculators/loan-eligibility"><i class="bi bi-check-circle"></i>Eligibility</a>
         </div>
       </div>
 

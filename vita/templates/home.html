@@ -1,4 +1,14 @@
 {% extends 'base.html' %}
+
+{% block title %}
+Welcome to Vittarthi's — Free Financial Calculators, Investment Tools & Finance Guides
+{% endblock %}
+
+{% block meta_description %}
+Use Vita₹thi's free financial calculators for EMI, SIP, home loans, salary, tax planning, retirement, and investment calculations. Simple tools and finance guides for smarter money decisions.
+{% endblock %}
+
+
 {% load static %}
 {% block content %}
 
@@ -939,7 +949,7 @@ summary{
     <div class="calc-group fade-up">
       <div class="calc-group-label"><i class="bi bi-graph-up-arrow"></i> Investment Calculators</div>
       <div class="calc-grid">
-        <a href="/sip/" class="calc-card">
+        <a href="/calculators/sip" class="calc-card">
           <div class="calc-icon"><i class="bi bi-graph-up-arrow"></i></div>
           <div class="calc-info">
             <div class="calc-name">SIP Calculator <span class="badge-new">New</span></div>
@@ -947,7 +957,7 @@ summary{
           </div>
           <i class="bi bi-arrow-up-right calc-arrow"></i>
         </a>
-        <a href="/ppf/" class="calc-card">
+        <a href="/calculators/ppf" class="calc-card">
           <div class="calc-icon"><i class="bi bi-piggy-bank"></i></div>
           <div class="calc-info">
             <div class="calc-name">PPF Calculator</div>
@@ -955,7 +965,7 @@ summary{
           </div>
           <i class="bi bi-arrow-up-right calc-arrow"></i>
         </a>
-        <a href="/nps/" class="calc-card">
+        <a href="/calculators/nps" class="calc-card">
           <div class="calc-icon"><i class="bi bi-shield-check"></i></div>
           <div class="calc-info">
             <div class="calc-name">NPS Calculator</div>
@@ -970,7 +980,7 @@ summary{
     <div class="calc-group fade-up">
       <div class="calc-group-label"><i class="bi bi-credit-card"></i> Loan Calculators</div>
       <div class="calc-grid">
-        <a href="/emi/" class="calc-card">
+        <a href="/calculators/emi" class="calc-card">
           <div class="calc-icon"><i class="bi bi-credit-card"></i></div>
           <div class="calc-info">
             <div class="calc-name">EMI Calculator</div>
@@ -978,7 +988,7 @@ summary{
           </div>
           <i class="bi bi-arrow-up-right calc-arrow"></i>
         </a>
-        <a href="/eligibility/" class="calc-card">
+        <a href="/calculators/eligibility" class="calc-card">
           <div class="calc-icon"><i class="bi bi-check-circle"></i></div>
           <div class="calc-info">
             <div class="calc-name">Loan Eligibility</div>
@@ -993,7 +1003,7 @@ summary{
     <div class="calc-group fade-up">
       <div class="calc-group-label"><i class="bi bi-person-check"></i> Income & Retirement Calculators</div>
       <div class="calc-grid">
-        <a href="/salary/" class="calc-card">
+        <a href="/calculators/salary" class="calc-card">
           <div class="calc-icon"><i class="bi bi-cash-stack"></i></div>
           <div class="calc-info">
             <div class="calc-name">Salary Calculator</div>
@@ -1001,7 +1011,7 @@ summary{
           </div>
           <i class="bi bi-arrow-up-right calc-arrow"></i>
         </a>
-        <a href="/pf/" class="calc-card">
+        <a href="/calculators/pf" class="calc-card">
           <div class="calc-icon"><i class="bi bi-briefcase"></i></div>
           <div class="calc-info">
             <div class="calc-name">PF Calculator</div>
@@ -1009,7 +1019,7 @@ summary{
           </div>
           <i class="bi bi-arrow-up-right calc-arrow"></i>
         </a>
-        <a href="/retirement/" class="calc-card">
+        <a href="/calculators/retirement" class="calc-card">
           <div class="calc-icon"><i class="bi bi-clock-history"></i></div>
           <div class="calc-info">
             <div class="calc-name">Retirement Calculator</div>
@@ -1021,6 +1031,10 @@ summary{
     </div>
   </div>
 </section>
+
+
+
+
 
 <!-- ════════ WHY USE ════════ -->
 <section class="section why-section">

@@ -33,6 +33,35 @@
 .vt-legal { display:flex; gap:1rem; flex-wrap:wrap; }
 .vt-legal a { font-size:.73rem; color:var(--ink-muted); text-decoration:none; transition:color .18s; }
 .vt-legal a:hover { color:var(--ink); }
+@media(max-width:1024px){
+  .popular-grid{grid-template-columns:1fr 1fr 1fr;}
+  .editorial-inner{grid-template-columns:1fr;}
+  .editorial-stats{grid-template-columns:repeat(4,1fr);}
+  .vt-fgrid{grid-template-columns:1.5fr 1fr 1fr;}
+  .vt-fgrid>.vt-brand-col{grid-column:1/-1;}
+  .vt-fgrid>.vt-tip-col{grid-column:1/-1;}
+}
+@media(max-width:768px){
+  .ham-btn{display:flex;}
+  .nav-desktop,.nav-auth{display:none;}
+  .popular-grid{grid-template-columns:1fr;}
+  .editorial-stats{grid-template-columns:1fr 1fr;}
+  .vt-fgrid{grid-template-columns:1fr 1fr;}
+  .vt-fgrid>.vt-brand-col{grid-column:1/-1;}
+  .vt-fgrid>.vt-tip-col{grid-column:1/-1;}
+  .vt-fbot{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:540px){
+  .popular-grid{grid-template-columns:1fr;}
+  .editorial-stats{grid-template-columns:1fr 1fr;}
+  .vt-fgrid{grid-template-columns:1fr;}
+  .vt-fstats{grid-template-columns:repeat(3,1fr);}
+  .calc-grid{grid-template-columns:1fr;}
+  .tabs-row{gap:.3rem;}
+}
+@media(hover:none){
+  .calc-card:hover,.popular-card:hover{transform:none;}
+}
 </style>
 <!-- ═════════════ FOOTER ═════════════ -->
 <footer class="vt-footer">
@@ -130,22 +159,22 @@
         <ul class="vt-links2">
 
           <li>
-            <a href="/sip/">
+            <a href="/calculators/sip">
               SIP
               <span class="vt-badge2">New</span>
             </a>
           </li>
 
-          <li><a href="/emi/">EMI</a></li>
-          <li><a href="/loan/home/">Home Loan</a></li>
-          <li><a href="/loan/car/">Car Loan</a></li>
-          <li><a href="/loan/personal/">Personal Loan</a></li>
-          <li><a href="/ppf/">PPF</a></li>
-          <li><a href="/nps/">NPS</a></li>
-          <li><a href="/pf/">PF</a></li>
-          <li><a href="/salary/">Salary</a></li>
-          <li><a href="/retirement/">Retirement</a></li>
-          <li><a href="/eligibility/">Loan Eligibility</a></li>
+          <li><a href="/calculators/emi">EMI</a></li>
+          <li><a href="/calculators/home-loan">Home Loan</a></li>
+          <li><a href="/calculators/car-loan">Car Loan</a></li>
+          <li><a href="/calculators/personal-loan">Personal Loan</a></li>
+          <li><a href="/calculators/ppf">PPF</a></li>
+          <li><a href="/calculators/nps">NPS</a></li>
+          <li><a href="/calculators/pf">PF</a></li>
+          <li><a href="/calculators/salary">Salary</a></li>
+          <li><a href="/calculators/retirement">Retirement</a></li>
+          <li><a href="/calculators/loan-eligibility">Loan Eligibility</a></li>
 
         </ul>
 
@@ -197,9 +226,8 @@
         </ul>
 
       </div>
-
-      <!-- TIPS -->
-
+    </div>
+    <!-- TIPS -->
       <div class="vt-tip-col">
 
         <div class="vt-col-h">
@@ -239,9 +267,6 @@
         </div>
 
       </div>
-
-    </div>
-
   </div>
 
   <!-- DISCLAIMER -->

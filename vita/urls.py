@@ -8,20 +8,20 @@ urlpatterns = [
     path('products/', views.products, name='products'),
     path('contact/', views.contact, name='contact'),
     
-    path('sip/', views.sip_calculator, name='sip'),
-    path('emi/', views.emi_calculator, name='emi'),
-    path('loan/home/', views.home_loan, name='home_loan'),
-    path('loan/car/', views.car_loan, name='car_loan'),
-    path('loan/personal/', views.personal_loan, name='personal_loan'),
+    path('calculators/sip', views.sip_calculator, name='sip'),
+    path('calculators/emi', views.emi_calculator, name='emi'),
+    path('calculators/home-loan', views.home_loan, name='home_loan'),
+    path('calculators/car-loan', views.car_loan, name='car_loan'),
+    path('calculators/personal-loan', views.personal_loan, name='personal_loan'),
 
-    path('ppf/', views.ppf_calc, name='ppf'),
-    path('nps/', views.nps_calc, name='nps'),
-    path('retirement/', views.retirement_calc, name='retirement'),
+    path('calculators/ppf', views.ppf_calc, name='ppf'),
+    path('calculators/nps', views.nps_calc, name='nps'),
+    path('calculators/retirement', views.retirement_calc, name='retirement'),
 
-    path('salary/', views.salary_calc, name='salary'),
-    path('pf/', views.pf_calc, name='pf'),
+    path('calculators/salary', views.salary_calc, name='salary'),
+    path('calculators/pf', views.pf_calc, name='pf'),
 
-    path('eligibility/', views.loan_eligibility, name='eligibility'),
+    path('calculators/loan-eligibility', views.loan_eligibility, name='eligibility'),
 
     path('blogs/', views.blog_list, name='blogs'),
     #path('blogs/<int:id>/', views.blog_detail, name='blog_detail'),
