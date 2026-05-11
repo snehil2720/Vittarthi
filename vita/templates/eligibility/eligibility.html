@@ -23,7 +23,35 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
-
+:root {
+  --ink:        #1a1208;
+  --ink-2:      #5a4a30;
+  --ink-3:      #9a8a70;
+  --paper:      #faf7f2;
+  --surface:    #ffffff;
+  --s2:         #f5f0e8;
+  --s3:         #ece4d4;
+  --amber:      #b45309;
+  --amber-2:    #d97706;
+  --amber-lt:   #fef3c7;
+  --amber-md:   #fde68a;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --blue:       #1b4fa6;
+  --blue-lt:    #e8effe;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(26,18,8,0.09);
+  --shadow:     0 4px 20px rgba(26,18,8,0.07);
+  --shadow-lg:  0 12px 48px rgba(26,18,8,0.11);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* Mobile drawer */
 .drawer {
   display:none; position:fixed;
@@ -287,96 +315,435 @@ td.green { color:var(--accent); font-weight:600; }
 .qf-val.alert { color:var(--gold); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,2rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--amber);background:var(--amber-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
-}
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
-}
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-}
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
-}
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
-}
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ═══ ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--amber-md) 0,var(--amber-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--amber);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--amber-lt);
+  position:relative;z-index:1;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. FOIR EXPLAINER — visual + editorial
+════════════════════════════════════ */
+.foir-sec{background:var(--paper);}
+.foir-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
+
+/* FOIR visual donut-style breakdown */
+.foir-visual{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.foir-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
+.foir-salary-label{
+  font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.5rem;
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.foir-salary-val{
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;font-weight:700;color:var(--amber);line-height:1;margin-bottom:1.25rem;
+}
+.foir-bars{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.25rem;}
+.foir-bar-row{display:flex;align-items:center;gap:.75rem;}
+.foir-bar-lbl{font-size:.73rem;color:var(--ink-2);width:130px;flex-shrink:0;line-height:1.3;}
+.foir-track{flex:1;background:var(--s2);border-radius:100px;height:12px;overflow:hidden;}
+.foir-fill{height:100%;border-radius:100px;}
+.foir-fill.existing{background:linear-gradient(90deg,var(--rose),#f87171);}
+.foir-fill.new-emi{background:linear-gradient(90deg,var(--amber),var(--amber-2));}
+.foir-fill.living{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.foir-bar-pct{font-size:.72rem;font-weight:600;width:35px;text-align:right;flex-shrink:0;}
+.foir-bracket{
+  background:var(--s2);border-radius:var(--r-sm);padding:.85rem 1rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:.75rem;
+}
+.foir-bracket-item{}
+.foir-bracket-label{font-size:.67rem;color:var(--ink-3);margin-bottom:3px;font-weight:500;}
+.foir-bracket-val{font-size:.85rem;font-weight:600;color:var(--ink);}
+.foir-bracket-val span{font-size:.7rem;font-weight:400;color:var(--ink-3);}
+
+/* Editorial */
+.foir-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.foir-content p:last-child{margin-bottom:0;}
+.foir-content strong{color:var(--ink);}
+.foir-rules{display:flex;flex-direction:column;gap:.75rem;margin:1.25rem 0;}
+.foir-rule{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:.9rem 1rem;
+  transition:border-color .2s;
+}
+.foir-rule:hover{border-color:var(--amber-md);}
+.foir-rule-icon{
+  width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:background .2s;
+}
+.foir-rule-icon.amber{background:var(--amber-lt);color:var(--amber);}
+.foir-rule-icon.green{background:var(--green-lt);color:var(--green);}
+.foir-rule:hover .foir-rule-icon{background:var(--amber-md);}
+.foir-rule-title{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.foir-rule-desc{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
+
+/* ════════════════════════════════════
+   3. CIBIL SCORE IMPACT
+════════════════════════════════════ */
+.cibil-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.cibil-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+
+/* Score range cards */
+.score-cards{display:flex;flex-direction:column;gap:.75rem;}
+.score-card{
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  border:1px solid var(--border);
+  display:flex;align-items:center;gap:1rem;
+  transition:transform .2s,box-shadow .2s;
+}
+.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.score-badge{
+  min-width:82px;text-align:center;border-radius:var(--r-sm);
+  padding:.45rem .5rem;flex-shrink:0;
+}
+.score-badge-range{font-size:.72rem;font-weight:700;}
+.score-badge-label{font-size:.6rem;font-weight:500;margin-top:1px;}
+.score-card.excellent{background:var(--green-lt);border-color:rgba(26,107,74,.2);}
+.score-card.excellent .score-badge{background:var(--green);color:#fff;}
+.score-card.good{background:var(--teal-lt);border-color:rgba(14,116,144,.2);}
+.score-card.good .score-badge{background:var(--teal);color:#fff;}
+.score-card.fair{background:var(--amber-lt);border-color:rgba(180,83,9,.2);}
+.score-card.fair .score-badge{background:var(--amber);color:#fff;}
+.score-card.poor{background:var(--rose-lt);border-color:rgba(160,54,58,.2);}
+.score-card.poor .score-badge{background:var(--rose);color:#fff;}
+.score-info{}
+.score-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.score-desc{font-size:.75rem;color:var(--ink-2);line-height:1.55;}
+
+/* Right side: how CIBIL is built */
+.cibil-build{display:flex;flex-direction:column;gap:.85rem;}
+.cibil-build-title{
+  font-size:.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.25rem;
+}
+.cibil-factor{
+  background:var(--s2);border-radius:var(--r-sm);border:1px solid var(--border);
+  padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
+}
+.cibil-factor:hover{border-color:var(--amber-md);background:var(--amber-lt);}
+.cibil-factor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
+.cibil-factor-name{font-size:.84rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.cibil-factor-name i{color:var(--amber);font-size:14px;}
+.cibil-factor-weight{
+  font-size:.68rem;font-weight:700;
+  background:var(--amber-lt);color:var(--amber);
+  padding:2px 8px;border-radius:100px;
+}
+.cibil-factor-bar{background:var(--s3);border-radius:100px;height:6px;overflow:hidden;margin-bottom:.4rem;}
+.cibil-factor-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--amber),var(--amber-2));}
+.cibil-factor-desc{font-size:.73rem;color:var(--ink-2);line-height:1.5;}
+
+/* ════════════════════════════════════
+   4. STRATEGIES TO BOOST ELIGIBILITY
+════════════════════════════════════ */
+.boost-sec{background:var(--paper);}
+.boost-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.boost-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  position:relative;overflow:hidden;
+  transition:transform .22s,box-shadow .22s;
+}
+.boost-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+}
+.boost-card:nth-child(1)::after{background:var(--green);}
+.boost-card:nth-child(2)::after{background:var(--blue);}
+.boost-card:nth-child(3)::after{background:var(--amber);}
+.boost-card:nth-child(4)::after{background:var(--teal);}
+.boost-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.boost-card:hover::after{transform:scaleX(1);}
+.boost-number{
+  font-family:'Playfair Display',serif;
+  font-size:2.5rem;font-weight:700;line-height:1;
+  margin-bottom:.85rem;opacity:.12;
+  position:absolute;top:1rem;right:1.25rem;
+}
+.boost-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:1rem;
+}
+.boost-card:nth-child(1) .boost-icon{background:var(--green-lt);color:var(--green);}
+.boost-card:nth-child(2) .boost-icon{background:var(--blue-lt);color:var(--blue);}
+.boost-card:nth-child(3) .boost-icon{background:var(--amber-lt);color:var(--amber);}
+.boost-card:nth-child(4) .boost-icon{background:var(--teal-lt);color:var(--teal);}
+.boost-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.boost-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+.boost-impact{
+  font-size:.7rem;font-weight:600;margin-top:.75rem;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:100px;
+}
+.boost-card:nth-child(1) .boost-impact{background:var(--green-lt);color:var(--green);}
+.boost-card:nth-child(2) .boost-impact{background:var(--blue-lt);color:var(--blue);}
+.boost-card:nth-child(3) .boost-impact{background:var(--amber-lt);color:var(--amber);}
+.boost-card:nth-child(4) .boost-impact{background:var(--teal-lt);color:var(--teal);}
+
+/* Co-applicant spotlight */
+.coapplicant-banner{
+  background:linear-gradient(135deg,var(--blue) 0%,#2260c4 100%);
+  border-radius:var(--r);padding:1.6rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1.25rem;
+  position:relative;overflow:hidden;
+}
+.coapplicant-banner::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:16px 16px;
+}
+.coapplicant-left{position:relative;z-index:1;}
+.coapplicant-tag{
+  font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
+  padding:3px 10px;border-radius:100px;margin-bottom:.6rem;display:inline-block;
+}
+.coapplicant-title{font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:.35rem;}
+.coapplicant-desc{font-size:.8rem;color:rgba(255,255,255,.78);line-height:1.6;max-width:420px;}
+.coapplicant-stat{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-sm);padding:.85rem 1.25rem;text-align:center;
+  position:relative;z-index:1;flex-shrink:0;
+}
+.coapplicant-stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;font-weight:700;color:#fff;line-height:1;
+}
+.coapplicant-stat-lbl{font-size:.7rem;color:rgba(255,255,255,.7);margin-top:3px;}
+
+/* ════════════════════════════════════
+   5. KEY STATS — numbers that matter
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--amber);
+  padding:clamp(2.5rem,5vw,1.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 35px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{
+  max-width:var(--max);margin:0 auto;
+  position:relative;z-index:1;
+}
+.stats-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.4rem,3vw,2rem);font-weight:700;
+  color:#fff;margin-bottom:2rem;text-align:center;
+}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;
+}
+.stat-box{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.35rem;
+}
+.stat-box-label{font-size:.75rem;color:rgba(255,255,255,.75);line-height:1.4;}
+
+/* ════════════════════════════════════
+   6. SALARY BRACKETS — FOIR table
+════════════════════════════════════ */
+.brackets-sec{background:var(--surface);border-top:1px solid var(--border);}
+.brackets-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.bracket-table-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
+}
+.bracket-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.bracket-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
+}
+.bracket-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.bracket-table tbody tr:last-child{border-bottom:none;}
+.bracket-table tbody tr:hover{background:var(--amber-lt);}
+.bracket-table td{padding:.8rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.bracket-table td:first-child{color:var(--ink);font-weight:500;}
+.bracket-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.72rem;font-weight:600;padding:2px 10px;border-radius:100px;
+}
+.bracket-pill.high  {background:var(--green-lt);color:var(--green);}
+.bracket-pill.mid   {background:var(--amber-lt);color:var(--amber);}
+.bracket-pill.low   {background:var(--rose-lt);color:var(--rose);}
+.bracket-result{font-weight:600;color:var(--ink);}
+
+/* Right: what reduces eligibility */
+.reduces-list{display:flex;flex-direction:column;gap:.75rem;}
+.reduces-item{
+  background:var(--s2);border:1px solid var(--border);border-left:4px solid;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;padding:1rem 1.1rem;
+  transition:background .2s;
+}
+.reduces-item:hover{background:var(--rose-lt);}
+.reduces-item:nth-child(1){border-left-color:var(--rose);}
+.reduces-item:nth-child(2){border-left-color:var(--amber);}
+.reduces-item:nth-child(3){border-left-color:var(--amber);}
+.reduces-item:nth-child(4){border-left-color:var(--ink-3);}
+.reduces-title{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;display:flex;align-items:center;gap:6px;}
+.reduces-title i{font-size:13px;}
+.reduces-desc{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
+
+/* ════════════════════════════════════
+   7. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.toggle{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.toggle{transform:rotate(45deg);color:var(--amber);}
+.faq-item.open .faq-q{color:var(--amber);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   8. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;
+  transition:all .22s;
+}
+.related-card:hover{background:var(--amber-lt);border-color:var(--amber-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--amber-lt);color:var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--amber-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   9. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(180,83,9,.35),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--amber);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .foir-grid,.cibil-grid,.brackets-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+  .boost-grid{grid-template-columns:1fr;}
+}
+@media(hover:none){
+  .boost-card:hover,.score-card:hover,.related-card:hover{transform:none;}
 }
 
 /* ═══════════ FOOTER ═══════════ */
@@ -637,35 +1004,495 @@ details[open] summary::after {
 
   </div>
 
-  <section class="seo-content">
-    <h2>Loan Eligibility Calculator – Know Before You Apply</h2>
-    <p>Applying for a loan without knowing your eligibility can lead to application rejections, which negatively impacts your CIBIL score. Our Loan Eligibility Calculator uses standard banking algorithms to tell you exactly how much Home Loan, Personal Loan, or Car Loan you qualify for based on your income and credit profile.</p>
-    
-    <h3>What is FOIR (Fixed Obligation to Income Ratio)?</h3>
-    <p>Banks do not allow you to spend your entire salary on loan EMIs. They use a metric called FOIR. Generally, banks assume that you need at least 40% to 50% of your income for living expenses.</p>
-    <ul class="seo-list">
-      <li>If your salary is below ₹50,000, banks usually cap total EMIs at <strong>50%</strong> of your income.</li>
-      <li>If your salary is higher, banks may allow up to <strong>60%</strong> of your income to go towards EMIs.</li>
-      <li>The calculator automatically deducts your <em>existing EMIs</em> from this limit to find your "New EMI Capacity".</li>
-    </ul>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">3 steps to know your borrowing power</h2>
+      <p class="sec-sub">Check your loan eligibility in seconds — before any bank runs a hard inquiry on your CIBIL report.</p>
+    </div>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Enter your income & obligations</div>
+        <div class="step-desc">Set your net monthly take-home salary and the total of all existing EMIs you are currently paying — home loan, car loan, credit card, anything.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Add your CIBIL score & rate</div>
+        <div class="step-desc">Enter your credit score and the expected interest rate for the loan type you need. Higher CIBIL scores unlock lower rates and higher approval amounts.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">See your max eligible loan</div>
+        <div class="step-desc">The calculator shows your maximum eligible loan amount, new EMI capacity, FOIR breakdown, and a tenure-wise eligibility comparison table.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <h3>How Does Credit Score Affect Eligibility?</h3>
-    <p>Your CIBIL score is a reflection of your past repayment behavior. It directly impacts both loan approval and the loan amount:</p>
-    <ul class="seo-list">
-      <li><strong>750 - 900 (Excellent):</strong> High chances of approval, maximum loan amount, and lowest interest rates.</li>
-      <li><strong>650 - 749 (Fair/Good):</strong> Moderate chances of approval. The bank might reduce the loan amount or charge a higher interest rate to cover the risk.</li>
-      <li><strong>Below 650 (Poor):</strong> High chance of rejection. It is advisable to improve your score by clearing outstanding credit card bills before applying for a new loan.</li>
-    </ul>
+<!-- ══════════════════════════════════════
+  SECTION 2 — FOIR EXPLAINER
+══════════════════════════════════════ -->
+<section class="sec foir-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-pie-chart"></i> The core concept</div>
+      <h2 class="sec-title">What is FOIR — and why it controls everything</h2>
+      <p class="sec-sub">FOIR (Fixed Obligation to Income Ratio) is the single most important metric banks use to decide how much loan you can get. Understanding it helps you plan strategically.</p>
+    </div>
+    <div class="foir-grid">
 
-    <h3>Tips to Increase Your Loan Eligibility</h3>
-    <p>If the calculator shows an eligible amount lower than what you need for your dream home or car, try these strategies:</p>
-    <ul class="seo-list">
-      <li><strong>Opt for a Longer Tenure:</strong> Increasing the loan duration from 15 years to 20 years reduces the monthly EMI, allowing the bank to sanction a larger principal amount.</li>
-      <li><strong>Add a Co-Applicant:</strong> Adding an earning spouse or parent as a co-applicant allows the bank to combine both incomes, significantly boosting the FOIR limit.</li>
-      <li><strong>Prepay Existing Debt:</strong> Foreclosing a small existing personal loan or clearing credit card EMIs frees up your monthly capacity for the new, larger loan.</li>
-    </ul>
+      <!-- Visual breakdown -->
+      <div class="foir-visual fu">
+        <div class="foir-visual-title"><i class="bi bi-bar-chart-fill" style="color:var(--amber);margin-right:6px;"></i> How your salary gets allocated — example</div>
+        <div class="foir-salary-label">Monthly Take-Home</div>
+        <div class="foir-salary-val">₹80,000</div>
+        <div class="foir-bars">
+          <div class="foir-bar-row">
+            <div class="foir-bar-lbl" style="color:var(--rose);">Existing EMIs</div>
+            <div class="foir-track"><div class="foir-fill existing" style="width:20%;"></div></div>
+            <div class="foir-bar-pct" style="color:var(--rose);">20%</div>
+          </div>
+          <div class="foir-bar-row">
+            <div class="foir-bar-lbl" style="color:var(--amber);">New EMI capacity</div>
+            <div class="foir-track"><div class="foir-fill new-emi" style="width:40%;"></div></div>
+            <div class="foir-bar-pct" style="color:var(--amber);">40%</div>
+          </div>
+          <div class="foir-bar-row">
+            <div class="foir-bar-lbl" style="color:var(--teal);">Living expenses</div>
+            <div class="foir-track"><div class="foir-fill living" style="width:40%;"></div></div>
+            <div class="foir-bar-pct" style="color:var(--teal);">40%</div>
+          </div>
+        </div>
+        <div class="foir-bracket">
+          <div class="foir-bracket-item">
+            <div class="foir-bracket-label">FOIR Cap Applied</div>
+            <div class="foir-bracket-val">60% <span>(salary ≥ ₹75K)</span></div>
+          </div>
+          <div class="foir-bracket-item">
+            <div class="foir-bracket-label">Existing EMIs</div>
+            <div class="foir-bracket-val">₹16,000 <span>(20%)</span></div>
+          </div>
+          <div class="foir-bracket-item">
+            <div class="foir-bracket-label">New EMI capacity</div>
+            <div class="foir-bracket-val" style="color:var(--amber);">₹32,000</div>
+          </div>
+          <div class="foir-bracket-item">
+            <div class="foir-bracket-label">Eligible loan @ 9% / 20 yr</div>
+            <div class="foir-bracket-val" style="color:var(--green);">≈ ₹35.5L</div>
+          </div>
+        </div>
+      </div>
 
-  </section>
+      <!-- Editorial -->
+      <div class="foir-content fu">
+        <p>Banks do not let you spend your entire salary on loan repayments. They use FOIR — the percentage of your gross income that goes toward all fixed financial obligations — to set a hard cap on how much you can borrow.</p>
+        <p>The key insight: <strong>your new loan eligibility is not based on how much you earn, but on how much of your income is still free after existing obligations.</strong></p>
+
+        <div class="foir-rules">
+          <div class="foir-rule">
+            <div class="foir-rule-icon amber"><i class="bi bi-currency-rupee"></i></div>
+            <div>
+              <div class="foir-rule-title">Salary below ₹50,000/month</div>
+              <div class="foir-rule-desc">Banks cap total EMIs at <strong>50%</strong> of net income. After subtracting existing EMIs, your new EMI capacity is the remainder up to that 50% ceiling.</div>
+            </div>
+          </div>
+          <div class="foir-rule">
+            <div class="foir-rule-icon green"><i class="bi bi-arrow-up-circle"></i></div>
+            <div>
+              <div class="foir-rule-title">Salary above ₹75,000/month</div>
+              <div class="foir-rule-desc">Higher income signals better financial resilience. Banks may allow up to <strong>60–65%</strong> FOIR, giving more room for a larger new loan EMI.</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:.83rem;color:var(--ink-3);background:var(--s2);padding:.8rem 1rem;border-radius:var(--r-sm);border-left:2px solid var(--amber);line-height:1.6;">
+          <strong style="color:var(--ink);">Practical example:</strong> If you earn ₹60,000/month and already pay ₹15,000 in car loan EMI, the bank will cap total EMIs at ₹30,000 (50% FOIR). Your new EMI can only be ₹15,000 — which at 8.5% over 20 years gives you an eligible home loan of approximately ₹15.5L, not ₹30L.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — CIBIL SCORE IMPACT
+══════════════════════════════════════ -->
+<section class="sec cibil-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-speedometer2"></i> Credit score</div>
+      <h2 class="sec-title">How your CIBIL score affects loan eligibility</h2>
+      <p class="sec-sub">Your CIBIL score doesn't just affect your interest rate — it directly determines whether the bank will lend to you at all, and how much.</p>
+    </div>
+    <div class="cibil-grid">
+
+      <!-- Score range cards -->
+      <div class="score-cards fu">
+        <div class="score-card excellent">
+          <div class="score-badge">
+            <div class="score-badge-range">750–900</div>
+            <div class="score-badge-label">Excellent</div>
+          </div>
+          <div class="score-info">
+            <div class="score-title">Best rates, maximum eligibility</div>
+            <div class="score-desc">Banks compete for your business. You get the lowest available interest rate, highest loan amount, and fastest approvals with minimal documentation.</div>
+          </div>
+        </div>
+        <div class="score-card good">
+          <div class="score-badge">
+            <div class="score-badge-range">700–749</div>
+            <div class="score-badge-label">Good</div>
+          </div>
+          <div class="score-info">
+            <div class="score-title">Approval likely, slightly higher rate</div>
+            <div class="score-desc">Most banks will approve, but you may be offered 1–2% higher rates or a lower loan amount than you requested. Negotiation is still possible with a good employer profile.</div>
+          </div>
+        </div>
+        <div class="score-card fair">
+          <div class="score-badge">
+            <div class="score-badge-range">650–699</div>
+            <div class="score-badge-label">Fair</div>
+          </div>
+          <div class="score-info">
+            <div class="score-title">Selective approval, higher rate</div>
+            <div class="score-desc">Prime banks may reject or offer significantly reduced amounts. NBFCs may approve at 18–26%. Improving your score by 50 points can save you lakhs in total interest.</div>
+          </div>
+        </div>
+        <div class="score-card poor">
+          <div class="score-badge">
+            <div class="score-badge-range">Below 650</div>
+            <div class="score-badge-label">Poor</div>
+          </div>
+          <div class="score-info">
+            <div class="score-title">High rejection risk — improve first</div>
+            <div class="score-desc">Most scheduled commercial banks will reject. Focus on clearing outstanding dues, reducing credit card utilization below 30%, and avoiding new applications for 6–12 months.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How CIBIL is built -->
+      <div class="fu">
+        <div class="cibil-build-title" style="margin-bottom:.85rem;">What builds your CIBIL score</div>
+        <div class="cibil-build">
+          <div class="cibil-factor">
+            <div class="cibil-factor-top">
+              <div class="cibil-factor-name"><i class="bi bi-clock-history"></i> Payment history</div>
+              <div class="cibil-factor-weight">35% weight</div>
+            </div>
+            <div class="cibil-factor-bar"><div class="cibil-factor-fill" style="width:35%;"></div></div>
+            <div class="cibil-factor-desc">Every missed or delayed EMI payment is recorded and weighs heavily. Even one missed payment can drop your score by 50–100 points.</div>
+          </div>
+          <div class="cibil-factor">
+            <div class="cibil-factor-top">
+              <div class="cibil-factor-name"><i class="bi bi-credit-card"></i> Credit utilization</div>
+              <div class="cibil-factor-weight">30% weight</div>
+            </div>
+            <div class="cibil-factor-bar"><div class="cibil-factor-fill" style="width:30%;"></div></div>
+            <div class="cibil-factor-desc">Using more than 30–35% of your total credit card limit is seen as credit dependency. Keeping utilization below 30% significantly improves your score.</div>
+          </div>
+          <div class="cibil-factor">
+            <div class="cibil-factor-top">
+              <div class="cibil-factor-name"><i class="bi bi-calendar-range"></i> Credit history length</div>
+              <div class="cibil-factor-weight">15% weight</div>
+            </div>
+            <div class="cibil-factor-bar"><div class="cibil-factor-fill" style="width:15%;"></div></div>
+            <div class="cibil-factor-desc">Older credit accounts with clean repayment history add to your score. Never close your oldest credit card — even if unused, it contributes to history length.</div>
+          </div>
+          <div class="cibil-factor">
+            <div class="cibil-factor-top">
+              <div class="cibil-factor-name"><i class="bi bi-grid-3x2"></i> Credit mix</div>
+              <div class="cibil-factor-weight">10% weight</div>
+            </div>
+            <div class="cibil-factor-bar"><div class="cibil-factor-fill" style="width:10%;"></div></div>
+            <div class="cibil-factor-desc">A mix of secured (home, car) and unsecured (personal loan, credit card) credit is viewed positively. Relying only on one type is seen as limited credit experience.</div>
+          </div>
+          <div class="cibil-factor">
+            <div class="cibil-factor-top">
+              <div class="cibil-factor-name"><i class="bi bi-search"></i> Recent hard inquiries</div>
+              <div class="cibil-factor-weight">10% weight</div>
+            </div>
+            <div class="cibil-factor-bar"><div class="cibil-factor-fill" style="width:10%;"></div></div>
+            <div class="cibil-factor-desc">Every loan application triggers a hard inquiry that reduces your score temporarily. Multiple inquiries within 30–45 days signal credit desperation to lenders.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — BOOST ELIGIBILITY STRATEGIES
+══════════════════════════════════════ -->
+<section class="sec boost-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-arrow-up-circle"></i> Action plan</div>
+      <h2 class="sec-title">How to increase your loan eligibility</h2>
+      <p class="sec-sub">If the calculator shows less than what you need, these proven strategies can meaningfully increase your eligible amount.</p>
+    </div>
+    <div class="boost-grid">
+      <div class="boost-card fu">
+        <div class="boost-number">1</div>
+        <div class="boost-icon"><i class="bi bi-x-circle"></i></div>
+        <div class="boost-title">Clear existing small EMIs first</div>
+        <div class="boost-desc">Foreclosing a personal loan or small consumer EMI frees up that monthly amount entirely from your FOIR calculation. Clearing a ₹10,000/month EMI can boost your home loan eligibility by ₹8–10 Lakhs at 8.5% over 20 years.</div>
+        <div class="boost-impact"><i class="bi bi-arrow-up"></i> Eligibility impact: Very High</div>
+      </div>
+      <div class="boost-card fu">
+        <div class="boost-number">2</div>
+        <div class="boost-icon"><i class="bi bi-people"></i></div>
+        <div class="boost-title">Add an earning co-applicant</div>
+        <div class="boost-desc">Adding a spouse or parent as co-applicant allows the bank to club both incomes. If your income is ₹60K and spouse earns ₹40K, the bank may treat combined income as ₹1L — potentially doubling your eligible loan amount and reducing the interest rate offered.</div>
+        <div class="boost-impact"><i class="bi bi-arrow-up"></i> Eligibility impact: Very High</div>
+      </div>
+      <div class="boost-card fu">
+        <div class="boost-number">3</div>
+        <div class="boost-icon"><i class="bi bi-calendar-plus"></i></div>
+        <div class="boost-title">Opt for a longer tenure</div>
+        <div class="boost-desc">Extending your home loan from 15 to 20 years reduces the required monthly EMI for the same principal — which means the bank can sanction a larger loan within your FOIR limit. Use the eligibility table in the calculator to see the exact difference across tenure options.</div>
+        <div class="boost-impact"><i class="bi bi-arrow-up"></i> Eligibility impact: High</div>
+      </div>
+      <div class="boost-card fu">
+        <div class="boost-number">4</div>
+        <div class="boost-icon"><i class="bi bi-graph-up"></i></div>
+        <div class="boost-title">Improve your CIBIL score first</div>
+        <div class="boost-desc">Improving your score from 690 to 750 can unlock a 1.5–2% lower interest rate. On a ₹40L home loan over 20 years, that difference saves ₹8–12 Lakhs in total interest and also increases the bank's willingness to sanction a higher principal.</div>
+        <div class="boost-impact"><i class="bi bi-arrow-up"></i> Eligibility impact: High</div>
+      </div>
+    </div>
+
+    <!-- Co-applicant banner -->
+    <div class="coapplicant-banner fu">
+      <div class="coapplicant-left">
+        <div class="coapplicant-tag"><i class="bi bi-people-fill"></i> Co-applicant advantage</div>
+        <div class="coapplicant-title">Club incomes — nearly double your eligible loan amount</div>
+        <div class="coapplicant-desc">Adding an earning spouse or parent as a co-applicant is one of the fastest ways to increase loan eligibility. Banks combine incomes for FOIR calculation — and the co-applicant's CIBIL score can also improve the overall credit profile presented to the lender.</div>
+      </div>
+      <div class="coapplicant-stat">
+        <div class="coapplicant-stat-num">2×</div>
+        <div class="coapplicant-stat-lbl">Potential eligibility<br>with joint income</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — KEY STATS
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-headline fu">Numbers every loan applicant should know</div>
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">50–60%</div>
+        <div class="stat-box-label">FOIR cap set by most Indian banks based on salary bracket</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">750+</div>
+        <div class="stat-box-label">CIBIL score for the best interest rates and maximum loan eligibility</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">5–10pts</div>
+        <div class="stat-box-label">CIBIL score drop per hard inquiry — apply only after checking eligibility</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">6–12 mo</div>
+        <div class="stat-box-label">Time to meaningfully improve a poor CIBIL score with consistent repayment</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — SALARY BRACKETS + WHAT REDUCES ELIGIBILITY
+══════════════════════════════════════ -->
+<section class="sec brackets-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-table"></i> Salary & FOIR reference</div>
+      <h2 class="sec-title">FOIR brackets & what reduces your eligibility</h2>
+      <p class="sec-sub">Know the rules banks apply — and the common mistakes that silently reduce how much you can borrow.</p>
+    </div>
+    <div class="brackets-grid">
+
+      <!-- FOIR bracket table -->
+      <div class="fu">
+        <div style="font-size:.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.75rem;">FOIR by salary bracket</div>
+        <div class="bracket-table-wrap">
+          <table class="bracket-table">
+            <thead>
+              <tr>
+                <th>Monthly Salary</th>
+                <th>Max FOIR</th>
+                <th>Max EMI allowed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Below ₹25,000</td>
+                <td><span class="bracket-pill low">40–45%</span></td>
+                <td class="bracket-result">₹10,000–₹11,250</td>
+              </tr>
+              <tr>
+                <td>₹25,000–₹50,000</td>
+                <td><span class="bracket-pill mid">50%</span></td>
+                <td class="bracket-result">₹12,500–₹25,000</td>
+              </tr>
+              <tr>
+                <td>₹50,000–₹75,000</td>
+                <td><span class="bracket-pill mid">55%</span></td>
+                <td class="bracket-result">₹27,500–₹41,250</td>
+              </tr>
+              <tr>
+                <td>₹75,000–₹1,50,000</td>
+                <td><span class="bracket-pill high">60%</span></td>
+                <td class="bracket-result">₹45,000–₹90,000</td>
+              </tr>
+              <tr>
+                <td>Above ₹1,50,000</td>
+                <td><span class="bracket-pill high">60–65%</span></td>
+                <td class="bracket-result">₹90,000+</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="font-size:.72rem;color:var(--ink-3);margin-top:.65rem;padding:.5rem .75rem;background:var(--s2);border-radius:var(--r-sm);">
+          ℹ️ These are indicative ranges. Actual FOIR applied varies by bank, loan type, and applicant profile. The calculator uses standard 50%/60% brackets by default.
+        </div>
+      </div>
+
+      <!-- What reduces eligibility -->
+      <div class="fu">
+        <div style="font-size:.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.75rem;">What silently reduces your loan eligibility</div>
+        <div class="reduces-list">
+          <div class="reduces-item">
+            <div class="reduces-title"><i class="bi bi-x-circle-fill" style="color:var(--rose);"></i> High existing EMI obligations</div>
+            <div class="reduces-desc">Every ₹1,000 in existing EMIs reduces your new EMI capacity by ₹1,000 — directly shrinking the principal the bank can approve. Clearing even one small loan before applying makes a measurable difference.</div>
+          </div>
+          <div class="reduces-item">
+            <div class="reduces-title"><i class="bi bi-exclamation-triangle-fill" style="color:var(--amber);"></i> Low or no credit history</div>
+            <div class="reduces-desc">First-time borrowers with no credit history ("NTC" — New to Credit) are seen as unpredictable by banks. Without a CIBIL score, you may be offered only smaller amounts at higher rates, or asked to apply with a co-applicant.</div>
+          </div>
+          <div class="reduces-item">
+            <div class="reduces-title"><i class="bi bi-exclamation-triangle-fill" style="color:var(--amber);"></i> Frequent job changes</div>
+            <div class="reduces-desc">Banks prefer applicants with 2+ years at the same employer, especially for home loans. Frequent job switching — even with higher income — signals income instability and can reduce the eligible loan amount or trigger additional scrutiny.</div>
+          </div>
+          <div class="reduces-item">
+            <div class="reduces-title"><i class="bi bi-dash-circle" style="color:var(--ink-3);"></i> Self-employment without clean ITR</div>
+            <div class="reduces-desc">Self-employed applicants must demonstrate stable, provable income through 2–3 years of ITR. Showing artificially low income in tax returns (to reduce tax) directly reduces loan eligibility — since banks base eligibility on declared, documented income.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Common questions about loan eligibility, FOIR, and CIBIL scores in India.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is this calculator accurate for home loans, personal loans, and car loans? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>Yes — the FOIR-based eligibility formula is the same across loan types. The primary variable is the interest rate and tenure, which differ by loan category. Set the interest rate and tenure that matches your loan type (e.g., 8.5%/20 yrs for home loan, 13%/5 yrs for personal loan, 9%/5 yrs for car loan) to get the most accurate estimate for your purpose.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Will checking my eligibility here affect my CIBIL score? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>No. This calculator does not access your CIBIL report and does not trigger any credit inquiry. You simply enter your CIBIL score manually. Only when you formally apply for a loan with a bank or lender does a "hard inquiry" occur, which can temporarily reduce your score by 5–10 points.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What counts as "existing EMIs" in the calculator? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>Include all fixed monthly obligations: home loan EMI, car loan EMI, personal loan EMI, education loan EMI, and any credit card minimum payment you typically roll over. Do not include utility bills, subscriptions, or voluntary investments like SIPs — these are not counted in FOIR by banks. Insurance premium EMIs may or may not be counted depending on the lender.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How does a co-applicant improve my loan eligibility? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>When you add a co-applicant, the bank calculates FOIR based on your combined net monthly income. If you earn ₹50,000 and your spouse earns ₹40,000, the bank treats total income as ₹90,000 — applying the higher FOIR bracket (60%) and calculating new EMI capacity on the combined figure. This can nearly double the eligible loan amount. The co-applicant's CIBIL score also factors in, so choose a co-applicant with a strong credit profile.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How quickly can I improve my CIBIL score? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>Score improvement is gradual — expect 6–12 months for meaningful change. The fastest actions: (1) Pay all overdue EMIs and credit card bills immediately — late payments stop accumulating. (2) Reduce credit card utilization below 30%. (3) Don't apply for any new credit for at least 6 months. (4) Dispute any errors in your CIBIL report (this can have an immediate effect if errors are corrected).</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What if the bank offers a lower loan than what the calculator shows? <i class="bi bi-plus-lg toggle"></i></div>
+        <div class="faq-a"><p>The calculator uses standard FOIR benchmarks. Individual banks may apply stricter criteria — lower FOIR caps for certain loan types, additional age-income matrix rules, or property-specific caps for home loans. If a bank offers less than expected: (1) Ask for the reason in writing. (2) Try a different lender. (3) Apply with a co-applicant. (4) Offer to clear an existing EMI before disbursement to improve your FOIR position.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Once you know your eligible amount, use these to plan your repayment and investments.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Plan repayments</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house-door"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Property finance</div></div>
+      </a>
+      <a href="/calculators/car-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-car-front"></i></div>
+        <div><div class="related-card-name">Car Loan</div><div class="related-card-sub">Auto finance</div></div>
+      </a>
+      <a href="/calculators/personal-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person"></i></div>
+        <div><div class="related-card-name">Personal Loan</div><div class="related-card-sub">Unsecured credit</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Know take-home</div></div>
+      </a>
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Grow savings</div></div>
+      </a>
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-piggy-bank"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Safe returns</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Know your number before the bank does</h2>
+    <p>Check your eligibility here, improve what you can — CIBIL, existing EMIs, co-applicant — then walk into the bank knowing exactly what to expect. No surprises, no hard inquiries wasted.</p>
+    <div class="final-btns">
+      <a href="#" class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i class="bi bi-arrow-up"></i> Back to Calculator</a>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -681,7 +1508,23 @@ function fmt(n) {
   if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
   return '₹' + Math.round(n);
 }
-
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* Eligibility Math Engine */
 function calcEligibility(salary, existing, score, rate, years) {
   // 1. Determine FOIR (Max percentage of income allowed for EMIs)

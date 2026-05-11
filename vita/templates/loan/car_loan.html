@@ -21,6 +21,34 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
+:root {
+  --ink:       #0d1520;
+  --ink-2:     #3d4f60;
+  --ink-3:     #7a8c9d;
+  --paper:     #f5f6f8;
+  --surface:   #ffffff;
+  --s2:        #eef0f4;
+  --s3:        #e2e5ea;
+  --blue:      #1b4fa6;
+  --blue-2:    #2260c4;
+  --blue-lt:   #e8effe;
+  --blue-md:   #c5d6f8;
+  --green:     #1a6b4a;
+  --green-lt:  #e6f2ec;
+  --gold:      #b8720a;
+  --gold-lt:   #fdf3e3;
+  --rose:      #a0363a;
+  --rose-lt:   #fdeaeb;
+  --teal:      #0e7490;
+  --teal-lt:   #e0f4f8;
+  --border:    rgba(13,21,32,0.09);
+  --shadow:    0 4px 20px rgba(13,21,32,0.07);
+  --shadow-lg: 0 12px 48px rgba(13,21,32,0.11);
+  --r:         14px;
+  --r-sm:      8px;
+  --pad:       clamp(1.25rem,5vw,2.5rem);
+  --max:       1200px;
+}
 
 /* Mobile drawer */
 .drawer {
@@ -299,98 +327,357 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+/* ═══ SHARED SECTION STYLES ═══ */
+.sec{padding:clamp(3rem,7vw,2.5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--blue);background:var(--blue-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+/* ═══ FADE ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);border-radius: 35px;}
+.steps-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2rem;position:relative;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--blue-md) 0,var(--blue-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;
+  box-shadow:0 0 0 8px var(--blue-lt);
+  position:relative;z-index:1;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. CAR vs HOME LOAN — comparison table
+════════════════════════════════════ */
+.compare-sec{background:var(--paper);}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.compare-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.compare-table thead th{
+  padding:.7rem 1rem;text-align:left;
+  font-size:.68rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);
+  border-bottom:1px solid var(--border);
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.compare-table thead th:first-child{border-radius:var(--r-sm) 0 0 0;}
+.compare-table thead th:last-child{border-radius:0 var(--r-sm) 0 0;}
+.compare-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.compare-table tbody tr:last-child{border-bottom:none;}
+.compare-table tbody tr:hover{background:var(--s2);}
+.compare-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:top;}
+.compare-table td:first-child{color:var(--ink);font-weight:500;}
+.compare-table td .good{color:var(--green);font-weight:600;}
+.compare-table td .bad {color:var(--rose);font-weight:600;}
+.compare-table td .mid {color:var(--gold);font-weight:600;}
+.compare-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+/* Depreciation visual */
+.depr-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);
+}
+.depr-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
+.depr-bar-group{display:flex;flex-direction:column;gap:.7rem;}
+.depr-row{display:flex;align-items:center;gap:.75rem;}
+.depr-year{font-size:.72rem;color:var(--ink-3);width:52px;flex-shrink:0;font-weight:500;}
+.depr-track{flex:1;background:var(--s2);border-radius:100px;height:10px;overflow:hidden;}
+.depr-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .6s ease;}
+.depr-val{font-size:.72rem;font-weight:600;color:var(--ink-2);width:42px;text-align:right;flex-shrink:0;}
+.depr-note{
+  margin-top:1rem;font-size:.72rem;color:var(--ink-3);
+  background:var(--s2);border-radius:var(--r-sm);padding:.55rem .8rem;
+  border-left:2px solid var(--rose);line-height:1.55;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   3. WHY USE — 4 benefit cards
+════════════════════════════════════ */
+.why-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
+.why-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  position:relative;overflow:hidden;
+  transition:transform .22s,box-shadow .22s;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.why-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.why-card:nth-child(1)::before{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.why-card:nth-child(2)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.why-card:nth-child(3)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.why-card:nth-child(4)::before{background:linear-gradient(90deg,var(--green),#34d399);}
+.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.why-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:1rem;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
-}
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
-}
+.why-card:nth-child(1) .why-icon{background:var(--blue-lt);color:var(--blue);}
+.why-card:nth-child(2) .why-icon{background:var(--teal-lt);color:var(--teal);}
+.why-card:nth-child(3) .why-icon{background:var(--gold-lt);color:var(--gold);}
+.why-card:nth-child(4) .why-icon{background:var(--green-lt);color:var(--green);}
+.why-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.why-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
 
+/* ════════════════════════════════════
+   4. EV BENEFITS — hero card
+════════════════════════════════════ */
+.ev-sec{background:var(--paper);}
+.ev-inner{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
+/* Left: editorial */
+.ev-content .label{color:var(--teal);background:var(--teal-lt);}
+.ev-highlight{
+  background:var(--teal);border-radius:var(--r);
+  padding:1.5rem;margin:1.25rem 0;
+  display:flex;align-items:center;gap:1rem;
+}
+.ev-highlight-num{
+  font-family:'Playfair Display',serif;
+  font-size:2.2rem;font-weight:700;color:#fff;line-height:1;flex-shrink:0;
+}
+.ev-highlight-text{font-size:.8rem;color:rgba(255,255,255,.85);line-height:1.6;}
+.ev-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:.9rem;}
+.ev-content p:last-child{margin-bottom:0;}
+/* Right: benefit cards */
+.ev-cards{display:flex;flex-direction:column;gap:.85rem;}
+.ev-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.1rem 1.2rem;
+  display:flex;gap:.85rem;align-items:flex-start;
+  transition:border-color .2s,background .2s;
+}
+.ev-card:hover{border-color:var(--teal);background:var(--teal-lt);}
+.ev-card-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--teal-lt);color:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;transition:background .2s;
+}
+.ev-card:hover .ev-card-icon{background:rgba(14,116,144,.2);}
+.ev-card-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.ev-card-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
+
+/* ════════════════════════════════════
+   5. KEY INSIGHTS — stats + tips
+════════════════════════════════════ */
+.insight-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.insight-list{display:flex;flex-direction:column;gap:.9rem;}
+.insight-item{
+  display:flex;gap:1rem;padding:1.1rem 1.25rem;
+  background:var(--s2);border-radius:var(--r-sm);
+  border:1px solid var(--border);
+  transition:border-color .2s,background .2s;
+}
+.insight-item:hover{border-color:var(--blue-md);background:var(--blue-lt);}
+.insight-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--blue-lt);color:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;transition:background .2s;
+}
+.insight-item:hover .insight-icon{background:var(--blue-md);}
+.insight-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;}
+.insight-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
+.insight-stats{display:flex;flex-direction:column;gap:1rem;}
+.istat{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem 1.4rem;
+  position:relative;overflow:hidden;
+}
+.istat::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:80px;height:80px;border-radius:50%;opacity:.08;
+}
+.istat.blue::after {background:var(--blue);}
+.istat.gold::after  {background:var(--gold);}
+.istat.rose::after  {background:var(--rose);}
+.istat-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem;}
+.istat-val{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;line-height:1;margin-bottom:.3rem;
+}
+.istat.blue .istat-val{color:var(--blue);}
+.istat.gold  .istat-val{color:var(--gold);}
+.istat.rose  .istat-val{color:var(--rose);}
+.istat-desc{font-size:.75rem;color:var(--ink-2);line-height:1.5;}
+
+/* ════════════════════════════════════
+   6. DEALER vs BANK — comparison cards
+════════════════════════════════════ */
+.dvb-sec{background:var(--paper);}
+.dvb-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.dvb-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  box-shadow:var(--shadow);
+}
+.dvb-card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;}
+.dvb-badge{
+  font-size:.7rem;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;padding:.25rem .75rem;
+  border-radius:100px;
+}
+.dvb-badge.dealer{background:var(--gold-lt);color:var(--gold);}
+.dvb-badge.bank{background:var(--blue-lt);color:var(--blue);}
+.dvb-card-title{font-size:.95rem;font-weight:600;color:var(--ink);}
+.dvb-list{display:flex;flex-direction:column;gap:.55rem;}
+.dvb-item{
+  display:flex;align-items:flex-start;gap:.6rem;
+  font-size:.78rem;color:var(--ink-2);line-height:1.55;
+}
+.dvb-item i{font-size:13px;flex-shrink:0;margin-top:1px;}
+.dvb-item i.pro{color:var(--green);}
+.dvb-item i.con{color:var(--rose);}
+/* verdict banner */
+.dvb-verdict{
+  background:var(--blue);border-radius:var(--r);
+  padding:1.1rem 1.4rem;
+  display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;
+}
+.dvb-verdict i{font-size:1.2rem;color:rgba(255,255,255,.7);flex-shrink:0;}
+.dvb-verdict-text{font-size:.82rem;color:rgba(255,255,255,.9);line-height:1.6;flex:1;}
+.dvb-verdict-text strong{color:#fff;}
+
+/* ════════════════════════════════════
+   7. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--surface);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s3);}
+.faq-q i{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i{transform:rotate(45deg);color:var(--blue);}
+.faq-item.open .faq-q{color:var(--blue);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   8. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--paper);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;
+  transition:all .22s;
+}
+.related-card:hover{background:var(--blue-lt);border-color:var(--blue-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--blue-lt);color:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;transition:background .22s;
+}
+.related-card:hover .related-card-icon{background:var(--blue-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   9. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(27,79,166,.4),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--blue);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .compare-grid,.ev-inner,.insight-grid{grid-template-columns:1fr;}
+  .dvb-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .insight-stats{flex-direction:row;flex-wrap:wrap;}
+  .istat{flex:1;min-width:140px;}
+  .related-grid{grid-template-columns:1fr 1fr;}
+}
+@media(hover:none){
+  .why-card:hover,.related-card:hover,.ev-card:hover,.insight-item:hover{transform:none;}
+}
 /* ═══════════ FOOTER ═══════════ */
 /* footer {
   text-align:center; padding:1.75rem var(--pad);
@@ -459,7 +746,6 @@ details[open] summary::after {
   .tip:hover, .metric:hover { transform:none; }
 }
 </style>
-</head>
 <body>
 
 <div class="page">
@@ -664,46 +950,437 @@ details[open] summary::after {
     </div>
 
   </div>
-
-  <section class="seo-content">
-    <h2>Car Loan EMI Calculator – Finance Your Next Ride Wisely</h2>
-    <p>Whether you are planning to buy a practical family SUV, a compact city hatchback, an eco-friendly EV, or even a performance two-wheeler like an Apache RTR 160 4V or a Royal Enfield Hunter, understanding your monthly financial commitment is crucial. Our Car Loan EMI calculator helps you plan your auto finance with precision.</p>
-    
-    <h3>How Auto Loans Differ from Other Loans</h3>
-    <p>Unlike home loans, which are meant for appreciating assets over 20-30 years, car loans are secured against depreciating assets. This means:</p>
-    <ul class="seo-list">
-      <li><strong>Shorter Tenures:</strong> Most banks offer auto loans for a maximum of 7 to 8 years.</li>
-      <li><strong>Higher Interest Rates:</strong> Car loan rates are generally 1% to 3% higher than home loan rates.</li>
-      <li><strong>Faster Depreciation:</strong> Since the car loses value every year, it is highly recommended to keep the loan tenure as short as possible to prevent owing more than the car is worth (negative equity).</li>
-    </ul>
-
-    <h3>Why Should You Use This Calculator?</h3>
-    <ul class="seo-list">
-      <li><strong>Negotiate Better:</strong> Dealerships often try to sell loans based on "affordable monthly payments" by silently extending the tenure. Knowing the math gives you the upper hand.</li>
-      <li><strong>Compare Bank Offers:</strong> Use the calculator to see the actual total interest difference between a 8.5% and a 9.2% rate from different banks.</li>
-      <li><strong>Plan Two-Wheeler Loans:</strong> This calculator scales perfectly for smaller amounts, making it ideal for superbike or premium commuter bike loans.</li>
-    </ul>
-
-    <h3>Special Benefits for Electric Vehicles (EVs)</h3>
-    <p>The government encourages the adoption of electric vehicles by offering tax incentives. Under Section 80EEB of the Income Tax Act, you can claim a deduction of up to ₹1.5 Lakh on the interest paid on an EV loan. Additionally, many banks offer a "Green Car Loan" with interest rates 0.20% to 0.50% lower than standard petrol/diesel car loans.</p>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>Should I take a loan from the dealer or my bank?</summary>
-        <div class="faq-content">Dealerships offer convenience, but banks where you hold a salary account often provide pre-approved loans with lower interest rates and zero processing fees. Always compare both.</div>
-      </details>
-      <details name="faq">
-        <summary>Does zero-depreciation insurance affect my loan?</summary>
-        <div class="faq-content">While insurance doesn't directly change your EMI, banks highly recommend (and sometimes mandate) a comprehensive zero-dep insurance policy for financed cars to protect their asset.</div>
-      </details>
-      <details name="faq">
-        <summary>What is a good CIBIL score for an auto loan?</summary>
-        <div class="faq-content">A CIBIL score of 750 and above is considered excellent and will help you secure the lowest possible interest rates from prime lenders.</div>
-      </details>
+<br>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">3 steps to your car loan clarity</h2>
+      <p class="sec-sub">From on-road price to monthly commitment — see the full cost of your vehicle in seconds.</p>
     </div>
-    <br>
-  </section>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Enter vehicle & loan details</div>
+        <div class="step-desc">Set the loan amount (on-road price minus down payment), the interest rate from your bank or NBFC, and the tenure you prefer.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">See your EMI & total cost</div>
+        <div class="step-desc">The calculator instantly shows your monthly EMI, total interest paid over the loan period, and a year-wise amortization breakdown.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Adjust & find your fit</div>
+        <div class="step-desc">Change tenure or down payment to find an EMI that fits your salary. Use the common loan presets to benchmark popular vehicle scenarios.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 2 — CAR LOAN vs HOME LOAN + DEPRECIATION
+══════════════════════════════════════ -->
+<section class="sec compare-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-arrow-left-right"></i> Auto loans explained</div>
+      <h2 class="sec-title">How car loans differ from other loans</h2>
+      <p class="sec-sub">Cars are depreciating assets — this changes how you should think about financing one compared to a home loan or personal loan.</p>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-wrap fu">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Car Loan</th>
+              <th>Home Loan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Asset type</td>
+              <td><span class="bad">Depreciating</span></td>
+              <td><span class="good">Appreciating</span></td>
+            </tr>
+            <tr>
+              <td>Max tenure</td>
+              <td><span class="mid">7–8 years</span></td>
+              <td><span class="good">Up to 30 years</span></td>
+            </tr>
+            <tr>
+              <td>Interest rate</td>
+              <td><span class="bad">8.5%–14%</span></td>
+              <td><span class="good">8%–10%</span></td>
+            </tr>
+            <tr>
+              <td>Tax benefit</td>
+              <td><span class="mid">Only for EVs</span></td>
+              <td><span class="good">80C + 24(b)</span></td>
+            </tr>
+            <tr>
+              <td>LTV ratio</td>
+              <td><span class="mid">Up to 90%</span></td>
+              <td><span class="mid">75–85%</span></td>
+            </tr>
+            <tr>
+              <td>Prepayment penalty</td>
+              <td><span class="bad">May apply</span></td>
+              <td><span class="good">Not on floating</span></td>
+            </tr>
+            <tr>
+              <td>Recommended tenure</td>
+              <td><span class="good">≤ 5 years</span></td>
+              <td><span class="mid">10–20 years</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="depr-card fu">
+        <div class="depr-title"><i class="bi bi-graph-down-arrow" style="color:var(--rose);margin-right:5px;"></i> How a car depreciates over time</div>
+        <div class="depr-bar-group">
+          <div class="depr-row">
+            <div class="depr-year">Year 0</div>
+            <div class="depr-track"><div class="depr-fill" style="width:100%;"></div></div>
+            <div class="depr-val">100%</div>
+          </div>
+          <div class="depr-row">
+            <div class="depr-year">Year 1</div>
+            <div class="depr-track"><div class="depr-fill" style="width:80%;"></div></div>
+            <div class="depr-val">80%</div>
+          </div>
+          <div class="depr-row">
+            <div class="depr-year">Year 2</div>
+            <div class="depr-track"><div class="depr-fill" style="width:70%;"></div></div>
+            <div class="depr-val">70%</div>
+          </div>
+          <div class="depr-row">
+            <div class="depr-year">Year 3</div>
+            <div class="depr-track"><div class="depr-fill" style="width:62%;"></div></div>
+            <div class="depr-val">62%</div>
+          </div>
+          <div class="depr-row">
+            <div class="depr-year">Year 5</div>
+            <div class="depr-track"><div class="depr-fill" style="width:50%;"></div></div>
+            <div class="depr-val">50%</div>
+          </div>
+          <div class="depr-row">
+            <div class="depr-year">Year 8</div>
+            <div class="depr-track"><div class="depr-fill" style="width:35%;"></div></div>
+            <div class="depr-val">35%</div>
+          </div>
+        </div>
+        <div class="depr-note">⚠️ A car bought for ₹10L can be worth just ₹3.5L after 8 years. If your loan tenure is 8 years, you may still owe more than the car is worth in the first 4–5 years — this is called <strong>negative equity</strong>. Keep tenure under 5 years to stay ahead of depreciation.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — WHY USE THIS CALCULATOR
+══════════════════════════════════════ -->
+<section class="sec why-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-stars"></i> Why this calculator</div>
+      <h2 class="sec-title">Why use a Car Loan Calculator?</h2>
+      <p class="sec-sub">Dealerships are skilled at making long-tenure loans feel affordable. Knowing your numbers before the showroom visit puts you in control.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-shield-exclamation"></i></div>
+        <div class="why-title">Don't fall for the EMI trap</div>
+        <div class="why-desc">Dealers often extend tenure to 7–8 years to show a lower EMI. Use this calculator to see that a 7-year loan at 9% costs ₹3L+ more in interest than a 5-year loan on the same amount.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-bank2"></i></div>
+        <div class="why-title">Compare bank vs dealer finance</div>
+        <div class="why-desc">Plug in rates from your bank (where you hold a salary account) and the dealer's DSA partner side by side to see the true interest cost difference over the full tenure.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-arrow-down-circle"></i></div>
+        <div class="why-title">Optimise your down payment</div>
+        <div class="why-desc">A 20–30% down payment reduces your principal, lowers interest, and keeps you ahead of depreciation. The slider shows exactly how much interest you save with each extra rupee down.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-bicycle"></i></div>
+        <div class="why-title">Works for two-wheelers too</div>
+        <div class="why-desc">The calculator scales perfectly for bike loans — whether a ₹80K commuter, a ₹1.8L Royal Enfield, or a ₹4L+ superbike. Just enter the loan amount and adjust the range.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — EV BENEFITS
+══════════════════════════════════════ -->
+<section class="sec ev-sec">
+  <div class="sec-inner">
+    <div class="ev-inner">
+      <div class="ev-content fu">
+        <div class="label" style="color:var(--teal);background:var(--teal-lt);"><i class="bi bi-lightning-charge-fill"></i> Electric vehicles</div>
+        <h2 class="sec-title">Special benefits for EV buyers</h2>
+        <p>The Indian government actively encourages electric vehicle adoption through financial incentives that make EV loans cheaper than conventional auto loans in the long run.</p>
+        <div class="ev-highlight">
+          <div class="ev-highlight-num">₹1.5L</div>
+          <div class="ev-highlight-text">Tax deduction on EV loan interest under <strong>Section 80EEB</strong> of the Income Tax Act — available to individual borrowers who purchase an EV on loan.</div>
+        </div>
+        <p>Many public sector banks and some private banks also offer a "Green Car Loan" rate that is 0.20%–0.50% lower than their standard car loan rate. On a ₹20L EV loan over 5 years, this can mean savings of ₹15,000–₹35,000 in interest alone.</p>
+        <p>Use the interest rate slider in the calculator above to compare your standard rate vs the green rate and see the exact savings.</p>
+      </div>
+      <div class="ev-cards fu">
+        <div class="ev-card">
+          <div class="ev-card-icon"><i class="bi bi-receipt-cutoff"></i></div>
+          <div>
+            <div class="ev-card-title">Section 80EEB — Interest deduction</div>
+            <div class="ev-card-desc">Claim up to ₹1.5 Lakh per year on EV loan interest paid. Valid for vehicles purchased on or after 1 April 2019 and loans sanctioned before 31 March 2023 (check current budget updates).</div>
+          </div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-card-icon"><i class="bi bi-percent"></i></div>
+          <div>
+            <div class="ev-card-title">Lower interest rates — Green Car Loans</div>
+            <div class="ev-card-desc">SBI, Bank of Baroda, and several banks offer dedicated green car loan schemes with preferential rates for EV purchases. Always compare these with standard loan quotes.</div>
+          </div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-card-icon"><i class="bi bi-fuel-pump"></i></div>
+          <div>
+            <div class="ev-card-title">Lower running cost savings</div>
+            <div class="ev-card-desc">While not part of EMI, EVs cost ₹1–2/km to run vs ₹7–10/km for petrol vehicles. Factor this saving when comparing the total ownership cost of an EV vs ICE vehicle.</div>
+          </div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-card-icon"><i class="bi bi-file-earmark-check"></i></div>
+          <div>
+            <div class="ev-card-title">State-level subsidies</div>
+            <div class="ev-card-desc">States like Maharashtra, Delhi, Gujarat, and Tamil Nadu offer additional purchase subsidies (₹5,000–₹1.5L) and road tax exemptions on EVs over and above central incentives.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — KEY INSIGHTS & STATS
+══════════════════════════════════════ -->
+<section class="sec insight-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Smart tips</div>
+      <h2 class="sec-title">Finance your car the smart way</h2>
+    </div>
+    <div class="insight-grid">
+      <div class="insight-list">
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-calendar-check"></i></div>
+          <div>
+            <div class="insight-title">Keep tenure under 5 years</div>
+            <div class="insight-desc">Cars lose 15–20% of value in Year 1 alone. A 7-year loan leaves you in negative equity territory for the first 4–5 years — where you owe more than the car is worth. A 4–5 year tenure keeps you ahead.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-arrow-down-up"></i></div>
+          <div>
+            <div class="insight-title">20% down payment is the floor</div>
+            <div class="insight-desc">Aim for at least 20% of the on-road price as down payment. This reduces principal, lowers total interest, improves approval odds, and cushions against negative equity in the first two years.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-graph-up"></i></div>
+          <div>
+            <div class="insight-title">Check CIBIL before applying</div>
+            <div class="insight-desc">A CIBIL score of 750+ gets you the best interest rates. Scores between 700–749 may attract 0.5%–1% higher rates. Check your score free on CIBIL's website before visiting any lender.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <div class="insight-title">Zero-dep insurance is worth it</div>
+            <div class="insight-desc">Banks financing vehicles highly recommend — and sometimes require — zero-depreciation insurance. While it increases insurance premium, it ensures full claim settlement without depreciation cuts on parts.</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-stats">
+        <div class="istat blue fu">
+          <div class="istat-label">Recommended max tenure</div>
+          <div class="istat-val">5 yrs</div>
+          <div class="istat-desc">Financial planners recommend keeping car loan tenure at or below 5 years to avoid being underwater on depreciation and to minimise total interest paid.</div>
+        </div>
+        <div class="istat gold fu">
+          <div class="istat-label">Interest rate range in India</div>
+          <div class="istat-val">8.5–14%</div>
+          <div class="istat-desc">Car loan rates vary widely by lender, vehicle type, CIBIL score, and whether it's new or used. Pre-owned vehicles typically attract 1–3% higher rates than new cars.</div>
+        </div>
+        <div class="istat rose fu">
+          <div class="istat-label">Depreciation in Year 1</div>
+          <div class="istat-val">15–20%</div>
+          <div class="istat-desc">A new car loses 15–20% of its value the moment you drive it out of the showroom. This is why a large enough down payment and shorter tenure are critical for car loans.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — DEALER vs BANK
+══════════════════════════════════════ -->
+<section class="sec dvb-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-balance-scale"></i> Making the right choice</div>
+      <h2 class="sec-title">Dealer finance vs bank loan</h2>
+      <p class="sec-sub">Where you get your car loan matters as much as the rate. Here's how to think about it.</p>
+    </div>
+    <div class="dvb-grid">
+      <div class="dvb-card fu">
+        <div class="dvb-card-head">
+          <span class="dvb-badge dealer">🏬 Dealer Finance</span>
+        </div>
+        <div class="dvb-card-title" style="margin-bottom:1rem;">Through showroom DSA / NBFC partner</div>
+        <div class="dvb-list">
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Faster processing — same-day approval in many cases</div>
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Less documentation — dealer coordinates with lender</div>
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Occasional 0% or subvention schemes on select models</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>Interest rates often 0.5%–2% higher than bank rates</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>Hidden processing fees, insurance bundling pressure</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>Dealer incentive may not align with your best interest</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>Prepayment charges more likely to apply</div>
+        </div>
+      </div>
+      <div class="dvb-card fu">
+        <div class="dvb-card-head">
+          <span class="dvb-badge bank">🏦 Your Bank / Direct Lender</span>
+        </div>
+        <div class="dvb-card-title" style="margin-bottom:1rem;">Salary account bank or NBFC applied directly</div>
+        <div class="dvb-list">
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Lower interest rates — especially with salary account relationship</div>
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Pre-approved offers often available — zero/low processing fee</div>
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>Transparent terms — easier to compare and negotiate</div>
+          <div class="dvb-item"><i class="bi bi-check-circle-fill pro"></i>No pressure to bundle insurance or add-ons</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>Slightly slower — may take 2–3 business days for approval</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>More documentation required upfront</div>
+          <div class="dvb-item"><i class="bi bi-x-circle-fill con"></i>May not offer manufacturer-linked subvention rates</div>
+        </div>
+      </div>
+    </div>
+    <div class="dvb-verdict fu">
+      <i class="bi bi-info-circle-fill"></i>
+      <div class="dvb-verdict-text"><strong>Our recommendation:</strong> Get a pre-approved offer from your salary account bank before visiting the showroom. Walk in knowing your rate and use it to negotiate with the dealer's finance partner. Even a 0.5% rate reduction on a ₹10L loan over 5 years saves you approximately ₹13,500 in total interest.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Common questions about car loan planning and auto finance in India.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Should I take a loan from the dealer or my bank? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Banks where you hold a salary account often provide pre-approved offers with lower interest rates and zero processing fees. Dealerships offer convenience but rates are typically 0.5%–2% higher. Always get a quote from your bank first, then use it to negotiate at the showroom.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is negative equity and how do I avoid it? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Negative equity is when you owe more on your car loan than the car is currently worth. Since cars depreciate 20% in Year 1 and about 10–15% each subsequent year, long tenure loans (7–8 years) often result in negative equity for the first 4–5 years. Avoid it by putting down at least 20% and keeping tenure at or below 5 years.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What CIBIL score is needed for the best car loan rate? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>A CIBIL score of 750 and above is considered excellent and will qualify you for the lowest available rates from prime lenders. Scores between 700–749 may attract 0.5%–1% higher rates. Below 650, you may face rejection from banks and be forced to rely on NBFCs with significantly higher rates.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I get a loan for a used/second-hand car? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Yes — most banks and NBFCs offer used car loans, but at rates 1%–3% higher than new car loans. The LTV (loan-to-value) ratio is also lower — typically 70–80% of the vehicle valuation rather than 85–90% for new cars. Vehicle age at the end of tenure usually cannot exceed 10–15 years depending on the lender.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Are there prepayment charges on car loans? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Unlike home loans (where floating rate prepayment is penalty-free), car loans — which are typically fixed rate — may carry prepayment charges of 1%–5% of the outstanding amount. This varies by lender and loan agreement. Always check the foreclosure terms before signing. Some lenders waive these after 12 months of repayment.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does zero-depreciation insurance affect my loan terms? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Insurance doesn't directly change your EMI, but banks financing vehicles highly recommend (and sometimes mandate) comprehensive zero-depreciation insurance to protect their collateral. While it increases your annual insurance premium by 20–30%, it ensures full claim settlement without deductions for part depreciation — which is worth it on financed vehicles.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Use these tools alongside the Car Loan Calculator for a complete financial picture.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Any loan type</div></div>
+      </a>
+      <a href="/calculators/eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Check capacity</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house-door"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Property finance</div></div>
+      </a>
+      <a href="/calculators/personal-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person"></i></div>
+        <div><div class="related-card-name">Personal Loan</div><div class="related-card-sub">Unsecured credit</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Take-home pay</div></div>
+      </a>
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Grow savings</div></div>
+      </a>
+      <a href="/calculators/retirement" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-clock-history"></i></div>
+        <div><div class="related-card-name">Retirement Planner</div><div class="related-card-sub">Future corpus</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Drive smart, finance smarter</h2>
+    <p>Use the calculator above to find the right EMI, compare tenure options, and understand the true cost of your car loan before you sign anything at the showroom.</p>
+    <div class="final-btns">
+      <a href="#" class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i class="bi bi-arrow-up"></i> Back to Calculator</a>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
+
 
 </div>
 
@@ -941,7 +1618,26 @@ window.addEventListener('DOMContentLoaded', () => {
   initCharts(); updateAll();
   window.addEventListener('resize', () => { if (window.innerWidth > 768 && drawerOpen) toggleDrawer(); });
 });
+/* FAQ toggle */
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+/* Scroll reveal */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 </script>
 </body>
-</html>
 {% endblock %}

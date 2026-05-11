@@ -21,6 +21,34 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
+:root {
+  --ink:       #130f1e;
+  --ink-2:     #4a4460;
+  --ink-3:     #8a84a0;
+  --paper:     #f7f5fb;
+  --surface:   #ffffff;
+  --s2:        #f0edf8;
+  --s3:        #e4dff0;
+  --purple:    #6d28d9;
+  --purple-2:  #7c3aed;
+  --purple-lt: #ede9fe;
+  --purple-md: #d8d0f8;
+  --green:     #1a6b4a;
+  --green-lt:  #e6f2ec;
+  --gold:      #b8720a;
+  --gold-lt:   #fdf3e3;
+  --rose:      #a0363a;
+  --rose-lt:   #fdeaeb;
+  --orange:    #c2410c;
+  --orange-lt: #fff1eb;
+  --border:    rgba(19,15,30,0.09);
+  --shadow:    0 4px 20px rgba(19,15,30,0.07);
+  --shadow-lg: 0 12px 48px rgba(19,15,30,0.11);
+  --r:         14px;
+  --r-sm:      8px;
+  --pad:       clamp(1.25rem,5vw,2.5rem);
+  --max:       1200px;
+}
 
 /* Mobile drawer */
 .drawer {
@@ -299,98 +327,457 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+/* ═══ SHARED ═══ */
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--purple);background:var(--purple-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--purple-md) 0,var(--purple-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--purple);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--purple-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. PERSONAL vs OTHER LOANS comparison
+════════════════════════════════════ */
+.compare-sec{background:var(--paper);}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.compare-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.compare-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.compare-table thead th{
+  padding:.7rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.compare-table thead th:first-child{border-radius:var(--r-sm) 0 0 0;}
+.compare-table thead th:last-child{border-radius:0 var(--r-sm) 0 0;}
+.compare-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.compare-table tbody tr:last-child{border-bottom:none;}
+.compare-table tbody tr:hover{background:var(--s2);}
+.compare-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:top;}
+.compare-table td:first-child{color:var(--ink);font-weight:500;}
+.good{color:var(--green);font-weight:600;}
+.bad {color:var(--rose);font-weight:600;}
+.mid {color:var(--gold);font-weight:600;}
+
+/* Use-case cards — right column */
+.usecase-stack{display:flex;flex-direction:column;gap:.85rem;}
+.usecase-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:flex-start;gap:.85rem;
+  transition:border-color .2s,background .2s;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.usecase-card:hover{border-color:var(--purple-md);background:var(--purple-lt);}
+.usecase-emoji{
+  width:38px;height:38px;border-radius:9px;
+  background:var(--purple-lt);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;transition:background .2s;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.usecase-card:hover .usecase-emoji{background:var(--purple-md);}
+.usecase-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.usecase-desc{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
+.usecase-rate{
+  font-size:.68rem;font-weight:600;color:var(--purple);
+  background:var(--purple-lt);padding:2px 8px;border-radius:100px;
+  margin-top:.4rem;display:inline-block;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   3. WHY USE — 4 benefit cards
+════════════════════════════════════ */
+.why-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
+.why-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  position:relative;overflow:hidden;
+  transition:transform .22s,box-shadow .22s;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.why-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.why-card:nth-child(1)::before{background:linear-gradient(90deg,var(--purple),#a78bfa);}
+.why-card:nth-child(2)::before{background:linear-gradient(90deg,var(--orange),#fb923c);}
+.why-card:nth-child(3)::before{background:linear-gradient(90deg,var(--green),#34d399);}
+.why-card:nth-child(4)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.why-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:1rem;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.why-card:nth-child(1) .why-icon{background:var(--purple-lt);color:var(--purple);}
+.why-card:nth-child(2) .why-icon{background:var(--orange-lt);color:var(--orange);}
+.why-card:nth-child(3) .why-icon{background:var(--green-lt);color:var(--green);}
+.why-card:nth-child(4) .why-icon{background:var(--gold-lt);color:var(--gold);}
+.why-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.why-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   4. CIBIL & FACTORS — split layout
+════════════════════════════════════ */
+.cibil-sec{background:var(--paper);}
+.cibil-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+
+/* CIBIL score meter */
+.cibil-meter-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.cibil-meter-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
+.cibil-ranges{display:flex;flex-direction:column;gap:.55rem;}
+.cibil-row{display:flex;align-items:center;gap:.85rem;}
+.cibil-range-label{font-size:.75rem;font-weight:600;color:var(--ink);width:90px;flex-shrink:0;}
+.cibil-track{flex:1;height:10px;border-radius:100px;overflow:hidden;background:var(--s2);}
+.cibil-fill{height:100%;border-radius:100px;}
+.cibil-desc{font-size:.7rem;color:var(--ink-3);width:110px;text-align:right;flex-shrink:0;}
+.cibil-note{
+  margin-top:1.25rem;background:var(--purple-lt);border-radius:var(--r-sm);
+  padding:.75rem 1rem;font-size:.75rem;color:var(--purple);
+  line-height:1.6;border-left:3px solid var(--purple);
 }
 
+/* Factors list */
+.factors-list{display:flex;flex-direction:column;gap:.85rem;}
+.factor-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:flex-start;gap:.85rem;
+  transition:border-color .2s,background .2s;
+}
+.factor-item:hover{border-color:var(--purple-md);background:var(--purple-lt);}
+.factor-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--purple-lt);color:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;transition:background .2s;
+}
+.factor-item:hover .factor-icon{background:var(--purple-md);}
+.factor-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.factor-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
+
+/* ════════════════════════════════════
+   5. DEBT CONSOLIDATION SPOTLIGHT
+════════════════════════════════════ */
+.debt-sec{
+  background:var(--purple);
+  padding:clamp(2.5rem,6vw,4rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.debt-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;pointer-events:none;
+}
+.debt-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1.1fr 1fr;
+  gap:clamp(2rem,4vw,4rem);align-items:center;
+  position:relative;z-index:1;
+}
+.debt-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.75);background:rgba(255,255,255,.15);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.debt-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:.85rem;
+}
+.debt-sub{font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.8;margin-bottom:1.25rem;}
+.debt-savings{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.debt-savings-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:#fff;line-height:1;flex-shrink:0;
+}
+.debt-savings-text{font-size:.78rem;color:rgba(255,255,255,.8);line-height:1.6;}
+
+/* Comparison visual */
+.debt-compare{display:flex;flex-direction:column;gap:1rem;}
+.debt-option{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+}
+.debt-option-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:.6rem;
+}
+.debt-option-name{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.9);}
+.debt-option-rate{
+  font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:100px;
+}
+.debt-option-rate.high{background:rgba(248,113,113,.25);color:#fca5a5;}
+.debt-option-rate.low {background:rgba(52,211,153,.25);color:#6ee7b7;}
+.debt-bar-track{background:rgba(255,255,255,.12);border-radius:100px;height:8px;overflow:hidden;}
+.debt-bar-fill{height:100%;border-radius:100px;}
+.debt-bar-fill.high{background:linear-gradient(90deg,#f87171,#fca5a5);}
+.debt-bar-fill.low {background:linear-gradient(90deg,#34d399,#6ee7b7);}
+.debt-option-meta{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.45rem;}
+.debt-arrow{
+  text-align:center;color:rgba(255,255,255,.5);
+  font-size:1.25rem;margin:-.25rem 0;
+}
+
+/* ════════════════════════════════════
+   6. KEY INSIGHTS — stats + tips
+════════════════════════════════════ */
+.insight-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.insight-list{display:flex;flex-direction:column;gap:.9rem;}
+.insight-item{
+  display:flex;gap:1rem;padding:1.1rem 1.25rem;
+  background:var(--s2);border-radius:var(--r-sm);border:1px solid var(--border);
+  transition:border-color .2s,background .2s;
+}
+.insight-item:hover{border-color:var(--purple-md);background:var(--purple-lt);}
+.insight-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--purple-lt);color:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.insight-item:hover .insight-icon{background:var(--purple-md);}
+.insight-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;}
+.insight-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
+.insight-stats{display:flex;flex-direction:column;gap:1rem;}
+.istat{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem 1.4rem;
+  position:relative;overflow:hidden;
+}
+.istat::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:80px;height:80px;border-radius:50%;opacity:.08;
+}
+.istat.purple::after{background:var(--purple);}
+.istat.rose::after  {background:var(--rose);}
+.istat.gold::after  {background:var(--gold);}
+.istat-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem;}
+.istat-val{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;line-height:1;margin-bottom:.3rem;
+}
+.istat.purple .istat-val{color:var(--purple);}
+.istat.rose   .istat-val{color:var(--rose);}
+.istat.gold   .istat-val{color:var(--gold);}
+.istat-desc{font-size:.75rem;color:var(--ink-2);line-height:1.5;}
+
+/* ════════════════════════════════════
+   7. WARNINGS / WATCH OUT
+════════════════════════════════════ */
+.warn-sec{background:var(--paper);}
+.warn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.25rem;}
+.warn-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  border-left:4px solid;
+  transition:transform .22s,box-shadow .22s;
+}
+.warn-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.warn-card.red   {border-left-color:var(--rose);}
+.warn-card.orange{border-left-color:var(--orange);}
+.warn-card.gold  {border-left-color:var(--gold);}
+.warn-icon{
+  width:38px;height:38px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;margin-bottom:.85rem;
+}
+.warn-card.red    .warn-icon{background:var(--rose-lt);color:var(--rose);}
+.warn-card.orange .warn-icon{background:var(--orange-lt);color:var(--orange);}
+.warn-card.gold   .warn-icon{background:var(--gold-lt);color:var(--gold);}
+.warn-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.warn-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* Bottom safe tip */
+.safe-tip{
+  background:var(--green-lt);border:1px solid rgba(26,107,74,.2);
+  border-radius:var(--r);padding:1.1rem 1.4rem;
+  display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;
+}
+.safe-tip i{color:var(--green);font-size:1.1rem;flex-shrink:0;}
+.safe-tip-text{font-size:.82rem;color:var(--green);line-height:1.6;flex:1;}
+.safe-tip-text strong{color:var(--green);}
+
+/* ════════════════════════════════════
+   8. TAX — limited but real
+════════════════════════════════════ */
+.tax-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.tax-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;}
+.tax-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  display:flex;flex-direction:column;gap:.65rem;
+  transition:transform .22s,box-shadow .22s;
+}
+.tax-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tax-badge{
+  display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;padding:.25rem .75rem;border-radius:100px;
+  align-self:flex-start;
+}
+.tax-badge.green {background:var(--green-lt);color:var(--green);}
+.tax-badge.gold  {background:var(--gold-lt);color:var(--gold);}
+.tax-badge.grey  {background:var(--s3);color:var(--ink-3);}
+.tax-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tax-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+.tax-note{
+  font-size:.7rem;color:var(--ink-3);background:var(--surface);
+  border-radius:var(--r-sm);padding:.5rem .75rem;
+  border-left:2px solid var(--border);line-height:1.5;
+}
+
+/* ════════════════════════════════════
+   9. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i{transform:rotate(45deg);color:var(--purple);}
+.faq-item.open .faq-q{color:var(--purple);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   10. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;
+  transition:all .22s;
+}
+.related-card:hover{background:var(--purple-lt);border-color:var(--purple-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--purple-lt);color:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--purple-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   11. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,1.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(109,40,217,.4),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--purple);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .compare-grid,.cibil-grid,.debt-inner,.insight-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .insight-stats{flex-direction:row;flex-wrap:wrap;}
+  .istat{flex:1;min-width:140px;}
+  .related-grid{grid-template-columns:1fr 1fr;}
+  .debt-inner{grid-template-columns:1fr;}
+}
+@media(hover:none){
+  .why-card:hover,.warn-card:hover,.tax-card:hover,.related-card:hover{transform:none;}
+}
 /* ═══════════ FOOTER ═══════════ */
 /* footer {
   text-align:center; padding:1.75rem var(--pad);
@@ -665,42 +1052,522 @@ details[open] summary::after {
 
   </div>
 
-  <section class="seo-content">
-    <h2>Personal Loan EMI Calculator – Smart Financial Planning</h2>
-    <p>A Personal Loan is an unsecured loan provided by financial institutions based on your credit history, income, and repayment capacity. Unlike home or car loans, you don't need to pledge any collateral (like a house or car) to get a personal loan. Because of this risk to the lender, the interest rates are generally higher.</p>
-    
-    <h3>Why Use a Personal Loan EMI Calculator?</h3>
-    <p>Taking a personal loan without proper planning can trap you in a cycle of debt. Our calculator helps you:</p>
-    <ul class="seo-list">
-      <li><strong>Assess Affordability:</strong> Find out exactly how much your monthly EMI will be before you apply.</li>
-      <li><strong>Save on Interest:</strong> By tweaking the tenure slider, you can see how reducing your loan by just 1 year saves you thousands of rupees in interest.</li>
-      <li><strong>Debt Consolidation:</strong> If you are paying 36% interest on credit card bills, check if an 11% personal loan EMI makes more financial sense to pay off that expensive debt.</li>
-    </ul>
-
-    <h3>Factors Affecting Your EMI and Interest Rate</h3>
-    <ul class="seo-list">
-      <li><strong>Credit Score (CIBIL):</strong> This is the most critical factor. A high score (750+) indicates you are a low-risk borrower, allowing you to negotiate lower interest rates.</li>
-      <li><strong>Employer Category:</strong> Banks categorize employers into tiers (Super A, A, B, C). Working for a top-tier MNC or PSU usually fetches better rates.</li>
-      <li><strong>Income & Existing Debt (FOIR):</strong> Fixed Obligation to Income Ratio determines how much of your current income is already going towards EMIs. Lenders prefer this to be below 50%.</li>
-    </ul>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>Can I pre-pay or foreclose my personal loan?</summary>
-        <div class="faq-content">Yes, but unlike home loans, most banks have a lock-in period (usually 6 to 12 months) before which you cannot foreclose. Even after that, they might charge a foreclosure penalty of 2% to 5% on the outstanding principal.</div>
-      </details>
-      <details name="faq">
-        <summary>Does applying for multiple personal loans affect my credit score?</summary>
-        <div class="faq-content">Yes. Every time you apply for a loan, the bank makes a "Hard Inquiry" into your credit report. Multiple inquiries in a short span signal credit hunger and will temporarily lower your CIBIL score.</div>
-      </details>
-      <details name="faq">
-        <summary>Are there any tax benefits on personal loans?</summary>
-        <div class="faq-content">Generally, no. However, if the personal loan is specifically used for home renovation, you can claim tax benefits under Section 24(b), or if used for business expansion, you can write off the interest as a business expense.</div>
-      </details>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">3 steps to plan your personal loan</h2>
+      <p class="sec-sub">No collateral, no asset valuation — just your numbers and a clear monthly commitment.</p>
     </div>
-    <br>
-  </section>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Enter loan amount & purpose</div>
+        <div class="step-desc">Set the amount you need — whether it's ₹50,000 for a medical emergency or ₹10L for a wedding. Use the common presets for instant benchmarks.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Adjust rate & tenure</div>
+        <div class="step-desc">Enter the rate your bank quoted (varies by CIBIL score). Adjust tenure from 1–7 years and watch total interest change in real time.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Compare & decide smartly</div>
+        <div class="step-desc">See your monthly EMI, total interest outgo, and amortization schedule. Find the tenure where EMI stays below 30–40% of your monthly income.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 2 — PERSONAL LOAN vs OTHER LOANS + USE CASES
+══════════════════════════════════════ -->
+<section class="sec compare-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-arrow-left-right"></i> Understanding personal loans</div>
+      <h2 class="sec-title">How personal loans compare to other credit</h2>
+      <p class="sec-sub">Personal loans fill the gap where secured loans don't apply — but the higher rate comes with real tradeoffs worth knowing.</p>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-wrap fu">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Personal Loan</th>
+              <th>Home / Car Loan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Collateral</td>
+              <td><span class="good">None required</span></td>
+              <td><span class="mid">Asset pledged</span></td>
+            </tr>
+            <tr>
+              <td>Interest rate</td>
+              <td><span class="bad">10.5%–30%</span></td>
+              <td><span class="good">8%–12%</span></td>
+            </tr>
+            <tr>
+              <td>Max tenure</td>
+              <td><span class="mid">Up to 7 years</span></td>
+              <td><span class="good">Up to 30 years</span></td>
+            </tr>
+            <tr>
+              <td>Approval speed</td>
+              <td><span class="good">1–3 days</span></td>
+              <td><span class="mid">1–3 weeks</span></td>
+            </tr>
+            <tr>
+              <td>Tax benefit</td>
+              <td><span class="bad">None (usually)</span></td>
+              <td><span class="good">80C + 24(b)</span></td>
+            </tr>
+            <tr>
+              <td>vs Credit Card</td>
+              <td><span class="good">10–30% rate</span></td>
+              <td><span class="bad">36–42% rate</span></td>
+            </tr>
+            <tr>
+              <td>Processing fee</td>
+              <td><span class="bad">1%–3% upfront</span></td>
+              <td><span class="mid">0.5%–1%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fu">
+        <div class="label" style="margin-bottom:.85rem;">Common use cases</div>
+        <div class="usecase-stack">
+          <div class="usecase-card">
+            <div class="usecase-emoji">💍</div>
+            <div>
+              <div class="usecase-title">Wedding expenses</div>
+              <div class="usecase-desc">Cover venue, catering, and other costs without liquidating savings or investments.</div>
+              <div class="usecase-rate">₹5L–₹15L · 3–5 yrs</div>
+            </div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-emoji">🏥</div>
+            <div>
+              <div class="usecase-title">Medical emergency</div>
+              <div class="usecase-desc">Quick disbursal (24–48 hrs) makes personal loans ideal for urgent hospital bills.</div>
+              <div class="usecase-rate">₹1L–₹10L · 1–3 yrs</div>
+            </div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-emoji">📉</div>
+            <div>
+              <div class="usecase-title">Debt consolidation</div>
+              <div class="usecase-desc">Replace 36% credit card debt with a 12% personal loan and save significantly.</div>
+              <div class="usecase-rate">₹2L–₹10L · 2–4 yrs</div>
+            </div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-emoji">🏠</div>
+            <div>
+              <div class="usecase-title">Home renovation</div>
+              <div class="usecase-desc">Faster and simpler than a top-up loan. May qualify for tax benefit under Sec 24(b).</div>
+              <div class="usecase-rate">₹3L–₹20L · 3–5 yrs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — WHY USE THIS CALCULATOR
+══════════════════════════════════════ -->
+<section class="sec why-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-stars"></i> Why this calculator</div>
+      <h2 class="sec-title">Why use a Personal Loan Calculator?</h2>
+      <p class="sec-sub">Personal loans are the easiest to get — and the easiest to overborrow on. Knowing your exact cost before applying keeps you in control.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-wallet2"></i></div>
+        <div class="why-title">Avoid overborrowing</div>
+        <div class="why-desc">Banks often offer more than you need. Use the calculator to borrow exactly what you require — each extra lakh at 13% over 5 years costs ₹34,000+ in interest.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-calendar2-x"></i></div>
+        <div class="why-title">Spot the tenure trap</div>
+        <div class="why-desc">Reducing your tenure by just 1 year on a ₹5L loan at 13% saves around ₹18,000 in total interest. The calculator makes this tradeoff instantly visible.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-credit-card-2-back"></i></div>
+        <div class="why-title">Beat credit card interest</div>
+        <div class="why-desc">If you're paying 36–42% on credit card rollover debt, a 12–14% personal loan for debt consolidation is almost always the smarter financial move.</div>
+      </div>
+      <div class="why-card fu">
+        <div class="why-icon"><i class="bi bi-bar-chart"></i></div>
+        <div class="why-title">Compare bank offers fairly</div>
+        <div class="why-desc">Banks advertise "starting from 10.5%" but your actual rate depends on CIBIL and employer category. Plug in different rates to see the exact total cost difference.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — CIBIL SCORE + FACTORS
+══════════════════════════════════════ -->
+<section class="sec cibil-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-person-check"></i> What drives your rate</div>
+      <h2 class="sec-title">Factors that affect your EMI & interest rate</h2>
+      <p class="sec-sub">Unlike home loans, personal loan rates are almost entirely risk-based. The same bank can offer you 10.5% or 22% depending on these factors.</p>
+    </div>
+    <div class="cibil-grid">
+      <div class="cibil-meter-card fu">
+        <div class="cibil-meter-title"><i class="bi bi-speedometer2" style="color:var(--purple);margin-right:6px;"></i> CIBIL Score vs Interest Rate you'll get</div>
+        <div class="cibil-ranges">
+          <div class="cibil-row">
+            <div class="cibil-range-label" style="color:var(--green);">800–900</div>
+            <div class="cibil-track"><div class="cibil-fill" style="width:95%;background:linear-gradient(90deg,#1a6b4a,#34d399);"></div></div>
+            <div class="cibil-desc" style="color:var(--green);">10.5%–12%</div>
+          </div>
+          <div class="cibil-row">
+            <div class="cibil-range-label" style="color:#3b82f6;">750–799</div>
+            <div class="cibil-track"><div class="cibil-fill" style="width:75%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div>
+            <div class="cibil-desc" style="color:#3b82f6;">12%–15%</div>
+          </div>
+          <div class="cibil-row">
+            <div class="cibil-range-label" style="color:var(--gold);">700–749</div>
+            <div class="cibil-track"><div class="cibil-fill" style="width:55%;background:linear-gradient(90deg,#b8720a,#fbbf24);"></div></div>
+            <div class="cibil-desc" style="color:var(--gold);">15%–20%</div>
+          </div>
+          <div class="cibil-row">
+            <div class="cibil-range-label" style="color:var(--orange);">650–699</div>
+            <div class="cibil-track"><div class="cibil-fill" style="width:35%;background:linear-gradient(90deg,#c2410c,#fb923c);"></div></div>
+            <div class="cibil-desc" style="color:var(--orange);">20%–26%</div>
+          </div>
+          <div class="cibil-row">
+            <div class="cibil-range-label" style="color:var(--rose);">Below 650</div>
+            <div class="cibil-track"><div class="cibil-fill" style="width:18%;background:linear-gradient(90deg,#a0363a,#f87171);"></div></div>
+            <div class="cibil-desc" style="color:var(--rose);">26%–30%+</div>
+          </div>
+        </div>
+        <div class="cibil-note">
+          <strong>Pro tip:</strong> Check your CIBIL score for free on the CIBIL website before applying. Every hard inquiry by a bank temporarily reduces your score by 5–10 points — so apply only when you are confident of approval.
+        </div>
+      </div>
+
+      <div class="factors-list fu">
+        <div class="factor-item">
+          <div class="factor-icon"><i class="bi bi-building"></i></div>
+          <div>
+            <div class="factor-title">Employer category (Super A / A / B / C)</div>
+            <div class="factor-desc">Banks classify employers into tiers. A Tier-1 MNC or PSU employee gets rates 2–4% lower than an employee of an unlisted SME — even with identical CIBIL scores.</div>
+          </div>
+        </div>
+        <div class="factor-item">
+          <div class="factor-icon"><i class="bi bi-calculator"></i></div>
+          <div>
+            <div class="factor-title">FOIR — Fixed Obligation to Income Ratio</div>
+            <div class="factor-desc">Banks calculate what percentage of your gross income goes toward existing EMIs. Most lenders cap this at 50–55%. If you're already at 40%, your personal loan eligibility shrinks significantly.</div>
+          </div>
+        </div>
+        <div class="factor-item">
+          <div class="factor-icon"><i class="bi bi-cash-coin"></i></div>
+          <div>
+            <div class="factor-title">Income level & stability</div>
+            <div class="factor-desc">Higher and more stable income means lower perceived risk. Salaried employees with 2+ years at the same employer get better rates than self-employed or job-hopping applicants.</div>
+          </div>
+        </div>
+        <div class="factor-item">
+          <div class="factor-icon"><i class="bi bi-clock-history"></i></div>
+          <div>
+            <div class="factor-title">Existing relationship with the bank</div>
+            <div class="factor-desc">If you hold a salary account at the bank, you often get pre-approved offers with rates 0.5%–1.5% lower than walk-in applicants, plus reduced documentation and faster disbursement.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — DEBT CONSOLIDATION SPOTLIGHT
+══════════════════════════════════════ -->
+<section class="debt-sec">
+  <div class="debt-inner">
+    <div class="fu">
+      <div class="debt-label"><i class="bi bi-lightning-charge-fill"></i> Smart money move</div>
+      <div class="debt-title">Use a personal loan to escape high-interest debt</div>
+      <div class="debt-sub">If you're carrying a credit card rollover balance at 36–42% per year, a personal loan at 12–14% is one of the most effective ways to reduce your interest burden immediately.</div>
+      <div class="debt-savings">
+        <div class="debt-savings-num">₹62K+</div>
+        <div class="debt-savings-text">Estimated interest saved by replacing ₹3L of credit card debt (36%) with a personal loan at 13% over 3 years. The EMI is similar — but you're building towards zero debt instead of revolving credit.</div>
+      </div>
+    </div>
+    <div class="debt-compare fu">
+      <div class="debt-option">
+        <div class="debt-option-head">
+          <div class="debt-option-name">💳 Credit Card Rollover (₹3L)</div>
+          <div class="debt-option-rate high">36% p.a.</div>
+        </div>
+        <div class="debt-bar-track"><div class="debt-bar-fill high" style="width:90%;"></div></div>
+        <div class="debt-option-meta">Total interest paid over 3 years ≈ ₹1,08,000+</div>
+      </div>
+      <div class="debt-arrow"><i class="bi bi-arrow-down-circle-fill" style="color:rgba(255,255,255,.4);font-size:1.5rem;"></i></div>
+      <div class="debt-option">
+        <div class="debt-option-head">
+          <div class="debt-option-name">💜 Personal Loan (₹3L)</div>
+          <div class="debt-option-rate low">13% p.a.</div>
+        </div>
+        <div class="debt-bar-track"><div class="debt-bar-fill low" style="width:33%;"></div></div>
+        <div class="debt-option-meta">Total interest paid over 3 years ≈ ₹62,000 · Save ₹46,000+</div>
+      </div>
+      <div style="background:rgba(255,255,255,.1);border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:.5rem;">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.6);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.8px;font-weight:600;">How to do it</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.82);line-height:1.65;">Take a personal loan → Pay off credit card balance in full → Cancel rollover → Repay loan at fixed EMI. Fixed EMI creates discipline; revolving credit does not.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — KEY INSIGHTS & STATS
+══════════════════════════════════════ -->
+<section class="sec insight-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Smart tips</div>
+      <h2 class="sec-title">Borrow smart, repay faster</h2>
+    </div>
+    <div class="insight-grid">
+      <div class="insight-list">
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-search"></i></div>
+          <div>
+            <div class="insight-title">Use soft inquiry tools to compare rates</div>
+            <div class="insight-desc">Platforms like BankBazaar and PaisaBazaar let you check pre-qualified offers without a hard CIBIL inquiry. Compare at least 3 lenders before applying formally to protect your score.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-lock"></i></div>
+          <div>
+            <div class="insight-title">Know the lock-in period</div>
+            <div class="insight-desc">Most personal loans have a 6–12 month lock-in before you can prepay. After that, foreclosure penalties of 2–5% may apply on the outstanding principal. Factor this in before signing.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-receipt"></i></div>
+          <div>
+            <div class="insight-title">Account for the true cost of the loan</div>
+            <div class="insight-desc">Add the processing fee (1–3% of loan amount, charged upfront), GST on fee, and any insurance premium bundled in. A 12% loan with 2% processing fee effectively costs more than a 13% loan with 0 fees.</div>
+          </div>
+        </div>
+        <div class="insight-item fu">
+          <div class="insight-icon"><i class="bi bi-arrow-repeat"></i></div>
+          <div>
+            <div class="insight-title">Don't apply multiple places simultaneously</div>
+            <div class="insight-desc">Each formal application triggers a hard inquiry that temporarily lowers your CIBIL score by 5–10 points. Multiple inquiries in 30 days can hurt your score enough to push you into a higher rate bracket.</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-stats">
+        <div class="istat purple fu">
+          <div class="istat-label">Personal loan interest rate range</div>
+          <div class="istat-val">10.5–30%</div>
+          <div class="istat-desc">The spread between the best and worst personal loan rates is enormous. A borrower with a 820 CIBIL at a top-tier employer can get 10.5%; a 680 CIBIL with an unknown employer may pay 26–30%.</div>
+        </div>
+        <div class="istat rose fu">
+          <div class="istat-label">Credit card debt cost vs personal loan</div>
+          <div class="istat-val">2–3x</div>
+          <div class="istat-desc">Credit card rollover interest (36–42%) is roughly 2–3x higher than a personal loan. If you're carrying any balance month-to-month, debt consolidation should be your first financial move.</div>
+        </div>
+        <div class="istat gold fu">
+          <div class="istat-label">Recommended max FOIR</div>
+          <div class="istat-val">40–50%</div>
+          <div class="istat-desc">Keep total EMI obligations below 40–50% of gross monthly income. If you're already at 35%, adding a large personal loan EMI may strain monthly cash flow significantly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — WATCH OUT / WARNINGS
+══════════════════════════════════════ -->
+<section class="sec warn-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label" style="color:var(--rose);background:var(--rose-lt);"><i class="bi bi-exclamation-triangle"></i> Before you sign</div>
+      <h2 class="sec-title">Common personal loan mistakes to avoid</h2>
+      <p class="sec-sub">Personal loans are easy to get but costly to mismanage. These are the three most common traps.</p>
+    </div>
+    <div class="warn-grid">
+      <div class="warn-card red fu">
+        <div class="warn-icon"><i class="bi bi-clock-history"></i></div>
+        <div class="warn-title">Choosing the longest tenure for lowest EMI</div>
+        <div class="warn-desc">A ₹5L loan at 13% for 7 years has an EMI of ₹8,954 but you pay ₹2.5L in total interest. The same loan for 3 years costs ₹16,843 EMI but only ₹1.06L in interest — saving ₹1.44L. Shorter is almost always better for personal loans.</div>
+      </div>
+      <div class="warn-card orange fu">
+        <div class="warn-icon"><i class="bi bi-shield-exclamation"></i></div>
+        <div class="warn-title">Ignoring processing fees and hidden charges</div>
+        <div class="warn-desc">A 1.5% processing fee on a ₹10L loan is ₹15,000 deducted upfront — before you receive the money. Add GST at 18% on the fee, plus possible insurance premiums bundled in. Always ask for the full disbursal amount in writing before signing.</div>
+      </div>
+      <div class="warn-card gold fu">
+        <div class="warn-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="warn-title">Taking a personal loan for discretionary spending</div>
+        <div class="warn-desc">Vacations, gadgets, and luxury purchases financed at 14–20% create financial stress with no underlying asset value. If you must borrow for non-essential items, at minimum ensure the EMI is below 15% of your take-home and you have a clear repayment plan.</div>
+      </div>
+    </div>
+    <div class="safe-tip fu">
+      <i class="bi bi-check-circle-fill"></i>
+      <div class="safe-tip-text"><strong>The golden rule:</strong> A personal loan makes sense when (1) the purpose is genuine and urgent, (2) the rate is lower than your alternatives (like credit card), and (3) the total EMI burden stays below 40% of your monthly income. If all three are true, proceed — but borrow only what you need.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — TAX BENEFITS (Limited)
+══════════════════════════════════════ -->
+<section class="sec tax-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-receipt-cutoff"></i> Tax angle</div>
+      <h2 class="sec-title">Are there tax benefits on personal loans?</h2>
+      <p class="sec-sub">Generally no — but there are important exceptions depending on how you use the loan amount.</p>
+    </div>
+    <div class="tax-grid">
+      <div class="tax-card fu">
+        <span class="tax-badge green">Section 24(b)</span>
+        <div class="tax-title">Home renovation or repair</div>
+        <div class="tax-desc">If the personal loan is specifically used for renovation or repair of a residential property, you can claim interest paid as a deduction under Section 24(b) — up to ₹30,000 per year for a self-occupied property.</div>
+        <div class="tax-note">Maintain clear records: loan sanction letter, bank statements, and contractor invoices showing the loan was used for home renovation.</div>
+      </div>
+      <div class="tax-card fu">
+        <span class="tax-badge gold">Business purpose</span>
+        <div class="tax-title">Business or professional use</div>
+        <div class="tax-desc">If the loan amount is used to fund a business or professional activity (buying equipment, funding inventory, expanding operations), the entire interest paid can be claimed as a business expense — effectively reducing your taxable income.</div>
+        <div class="tax-note">The end use of funds must be demonstrable. Mixing business and personal use funds makes this difficult to claim and may attract scrutiny.</div>
+      </div>
+      <div class="tax-card fu">
+        <span class="tax-badge grey">All other purposes</span>
+        <div class="tax-title">Personal, wedding, medical, travel</div>
+        <div class="tax-desc">No tax deduction is available for interest paid on personal loans taken for weddings, vacations, medical expenses (unless Section 80DDB applies), education (Section 80E covers only education loans from financial institutions), or general consumption.</div>
+        <div class="tax-note">This makes the effective cost of a personal loan for personal use equal to the stated interest rate with no tax offset — a key reason to prefer lower rates and shorter tenures.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Everything you need to know before taking a personal loan in India.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I pre-pay or foreclose my personal loan early? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Yes, but most lenders impose a lock-in period of 6–12 months during which prepayment is not allowed. After that, a foreclosure penalty of 2–5% of the outstanding principal is common. Always clarify this before signing — some banks and NBFCs waive it after 12–24 months of repayment.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does applying to multiple banks hurt my CIBIL score? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Yes. Every formal loan application triggers a "hard inquiry" on your credit report, which temporarily reduces your CIBIL score by 5–10 points. Multiple hard inquiries within 30–45 days signal credit desperation to lenders and can push you into a higher rate bracket or trigger rejection. Use soft inquiry / pre-qualification tools first to shortlist 1–2 lenders before applying formally.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How quickly can I get a personal loan disbursed? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>For salary account holders with pre-approved offers, disbursement can happen within hours. For fresh applicants with all documents in order, most banks take 1–3 working days. NBFCs and fintech lenders (Bajaj Finserv, KreditBee, MoneyTap etc.) often disburse within 24 hours but at higher rates — sometimes 18–30%.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is a personal loan better than using a credit card? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>For amounts above ₹50,000 that you cannot repay in the next 1–2 billing cycles, a personal loan is almost always better. Credit card rollover interest (36–42% p.a.) is 2–3x higher than personal loan rates. A personal loan also forces discipline with fixed EMIs — unlike revolving credit card debt which can compound indefinitely if you only pay the minimum due each month.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What happens if I miss an EMI payment? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Missing an EMI triggers a late payment penalty (usually 2–4% of the EMI amount), and the default is reported to CIBIL within 30 days. A single missed EMI can drop your credit score by 50–100 points. If you're unable to pay, contact your lender before the due date — many offer a one-time restructuring or moratorium for genuine hardship cases.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can a self-employed person get a personal loan? <i class="bi bi-plus-lg"></i></div>
+        <div class="faq-a"><p>Yes, but documentation requirements are stricter. Self-employed applicants typically need to provide 2 years of ITR, bank statements for 6–12 months, GST registration, and business vintage proof. Rates are generally 1–3% higher than for salaried applicants at the same CIBIL score due to perceived income instability.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Use these alongside the Personal Loan Calculator for a complete financial picture.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Any loan type</div></div>
+      </a>
+      <a href="/calculators/loan-eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Check capacity</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house-door"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Secured finance</div></div>
+      </a>
+      <a href="/calculators/car-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-car-front"></i></div>
+        <div><div class="related-card-name">Car Loan</div><div class="related-card-sub">Auto finance</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Know your take-home</div></div>
+      </a>
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Invest vs borrow</div></div>
+      </a>
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-piggy-bank"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Tax-free savings</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Plan your personal loan with confidence</h2>
+    <p>Use the calculator above to find the right EMI, understand your total interest cost, and borrow only what you truly need — before you walk into the bank or sign anything online.</p>
+    <div class="final-btns">
+      <a href="#" class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i class="bi bi-arrow-up"></i> Back to Calculator</a>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -709,6 +1576,25 @@ details[open] summary::after {
 </footer> -->
 
 <script>
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+/* Scroll reveal */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
