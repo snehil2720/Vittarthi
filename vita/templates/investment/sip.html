@@ -331,7 +331,7 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);}
 .sec-inner{max-width:var(--max);margin:0 auto;}
 .label{
   display:inline-flex;align-items:center;gap:6px;
@@ -381,7 +381,7 @@ td.gold { color:var(--gold); font-weight:600; }
 /* ════════════════════════════════════
    2. POWER OF COMPOUNDING — hero visual
 ════════════════════════════════════ */
-.compound-sec{background:var(--green-dk);padding:clamp(3rem,7vw,5rem) var(--pad);position:relative;overflow:hidden;border-radius: 20px;}
+.compound-sec{background:var(--green-dk);padding:clamp(3rem,7vw,5rem) var(--pad);position:relative;overflow:hidden;}
 .compound-sec::before{
   content:'';position:absolute;inset:0;
   background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
@@ -696,7 +696,6 @@ td.gold { color:var(--gold); font-weight:600; }
   background:var(--green);
   padding:clamp(2rem,5vw,3.5rem) var(--pad);
   position:relative;overflow:hidden;
-  border-radius: 20px;
 }
 .stats-sec::before{
   content:'';position:absolute;inset:0;
@@ -804,7 +803,6 @@ td.gold { color:var(--gold); font-weight:600; }
   background:var(--ink);
   padding:clamp(2rem,5vw,3.5rem) var(--pad);
   text-align:center;position:relative;overflow:hidden;
-  border-radius: 20px;
 }
 .final-note::before{
   content:'';position:absolute;inset:0;
@@ -836,21 +834,54 @@ td.gold { color:var(--gold); font-weight:600; }
 }
 .btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
 
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:900px){
-  .compound-inner,.vs-grid,.stepup-grid,.myth-grid,.elss-grid{grid-template-columns:1fr;}
+
+/* ═══════════ FOOTER ═══════════ */
+/* footer {
+  text-align:center; padding:1.75rem var(--pad);
+  color:var(--muted); font-size:.75rem;
+  border-top:1px solid var(--border); margin-top:3rem;
+} */
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.card { animation:fadeUp .45s ease both; }
+
+/* ════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+════════════════════════════════════════ */
+@media (max-width:1024px) {
+  .main-grid {
+    grid-template-columns:300px 1fr;
+    grid-template-areas:
+      "inputs charts"
+      "sidebar sidebar";
+  }
+  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .sidebar-col .card + .card { margin-top:0; }
+}
+
+@media (max-width:768px) {
+  :root { --nav-h:56px; }
+  .ham-btn     { display:flex; }
+  .nav-desktop { display:none; }
+  .main-grid {
+    grid-template-columns:1fr;
+    grid-template-areas: "inputs" "charts" "sidebar";
+  }
+  .sidebar-col { grid-template-columns:1fr 1fr; }
+  .metrics-row { grid-template-columns:repeat(3,1fr); }
+  .tips-grid   { grid-template-columns:repeat(2,1fr); }
+  .donut-wrap  { flex-direction:row; }
+    .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+    .compound-inner,.vs-grid,.stepup-grid,.myth-grid,.elss-grid{grid-template-columns:1fr;}
   .faq-grid{grid-template-columns:1fr;}
   .steps-grid::before{display:none;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-}
-@media(hover:none){
-  .why-card:hover,.goal-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
-  .myth-card:hover{transform:none;}
 }
 
 @media (max-width:580px) {
@@ -877,7 +908,24 @@ td.gold { color:var(--gold); font-weight:600; }
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .why-card:hover,.goal-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
+  .myth-card:hover{transform:none;}
 }
+/* @media(max-width:900px){
+  .compound-inner,.vs-grid,.stepup-grid,.myth-grid,.elss-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+} */
+/* @media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+} */
+/* @media(hover:none){
+  .why-card:hover,.goal-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
+  .myth-card:hover{transform:none;}
+} */
 </style>
 
 <body>
@@ -1080,7 +1128,7 @@ td.gold { color:var(--gold); font-weight:600; }
     </div>
 
   </div>
-<br>
+
 <section class="sec steps-sec">
   <div class="sec-inner">
     <div class="sec-hdr center fu">
@@ -1759,23 +1807,6 @@ td.gold { color:var(--gold); font-weight:600; }
 </footer> -->
 
 <script>
-/* helpers */
-function fmt(n) {
-  if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
-  if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
-  
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0
-  }).format(n);
-}
-function fmtS(n) {
-  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
-  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
-  if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
-  return '₹' + Math.round(n);
-}
 function toggleFaq(el) {
   const isOpen = el.classList.contains('open');
   document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
@@ -1793,6 +1824,24 @@ const obs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+/* helpers */
+function fmt(n) {
+  if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
+  if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
+  
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(n);
+}
+function fmtS(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
+  if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
+  return '₹' + Math.round(n);
+}
+
 /* SIP Math Engine (Updated to Effective CAGR) */
 function calcSIP(p, r, y) {
   // Use Effective Rate for CAGR matching
@@ -2090,4 +2139,5 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
+</html>
 {% endblock %} 
