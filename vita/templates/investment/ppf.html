@@ -22,7 +22,36 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
-
+:root {
+  --ink:        #0d1240;
+  --ink-2:      #3d4480;
+  --ink-3:      #7a80b8;
+  --paper:      #f4f5fb;
+  --surface:    #ffffff;
+  --s2:         #eef0f8;
+  --s3:         #e0e3f0;
+  --indigo:     #3730a3;
+  --indigo-2:   #4338ca;
+  --indigo-lt:  #eef2ff;
+  --indigo-md:  #c7d2fe;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b8720a;
+  --gold-lt:    #fdf3e3;
+  --gold-md:    #fde68a;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(13,18,64,0.09);
+  --shadow:     0 4px 20px rgba(13,18,64,0.07);
+  --shadow-lg:  0 12px 48px rgba(13,18,64,0.12);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* Mobile drawer */
 .drawer {
   display:none; position:fixed;
@@ -300,111 +329,503 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--indigo);background:var(--indigo-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* ════════════════════════════════════
+   1. HOW PPF WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--indigo-md) 0,var(--indigo-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--indigo);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--indigo-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. EEE HERO SECTION
+════════════════════════════════════ */
+.eee-sec{
+  background:var(--indigo);
+  padding:clamp(3rem,7vw,5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.eee-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.eee-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.eee-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.eee-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.eee-title em{font-style:italic;color:var(--gold-md);}
+.eee-sub{font-size:.9rem;color:rgba(255,255,255,.78);line-height:1.8;margin-bottom:1.5rem;}
+.eee-saving{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+}
+.eee-saving-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--gold-md);line-height:1;flex-shrink:0;
+}
+.eee-saving-text{font-size:.78rem;color:rgba(255,255,255,.8);line-height:1.6;}
+
+/* Three E cards */
+.eee-cards{display:flex;flex-direction:column;gap:.85rem;}
+.eee-card{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:background .2s;
+}
+.eee-card:hover{background:rgba(255,255,255,.18);}
+.eee-e{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--gold-md);
+  line-height:1;flex-shrink:0;width:28px;
+}
+.eee-card-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.3rem;}
+.eee-card-sub{font-size:.75rem;color:rgba(255,255,255,.72);line-height:1.6;}
+.eee-badge{
+  display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;background:rgba(253,230,138,.2);color:var(--gold-md);
+  padding:1px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   3. THE 5TH OF MONTH RULE
+════════════════════════════════════ */
+.fifth-sec{background:var(--paper);}
+.fifth-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
+.fifth-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.fifth-content strong{color:var(--ink);}
+.fifth-rule{
+  background:var(--indigo);border-radius:var(--r);padding:1.5rem;
+  margin-top:1.25rem;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.fifth-rule-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.fifth-rule-rows{display:flex;flex-direction:column;gap:.6rem;}
+.fifth-rule-row{
+  background:rgba(255,255,255,.1);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.fifth-rule-row-lbl{font-size:.78rem;color:rgba(255,255,255,.8);}
+.fifth-rule-row-val{font-size:.82rem;font-weight:600;}
+.fifth-rule-row-val.good{color:#6ee7b7;}
+.fifth-rule-row-val.bad {color:#fca5a5;}
+
+/* Visual calendar */
+.fifth-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.fifth-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.1rem;}
+.fifth-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1rem;}
+.cal-header{font-size:.62rem;font-weight:600;text-transform:uppercase;color:var(--ink-3);text-align:center;padding:.3rem 0;}
+.cal-day{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;color:var(--ink-2);border-radius:6px;
+  transition:background .15s;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.cal-day.highlight{background:var(--indigo);color:#fff;font-weight:700;}
+.cal-day.deadline{background:var(--rose);color:#fff;font-weight:700;}
+.cal-day.good-zone{background:var(--green-lt);color:var(--green);font-weight:600;}
+.cal-day.empty{opacity:0;}
+.cal-legend{display:flex;flex-direction:column;gap:.5rem;}
+.cal-legend-item{display:flex;align-items:center;gap:.6rem;font-size:.75rem;color:var(--ink-2);}
+.cal-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.fifth-saving-box{
+  background:var(--green-lt);border:1px solid var(--green-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;
+  font-size:.78rem;color:var(--green);line-height:1.6;
+  border-left:3px solid var(--green);
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.fifth-saving-box strong{color:var(--green);}
+
+/* ════════════════════════════════════
+   4. PPF vs OTHER INSTRUMENTS
+════════════════════════════════════ */
+.compare-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.compare-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.compare-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.compare-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
+}
+.compare-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.compare-table tbody tr:last-child{border-bottom:none;}
+.compare-table tbody tr:hover{background:var(--s2);}
+.compare-table tbody tr.ppf-row{background:var(--indigo-lt);}
+.compare-table tbody tr.ppf-row:hover{background:var(--indigo-lt);}
+.compare-table td{padding:.8rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.compare-table td:first-child{color:var(--ink);font-weight:600;}
+.compare-table tr.ppf-row td:first-child{color:var(--indigo);}
+.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
+.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:100px;}
+.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
+.pill-i{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--indigo-lt);color:var(--indigo);padding:2px 8px;border-radius:100px;}
+
+/* Who should use PPF */
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;}
+.who-card{
+  background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:flex-start;gap:.85rem;
+  transition:border-color .2s,background .2s;
+}
+.who-card:hover{border-color:var(--indigo-md);background:var(--indigo-lt);}
+.who-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.who-card:hover .who-icon{background:var(--indigo-md);}
+.who-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.who-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+/* ════════════════════════════════════
+   5. 15-YEAR EXTENSION POWER
+════════════════════════════════════ */
+.extension-sec{background:var(--paper);}
+.extension-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.ext-options{display:flex;flex-direction:column;gap:.85rem;}
+.ext-option{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  transition:border-color .2s,box-shadow .2s;
+}
+.ext-option:hover{border-color:var(--indigo-md);box-shadow:var(--shadow);}
+.ext-option-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;}
+.ext-option-title{font-size:.88rem;font-weight:600;color:var(--ink);}
+.ext-option-badge{
+  font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.4px;
+}
+.ext-option-badge.with{background:var(--green-lt);color:var(--green);}
+.ext-option-badge.without{background:var(--teal-lt);color:var(--teal);}
+.ext-option-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;margin-bottom:.75rem;}
+.ext-option-list{display:flex;flex-direction:column;gap:.35rem;}
+.ext-option-item{font-size:.75rem;color:var(--ink-2);display:flex;align-items:flex-start;gap:.5rem;}
+.ext-option-item i{color:var(--indigo);font-size:12px;margin-top:2px;flex-shrink:0;}
+
+/* Compounding waterfall */
+.ext-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.ext-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
+.ext-timeline{display:flex;flex-direction:column;gap:.85rem;position:relative;}
+.ext-timeline::before{
+  content:'';position:absolute;left:19px;top:8px;bottom:8px;
+  width:2px;background:var(--indigo-md);border-radius:2px;
+}
+.ext-milestone{display:flex;align-items:flex-start;gap:.85rem;position:relative;}
+.ext-dot{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--indigo);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;position:relative;z-index:1;
+  border:3px solid var(--paper);
+}
+.ext-milestone-body{}
+.ext-milestone-year{font-size:.72rem;font-weight:600;color:var(--indigo);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.25rem;}
+.ext-milestone-corpus{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:.25rem;}
+.ext-milestone-desc{font-size:.73rem;color:var(--ink-2);line-height:1.55;}
+.ext-milestone-desc strong{color:var(--ink);}
+.ext-assumption{
+  background:var(--s2);border-radius:var(--r-sm);padding:.65rem .85rem;
+  font-size:.71rem;color:var(--ink-3);margin-top:.5rem;line-height:1.55;
 }
 
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+/* ════════════════════════════════════
+   6. WITHDRAWAL & LOAN RULES
+════════════════════════════════════ */
+.rules-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.rule-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  display:flex;flex-direction:column;gap:.65rem;
+  transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
 }
-.card { animation:fadeUp .45s ease both; }
+.rule-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.rule-card:nth-child(1)::before{background:linear-gradient(90deg,var(--indigo),#818cf8);}
+.rule-card:nth-child(2)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.rule-card:nth-child(3)::before{background:linear-gradient(90deg,var(--rose),#f87171);}
+.rule-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.rule-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;
+}
+.rule-card:nth-child(1) .rule-icon{background:var(--indigo-lt);color:var(--indigo);}
+.rule-card:nth-child(2) .rule-icon{background:var(--teal-lt);color:var(--teal);}
+.rule-card:nth-child(3) .rule-icon{background:var(--rose-lt);color:var(--rose);}
+.rule-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.rule-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+.rule-highlight{
+  font-size:.75rem;font-weight:600;padding:.3rem .75rem;border-radius:100px;
+  align-self:flex-start;
+}
+.rule-card:nth-child(1) .rule-highlight{background:var(--indigo-lt);color:var(--indigo);}
+.rule-card:nth-child(2) .rule-highlight{background:var(--teal-lt);color:var(--teal);}
+.rule-card:nth-child(3) .rule-highlight{background:var(--rose-lt);color:var(--rose);}
+
+/* ════════════════════════════════════
+   7. KEY STATS STRIP
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--indigo);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
+}
+.stat-box-num span{color:var(--gold-md);}
+.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.72);line-height:1.4;}
+
+/* ════════════════════════════════════
+   8. PRO TIPS — 4 cards
+════════════════════════════════════ */
+.tips-sec{background:var(--paper);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.tip-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.tip-number{
+  font-family:'Playfair Display',serif;
+  font-size:2.5rem;font-weight:700;color:var(--indigo);
+  opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
+}
+.tip-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+  background:var(--indigo);
+}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tip-card:hover::after{transform:scaleX(1);}
+.tip-icon{
+  width:40px;height:40px;border-radius:9px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   9. ACCOUNT OPENING GUIDE
+════════════════════════════════════ */
+.open-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.open-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.open-list{display:flex;flex-direction:column;gap:.75rem;}
+.open-item{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
+}
+.open-item:hover{border-color:var(--indigo-md);background:var(--indigo-lt);}
+.open-item-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.open-item:hover .open-item-icon{background:var(--indigo-md);}
+.open-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.open-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+/* Documents / eligibility box */
+.open-docs{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
+.open-docs-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
+.docs-section{margin-bottom:1.1rem;}
+.docs-section:last-child{margin-bottom:0;}
+.docs-section-label{
+  font-size:.67rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.5rem;
+}
+.docs-list{display:flex;flex-direction:column;gap:.35rem;}
+.docs-item{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:.78rem;color:var(--ink-2);
+}
+.docs-item i{color:var(--indigo);font-size:12px;flex-shrink:0;}
+.docs-eligibility{
+  background:var(--indigo-lt);border:1px solid var(--indigo-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
+  font-size:.75rem;color:var(--indigo);line-height:1.6;
+}
+.docs-eligibility strong{color:var(--indigo);}
+
+/* ════════════════════════════════════
+   10. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--indigo);}
+.faq-item.open .faq-q{color:var(--indigo);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   11. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;
+  transition:all .22s;
+}
+.related-card:hover{background:var(--indigo-lt);border-color:var(--indigo-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--indigo-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   12. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(55,48,163,.45),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--indigo);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .eee-inner,.fifth-grid,.extension-grid,.open-grid{grid-template-columns:1fr;}
+  .rules-grid{grid-template-columns:1fr 1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .who-grid{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .rules-grid{grid-template-columns:1fr;}
+  .related-grid{grid-template-columns:1fr 1fr;}
+  .who-grid{grid-template-columns:1fr 1fr;}
+}
 
 /* ════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
@@ -458,6 +879,7 @@ details[open] summary::after {
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .rule-card:hover,.tip-card:hover,.related-card:hover,.who-card:hover{transform:none;}
 }
 </style>
 <body>
@@ -661,46 +1083,653 @@ details[open] summary::after {
     </div>
 
   </div>
-
-  <section class="seo-content">
-    <h2>PPF Calculator – Master Tax-Free Wealth Creation</h2>
-    <p>The Public Provident Fund (PPF) is one of the most popular and safest long-term investment avenues in India. Backed by the Government of India, it guarantees returns and comes with the highly coveted EEE (Exempt-Exempt-Exempt) tax status. Our PPF Calculator helps you visualize how your yearly deposits compound over decades to build a massive, completely tax-free corpus.</p>
-    
-    <h3>What is the EEE Tax Benefit?</h3>
-    <p>PPF is a tax-saver's paradise. EEE stands for:</p>
-    <ul class="seo-list">
-      <li><strong>Exempt (Investment):</strong> The amount you invest every year (up to ₹1.5 Lakh) qualifies for deduction under Section 80C.</li>
-      <li><strong>Exempt (Interest):</strong> The interest you earn every year is completely free from income tax.</li>
-      <li><strong>Exempt (Maturity):</strong> When you finally withdraw the money after 15 years, the entire maturity amount is completely tax-free. No Capital Gains Tax!</li>
-    </ul>
-
-    <h3>How PPF Interest is Calculated</h3>
-    <p>While interest on PPF is credited to your account annually on March 31st, it is actually calculated on a monthly basis. The interest is calculated on the lowest balance in your account between the close of the <strong>5th day and the end of the month</strong>. Therefore, if you are making yearly deposits, always try to deposit the amount between April 1st and April 5th to maximize your interest earnings for the entire financial year.</p>
-
-    <h3>Rules for PPF Account Extension</h3>
-    <p>The standard lock-in period for a PPF account is 15 years. However, the real magic of compounding happens if you don't withdraw the money immediately. You can extend your PPF account indefinitely in blocks of 5 years. You have two options when extending:</p>
-    <ul class="seo-list">
-      <li><strong>Extension with contribution:</strong> You continue to deposit fresh money every year and earn interest on the total balance.</li>
-      <li><strong>Extension without contribution:</strong> You stop putting in new money, but your existing corpus continues to earn interest.</li>
-    </ul>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>Can I withdraw money from PPF before 15 years?</summary>
-        <div class="faq-content">Yes, partial withdrawals are allowed from the 7th financial year onwards. You can withdraw up to 50% of the balance that stood at the end of the 4th year preceding the year of withdrawal.</div>
-      </details>
-      <details name="faq">
-        <summary>Can I take a loan against my PPF account?</summary>
-        <div class="faq-content">Yes, you can avail a loan against your PPF balance between the 3rd and 6th financial year of opening the account. The interest rate charged on the loan will be 1% higher than the prevailing PPF interest rate.</div>
-      </details>
-      <details name="faq">
-        <summary>What happens if I miss a yearly payment?</summary>
-        <div class="faq-content">You must deposit a minimum of ₹500 every financial year to keep the account active. If you fail to do so, the account becomes inactive. You can revive it by paying a penalty of ₹50 for every defaulted year, along with the minimum deposit amount.</div>
-      </details>
+<br>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">How PPF builds tax-free wealth</h2>
+      <p class="sec-sub">A government-backed, zero-risk account that gives you guaranteed returns, a tax deduction every year, and a completely tax-free corpus at maturity. No other instrument in India offers all three.</p>
     </div>
-    <br>
-  </section>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Open your PPF account</div>
+        <div class="step-desc">Open at any post office, SBI branch, or major nationalised bank. Also available fully online through banks like SBI, PNB, BOB, and HDFC. Minimum ₹500/year to keep active.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Deposit before the 5th each month</div>
+        <div class="step-desc">Interest is calculated on the lowest balance between the 5th and end of the month. Depositing before the 5th ensures you earn interest for the entire month — a critical rule most investors miss.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Let EEE compounding work</div>
+        <div class="step-desc">Interest is compounded annually and added to your principal every March 31st. Since the interest is tax-free and reinvested, every rupee of interest earns more interest — tax-free — year after year.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 2 — EEE TRIPLE EXEMPTION
+══════════════════════════════════════ -->
+<section class="eee-sec">
+  <div class="eee-inner">
+    <div class="fu">
+      <div class="eee-label"><i class="bi bi-shield-fill-check"></i> India's only EEE instrument</div>
+      <div class="eee-title">Triple tax-free:<br>the <em>unmatched advantage</em> of PPF</div>
+      <div class="eee-sub">PPF is one of the very few investments in India that enjoys EEE — Exempt at investment, Exempt on interest, Exempt at maturity. No other government-backed instrument matches this across all three stages.</div>
+      <div class="eee-saving">
+        <div class="eee-saving-num">₹46,800</div>
+        <div class="eee-saving-text">Maximum annual tax saving for a 30% tax bracket investor who invests the full ₹1.5L per year in PPF under the old tax regime (includes 4% health & education cess).</div>
+      </div>
+    </div>
+    <div class="eee-cards fu">
+      <div class="eee-card">
+        <div class="eee-e">E</div>
+        <div>
+          <div class="eee-card-title">Exempt — Investment <span class="eee-badge">Section 80C</span></div>
+          <div class="eee-card-sub">Up to ₹1.5 Lakh invested per year is fully deductible from taxable income under Section 80C. A 30% slab investor saves ₹46,800 annually just from this deduction — before even counting tax-free interest.</div>
+        </div>
+      </div>
+      <div class="eee-card">
+        <div class="eee-e">E</div>
+        <div>
+          <div class="eee-card-title">Exempt — Interest earned</div>
+          <div class="eee-card-sub">Every rupee of interest your PPF earns each year is completely free from income tax — unlike FD interest (taxed as income) or debt fund gains. The current rate of 7.1% p.a. is effectively higher for taxpayers since there's zero tax drag on returns.</div>
+        </div>
+      </div>
+      <div class="eee-card">
+        <div class="eee-e">E</div>
+        <div>
+          <div class="eee-card-title">Exempt — Maturity amount</div>
+          <div class="eee-card-sub">When your PPF matures (after 15 years or extended blocks), the entire corpus — principal plus all accumulated interest — is withdrawn tax-free. No Capital Gains Tax. No TDS. Zero taxation at any point on the way out.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — THE 5TH OF MONTH RULE
+══════════════════════════════════════ -->
+<section class="sec fifth-sec">
+  <div class="sec-inner">
+    <div class="fifth-grid">
+      <div class="fifth-content fu">
+        <div class="label"><i class="bi bi-calendar-event"></i> The rule most people miss</div>
+        <h2 class="sec-title">The 5th of the month rule — worth thousands</h2>
+        <p>PPF interest is calculated on the <strong>lowest balance between the close of the 5th day and end of each month</strong>. This one rule — buried in the fine print — can cost you a full month's interest if you deposit after the 5th.</p>
+        <p>If you deposit ₹1.5L on April 10th instead of April 4th, you lose interest on ₹1.5L for the entire month of April. At 7.1% p.a., that's approximately <strong>₹888 lost in a single month</strong> — just from poor deposit timing.</p>
+        <p>Over a 15-year period, consistent late deposits (after the 5th each month) can reduce your final corpus by ₹15,000–₹20,000 compared to early deposits. This is one of the most impactful — and most overlooked — PPF optimizations.</p>
+        <div class="fifth-rule">
+          <div class="fifth-rule-title"><i class="bi bi-calendar-check"></i> Impact of deposit timing</div>
+          <div class="fifth-rule-rows">
+            <div class="fifth-rule-row">
+              <div class="fifth-rule-row-lbl">Deposit ₹1.5L before 5th April</div>
+              <div class="fifth-rule-row-val good">12 months interest ✓</div>
+            </div>
+            <div class="fifth-rule-row">
+              <div class="fifth-rule-row-lbl">Deposit ₹1.5L on 6th April</div>
+              <div class="fifth-rule-row-val bad">11 months interest ✗</div>
+            </div>
+            <div class="fifth-rule-row">
+              <div class="fifth-rule-row-lbl">Interest lost per late year</div>
+              <div class="fifth-rule-row-val bad">≈ ₹888 @ 7.1%</div>
+            </div>
+            <div class="fifth-rule-row">
+              <div class="fifth-rule-row-lbl">Total loss over 15 years</div>
+              <div class="fifth-rule-row-val bad">₹13,000–₹20,000+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar visual -->
+      <div class="fifth-visual fu">
+        <div class="fifth-visual-title"><i class="bi bi-calendar3" style="color:var(--indigo);margin-right:6px;"></i> April — optimal deposit window</div>
+        <div class="fifth-calendar">
+          <div class="cal-header">Mo</div>
+          <div class="cal-header">Tu</div>
+          <div class="cal-header">We</div>
+          <div class="cal-header">Th</div>
+          <div class="cal-header">Fr</div>
+          <div class="cal-header">Sa</div>
+          <div class="cal-header">Su</div>
+          <!-- Week 1: April starts on Tuesday -->
+          <div class="cal-day empty"></div>
+          <div class="cal-day good-zone">1</div>
+          <div class="cal-day good-zone">2</div>
+          <div class="cal-day good-zone">3</div>
+          <div class="cal-day good-zone">4</div>
+          <div class="cal-day highlight">5</div>
+          <div class="cal-day">6</div>
+          <!-- Week 2 -->
+          <div class="cal-day">7</div>
+          <div class="cal-day">8</div>
+          <div class="cal-day">9</div>
+          <div class="cal-day deadline">10</div>
+          <div class="cal-day">11</div>
+          <div class="cal-day">12</div>
+          <div class="cal-day">13</div>
+          <!-- Week 3 -->
+          <div class="cal-day">14</div>
+          <div class="cal-day">15</div>
+          <div class="cal-day">16</div>
+          <div class="cal-day">17</div>
+          <div class="cal-day">18</div>
+          <div class="cal-day">19</div>
+          <div class="cal-day">20</div>
+          <!-- Week 4 -->
+          <div class="cal-day">21</div>
+          <div class="cal-day">22</div>
+          <div class="cal-day">23</div>
+          <div class="cal-day">24</div>
+          <div class="cal-day">25</div>
+          <div class="cal-day">26</div>
+          <div class="cal-day">27</div>
+          <!-- Week 5 -->
+          <div class="cal-day">28</div>
+          <div class="cal-day">29</div>
+          <div class="cal-day">30</div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+        </div>
+        <div class="cal-legend">
+          <div class="cal-legend-item">
+            <div class="cal-legend-dot" style="background:var(--green-lt);border:1px solid var(--green-md);"></div>
+            Deposit here — earn full month's interest
+          </div>
+          <div class="cal-legend-item">
+            <div class="cal-legend-dot" style="background:var(--indigo);"></div>
+            5th — last day to deposit for full month interest
+          </div>
+          <div class="cal-legend-item">
+            <div class="cal-legend-dot" style="background:var(--rose);"></div>
+            Deposit here — lose that month's interest
+          </div>
+        </div>
+        <div class="fifth-saving-box" style="margin-top:1rem;">
+          <strong>Pro tip:</strong> Set a bank standing instruction to auto-transfer your PPF deposit on April 1st every year. This ensures you never miss the window and earn maximum interest for the entire financial year.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — PPF vs OTHER INSTRUMENTS
+══════════════════════════════════════ -->
+<section class="sec compare-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-arrow-left-right"></i> Comparison</div>
+      <h2 class="sec-title">PPF vs other tax-saving instruments</h2>
+      <p class="sec-sub">How does PPF stack up against ELSS, NPS, NSC, and tax-saver FDs? Here's an honest, complete comparison.</p>
+    </div>
+    <div class="compare-wrap fu">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Instrument</th>
+            <th>Returns</th>
+            <th>Lock-in</th>
+            <th>Risk</th>
+            <th>Tax on returns</th>
+            <th>Loan facility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ppf-row">
+            <td>PPF 🏆</td>
+            <td><span class="pill-m">7.1% fixed</span></td>
+            <td><span class="pill-b">15 years</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-g">Fully exempt (EEE)</span></td>
+            <td><span class="pill-g">Yes (yr 3–6)</span></td>
+          </tr>
+          <tr>
+            <td>ELSS (Mutual Fund)</td>
+            <td><span class="pill-g">12–15% (market)</span></td>
+            <td><span class="pill-g">3 years</span></td>
+            <td><span class="pill-b">Market risk</span></td>
+            <td><span class="pill-m">10% LTCG above ₹1L</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+          <tr>
+            <td>NPS (Tier 1)</td>
+            <td><span class="pill-g">9–12% (market)</span></td>
+            <td><span class="pill-b">Till retirement</span></td>
+            <td><span class="pill-m">Low-moderate</span></td>
+            <td><span class="pill-m">Partially taxable</span></td>
+            <td><span class="pill-m">Limited</span></td>
+          </tr>
+          <tr>
+            <td>Tax-saver FD</td>
+            <td><span class="pill-m">6.5–7.5% fixed</span></td>
+            <td><span class="pill-m">5 years</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-b">Taxable as income</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+          <tr>
+            <td>NSC</td>
+            <td><span class="pill-m">7.7% fixed</span></td>
+            <td><span class="pill-m">5 years</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-b">Taxable as income</span></td>
+            <td><span class="pill-g">Yes (collateral)</span></td>
+          </tr>
+          <tr>
+            <td>Sukanya Samriddhi</td>
+            <td><span class="pill-g">8.2% fixed</span></td>
+            <td><span class="pill-b">21 years</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-g">Fully exempt (EEE)</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sec-hdr fu" style="margin-top:2.5rem;margin-bottom:1rem;">
+      <div class="label"><i class="bi bi-person-check"></i> Is PPF right for you?</div>
+      <h3 class="sec-title" style="font-size:1.4rem;">Who benefits most from PPF?</h3>
+    </div>
+    <div class="who-grid fu">
+      <div class="who-card">
+        <div class="who-icon"><i class="bi bi-shield-fill-check"></i></div>
+        <div>
+          <div class="who-title">Risk-averse investors</div>
+          <div class="who-desc">If capital preservation is your priority, PPF is unmatched. Government-backed, zero default risk, and fully insulated from market volatility — your principal and returns are completely safe.</div>
+        </div>
+      </div>
+      <div class="who-card">
+        <div class="who-icon"><i class="bi bi-building"></i></div>
+        <div>
+          <div class="who-title">Self-employed & business owners</div>
+          <div class="who-desc">Unlike salaried employees who have EPF as a guaranteed long-term savings vehicle, self-employed individuals have no mandatory retirement savings. PPF fills this gap perfectly — with the same government backing and tax benefits.</div>
+        </div>
+      </div>
+      <div class="who-card">
+        <div class="who-icon"><i class="bi bi-percent"></i></div>
+        <div>
+          <div class="who-title">High tax bracket investors</div>
+          <div class="who-desc">The EEE benefit is most powerful for people in the 20–30% tax bracket. A 30% slab investor earns an effective pre-tax equivalent yield of ~10.7% on PPF at 7.1% — better than most fixed income instruments after tax.</div>
+        </div>
+      </div>
+      <div class="who-card">
+        <div class="who-icon"><i class="bi bi-people"></i></div>
+        <div>
+          <div class="who-title">Parents planning for children</div>
+          <div class="who-desc">You can open a PPF account in a minor child's name (managed by guardian) to build a tax-free education or marriage corpus over 15–20 years. A ₹50,000/year SIP from birth gives your child a tax-free ₹25L+ corpus at age 15.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — EXTENSION POWER: 15+5+5
+══════════════════════════════════════ -->
+<section class="sec extension-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightning-charge"></i> Where real wealth is built</div>
+      <h2 class="sec-title">The 15+5+5 extension — PPF's secret superpower</h2>
+      <p class="sec-sub">Most investors withdraw at 15 years. The ones who extend and stay invested in blocks of 5 years see an exponential acceleration that is hard to replicate anywhere else.</p>
+    </div>
+    <div class="extension-grid">
+      <div class="ext-options fu">
+        <div class="label" style="margin-bottom:.75rem;">Two ways to extend</div>
+        <div class="ext-option">
+          <div class="ext-option-head">
+            <div class="ext-option-title">Extension with contribution</div>
+            <div class="ext-option-badge with">Recommended</div>
+          </div>
+          <div class="ext-option-desc">Continue depositing up to ₹1.5L per year while your existing corpus keeps growing. You get the benefit of new tax deductions AND the compounding on the growing balance.</div>
+          <div class="ext-option-list">
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>Continue 80C deduction on new deposits</div>
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>Full interest on old corpus + new deposits</div>
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>Can make partial withdrawals once per year</div>
+            <div class="ext-option-item"><i class="bi bi-info-circle"></i>Must notify bank within 1 year of maturity</div>
+          </div>
+        </div>
+        <div class="ext-option">
+          <div class="ext-option-head">
+            <div class="ext-option-title">Extension without contribution</div>
+            <div class="ext-option-badge without">Passive growth</div>
+          </div>
+          <div class="ext-option-desc">Stop making new deposits but let your existing corpus sit and earn 7.1% tax-free interest. A ₹40L corpus earns ₹2.84L per year — completely tax-free — with zero new money going in.</div>
+          <div class="ext-option-list">
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>No obligation to deposit anything</div>
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>Full interest on existing corpus</div>
+            <div class="ext-option-item"><i class="bi bi-check-circle-fill"></i>One full withdrawal per year allowed</div>
+            <div class="ext-option-item"><i class="bi bi-x-circle" style="color:var(--rose);"></i>No new 80C deduction on this amount</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compounding timeline -->
+      <div class="fu">
+        <div class="ext-visual">
+          <div class="ext-visual-title"><i class="bi bi-graph-up-arrow" style="color:var(--indigo);margin-right:6px;"></i> ₹1.5L/year · 7.1% interest — stay invested and watch it compound</div>
+          <div class="ext-timeline">
+            <div class="ext-milestone">
+              <div class="ext-dot"><i class="bi bi-flag-fill" style="font-size:11px;"></i></div>
+              <div class="ext-milestone-body">
+                <div class="ext-milestone-year">Year 0 — Start</div>
+                <div class="ext-milestone-corpus">₹0</div>
+                <div class="ext-milestone-desc">Open your PPF account. First deposit of ₹1.5L. Claim ₹46,800 in tax savings.</div>
+              </div>
+            </div>
+            <div class="ext-milestone">
+              <div class="ext-dot"><i class="bi bi-1-circle-fill" style="font-size:13px;"></i></div>
+              <div class="ext-milestone-body">
+                <div class="ext-milestone-year">Year 15 — Maturity</div>
+                <div class="ext-milestone-corpus" style="color:var(--indigo);">₹40.7L</div>
+                <div class="ext-milestone-desc">Total invested: <strong>₹22.5L.</strong> Tax-free interest earned: <strong>₹18.2L.</strong> Most investors stop here — but the best is yet to come.</div>
+              </div>
+            </div>
+            <div class="ext-milestone">
+              <div class="ext-dot"><i class="bi bi-2-circle-fill" style="font-size:13px;"></i></div>
+              <div class="ext-milestone-body">
+                <div class="ext-milestone-year">Year 20 — First extension</div>
+                <div class="ext-milestone-corpus" style="color:var(--indigo);">₹66.6L</div>
+                <div class="ext-milestone-desc">Five more years of ₹1.5L deposits + interest on ₹40.7L base. Corpus grows by ₹25.9L — <strong>nearly as much as in the first 15 years combined.</strong></div>
+              </div>
+            </div>
+            <div class="ext-milestone">
+              <div class="ext-dot" style="background:var(--gold);"><i class="bi bi-star-fill" style="font-size:10px;"></i></div>
+              <div class="ext-milestone-body">
+                <div class="ext-milestone-year">Year 25 — Second extension</div>
+                <div class="ext-milestone-corpus" style="color:var(--gold);">₹1.03 Crore 🎯</div>
+                <div class="ext-milestone-desc">Total invested over 25 years: <strong>₹37.5L.</strong> You crossed ₹1 Crore — <strong>entirely tax-free</strong> — with just ₹12,500/month. This is the PPF Crorepati plan.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ext-assumption">ℹ️ Assumes 7.1% p.a. throughout. Actual rate is reviewed quarterly by the government and may change. All figures are illustrative.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — WITHDRAWAL, LOAN & REVIVAL RULES
+══════════════════════════════════════ -->
+<section class="sec rules-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-file-earmark-text"></i> Key rules</div>
+      <h2 class="sec-title">Withdrawal, loan & account revival rules</h2>
+      <p class="sec-sub">PPF has specific rules around liquidity — understanding them helps you plan around the lock-in without surprises.</p>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="rule-title">Partial withdrawal</div>
+        <div class="rule-desc">Partial withdrawals are allowed from the <strong>7th financial year</strong> onwards (i.e., from year 6 of deposit, in year 7). You can withdraw up to <strong>50% of the balance</strong> at the end of the 4th year preceding the year of withdrawal, or the balance at the end of the preceding year — whichever is lower. Only one partial withdrawal is allowed per financial year.</div>
+        <div class="rule-highlight">Available from Year 7</div>
+      </div>
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-bank"></i></div>
+        <div class="rule-title">Loan against PPF</div>
+        <div class="rule-desc">You can take a loan against your PPF balance between the <strong>3rd and 6th financial year</strong> of account opening. The loan amount can be up to 25% of the balance at the end of the 2nd preceding year. The interest rate on this loan is just <strong>1% above the prevailing PPF rate</strong> (currently 8.1% p.a.) — far cheaper than personal loans. The loan must be repaid within 36 months.</div>
+        <div class="rule-highlight">Available Year 3 to Year 6</div>
+      </div>
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="rule-title">Account revival & premature closure</div>
+        <div class="rule-desc">If you miss the minimum ₹500 deposit in any financial year, your account becomes <strong>inactive (discontinued)</strong>. To revive it, pay ₹50 penalty per missed year + ₹500 minimum deposit per missed year. Premature closure (before 15 years) is allowed only in exceptional cases — serious illness, higher education, change of residency — with a <strong>1% penalty on interest</strong> earned.</div>
+        <div class="rule-highlight">Revival: ₹50/yr penalty</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — KEY STATS STRIP
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">7.1<span>%</span></div>
+        <div class="stat-box-lbl">Current PPF interest rate p.a. — reviewed quarterly by the Government of India</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">EEE</div>
+        <div class="stat-box-lbl">Triple exemption — the only government-backed instrument with fully tax-free returns at all three stages</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">₹1.5<span>L</span></div>
+        <div class="stat-box-lbl">Maximum annual PPF deposit eligible for 80C deduction — saving up to ₹46,800 in taxes per year</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">25<span>+yr</span></div>
+        <div class="stat-box-lbl">At ₹1.5L/year, 25 years of PPF with extensions builds a ₹1 Crore+ entirely tax-free corpus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — PRO TIPS
+══════════════════════════════════════ -->
+<section class="sec tips-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Maximise your PPF</div>
+      <h2 class="sec-title">4 strategies to get the most from your PPF</h2>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card fu">
+        <div class="tip-number">1</div>
+        <div class="tip-icon"><i class="bi bi-calendar-check"></i></div>
+        <div class="tip-title">Deposit between April 1–5 every year</div>
+        <div class="tip-desc">The single highest-impact PPF optimization. Depositing the full ₹1.5L before the 5th of April ensures you earn 12 full months of interest on the entire amount. Set a standing instruction on April 1st and never miss it.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">2</div>
+        <div class="tip-icon"><i class="bi bi-arrow-clockwise"></i></div>
+        <div class="tip-title">Never withdraw at 15 years — extend</div>
+        <div class="tip-desc">The biggest PPF mistake: withdrawing at maturity out of habit. The corpus at Year 15 earns more interest in the next 5 years (extension) than you deposited in the first 5 years. Extend in 5-year blocks unless you truly need the money.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">3</div>
+        <div class="tip-icon"><i class="bi bi-people"></i></div>
+        <div class="tip-title">Open a PPF for your minor child</div>
+        <div class="tip-desc">A guardian can open a PPF in a child's name. However, the combined limit across your own PPF and the child's PPF is ₹1.5L per financial year. This is best used for building a dedicated education corpus over 15–20 years — which matures around the time they need it most.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">4</div>
+        <div class="tip-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="tip-title">Use PPF as the debt component of your portfolio</div>
+        <div class="tip-desc">In a balanced portfolio, PPF serves as the "safe debt" component — replacing FDs, debt funds, or bonds that have tax drag. Pair PPF (guaranteed, tax-free debt) with equity mutual fund SIPs (growth, market-linked) to build a complete, tax-efficient portfolio.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — ACCOUNT OPENING GUIDE
+══════════════════════════════════════ -->
+<section class="sec open-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-file-earmark-plus"></i> Getting started</div>
+      <h2 class="sec-title">How to open a PPF account</h2>
+      <p class="sec-sub">Opening a PPF account today takes less than 15 minutes online — and locks in your tax-free compounding journey for decades.</p>
+    </div>
+    <div class="open-grid">
+      <div class="open-list fu">
+        <div class="open-item">
+          <div class="open-item-icon"><i class="bi bi-bank2"></i></div>
+          <div>
+            <div class="open-item-title">Through a bank (online or branch)</div>
+            <div class="open-item-desc">SBI, PNB, Bank of Baroda, Canara Bank, HDFC, ICICI, and Axis Bank all offer PPF accounts — many with full online opening via net banking or their mobile app. SBI's YONO app and HDFC NetBanking are the most widely used digital options.</div>
+          </div>
+        </div>
+        <div class="open-item">
+          <div class="open-item-icon"><i class="bi bi-envelope"></i></div>
+          <div>
+            <div class="open-item-title">Through a Post Office</div>
+            <div class="open-item-desc">Any India Post branch offers PPF accounts. Ideal for those without access to major bank branches. The account can later be transferred to a bank for better digital access.</div>
+          </div>
+        </div>
+        <div class="open-item">
+          <div class="open-item-icon"><i class="bi bi-phone"></i></div>
+          <div>
+            <div class="open-item-title">Online — fastest method</div>
+            <div class="open-item-desc">If you have a net banking or mobile banking account at SBI, HDFC, ICICI, Axis, or PNB, you can open a PPF account entirely online in minutes — no physical form, no branch visit required. Deposits can be made instantly via NEFT/UPI.</div>
+          </div>
+        </div>
+        <div class="open-item">
+          <div class="open-item-icon"><i class="bi bi-arrow-left-right"></i></div>
+          <div>
+            <div class="open-item-title">Transfer your existing PPF account</div>
+            <div class="open-item-desc">If you have an old post office PPF account and want better digital access, you can transfer it to any authorized bank. Submit Form SB-10(b) at your post office and the receiving bank will process the transfer without any penalty or loss of lock-in tenure.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="open-docs fu">
+        <div class="open-docs-title"><i class="bi bi-file-earmark-check" style="color:var(--indigo);margin-right:6px;"></i> Documents required</div>
+        <div class="docs-section">
+          <div class="docs-section-label">Identity & address proof (any one each)</div>
+          <div class="docs-list">
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>PAN Card (mandatory)</div>
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Aadhaar Card</div>
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Passport / Voter ID / Driving licence</div>
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Utility bill for address (if different)</div>
+          </div>
+        </div>
+        <div class="docs-section">
+          <div class="docs-section-label">For minor's PPF account</div>
+          <div class="docs-list">
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Child's birth certificate</div>
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Guardian's KYC documents (same as above)</div>
+            <div class="docs-item"><i class="bi bi-check-circle-fill"></i>Declaration of guardianship</div>
+          </div>
+        </div>
+        <div class="docs-eligibility">
+          <strong>Eligibility:</strong> Any Indian resident individual can open a PPF account. NRIs cannot open new PPF accounts (those opened before becoming NRI can continue till maturity). HUFs are no longer eligible to open new PPF accounts as of 2005. One account per individual — holding multiple PPF accounts is not permitted and additional accounts earn no interest.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Everything you need to know about PPF — rules, limits, and common edge cases.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I invest more than ₹1.5L in PPF? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Yes, but only up to ₹1.5L qualifies for the Section 80C tax deduction. Any amount deposited beyond ₹1.5L in a financial year earns no interest and is returned without any tax benefit. The effective maximum is ₹1.5L per year. This limit applies to the combined deposits across your own PPF and any minor child's PPF account you manage as guardian.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is PPF available under the new tax regime? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>The Section 80C deduction (which includes PPF) is available only under the old tax regime. If you've opted for the new tax regime, you cannot claim 80C deductions — which means the tax-saving benefit of PPF investment disappears. However, the interest and maturity exemption still applies regardless of regime. Evaluate both regimes with a tax calculator before deciding.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What happens to my PPF if I become an NRI? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>NRIs cannot open a new PPF account. If you had a PPF account as a resident Indian and subsequently become an NRI, you can continue the account till its original maturity (15 years from opening date) — but you cannot extend it beyond maturity. The account earns the prevailing PPF interest rate until maturity, after which the balance must be withdrawn.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I have two PPF accounts? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>No. An individual is permitted to hold only one PPF account. If a second account is inadvertently opened, it will be treated as irregular and will earn no interest. It will not be merged with the primary account and the excess deposits will be returned without any benefit. A minor child's PPF account (opened by a parent as guardian) is separate — but the combined yearly deposit limit across both accounts is still ₹1.5L.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How is the PPF interest rate decided? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>The Government of India sets the PPF interest rate quarterly, based on government bond yields plus a spread. The rate has historically ranged from 7.1% (current) to 12% (early 2000s). While the rate is not guaranteed to stay the same, it is reviewed and announced quarterly — giving investors advance notice. Historically, the government has kept rates stable for extended periods rather than changing them every quarter.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is the nominee and succession process for PPF? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>You can nominate one or more individuals when opening a PPF account or at any time during the account's life by submitting Form E. In the event of the account holder's death, the nominee can claim the balance (along with accrued interest) without going through probate. If no nominee is designated, the legal heir must produce a succession certificate — which can be a lengthy legal process. Always add a nominee at account opening.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Use these alongside the PPF Calculator to build a complete financial plan.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Equity wealth building</div></div>
+      </a>
+      <a href="/calculators/nps" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="related-card-name">NPS Calculator</div><div class="related-card-sub">Pension planning</div></div>
+      </a>
+      <a href="/calculators/pf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-briefcase"></i></div>
+        <div><div class="related-card-name">EPF Calculator</div><div class="related-card-sub">Provident fund</div></div>
+      </a>
+      <a href="/calculators/retirement" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-clock-history"></i></div>
+        <div><div class="related-card-name">Retirement Planner</div><div class="related-card-sub">Target corpus</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Take-home pay</div></div>
+      </a>
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Loan planning</div></div>
+      </a>
+      <a href="/calculators/loan-eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Borrowing capacity</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 12 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Start your PPF journey — the earlier, the better</h2>
+    <p>Every year you delay costs you a year of tax-free compounding that can never be recovered. Use the calculator above to see your maturity amount — then open your account today.</p>
+    <div class="final-btns">
+      <a href="#" class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i class="bi bi-arrow-up"></i> Back to Calculator</a>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Investment Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -722,7 +1751,35 @@ function fmtS(n) {
   if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
   return '₹' + Math.round(n);
 }
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
 
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* PPF Math Engine */
 // Assumes yearly investment is made at the start of the year (April 1 - April 5)
 function calcPPF(p, r, y) {

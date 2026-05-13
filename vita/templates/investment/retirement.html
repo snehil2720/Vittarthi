@@ -662,7 +662,7 @@ details[open] summary::after {
     </div>
 
   </div>
-
+<br>
   <section class="seo-content">
     <h2>Retirement Calculator – Plan Your Golden Years</h2>
     <p>Retirement planning is not an age, it is a financial number. Whether you plan to work until you are 60 or join the FIRE (Financial Independence, Retire Early) movement at 45, knowing your target corpus is the most important step in personal finance. Our Retirement Calculator helps you combine your existing savings with your monthly investments to forecast your future wealth.</p>
@@ -720,6 +720,18 @@ function fmtS(n) {
   return '₹' + Math.round(n);
 }
 
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 /* Retirement Math Engine */
 function calcRetirement(age, retAge, savings, sip, rate) {
   const y = retAge - age;

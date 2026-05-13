@@ -733,7 +733,18 @@ function syncFromSlider(id) {
   updateFill(id);
   updateAll();
 }
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
 
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 function syncFromInput(id) {
   const v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 

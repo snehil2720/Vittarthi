@@ -1130,7 +1130,7 @@ td.gold { color:var(--gold); font-weight:600; }
     </div>
 
   </div>
-
+<br>
 <section class="sec steps-sec">
   <div class="sec-inner">
     <div class="sec-hdr center fu">
@@ -1843,7 +1843,18 @@ function fmtS(n) {
   if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
   return '₹' + Math.round(n);
 }
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
 
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 /* SIP Math Engine (Updated to Effective CAGR) */
 function calcSIP(p, r, y) {
   // Use Effective Rate for CAGR matching

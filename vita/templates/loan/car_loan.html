@@ -1403,6 +1403,18 @@ function fmtS(n) {
   return '₹' + Math.round(n);
 }
 
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 /* EMI Engine */
 function calcEMI(p, r, y) {
   const mr = r / 100 / 12;

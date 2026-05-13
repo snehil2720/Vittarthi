@@ -666,7 +666,7 @@ details[open] summary::after {
     </div>
 
   </div>
-
+<br>
   <section class="seo-content">
     <h2>NPS Calculator – Secure Your Retirement Life</h2>
     <p>The National Pension System (NPS) is a voluntary, long-term retirement savings scheme regulated by the Pension Fund Regulatory and Development Authority (PFRDA) in India. Our NPS calculator helps you estimate the wealth you will accumulate by the time you retire at 60, how much tax-free lumpsum you can withdraw, and what your monthly pension will look like.</p>
@@ -730,7 +730,18 @@ function fmtS(n) {
   if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
   return '₹' + Math.round(n);
 }
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
 
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
 /* NPS Math Engine */
 function calcNPS(amount, age, rate, annPct, annRate) {
   const y = 60 - age; // years till 60
