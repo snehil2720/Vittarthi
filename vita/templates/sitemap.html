@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Sitemap | Vita₹thi{% endblock %}
+
+{% block content %}
+
+<div class="sitemap-page">
+
+    <div class="sitemap-header">
+        <h1>XML Sitemap</h1>
+
+        <p>
+            This sitemap index contains all important URLs of Vita₹thi.
+        </p>
+    </div>
+
+    <div class="sitemap-grid">
+
+        {% for sm in sitemaps %}
+
+        <a href="{{ sm.url }}" class="sitemap-card">
+
+            <div class="sitemap-title">
+                {{ sm.title }}
+            </div>
+
+            <div class="sitemap-desc">
+                {{ sm.desc }}
+            </div>
+
+            <div class="sitemap-link">
+                {{ sm.url }}
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<style>
+
+.sitemap-page{
+    max-width:1100px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.sitemap-header h1{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.sitemap-header p{
+    color:#666;
+    margin-bottom:40px;
+}
+
+.sitemap-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+}
+
+.sitemap-card{
+    display:block;
+    padding:25px;
+    border-radius:16px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    transition:.25s;
+    text-decoration:none;
+}
+
+.sitemap-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.sitemap-title{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:10px;
+    color:#111827;
+}
+
+.sitemap-desc{
+    color:#6b7280;
+    margin-bottom:20px;
+}
+
+.sitemap-link{
+    color:#2563eb;
+    font-size:14px;
+    word-break:break-all;
+}
+
+.dark .sitemap-card{
+    background:#111827;
+    border-color:#374151;
+}
+
+.dark .sitemap-title{
+    color:#fff;
+}
+
+.dark .sitemap-desc{
+    color:#9ca3af;
+}
+
+</style>
+
+{% endblock %}

@@ -19,6 +19,9 @@ import yfinance as yf
 import certifi
 from .models import CalcUsage
 from django.db.models import Count
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+
 
 def auth_page(request):
     return render(request, "authentication/auth.html")
@@ -854,3 +857,51 @@ def custom_403(request, exception):
 
 def custom_400(request, exception):
     return render(request, 'errors/400.html', status=400)
+
+def sitemap_ui(request):
+
+    sitemap_links = [
+        {
+            "title": "Posts Sitemap",
+            "url": "/sitemap-posts.xml",
+            "desc": "Blogs, news and case studies"
+        },
+        {
+            "title": "Pages Sitemap",
+            "url": "/sitemap-pages.xml",
+            "desc": "Static pages"
+        },
+        {
+            "title": "Categories Sitemap",
+            "url": "/sitemap-categories.xml",
+            "desc": "Secondary category archive pages"
+        },
+        {
+            "title": "Calculators Sitemap",
+            "url": "/sitemap-calculators.xml",
+            "desc": "All calculator pages"
+        }
+    ]
+
+    return render(request, 'sitemap.html', {
+        'sitemaps': sitemap_links
+    })
+
+
+import os
+def styled_sitemap(request, sitemap_response):
+
+    sitemap_response.render()
+
+    content = sitemap_response.content.decode()
+
+    content = content.replace(
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '''<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/static/sitemap.xsl"?>'''
+    )
+
+    return HttpResponse(
+        content,
+        content_type='application/xml'
+    )

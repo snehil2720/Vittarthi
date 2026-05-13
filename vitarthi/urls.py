@@ -19,12 +19,20 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from ckeditor_uploader import views as ckeditor_views
-from django.contrib.sitemaps.views import sitemap
-from vita.sitemaps import StaticViewSitemap, BlogSitemap
-#from django.views.generic import TemplateView
+from vita.sitemaps import (PostsSitemap,PagesSitemap,CategoriesSitemap,CalculatorsSitemap)
+from vita.views import sitemap_ui
+from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap, index
+from vita.views import styled_sitemap
+# sitemaps = {
+#     'static': StaticViewSitemap,
+#     'blogs': BlogSitemap,
+# }
 sitemaps = {
-    'static': StaticViewSitemap,
-    'blogs': BlogSitemap,
+    'posts': PostsSitemap,
+    'pages': PagesSitemap,
+    'categories': CategoriesSitemap,
+    'calculators': CalculatorsSitemap
 }
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,12 +41,25 @@ urlpatterns = [
     path('ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
     path('ckeditor/browse/', ckeditor_views.browse, name='ckeditor_browse'),
     path('smart/', include('smartvitarthi.urls')),
+    path('sitemap/', sitemap_ui, name='sitemap_ui'),
     path(
-    'sitemap.xml',
-    sitemap,
-    {'sitemaps': sitemaps},
+        'sitemap.xml',
+        index,
+        {'sitemaps': sitemaps},
+    ),
+path(
+    'sitemap-<section>.xml',
+    lambda request, section:
+        styled_sitemap(
+            request,
+            sitemap(
+                request,
+                sitemaps=sitemaps,
+                section=section
+            )
+        ),
     name='django.contrib.sitemaps.views.sitemap'
-    )
+),
     # path(
     # "robots.txt",
     # TemplateView.as_view(

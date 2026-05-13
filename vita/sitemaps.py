@@ -1,36 +1,10 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import Blog
+
+from .models import Blog, PrimaryCategory
 
 
-class StaticViewSitemap(Sitemap):
-
-    changefreq = "weekly"
-    priority = 0.7
-
-    def items(self):
-        return [
-            'home',
-            'calculators',
-            'contact',
-            'sip',
-            'emi',
-            'home_loan',
-            'car_loan',
-            'personal_loan',
-            'ppf',
-            'nps',
-            'retirement',
-            'salary',
-            'pf',
-            'eligibility',
-        ]
-
-    def location(self, item):
-        return reverse(item)
-
-
-class BlogSitemap(Sitemap):
+class PostsSitemap(Sitemap):
 
     changefreq = "daily"
     priority = 0.9
@@ -49,3 +23,58 @@ class BlogSitemap(Sitemap):
             primary_slug = obj.primary_category.slug
 
         return f'/resources/{primary_slug}/{obj.slug}/'
+
+
+class PagesSitemap(Sitemap):
+
+    changefreq = "weekly"
+    priority = 0.7
+
+    def items(self):
+
+        return [
+            'home',
+            'calculators',
+            'contact',
+        ]
+
+    def location(self, item):
+        return reverse(item)
+
+
+class CategoriesSitemap(Sitemap):
+
+    changefreq = "weekly"
+    priority = 0.8
+
+    def items(self):
+        return PrimaryCategory.objects.all()
+
+    def location(self, obj):
+
+        return f'/resources/{obj.slug}/'
+
+
+class CalculatorsSitemap(Sitemap):
+
+    changefreq = "monthly"
+    priority = 0.8
+
+    def items(self):
+
+        return [
+            '/calculators/sip',
+            '/calculators/emi',
+            '/calculators/home-loan',
+            '/calculators/car-loan',
+            '/calculators/personal-loan',
+            '/calculators/ppf',
+            '/calculators/nps',
+            '/calculators/pf',
+            '/calculators/salary',
+            '/calculators/retirement',
+            '/calculators/loan-eligibility',
+        ]
+
+    def location(self, item):
+        return item
