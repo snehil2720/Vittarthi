@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>{% block title %}Vita₹thi{% endblock %}</title>
+<title>{% block title %}Vittarthi{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}{% endblock %}">
 {% load static %}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -594,14 +594,14 @@ color: white;
     <li><a href="/calculators/" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
     <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
 <li class="dropdown">
-  <a href="javascript:void(0)">Resources ▾</a> 
+  <a href="javascript:void(0)" class="{% if 'resources' in request.path %}active{% endif %}">Resources ▾</a> 
   <ul class="dropdown-menu">
     <li><a href="/resources/blogs/">Blogs</a></li>
     <li><a href="/resources/case-study/">Case Study</a></li>
     <li><a href="/resources/news/">News</a></li>
   </ul>
 </li>
-    <!-- <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li> -->
+    <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
 
     <!-- {% if user.is_authenticated %}
         <li>

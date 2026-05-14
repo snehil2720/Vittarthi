@@ -6,7 +6,7 @@ urlpatterns = [
     path('calculators/', views.calculators, name='calculators'),
     # path('blogs/', views.blogs, name='blogs'),
     path('products/', views.products, name='products'),
-    path('contact/', views.contact, name='contact'),
+    path('contact/', views.contact_page, name='contact'),
     
     path('calculators/sip', views.sip_calculator, name='sip'),
     path('calculators/emi', views.emi_calculator, name='emi'),
@@ -53,6 +53,11 @@ urlpatterns = [
 
     path('resources/<slug:primary_slug>/', views.blog_list, name='resource_list'),
     path('get-secondary/<int:primary_id>/', views.get_secondary),
+    path('contact-submit/',views.contact_submit, name='contact_submit'),
+    #path('privacy/', views.privacy_policy, name='privacy'),
+
+    path('<slug:slug>/', views.legal_page, name='legal_page'),
+
 
 ]
 

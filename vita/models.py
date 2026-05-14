@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils.text import slugify
 import re
 from django.utils.html import strip_tags
-
+import uuid
 # class Category(models.Model):
 #     name = models.CharField(max_length=100, unique=True)
 #     slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
@@ -122,3 +122,114 @@ def generate_clean_summary(content):
     content = re.sub(r'\s+', ' ', content).strip()
 
     return " ".join(content.split()[:30]) + "..."
+
+class ContactMessage(models.Model):
+
+    CATEGORY_CHOICES = [
+        ('general', 'General Query'),
+        ('bug', 'Bug / Error Report'),
+        ('content', 'Content Feedback'),
+        ('feature', 'Feature Request'),
+        ('partnership', 'Partnership'),
+        ('privacy', 'Privacy / Legal'),
+    ]
+
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+        ('spam', 'Spam'),
+    ]
+
+    first_name = models.CharField(max_length=100)
+
+    last_name = models.CharField(
+        max_length=100,
+        blank=True
+    )
+    ticket_id = models.CharField(
+        max_length=20,
+        unique=True,
+        blank=True
+    )
+    email = models.EmailField()
+
+    category = models.CharField(
+        max_length=30,
+        choices=CATEGORY_CHOICES,
+        default='general'
+    )
+
+    calculator = models.CharField(
+        max_length=150,
+        blank=True
+    )
+
+    subject = models.CharField(max_length=255)
+
+    message = models.TextField()
+
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True
+    )
+
+    user_agent = models.TextField(
+        blank=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new'
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    def save(self, *args, **kwargs):
+        if not self.ticket_id:
+            self.ticket_id = (
+                'VT-' +
+                str(uuid.uuid4()).split('-')[0].upper()
+            )
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.subject} - {self.email}"
+
+
+class PrivacyPolicy(models.Model):
+    title = models.CharField(max_length=200, default="Privacy Policy")
+    content = RichTextUploadingField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+class LegalPage(models.Model):
+    PAGE_CHOICES = (
+        ('privacy-policy', 'Privacy Policy'),
+        ('disclaimer', 'Disclaimer'),
+        ('terms-of-use', 'Terms of Use'),
+    )
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    page_type = models.CharField(
+        max_length=50,
+        choices=PAGE_CHOICES,
+        unique=True
+    )
+    short_description = models.TextField(
+        max_length=300,
+        blank=True,
+        null=True
+    )
+    content = RichTextUploadingField()
+    updated_at = models.DateTimeField(auto_now=True)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return self.title

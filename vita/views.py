@@ -1,27 +1,24 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory
+from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
 from django.contrib.auth import login, authenticate,logout
-from .models import CustomUser
 from django.contrib import messages
 from django.utils.text import slugify
 import re
 import math
-from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
 from .utils import generate_ai_summary
 import requests
 import yfinance as yf
 import certifi
-from .models import CalcUsage
 from django.db.models import Count
 from django.template.loader import render_to_string
 from django.http import HttpResponse
-
+from django.views.decorators.http import require_POST
 
 def auth_page(request):
     return render(request, "authentication/auth.html")
@@ -905,3 +902,108 @@ def styled_sitemap(request, sitemap_response):
         content,
         content_type='application/xml'
     )
+
+@require_POST
+def contact_submit(request):
+    print("CONTACT API HIT_before")
+    try:
+        print("CONTACT API HIT")
+        data = json.loads(request.body)
+        #print(data)
+        if data.get('website'):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Spam detected'
+            }, status=400)
+        contact = ContactMessage.objects.create(
+            first_name=data.get('first_name'),
+            last_name=data.get('last_name'),
+            email=data.get('email'),
+            category=data.get('category'),
+            calculator=data.get('calculator'),
+            subject=data.get('subject'),
+            message=data.get('message'),
+            ip_address=request.META.get('REMOTE_ADDR'),
+            user_agent=request.META.get('HTTP_USER_AGENT')
+        )
+        send_mail(
+            subject='We received your message | Vittarthi',
+            message=f'''
+        Hi {contact.first_name},
+        Your Ticket ID :
+        {{contact.ticket_id}}
+        Thank you for contacting Vittarthi.
+        We’ve received your message regarding:
+        "{contact.subject}"
+        Our team will review it and get back to you soon.
+        Typical response times:
+        • General queries → 1–2 business days
+        • Bug reports → within 24 hours
+        • Privacy requests → within 5 business days
+        Regards,
+        Team Vittarthi
+        https://vittarthi.com
+        ''',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[contact.email],
+            fail_silently=True
+        )   
+        send_mail(
+            subject=f'New Contact Form | {contact.category}',
+            message=f'''
+        New contact form submitted.
+        Name:
+        {contact.first_name} {contact.last_name}
+        Ticket ID:
+        {contact.ticket_id}
+        Email:
+        {contact.email}
+        Category:
+        {contact.category}
+        Subject:
+        {contact.subject}
+        Message:
+        {contact.message}
+        ''',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=['vittarthi2026@gmail.com'],
+            fail_silently=True
+        )
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Message saved successfully',
+            'ticket_id': contact.ticket_id
+        })
+
+    except Exception as e:
+
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+    
+def contact_page(request):
+
+    return render(
+        request,
+        'vita/contact.html'
+    )
+
+
+def privacy_policy(request):
+    policy = PrivacyPolicy.objects.first()
+    return render(request, "vita/privacy.html", {
+        "policy": policy
+    })
+
+def legal_page(request, slug):
+
+    page = get_object_or_404(
+        LegalPage,
+        slug=slug
+    )
+
+    return render(request, "vita/legal_page.html", {
+        "page": page
+    })

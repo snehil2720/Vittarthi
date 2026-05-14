@@ -1,0 +1,902 @@
+{% extends 'base.html' %}
+{% block title %}
+Contact Us | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Get in touch with the Vita₹thi team — for calculator feedback, content queries, bug reports, or partnership enquiries.
+{% endblock %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% block content %}
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --ink:        #0d1240;
+  --ink-2:      #3d4480;
+  --ink-3:      #7a80b8;
+  --paper:      #f4f5fb;
+  --surface:    #ffffff;
+  --s2:         #eef0f8;
+  --s3:         #e0e3f0;
+  --indigo:     #3730a3;
+  --indigo-2:   #4338ca;
+  --indigo-lt:  #eef2ff;
+  --indigo-md:  #c7d2fe;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b45309;
+  --gold-lt:    #fffbeb;
+  --gold-md:    #fde68a;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(13,18,64,0.09);
+  --shadow:     0 4px 20px rgba(13,18,64,0.07);
+  --shadow-lg:  0 12px 48px rgba(13,18,64,0.12);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .65s ease both;}
+
+/* ════════════════════
+   NAV
+════════════════════ */
+/* ════════════════════
+   HERO
+════════════════════ */
+.hero{
+  background:var(--indigo);
+  padding:clamp(3rem,7vw,3rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-top-left-radius: 180px;
+    border-top-right-radius: 180px;
+    border-bottom-left-radius: 180px;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
+}
+.hero-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
+  padding:4px 12px;border-radius:100px;margin-bottom:1.1rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4.5vw,3.2rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.4px;margin-bottom:.85rem;
+}
+.hero-title em{font-style:italic;color:var(--gold-md);}
+.hero-sub{font-size:.95rem;color:rgba(255,255,255,.78);line-height:1.8;max-width:540px;}
+
+/* Response time chips */
+.hero-chips{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.5rem;}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.84);font-size:.75rem;font-weight:500;
+  padding:.35rem .85rem;border-radius:100px;
+}
+.chip i{color:var(--gold-md);font-size:12px;}
+
+/* ════════════════════
+   MAIN LAYOUT
+════════════════════ */
+.main-sec{
+  padding:clamp(2.5rem,6vw,3.5rem) var(--pad);
+}
+.main-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 400px;
+  gap:clamp(2rem,4vw,4rem);align-items:start;
+}
+
+/* ════════════════════
+   CONTACT FORM
+════════════════════ */
+.form-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:2rem;box-shadow:var(--shadow);
+}
+.form-card-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:.4rem;
+}
+.form-card-sub{font-size:.83rem;color:var(--ink-2);line-height:1.65;margin-bottom:1.75rem;}
+
+/* Category selector */
+.category-label{
+  font-size:.75rem;font-weight:600;color:var(--ink-3);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:.65rem;display:block;
+}
+.category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem;}
+.cat-btn{
+  background:var(--s2);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);padding:.65rem .5rem;
+  display:flex;flex-direction:column;align-items:center;gap:.3rem;
+  cursor:pointer;transition:all .18s;text-align:center;
+}
+.cat-btn:hover{border-color:var(--indigo-md);background:var(--indigo-lt);}
+.cat-btn.active{border-color:var(--indigo);background:var(--indigo-lt);}
+.cat-btn i{font-size:17px;color:var(--ink-3);transition:color .18s;}
+.cat-btn:hover i,.cat-btn.active i{color:var(--indigo);}
+.cat-btn span{font-size:.7rem;font-weight:600;color:var(--ink-2);transition:color .18s;line-height:1.3;}
+.cat-btn:hover span,.cat-btn.active span{color:var(--indigo);}
+
+/* Form fields */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.field-group{margin-bottom:1.1rem;}
+.field-group.full{grid-column:1/-1;}
+.field-label{
+  display:block;font-size:.78rem;font-weight:600;color:var(--ink-2);
+  margin-bottom:.4rem;
+}
+.field-label span{color:var(--rose);margin-left:2px;}
+.field-input,.field-select,.field-textarea{
+  width:100%;background:var(--s2);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);padding:.7rem .9rem;
+  font-family:'DM Sans',sans-serif;font-size:.86rem;color:var(--ink);
+  transition:border-color .18s,background .18s,box-shadow .18s;
+  outline:none;
+  -webkit-appearance:none;
+}
+.field-input::placeholder,.field-textarea::placeholder{color:var(--ink-3);}
+.field-input:focus,.field-select:focus,.field-textarea:focus{
+  border-color:var(--indigo);background:var(--surface);
+  box-shadow:0 0 0 3px rgba(55,48,163,.1);
+}
+.field-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a80b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem;}
+.field-textarea{resize:vertical;min-height:130px;line-height:1.65;}
+.field-hint{font-size:.72rem;color:var(--ink-3);margin-top:.35rem;line-height:1.5;}
+
+/* Character counter */
+.field-footer{display:flex;justify-content:space-between;align-items:center;margin-top:.35rem;}
+.char-count{font-size:.71rem;color:var(--ink-3);}
+
+/* Checkbox */
+.checkbox-row{
+  display:flex;align-items:flex-start;gap:.7rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:.85rem .95rem;margin-bottom:1.25rem;
+}
+.checkbox-row input[type="checkbox"]{
+  width:16px;height:16px;border-radius:4px;
+  accent-color:var(--indigo);flex-shrink:0;margin-top:2px;cursor:pointer;
+}
+.checkbox-row label{font-size:.78rem;color:var(--ink-2);line-height:1.55;cursor:pointer;}
+.checkbox-row label a{color:var(--indigo);}
+
+/* Submit button */
+.submit-btn{
+  width:100%;background:var(--indigo);color:#fff;
+  border:none;border-radius:var(--r-sm);padding:.85rem 1.5rem;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;
+  transition:background .18s,transform .18s,box-shadow .18s;
+}
+.submit-btn:hover{background:var(--indigo-2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(55,48,163,.3);}
+.submit-btn:active{transform:translateY(0);}
+
+/* Success state */
+.form-success{
+  display:none;text-align:center;padding:2.5rem 1rem;
+}
+.form-success.show{display:block;}
+.success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--green-lt);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin:0 auto 1.25rem;
+  border:3px solid var(--green-md);
+}
+.success-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;}
+.success-body{font-size:.85rem;color:var(--ink-2);line-height:1.7;}
+
+/* ════════════════════
+   RIGHT SIDEBAR
+════════════════════ */
+.sidebar{display:flex;flex-direction:column;gap:1rem;}
+
+/* Contact channels */
+.channel-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem;
+  display:flex;align-items:flex-start;gap:.9rem;
+  box-shadow:var(--shadow);
+  transition:border-color .2s,transform .2s;
+}
+.channel-card:hover{border-color:var(--indigo-md);transform:translateY(-2px);}
+.channel-icon{
+  width:42px;height:42px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.channel-icon.indigo{background:var(--indigo-lt);color:var(--indigo);}
+.channel-icon.green{background:var(--green-lt);color:var(--green);}
+.channel-icon.gold{background:var(--gold-lt);color:var(--gold);}
+.channel-icon.teal{background:var(--teal-lt);color:var(--teal);}
+.channel-body{}
+.channel-title{font-size:.86rem;font-weight:600;color:var(--ink);margin-bottom:.15rem;}
+.channel-email{font-size:.78rem;color:var(--indigo);font-weight:500;margin-bottom:.2rem;}
+.channel-desc{font-size:.72rem;color:var(--ink-3);line-height:1.55;}
+.channel-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.65rem;font-weight:600;
+  padding:2px 7px;border-radius:100px;margin-top:.4rem;
+}
+.channel-badge.fast{background:var(--green-lt);color:var(--green);}
+.channel-badge.standard{background:var(--indigo-lt);color:var(--indigo);}
+.channel-badge.legal{background:var(--gold-lt);color:var(--gold);}
+
+/* Response time card */
+.response-card{
+  background:var(--indigo);border-radius:var(--r);padding:1.4rem;
+}
+.response-card-title{
+  font-size:.82rem;font-weight:600;color:#fff;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;
+}
+.response-rows{display:flex;flex-direction:column;gap:.5rem;}
+.response-row{
+  background:rgba(255,255,255,.11);border-radius:var(--r-sm);
+  padding:.6rem .85rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+}
+.response-row-type{font-size:.74rem;color:rgba(255,255,255,.8);}
+.response-row-time{font-size:.76rem;font-weight:600;color:var(--gold-md);}
+
+/* Office hours */
+.hours-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem;
+}
+.hours-card-title{
+  font-size:.82rem;font-weight:600;color:var(--ink);
+  margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;
+}
+.hours-rows{display:flex;flex-direction:column;gap:.4rem;}
+.hours-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.77rem;padding:.3rem 0;border-bottom:1px solid var(--border);
+}
+.hours-row:last-child{border-bottom:none;}
+.hours-row-day{color:var(--ink-2);}
+.hours-row-time{color:var(--ink);font-weight:500;}
+.hours-row-time.closed{color:var(--ink-3);}
+
+/* Social */
+.social-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem;
+}
+.social-card-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.85rem;}
+.social-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.social-link{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:.6rem .85rem;
+  font-size:.75rem;font-weight:500;color:var(--ink-2);
+  transition:all .18s;
+}
+.social-link:hover{background:var(--indigo-lt);border-color:var(--indigo-md);color:var(--indigo);text-decoration:none;}
+.social-link i{font-size:14px;}
+
+/* ════════════════════
+   FAQ
+════════════════════ */
+.faq-sec{
+  background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:clamp(3rem,6vw,2.5rem) var(--pad);
+  border-radius: 35px;
+}
+.faq-inner{max-width:var(--max);margin:0 auto;}
+.faq-layout{display:grid;grid-template-columns:280px 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.faq-sidebar-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:.65rem;
+}
+.faq-sidebar-sub{font-size:.82rem;color:var(--ink-2);line-height:1.75;margin-bottom:1.25rem;}
+.faq-sidebar-note{
+  background:var(--indigo-lt);border:1px solid var(--indigo-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;
+  font-size:.75rem;color:var(--indigo);line-height:1.6;
+}
+.faq-sidebar-note strong{color:var(--indigo);}
+.faq-list{display:flex;flex-direction:column;gap:.6rem;}
+.faq-item{
+  background:var(--paper);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.05rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q .tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q .tog{transform:rotate(45deg);color:var(--indigo);}
+.faq-item.open .faq-q{color:var(--indigo);background:var(--indigo-lt);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.05rem;
+  font-size:.82rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.85rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════
+   QUICK LINKS STRIP
+════════════════════ */
+.links-sec{
+  background:var(--paper);
+  padding:clamp(2.5rem,5vw,4rem) var(--pad);
+}
+.links-inner{max-width:var(--max);margin:0 auto;}
+.links-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-top:1.5rem;}
+.quick-link{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+  transition:all .22s;
+}
+.quick-link:hover{background:var(--indigo-lt);border-color:var(--indigo-md);transform:translateY(-2px);text-decoration:none;}
+.quick-link-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.quick-link:hover .quick-link-icon{background:var(--indigo-md);}
+.quick-link-name{font-size:.82rem;font-weight:600;color:var(--ink);}
+.quick-link-sub{font-size:.7rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════
+   FOOTER
+════════════════════ */
+.footer{background:#080c24;padding:clamp(2rem,4vw,3rem) var(--pad);}
+.footer-inner{max-width:var(--max);margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem;}
+.footer-brand{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--indigo-md);margin-bottom:.6rem;display:block;}
+.footer-tagline{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.65;max-width:240px;margin-bottom:1rem;}
+.footer-social{display:flex;gap:.5rem;}
+.social-btn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
+.social-btn:hover{background:var(--indigo);border-color:var(--indigo);color:#fff;text-decoration:none;}
+.footer-col-title{font-size:.7rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.85rem;}
+.footer-links{display:flex;flex-direction:column;gap:.4rem;}
+.footer-links a{font-size:.78rem;color:rgba(255,255,255,.5);transition:color .15s;}
+.footer-links a:hover{color:#fff;text-decoration:none;}
+.footer-divider{border:none;border-top:1px solid rgba(255,255,255,.06);margin-bottom:1.25rem;}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+.footer-copy{font-size:.72rem;color:rgba(255,255,255,.3);}
+.footer-legal{display:flex;gap:1rem;flex-wrap:wrap;}
+.footer-legal a{font-size:.72rem;color:rgba(255,255,255,.35);}
+.footer-legal a:hover{color:rgba(255,255,255,.7);text-decoration:none;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .main-inner{grid-template-columns:1fr 360px;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .main-inner{grid-template-columns:1fr;}
+  .sidebar{flex-direction:row;flex-wrap:wrap;}
+  .sidebar > *{flex:1;min-width:240px;}
+  .faq-layout{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .field-row{grid-template-columns:1fr;}
+  .category-grid{grid-template-columns:repeat(2,1fr);}
+  .social-links{grid-template-columns:1fr 1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+  .sidebar{flex-direction:column;}
+}
+@media(hover:none){
+  .channel-card:hover,.quick-link:hover{transform:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-chat-dots-fill"></i> Get in touch</div>
+      <h1 class="hero-title">We'd love to hear from you — <em>questions, feedback, or just a hello</em></h1>
+      <p class="hero-sub">Whether you've found a bug in a calculator, want to suggest a new tool, or have a content partnership idea — we read every message and respond to each one personally.</p>
+      <div class="hero-chips">
+        <div class="chip"><i class="bi bi-lightning-charge-fill"></i> General queries: within 2 business days</div>
+        <div class="chip"><i class="bi bi-bug-fill"></i> Bug reports: within 24 hours</div>
+        <div class="chip"><i class="bi bi-shield-fill-check"></i> Privacy requests: within 5 business days</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN: FORM + SIDEBAR -->
+<section class="main-sec">
+  <div class="main-inner">
+
+    <!-- FORM -->
+    <div class="fu">
+      <div class="form-card">
+        <div class="form-card-title">Send us a message</div>
+        <div class="form-card-sub">Fill in the form below and we'll get back to you as quickly as we can. All fields marked <span style="color:var(--rose);">*</span> are required.</div>
+
+        <!-- Category selector -->
+        <label class="category-label">What's this about?</label>
+        <div class="category-grid" id="catGrid">
+          <button type="button" class="cat-btn active" data-cat="general" onclick="selectCat(this)">
+            <i class="bi bi-chat-square-text"></i>
+            <span>General Query</span>
+          </button>
+          <button type="button" class="cat-btn" data-cat="bug" onclick="selectCat(this)">
+            <i class="bi bi-bug"></i>
+            <span>Bug / Error Report</span>
+          </button>
+          <button type="button" class="cat-btn" data-cat="content" onclick="selectCat(this)">
+            <i class="bi bi-pencil-square"></i>
+            <span>Content Feedback</span>
+          </button>
+          <button type="button" class="cat-btn" data-cat="feature" onclick="selectCat(this)">
+            <i class="bi bi-lightbulb"></i>
+            <span>Feature Request</span>
+          </button>
+          <button type="button" class="cat-btn" data-cat="partnership" onclick="selectCat(this)">
+            <i class="bi bi-handshake"></i>
+            <span>Partnership</span>
+          </button>
+          <button type="button" class="cat-btn" data-cat="privacy" onclick="selectCat(this)">
+            <i class="bi bi-shield-lock"></i>
+            <span>Privacy / Legal</span>
+          </button>
+        </div>
+
+        <!-- Context hint based on category -->
+        <div id="catHint" style="background:var(--indigo-lt);border:1px solid var(--indigo-md);border-radius:var(--r-sm);padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.78rem;color:var(--indigo);line-height:1.6;display:flex;align-items:flex-start;gap:.6rem;">
+          <i class="bi bi-info-circle-fill" style="flex-shrink:0;margin-top:1px;"></i>
+          <span id="catHintText">Ask us anything about the site, calculators, or content — we're happy to help.</span>
+        </div>
+
+        <form id="contactForm" onsubmit="handleSubmit(event)">
+          {% csrf_token %}
+          <!-- <input type="hidden" id="categoryInput" value="general"> -->
+            <input type="text" id="website" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0; height:0; width:0; pointer-events:none;">
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="fname">First name <span>*</span></label>
+              <input type="text" id="fname" class="field-input" placeholder="Aditya" required autocomplete="given-name">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="lname">Last name</label>
+              <input type="text" id="lname" class="field-input" placeholder="Sharma" autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="email">Email address <span>*</span></label>
+            <input type="email" id="email" class="field-input" placeholder="aditya@example.com" required autocomplete="email">
+            <div class="field-hint">We'll use this only to reply to your message.</div>
+          </div>
+
+          <div class="field-group" id="calculatorField">
+            <label class="field-label" for="calculator">Related calculator <span style="font-weight:400;color:var(--ink-3);">(optional)</span></label>
+            <select id="calculator" class="field-select">
+              <option value="">— Select calculator if relevant —</option>
+              <option>SIP Calculator</option>
+              <option>EMI Calculator</option>
+              <option>Home Loan Calculator</option>
+              <option>Car Loan Calculator</option>
+              <option>Personal Loan Calculator</option>
+              <option>PPF Calculator</option>
+              <option>NPS Calculator</option>
+              <option>EPF / PF Calculator</option>
+              <option>Salary Calculator</option>
+              <option>Retirement Planner</option>
+              <option>Loan Eligibility Calculator</option>
+              <option>Not calculator-specific</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="subject">Subject <span>*</span></label>
+            <input type="text" id="subject" class="field-input" placeholder="e.g. SIP calculator shows wrong total after step-up" required>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="message">Message <span>*</span></label>
+            <textarea id="message" class="field-textarea" placeholder="Please describe your query, feedback, or issue in as much detail as you can. The more context you provide, the faster and better we can respond." required maxlength="2000" oninput="updateCount(this)"></textarea>
+            <div class="field-footer">
+              <div class="field-hint">Be as specific as possible — it helps us help you faster.</div>
+              <div class="char-count"><span id="charCount">0</span> / 2000</div>
+            </div>
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="privacyCheck" required>
+            <label for="privacyCheck">I have read and agree to the <a href="/privacy/">Privacy Policy</a>. I understand that my name and email will be used only to respond to this message and will not be shared with third parties.</label>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <i class="bi bi-send-fill"></i>
+            Send Message
+          </button>
+        </form>
+
+        <!-- Success state (shown after submit) -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+          <div class="success-title">Message received!</div>
+          <div class="success-body">
+            Thank you for reaching out. We've received your message and will get back to you at the email address you provided within our standard response time.<br><br>
+            In the meantime, you might find an answer in our <a href="#faq">FAQ section</a> below.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar fu">
+
+      <!-- Channel cards -->
+      <div class="channel-card">
+        <div class="channel-icon indigo"><i class="bi bi-envelope-fill"></i></div>
+        <div class="channel-body">
+          <div class="channel-title">General Support</div>
+          <div class="channel-email">support@vittarthi.com</div>
+          <div class="channel-desc">Calculator questions, content feedback, feature requests, and general enquiries.</div>
+          <div class="channel-badge fast"><i class="bi bi-lightning-charge-fill"></i> Replies in 1–2 business days</div>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon green"><i class="bi bi-shield-lock-fill"></i></div>
+        <div class="channel-body">
+          <div class="channel-title">Privacy & Data</div>
+          <div class="channel-email">privacy@vittarthi.com</div>
+          <div class="channel-desc">Data access requests, deletion requests, or questions about the Privacy Policy.</div>
+          <div class="channel-badge standard"><i class="bi bi-clock-fill"></i> Replies within 5 business days</div>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon gold"><i class="bi bi-file-earmark-text-fill"></i></div>
+        <div class="channel-body">
+          <div class="channel-title">Legal & Partnerships</div>
+          <div class="channel-email">legal@vittarthi.com</div>
+          <div class="channel-desc">Terms of Use questions, IP concerns, content partnership, or media enquiries.</div>
+          <div class="channel-badge legal"><i class="bi bi-briefcase-fill"></i> Replies within 5 business days</div>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon teal"><i class="bi bi-bug-fill"></i></div>
+        <div class="channel-body">
+          <div class="channel-title">Bug Reports</div>
+          <div class="channel-email">support@vittarthi.com</div>
+          <div class="channel-desc">Found a calculation error or technical issue? We prioritise these — please include the calculator name, your inputs, and what result you got vs what you expected.</div>
+          <div class="channel-badge fast"><i class="bi bi-lightning-charge-fill"></i> Priority — within 24 hours</div>
+        </div>
+      </div>
+
+      <!-- Response times -->
+      <div class="response-card">
+        <div class="response-card-title"><i class="bi bi-clock-fill"></i> Typical response times</div>
+        <div class="response-rows">
+          <div class="response-row">
+            <div class="response-row-type">Bug & error reports</div>
+            <div class="response-row-time">Within 24 hrs</div>
+          </div>
+          <div class="response-row">
+            <div class="response-row-type">General support</div>
+            <div class="response-row-time">1–2 business days</div>
+          </div>
+          <div class="response-row">
+            <div class="response-row-type">Privacy / data requests</div>
+            <div class="response-row-time">Within 5 business days</div>
+          </div>
+          <div class="response-row">
+            <div class="response-row-type">Legal & partnerships</div>
+            <div class="response-row-time">Within 5 business days</div>
+          </div>
+          <div class="response-row">
+            <div class="response-row-type">Feature requests</div>
+            <div class="response-row-time">Acknowledged in 3 days</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Office hours -->
+      <div class="hours-card">
+        <div class="hours-card-title"><i class="bi bi-calendar3" style="color:var(--indigo);"></i> Response hours</div>
+        <div class="hours-rows">
+          <div class="hours-row">
+            <div class="hours-row-day">Monday – Friday</div>
+            <div class="hours-row-time">9:00 AM – 6:00 PM IST</div>
+          </div>
+          <div class="hours-row">
+            <div class="hours-row-day">Saturday</div>
+            <div class="hours-row-time">10:00 AM – 2:00 PM IST</div>
+          </div>
+          <div class="hours-row">
+            <div class="hours-row-day">Sunday & Public Holidays</div>
+            <div class="hours-row-time closed">Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social -->
+      <!-- <div class="social-card">
+        <div class="social-card-title"><i class="bi bi-at" style="color:var(--indigo);margin-right:4px;"></i>Find us online</div>
+        <div class="social-links">
+          <a href="#" class="social-link"><i class="bi bi-twitter-x"></i> Twitter / X</a>
+          <a href="#" class="social-link"><i class="bi bi-instagram"></i> Instagram</a>
+          <a href="#" class="social-link"><i class="bi bi-linkedin"></i> LinkedIn</a>
+          <a href="#" class="social-link"><i class="bi bi-youtube"></i> YouTube</a>
+        </div>
+      </div> -->
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec" id="faq">
+  <div class="faq-inner">
+    <div class="faq-layout">
+      <div class="fu">
+        <div class="faq-sidebar-title">Common questions before you write to us</div>
+        <p class="faq-sidebar-sub">Many queries get answered here immediately — saving you the wait for a reply.</p>
+        <div class="faq-sidebar-note">
+          <strong>Still need help?</strong> If your question isn't covered here, the contact form above is the fastest way to reach us. We respond to every genuine message.
+        </div>
+      </div>
+      <div class="faq-list fu">
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Why does my calculator result differ from my bank's quote? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>Our calculators use the standard reducing-balance formula used across all Indian banks — and results should match your lender's to within ₹1–5 per month due to rounding. Larger differences usually arise from: your lender using a different disbursement date, processing fees included in the financed amount, insurance premiums bundled with the loan, or a GST charge the calculator doesn't include. Always ask your lender for their official amortization schedule to verify the exact figures before signing.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Are the interest rates in the calculators up to date? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>We update the default interest rate values in our calculators when major rate changes are announced — for example, when RBI revises the repo rate, or when EPFO/government revises EPF/PPF rates. However, actual market rates from your specific lender may differ. For loan calculators, always enter the exact rate from your lender's offer letter. For EPF and PPF calculators, we note the rate currently used and the date it was last confirmed. If you believe a rate is outdated, please email support@vittarthi.com with the correct current rate and a source link.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Do you offer personalised financial advice? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>No — Vita₹thi is strictly an educational platform. We are not registered with SEBI, IRDAI, or any other financial regulatory authority, and we do not provide investment advice, tax advice, or any other form of regulated financial guidance. Our calculators give you numbers to help you understand a decision — but the decision itself, and advice tailored to your specific situation, should come from a qualified professional (SEBI-registered investment adviser, Chartered Accountant, etc.). We can't make specific recommendations via email either — for the same reason.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">I found an error in a calculator result. What should I do? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>Please report it! We take accuracy seriously and investigate every bug report. When you write to us, include: the name of the calculator, the exact inputs you used (loan amount, rate, tenure etc.), the result the calculator showed, and what result you expected or got from an official source. Send it to support@vittarthi.com with subject "Bug Report" or use the form above with "Bug / Error Report" selected. Bug reports receive priority and we typically respond within 24 hours.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I embed your calculators on my website or blog? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>Our calculators are currently only available directly on vittarthi.com. Embedding them on external sites is not available as a self-serve feature at this time. If you have a specific partnership or integration proposal — for example, a financial news site, HR platform, or educational institution — please reach out to legal@vittarthi.com with details about your use case. We evaluate embed requests on a case-by-case basis. Linking to any of our calculator pages is always welcome and doesn't require permission.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How do I request deletion of my personal data? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>If you've contacted us via a form or email, or if you've created an account, you can request deletion of your data by emailing privacy@vittarthi.com with the subject "Data Deletion Request." Please include the email address associated with your account or correspondence. We will process deletion requests within 30 days under the Digital Personal Data Protection Act, 2023 (DPDPA). Note: if you've only used our calculators without submitting any form or creating an account, we hold no personal data about you — calculator inputs are never transmitted to our servers.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I contribute an article or guide to Vita₹thi? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>We're open to well-researched, original contributions on Indian personal finance topics — particularly if you have professional expertise in investments, taxation, or financial planning. Guest contributions are not paid, but credited with your name and bio. To pitch, email support@vittarthi.com with "Guest Article Proposal" in the subject line, a 2–3 sentence summary of what you'd like to write, your professional background, and any previous writing samples. We review all pitches but cannot guarantee a response to every submission.</p></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Is Vita₹thi hiring? <i class="bi bi-plus-lg tog"></i></div>
+          <div class="faq-a"><p>Vita₹thi is currently a small, independent project. We aren't hiring full-time at the moment, but we occasionally work with freelance writers, developers, and designers on specific projects. If you're passionate about financial literacy, are skilled in web development or personal finance content, and would like to contribute — email support@vittarthi.com with a brief introduction and what you'd like to work on. We keep these on file and reach out when relevant opportunities arise.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LINKS -->
+<section class="links-sec">
+  <div class="links-inner">
+    <div class="fu" style="text-align:center;max-width:560px;margin:0 auto;">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--indigo);background:var(--indigo-lt);padding:4px 12px;border-radius:100px;margin-bottom:.85rem;">
+        <i class="bi bi-grid"></i> Quick access
+      </div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;">While you wait for a reply</h2>
+      <p style="font-size:.88rem;color:var(--ink-2);line-height:1.75;">Most financial questions can be answered instantly with the right calculator. Try one now.</p>
+    </div>
+    <div class="links-grid fu">
+      <a href="/calculators/emi" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="quick-link-name">EMI Calculator</div><div class="quick-link-sub">Any loan type</div></div>
+      </a>
+      <a href="/calculators/sip" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="quick-link-name">SIP Calculator</div><div class="quick-link-sub">Investment growth</div></div>
+      </a>
+      <a href="/calculators/salary" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="quick-link-name">Salary Calculator</div><div class="quick-link-sub">CTC to take-home</div></div>
+      </a>
+      <a href="/calculators/pf" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-briefcase"></i></div>
+        <div><div class="quick-link-name">EPF Calculator</div><div class="quick-link-sub">PF corpus</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-house"></i></div>
+        <div><div class="quick-link-name">Home Loan</div><div class="quick-link-sub">EMI & amortization</div></div>
+      </a>
+      <a href="/calculators/retirement" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-clock-history"></i></div>
+        <div><div class="quick-link-name">Retirement Planner</div><div class="quick-link-sub">Corpus target</div></div>
+      </a>
+      <a href="/calculators/ppf" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="quick-link-name">PPF Calculator</div><div class="quick-link-sub">Tax-free savings</div></div>
+      </a>
+      <a href="/calculators/" class="quick-link">
+        <div class="quick-link-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="quick-link-name">All Calculators</div><div class="quick-link-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── Category selector ── */
+const catHints = {
+  general:     "Ask us anything about the site, calculators, or content — we're happy to help.",
+  bug:         "Please include: the calculator name, exact inputs you used, the result shown, and what you expected. Screenshots are very helpful.",
+  content:     "Tell us about an article, guide, or calculator explanation that felt unclear, outdated, or incorrect. Include the URL if possible.",
+  feature:     "Suggest a new calculator, a new section for an existing tool, or any improvement you'd find useful. We read all suggestions.",
+  partnership: "For media collaborations, content partnerships, embedding enquiries, or sponsored content proposals. Please include your website and audience details.",
+  privacy:     "For data access, correction, or deletion requests, or questions about our Privacy Policy. Email privacy@vittarthi.com for faster processing."
+};
+
+function selectCat(btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cat = btn.dataset.cat;
+  document.getElementById('categoryInput').value = cat;
+  document.getElementById('catHintText').textContent = catHints[cat];
+}
+
+/* ── Character counter ── */
+function updateCount(el) {
+  document.getElementById('charCount').textContent = el.value.length;
+}
+
+/* ── Form submit ── */
+async function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML =
+      '<i class="bi bi-hourglass-split"></i> Sending...';
+    btn.disabled = true;
+    btn.style.opacity = '.7';
+    const payload = {
+        first_name:
+            document.getElementById('fname').value,
+        last_name:
+            document.getElementById('lname').value,
+        email:
+            document.getElementById('email').value,
+        website:
+            document.getElementById('website').value,
+        calculator:
+            document.getElementById('calculator').value,
+        subject:
+            document.getElementById('subject').value,
+        message:
+            document.getElementById('message').value
+    };
+    try {
+        const response = await fetch('/contact-submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+          document.querySelector('.success-body')
+            .innerHTML = `
+            Thank you for reaching out.
+            Your support ticket ID is:
+            <strong>${data.ticket_id}</strong>
+            We'll get back to you soon.
+            `;
+            document.getElementById('contactForm')
+                .style.display = 'none';
+            document.getElementById('formSuccess')
+                .classList.add('show');
+        } else {
+            alert(data.message || 'Something went wrong');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Server error');
+    } finally {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.innerHTML =
+          '<i class="bi bi-send-fill"></i> Send Message';
+    }
+}
+
+/* ── FAQ toggle ── */
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+/* ── Scroll reveal ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 80) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (
+                cookie.substring(0, name.length + 1)
+                === (name + '=')
+            ) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function toggleResources() {
+    const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow");
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
+
+</script>
+</html>
+{% endblock %}
