@@ -22,7 +22,36 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
-
+:root {
+  --ink:        #071828;
+  --ink-2:      #2a4a62;
+  --ink-3:      #6a8aa2;
+  --paper:      #f4faff;
+  --surface:    #ffffff;
+  --s2:         #e8f4fd;
+  --s3:         #d0e9f8;
+  --sky:        #0284c7;
+  --sky-2:      #0ea5e9;
+  --sky-lt:     #e0f2fe;
+  --sky-md:     #bae6fd;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b45309;
+  --gold-lt:    #fffbeb;
+  --gold-md:    #fde68a;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --violet:     #6d28d9;
+  --violet-lt:  #ede9fe;
+  --border:     rgba(7,24,40,0.09);
+  --shadow:     0 4px 20px rgba(7,24,40,0.07);
+  --shadow-lg:  0 12px 48px rgba(7,24,40,0.11);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* Mobile drawer */
 .drawer {
   display:none; position:fixed;
@@ -300,112 +329,501 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--sky);background:var(--sky-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* Pills */
+.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
+.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:100px;}
+.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
+.pill-s{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--sky-lt);color:var(--sky);padding:2px 8px;border-radius:100px;}
+.pill-v{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--violet-lt);color:var(--violet);padding:2px 8px;border-radius:100px;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--sky-md) 0,var(--sky-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--sky);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--sky-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. EMI ANATOMY HERO
+════════════════════════════════════ */
+.hero-sec{
+  background:var(--sky);
+  padding:clamp(3rem,7vw,5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.hero-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);background:rgba(255,255,255,.14);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.hero-title em{font-style:italic;color:#bae6fd;}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:1.5rem;}
+.hero-callout{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+}
+.hero-callout-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:#bae6fd;line-height:1;flex-shrink:0;
+}
+.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.84);line-height:1.6;}
+
+/* EMI formula card */
+.emi-formula-card{
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--r);padding:1.5rem;
+}
+.emi-formula-title{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;}
+.emi-formula-eq{
+  font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;
+  color:#fff;line-height:1.6;text-align:center;margin-bottom:1.1rem;
+  background:rgba(255,255,255,.08);border-radius:var(--r-sm);padding:.85rem 1rem;
+}
+.emi-formula-eq span{color:#bae6fd;}
+.emi-parts{display:flex;flex-direction:column;gap:.65rem;}
+.emi-part{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--r-sm);padding:.85rem 1.1rem;
+  display:flex;align-items:flex-start;gap:.85rem;transition:background .2s;
+}
+.emi-part:hover{background:rgba(255,255,255,.18);}
+.emi-part-var{
+  font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;
+  color:#bae6fd;flex-shrink:0;width:24px;text-align:center;line-height:1;
+}
+.emi-part-title{font-size:.84rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
+.emi-part-sub{font-size:.73rem;color:rgba(255,255,255,.74);line-height:1.5;}
+
+/* ════════════════════════════════════
+   3. AMORTIZATION EXPLAINED
+════════════════════════════════════ */
+.amort-sec{background:var(--paper);}
+.amort-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.amort-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.amort-content strong{color:var(--ink);}
+.amort-insight{background:var(--sky);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;}
+.amort-insight-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.amort-rows{display:flex;flex-direction:column;gap:.6rem;}
+.amort-row{
+  background:rgba(255,255,255,.13);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.amort-row-lbl{font-size:.78rem;color:rgba(255,255,255,.84);}
+.amort-row-val{font-size:.82rem;font-weight:600;}
+.amort-row-val.good{color:#a7f3d0;}
+.amort-row-val.bad{color:#fca5a5;}
+.amort-row-val.plain{color:#fff;}
+
+/* Amortization visual */
+.amort-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.amort-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.amort-timeline{display:flex;flex-direction:column;gap:.5rem;}
+.amort-year-row{display:flex;align-items:center;gap:.75rem;}
+.amort-year-label{font-size:.72rem;color:var(--ink-3);width:48px;flex-shrink:0;font-weight:500;}
+.amort-bar-wrap{flex:1;display:flex;height:18px;border-radius:100px;overflow:hidden;background:var(--s2);}
+.amort-bar-interest{background:linear-gradient(90deg,var(--rose),#fca5a5);height:100%;}
+.amort-bar-principal{background:linear-gradient(90deg,var(--sky),#7dd3fc);height:100%;}
+.amort-year-total{font-size:.7rem;color:var(--ink-3);width:52px;text-align:right;flex-shrink:0;}
+.amort-legend{display:flex;gap:1.25rem;margin-top:.85rem;flex-wrap:wrap;}
+.amort-legend-item{display:flex;align-items:center;gap:.5rem;font-size:.74rem;color:var(--ink-2);}
+.amort-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.amort-note{
+  background:var(--sky-lt);border:1px solid var(--sky-md);
+  border-radius:var(--r-sm);padding:.75rem .9rem;margin-top:.85rem;
+  font-size:.74rem;color:var(--sky);line-height:1.6;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   4. LOAN TYPE RATE COMPARISON
+════════════════════════════════════ */
+.rates-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.rates-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);    overflow-x: scroll;}
+.rates-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.rates-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.rates-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.rates-table tbody tr:last-child{border-bottom:none;}
+.rates-table tbody tr:hover{background:var(--s2);}
+.rates-table td{padding:.85rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.rates-table td:first-child{font-weight:600;color:var(--ink);}
+.rate-bar-cell{min-width:140px;}
+.rate-bar-wrap{display:flex;align-items:center;gap:.65rem;}
+.rate-bar-track{flex:1;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;}
+.rate-bar-fill{height:100%;border-radius:100px;}
+.rate-bar-pct{font-size:.72rem;font-weight:600;color:var(--ink-2);width:60px;flex-shrink:0;}
+
+/* ════════════════════════════════════
+   5. EMI vs TENURE TRADEOFF
+════════════════════════════════════ */
+.tradeoff-sec{background:var(--paper);}
+.tradeoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.tradeoff-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.tradeoff-content strong{color:var(--ink);}
+
+.tradeoff-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.tradeoff-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.scenario-rows{display:flex;flex-direction:column;gap:.75rem;}
+.scenario-row{
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  border:1px solid var(--border);background:var(--s2);
+  transition:border-color .2s,background .2s;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.scenario-row:hover{border-color:var(--sky-md);background:var(--sky-lt);}
+.scenario-row.best{border-color:var(--green-md);background:var(--green-lt);}
+.scenario-row.worst{border-color:rgba(160,54,58,.2);background:var(--rose-lt);}
+.scenario-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem;}
+.scenario-tenure{font-size:.82rem;font-weight:600;color:var(--ink);}
+.scenario-emi{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.scenario-row.best .scenario-emi{color:var(--green);}
+.scenario-row.worst .scenario-emi{color:var(--rose);}
+.scenario-emi{color:var(--sky);}
+.scenario-details{display:flex;gap:1rem;flex-wrap:wrap;}
+.scenario-detail{font-size:.73rem;color:var(--ink-2);}
+.scenario-detail span{font-weight:600;color:var(--ink);}
+.tradeoff-rule{
+  background:var(--sky);border-radius:var(--r-sm);padding:1rem 1.25rem;
+  font-size:.78rem;color:rgba(255,255,255,.9);line-height:1.6;margin-top:1rem;
+  display:flex;align-items:flex-start;gap:.65rem;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.tradeoff-rule i{color:#bae6fd;font-size:15px;flex-shrink:0;margin-top:1px;}
+
+/* ════════════════════════════════════
+   6. PREPAYMENT POWER
+════════════════════════════════════ */
+.prepay-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.prepay-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.prepay-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.prepay-content strong{color:var(--ink);}
+
+.prepay-visual{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.prepay-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.prepay-cases{display:flex;flex-direction:column;gap:.75rem;}
+.prepay-case{
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  border:1px solid var(--border);
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.prepay-case.base{background:var(--s2);}
+.prepay-case.good{background:var(--green-lt);border-color:var(--green-md);}
+.prepay-case.better{background:var(--sky-lt);border-color:var(--sky-md);}
+.prepay-case-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.prepay-case-label{font-size:.8rem;font-weight:600;}
+.prepay-case.base .prepay-case-label{color:var(--ink);}
+.prepay-case.good .prepay-case-label{color:var(--green);}
+.prepay-case.better .prepay-case-label{color:var(--sky);}
+.prepay-case-tag{
+  font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:100px;
+}
+.prepay-case.base .prepay-case-tag{background:var(--s3);color:var(--ink-3);}
+.prepay-case.good .prepay-case-tag{background:var(--green-md);color:var(--green);}
+.prepay-case.better .prepay-case-tag{background:var(--sky-md);color:var(--sky);}
+.prepay-stats{display:flex;gap:1rem;flex-wrap:wrap;}
+.prepay-stat{font-size:.74rem;color:var(--ink-2);}
+.prepay-stat span{font-weight:600;color:var(--ink);}
+.prepay-case.good .prepay-stat span{color:var(--green);}
+.prepay-case.better .prepay-stat span{color:var(--sky);}
+.prepay-note{
+  background:var(--sky-lt);border:1px solid var(--sky-md);
+  border-radius:var(--r-sm);padding:.75rem .9rem;margin-top:.85rem;
+  font-size:.74rem;color:var(--sky);line-height:1.6;
 }
 
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
+/* ════════════════════════════════════
+   7. FOIR & SAFE LIMITS
+════════════════════════════════════ */
+.foir-sec{background:var(--paper);}
+.foir-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.foir-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.foir-content strong{color:var(--ink);}
 
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+.foir-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.foir-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.foir-meter-wrap{margin-bottom:1.25rem;}
+.foir-meter-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ink-3);margin-bottom:.5rem;}
+.foir-meter-track{height:22px;border-radius:100px;overflow:hidden;display:flex;margin-bottom:.55rem;}
+.foir-zone{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;}
+.foir-zone.safe{background:var(--green);flex:2.5;}
+.foir-zone.caution{background:var(--gold);flex:1.5;}
+.foir-zone.danger{background:var(--rose);flex:1;}
+.foir-zone-labels{display:flex;margin-bottom:1rem;}
+.foir-zone-label{font-size:.7rem;display:flex;align-items:center;gap:.35rem;}
+.foir-zone-label span.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.foir-income-rows{display:flex;flex-direction:column;gap:.5rem;}
+.foir-income-row{
+  background:var(--s2);border-radius:var(--r-sm);
+  padding:.65rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  border:1px solid var(--border);
 }
-.card { animation:fadeUp .45s ease both; }
+.foir-income-row-lbl{font-size:.78rem;color:var(--ink-2);}
+.foir-income-row-val{font-size:.82rem;font-weight:600;color:var(--ink);}
+.foir-income-row.highlight{background:var(--sky-lt);border-color:var(--sky-md);}
+.foir-income-row.highlight .foir-income-row-lbl{color:var(--sky);}
+.foir-income-row.highlight .foir-income-row-val{color:var(--sky);}
 
+/* ════════════════════════════════════
+   8. STATS STRIP
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--sky);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
+}
+.stat-box-num span{color:#bae6fd;}
+.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
+
+/* ════════════════════════════════════
+   9. PRO TIPS — 4 cards
+════════════════════════════════════ */
+.tips-sec{background:var(--paper);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.tip-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.tip-number{
+  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;
+  color:var(--sky);opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
+}
+.tip-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+  background:var(--sky);
+}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tip-card:hover::after{transform:scaleX(1);}
+.tip-icon{
+  width:40px;height:40px;border-radius:9px;
+  background:var(--sky-lt);color:var(--sky);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   10. CREDIT SCORE & RATES GUIDE
+════════════════════════════════════ */
+.credit-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.credit-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.credit-list{display:flex;flex-direction:column;gap:.75rem;}
+.credit-item{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
+}
+.credit-item:hover{border-color:var(--sky-md);background:var(--sky-lt);}
+.credit-item-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--sky-lt);color:var(--sky);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.credit-item:hover .credit-item-icon{background:var(--sky-md);}
+.credit-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.credit-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+.credit-score-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
+.credit-score-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
+.score-bands{display:flex;flex-direction:column;gap:.5rem;}
+.score-band{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.75rem .9rem;border-radius:var(--r-sm);border:1px solid transparent;
+}
+.score-band.excellent{background:var(--green-lt);border-color:var(--green-md);}
+.score-band.good{background:var(--sky-lt);border-color:var(--sky-md);}
+.score-band.fair{background:var(--gold-lt);border-color:rgba(180,83,9,.2);}
+.score-band.poor{background:var(--rose-lt);border-color:rgba(160,54,58,.2);}
+.score-band-range{
+  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
+  width:80px;flex-shrink:0;
+}
+.score-band.excellent .score-band-range{color:var(--green);}
+.score-band.good .score-band-range{color:var(--sky);}
+.score-band.fair .score-band-range{color:var(--gold);}
+.score-band.poor .score-band-range{color:var(--rose);}
+.score-band-label{font-size:.78rem;font-weight:600;flex:1;}
+.score-band.excellent .score-band-label{color:var(--green);}
+.score-band.good .score-band-label{color:var(--sky);}
+.score-band.fair .score-band-label{color:var(--gold);}
+.score-band.poor .score-band-label{color:var(--rose);}
+.score-band-rate{font-size:.74rem;color:var(--ink-2);text-align:right;flex-shrink:0;}
+.credit-note{
+  background:var(--sky-lt);border:1px solid var(--sky-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
+  font-size:.75rem;color:var(--sky);line-height:1.6;
+}
+.credit-note strong{color:var(--sky);}
+
+/* ════════════════════════════════════
+   11. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--sky);}
+.faq-item.open .faq-q{color:var(--sky);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   12. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;transition:all .22s;
+}
+.related-card:hover{background:var(--sky-lt);border-color:var(--sky-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--sky-lt);color:var(--sky);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--sky-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   13. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(2,132,199,.45),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--sky);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero-inner,.amort-grid,.tradeoff-grid,.prepay-grid,.foir-grid,.credit-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+  .scenario-details{flex-direction:column;gap:.35rem;}
+}
 /* ════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
 ════════════════════════════════════════ */
@@ -458,6 +876,7 @@ details[open] summary::after {
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .tip-card:hover,.related-card:hover,.scenario-row:hover{transform:none;}
 }
 </style>
 <body>
@@ -664,114 +1083,784 @@ details[open] summary::after {
     </div>
 
   </div>
-
-  <section class="seo-content">
-    <h2>EMI Calculator – Understand Your Loan Repayments Clearly</h2>
-    <p>An EMI calculator helps you estimate how much you need to pay every month when you take a loan. Whether it is a home loan, car loan, or personal loan, knowing your EMI in advance makes it easier to plan your finances without stress.</p>
-    <p>This tool uses standard financial formulas to give quick and reliable results based on your loan amount, interest rate, and repayment period.</p>
-    
-    <h3>What is EMI?</h3>
-    <p>EMI stands for Equated Monthly Installment. It is the fixed amount you pay every month to repay a loan over a specific time period. Each EMI has two parts:</p>
-    <ul class="seo-list">
-      <li><strong>Principal:</strong> The original loan amount you borrowed</li>
-      <li><strong>Interest:</strong> The cost charged by the lender for borrowing</li>
-    </ul>
-    <p>In the early months, a larger portion of your EMI goes towards interest. Over time, the principal repayment increases while interest reduces.</p>
-
-    <h3>How EMI is Calculated</h3>
-    <p>EMI is calculated using a standard mathematical formula. It depends on:</p>
-    <ul class="seo-list">
-      <li>Loan amount</li>
-      <li>Monthly interest rate</li>
-      <li>Total number of monthly payments</li>
-    </ul>
-    <p>A higher interest rate or longer tenure increases total interest paid, even if the EMI looks smaller.</p>
-
-    <h3>Why Use an EMI Calculator?</h3>
-    <p>An EMI calculator removes guesswork and helps you make better decisions before taking a loan.</p>
-    <ul class="seo-list">
-      <li><strong>1. Instant Loan Planning:</strong> You can quickly check how much EMI fits your monthly budget.</li>
-      <li><strong>2. Compare Loan Options:</strong> Try different interest rates and tenures to find the most suitable option.</li>
-      <li><strong>3. Understand Total Cost:</strong> It shows not just EMI, but also total interest and overall payment.</li>
-      <li><strong>4. Avoid Financial Stress:</strong> Helps ensure your EMI does not exceed your repayment capacity.</li>
-    </ul>
-
-    <h3>Key Inputs Required</h3>
-    <p>To calculate EMI, you need three basic inputs:</p>
-    <ul class="seo-list">
-      <li><strong>Loan Amount:</strong> The total amount you plan to borrow.</li>
-      <li><strong>Interest Rate:</strong> The annual rate charged by the lender.</li>
-      <li><strong>Loan Tenure:</strong> The duration over which you will repay the loan, usually in years.</li>
-    </ul>
-
-    <h3>How to Use the EMI Calculator</h3>
-    <ul class="seo-list">
-      <li>Enter your loan amount</li>
-      <li>Adjust the interest rate</li>
-      <li>Select your loan tenure</li>
-      <li>View results instantly</li>
-    </ul>
-    <p>The calculator will show your Monthly EMI, Total interest payable, and Total repayment amount.</p>
-
-    <h3>Example</h3>
-    <p>If you take a loan of ₹10 lakh at an interest rate of 10% for 10 years:</p>
-    <ul class="seo-list">
-      <li>You pay a fixed EMI every month</li>
-      <li>A significant portion initially goes towards interest</li>
-      <li>Total repayment will be higher than the borrowed amount due to interest</li>
-    </ul>
-    <p>Using a calculator helps you see this clearly before committing.</p>
-
-    <h3>Benefits of Early Planning</h3>
-    <p>Using an EMI calculator before taking a loan gives you better control:</p>
-    <ul class="seo-list">
-      <li>Helps you choose a shorter tenure to reduce interest</li>
-      <li>Allows you to adjust EMI based on income</li>
-      <li>Makes long-term financial planning easier</li>
-    </ul>
-
-    <h3>EMI vs Interest Trade-Off</h3>
-    <p>There is always a balance between EMI and tenure:</p>
-    <ul class="seo-list">
-      <li><strong>Lower EMI</strong> → Longer tenure → Higher total interest</li>
-      <li><strong>Higher EMI</strong> → Shorter tenure → Lower total interest</li>
-    </ul>
-    <p>A calculator helps you find the right balance based on your comfort.</p>
-
-    <h3>Types of Loans You Can Calculate</h3>
-    <p>This EMI calculator can be used for:</p>
-    <ul class="seo-list">
-      <li>Home loans</li>
-      <li>Car loans</li>
-      <li>Personal loans</li>
-      <li>Education loans</li>
-    </ul>
-    <p>The formula remains the same, only values change.</p>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>Is EMI fixed for the entire loan period?</summary>
-        <div class="faq-content">Yes, in fixed-rate loans. In floating-rate loans, EMI or tenure may change based on market rates.</div>
-      </details>
-      <details name="faq">
-        <summary>Can I reduce my EMI?</summary>
-        <div class="faq-content">You can reduce your EMI by increasing your loan tenure, but keep in mind this increases the total interest you will pay over the life of the loan.</div>
-      </details>
-      <details name="faq">
-        <summary>Does prepayment affect EMI?</summary>
-        <div class="faq-content">Yes. Prepayment reduces your outstanding principal, which allows you to either lower your future EMIs or shorten your loan tenure while keeping the EMI the same.</div>
-      </details>
-      <details name="faq">
-        <summary>Are these calculations accurate?</summary>
-        <div class="faq-content">They are based on standard financial formulas. Actual values may vary slightly depending on your specific lender's terms, processing fees, and compounding periods.</div>
-      </details>
+<br>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">Three inputs. Instant clarity on any loan.</h2>
+      <p class="sec-sub">Whether you're comparing a home loan, calculating a car EMI, or stress-testing a personal loan before signing — three numbers are all it takes to see the full picture.</p>
     </div>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Enter loan amount, rate & tenure</div>
+        <div class="step-desc">Input the loan principal (what you're borrowing), the annual interest rate from your lender's offer, and the repayment tenure in years. Use the presets for Home, Car, Personal, and Education loans to instantly benchmark typical market terms — or enter your exact offer letter numbers.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">See your EMI and total cost instantly</div>
+        <div class="step-desc">The calculator shows your fixed monthly EMI, the total interest you'll pay over the full tenure, and the total repayment amount (principal + interest). The donut chart splits what goes to principal vs interest — revealing the true cost of borrowing that most lenders don't advertise upfront.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Explore the amortization schedule</div>
+        <div class="step-desc">The year-by-year table shows exactly how much of each year's payments go to principal vs interest. This is where the interest front-loading becomes visible — and where you can see how a prepayment in Year 2 saves far more than the same prepayment in Year 8. Use the bar and line charts to spot the crossover point.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <br>
-    <h3>Final Note</h3>
-    <p>An EMI calculator is not just a tool for calculation. It is a planning aid that helps you understand the real cost of borrowing. Before taking any loan, it is always advisable to check multiple scenarios and choose one that fits your financial capacity.</p>
-  </section>
+<!-- ══════════════════════════════════════
+  SECTION 2 — EMI ANATOMY HERO
+══════════════════════════════════════ -->
+<section class="hero-sec">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-calculator"></i> Inside every EMI</div>
+      <div class="hero-title">Every EMI has two parts —<br><em>and one shrinks while the other grows</em></div>
+      <div class="hero-sub">An EMI is not a flat repayment of your loan. It's a monthly payment calculated so that each instalment is identical in amount — but internally, the split between interest and principal shifts dramatically over time. Understanding this mechanism is the foundation of smart borrowing.</div>
+      <div class="hero-callout">
+        <div class="hero-callout-num">~60%</div>
+        <div class="hero-callout-text">On a 20-year home loan at 8.5%, approximately 60% of your total repayment is interest — not principal. You pay back your loan amount once and the bank's profit nearly another time on top. The longer the tenure, the higher this ratio climbs.</div>
+      </div>
+    </div>
+    <div class="emi-formula-card fu">
+      <div class="emi-formula-title">The EMI Formula — demystified</div>
+      <div class="emi-formula-eq">
+        EMI = <span>P × r × (1+r)ⁿ</span> ÷ <span>[(1+r)ⁿ − 1]</span>
+      </div>
+      <div class="emi-parts">
+        <div class="emi-part">
+          <div class="emi-part-var">P</div>
+          <div>
+            <div class="emi-part-title">Principal — the loan amount</div>
+            <div class="emi-part-sub">The amount you actually borrow. A larger principal means a proportionally larger EMI — but also means more interest charged on the outstanding balance each month. Every rupee of down payment directly reduces P and all interest calculated from it.</div>
+          </div>
+        </div>
+        <div class="emi-part">
+          <div class="emi-part-var">r</div>
+          <div>
+            <div class="emi-part-title">Monthly interest rate (Annual rate ÷ 12)</div>
+            <div class="emi-part-sub">The annual interest rate divided by 12. At 8.5% p.a., your monthly rate is 0.708%. Interest is charged on the outstanding balance — not the original loan — which is why prepayments have such a powerful effect in the early years when the balance is highest.</div>
+          </div>
+        </div>
+        <div class="emi-part">
+          <div class="emi-part-var">n</div>
+          <div>
+            <div class="emi-part-title">Total number of monthly instalments</div>
+            <div class="emi-part-sub">Years × 12. A 20-year loan = 240 EMIs. Increasing n lowers the EMI but dramatically increases total interest paid. Decreasing n raises EMI but slashes the interest cost. This is the most powerful lever a borrower controls after the interest rate itself.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — AMORTIZATION EXPLAINED
+══════════════════════════════════════ -->
+<section class="sec amort-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-bar-chart-steps"></i> How loans repay</div>
+      <h2 class="sec-title">Amortization — why you pay mostly interest at the start</h2>
+      <p class="sec-sub">The amortization schedule is the most revealing table in any loan document. Most borrowers never look at it — and that's exactly what lenders are counting on.</p>
+    </div>
+    <div class="amort-grid">
+      <div class="fu">
+        <div class="amort-content">
+          <p>In an amortized loan, your EMI stays fixed — but the internal split between interest and principal changes every single month. In the very first EMI, <strong>interest is charged on the full outstanding principal</strong>. As you repay, the outstanding balance slowly reduces, and so does the interest component of each subsequent EMI.</p>
+          <p>This means early EMIs are mostly interest. On a ₹50 Lakh home loan at 8.5% for 20 years, your first EMI of approximately ₹43,391 includes ₹35,417 of interest and just ₹7,974 of principal repayment — <strong>82% goes to the bank, 18% to reducing your debt</strong>. By Year 15, this ratio has flipped.</p>
+          <p>This is why <strong>prepaying in the first 5 years of a loan saves dramatically more than prepaying in Year 15</strong>. Early prepayment attacks the principal when it's at its largest, eliminating all future interest that would have been charged on that amount — often 2–3× the prepaid amount in total savings.</p>
+        </div>
+        <div class="amort-insight">
+          <div class="amort-insight-title"><i class="bi bi-bar-chart-fill"></i> ₹50L home loan · 8.5% · 20 years — interest vs principal</div>
+          <div class="amort-rows">
+            <div class="amort-row">
+              <div class="amort-row-lbl">EMI Year 1 — interest component</div>
+              <div class="amort-row-val bad">~82% (₹35,417)</div>
+            </div>
+            <div class="amort-row">
+              <div class="amort-row-lbl">EMI Year 1 — principal component</div>
+              <div class="amort-row-val plain">~18% (₹7,974)</div>
+            </div>
+            <div class="amort-row">
+              <div class="amort-row-lbl">EMI Year 10 — interest component</div>
+              <div class="amort-row-val plain">~55%</div>
+            </div>
+            <div class="amort-row">
+              <div class="amort-row-lbl">EMI Year 20 — interest component</div>
+              <div class="amort-row-val good">~5% (almost done)</div>
+            </div>
+            <div class="amort-row">
+              <div class="amort-row-lbl">Total interest paid over 20 years</div>
+              <div class="amort-row-val bad">₹54.1 Lakh</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="amort-visual fu">
+        <div class="amort-visual-title"><i class="bi bi-bar-chart" style="color:var(--sky);margin-right:6px;"></i> Interest vs principal share — ₹50L · 8.5% · 20 yrs</div>
+        <div class="amort-timeline">
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 1</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:82%;"></div>
+              <div class="amort-bar-principal" style="width:18%;"></div>
+            </div>
+            <div class="amort-year-total">82% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 3</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:78%;"></div>
+              <div class="amort-bar-principal" style="width:22%;"></div>
+            </div>
+            <div class="amort-year-total">78% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 5</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:73%;"></div>
+              <div class="amort-bar-principal" style="width:27%;"></div>
+            </div>
+            <div class="amort-year-total">73% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 8</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:64%;"></div>
+              <div class="amort-bar-principal" style="width:36%;"></div>
+            </div>
+            <div class="amort-year-total">64% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 10</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:55%;"></div>
+              <div class="amort-bar-principal" style="width:45%;"></div>
+            </div>
+            <div class="amort-year-total">55% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 13</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:42%;"></div>
+              <div class="amort-bar-principal" style="width:58%;"></div>
+            </div>
+            <div class="amort-year-total">42% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 16</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:26%;"></div>
+              <div class="amort-bar-principal" style="width:74%;"></div>
+            </div>
+            <div class="amort-year-total">26% int</div>
+          </div>
+          <div class="amort-year-row">
+            <div class="amort-year-label">Year 19</div>
+            <div class="amort-bar-wrap">
+              <div class="amort-bar-interest" style="width:9%;"></div>
+              <div class="amort-bar-principal" style="width:91%;"></div>
+            </div>
+            <div class="amort-year-total">9% int</div>
+          </div>
+        </div>
+        <div class="amort-legend">
+          <div class="amort-legend-item"><div class="amort-legend-dot" style="background:var(--rose);border-radius:3px;"></div>Interest paid</div>
+          <div class="amort-legend-item"><div class="amort-legend-dot" style="background:var(--sky);border-radius:3px;"></div>Principal repaid</div>
+        </div>
+        <div class="amort-note">The crossover point — where principal repaid exceeds interest in a single year — occurs around Year 12–13 on this loan. Before that point, prepayment delivers the highest return per rupee deployed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — LOAN TYPE RATE COMPARISON
+══════════════════════════════════════ -->
+<section class="sec rates-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-arrow-left-right"></i> Loan type comparison</div>
+      <h2 class="sec-title">Interest rates across all loan types — what to expect</h2>
+      <p class="sec-sub">Not all loans are priced equally. Secured loans (where the bank holds collateral) carry far lower rates than unsecured ones. Here's the full rate landscape in India as of 2024–25.</p>
+    </div>
+    <div class="rates-wrap fu">
+      <table class="rates-table">
+        <thead>
+          <tr>
+            <th>Loan Type</th>
+            <th>Typical Rate (p.a.)</th>
+            <th>Rate Range</th>
+            <th>Max Tenure</th>
+            <th>Secured?</th>
+            <th>Tax Benefit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🏡 Home Loan</td>
+            <td><span class="pill-g">8.35–9.5%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:42%;background:var(--green);"></div></div>
+                  <div class="rate-bar-pct">8.35–9.5%</div>
+                </div>
+              </div>
+            </td>
+            <td>30 years</td>
+            <td><span class="pill-g">Yes (property)</span></td>
+            <td><span class="pill-g">80C + Sec 24(b)</span></td>
+          </tr>
+          <tr>
+            <td>🚗 Car Loan</td>
+            <td><span class="pill-s">8.5–14%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:58%;background:var(--sky);"></div></div>
+                  <div class="rate-bar-pct">8.5–14%</div>
+                </div>
+              </div>
+            </td>
+            <td>7 years</td>
+            <td><span class="pill-s">Yes (vehicle)</span></td>
+            <td><span class="pill-m">EVs only (80EEB)</span></td>
+          </tr>
+          <tr>
+            <td>🎓 Education Loan</td>
+            <td><span class="pill-s">9–14%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:60%;background:var(--violet);"></div></div>
+                  <div class="rate-bar-pct">9–14%</div>
+                </div>
+              </div>
+            </td>
+            <td>15 years</td>
+            <td><span class="pill-m">Partial (degree)</span></td>
+            <td><span class="pill-g">Sec 80E (full interest)</span></td>
+          </tr>
+          <tr>
+            <td>💳 Personal Loan</td>
+            <td><span class="pill-m">10.5–24%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:78%;background:var(--gold);"></div></div>
+                  <div class="rate-bar-pct">10.5–24%</div>
+                </div>
+              </div>
+            </td>
+            <td>5 years</td>
+            <td><span class="pill-b">No</span></td>
+            <td><span class="pill-b">None</span></td>
+          </tr>
+          <tr>
+            <td>🏦 Loan Against Property</td>
+            <td><span class="pill-g">9–12%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:52%;background:var(--teal-lt);border-radius:100px;background:var(--green);"></div></div>
+                  <div class="rate-bar-pct">9–12%</div>
+                </div>
+              </div>
+            </td>
+            <td>15 years</td>
+            <td><span class="pill-g">Yes (property)</span></td>
+            <td><span class="pill-b">None</span></td>
+          </tr>
+          <tr>
+            <td>💰 Gold Loan</td>
+            <td><span class="pill-g">7.5–17%</span></td>
+            <td>
+              <div class="rate-bar-cell">
+                <div class="rate-bar-wrap">
+                  <div class="rate-bar-track"><div class="rate-bar-fill" style="width:55%;background:var(--gold);"></div></div>
+                  <div class="rate-bar-pct">7.5–17%</div>
+                </div>
+              </div>
+            </td>
+            <td>3 years</td>
+            <td><span class="pill-g">Yes (gold)</span></td>
+            <td><span class="pill-b">None</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — EMI vs TENURE TRADEOFF
+══════════════════════════════════════ -->
+<section class="sec tradeoff-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-sliders"></i> The EMI-tenure balance</div>
+      <h2 class="sec-title">The EMI vs tenure trade-off — more visible than you think</h2>
+      <p class="sec-sub">Lenders use long tenures to make large loans look affordable. The calculator makes the true cost of that convenience impossible to miss.</p>
+    </div>
+    <div class="tradeoff-grid">
+      <div class="tradeoff-content fu">
+        <p>The single most controllable lever in any loan is tenure. Most borrowers pick tenure based on what EMI feels comfortable — without ever looking at the total interest cost. That's exactly the wrong way to choose.</p>
+        <p>On a ₹30 Lakh home loan at 8.5%: choosing 20 years over 10 years reduces your EMI by ₹12,400/month — but <strong>costs you ₹27 Lakh more in total interest</strong>. That ₹12,400 saved on EMI gets paid to the bank instead, 27 times over.</p>
+        <p>The golden rule: <strong>choose the shortest tenure where the EMI doesn't exceed 30–35% of your net monthly income</strong>. This minimises total interest without straining monthly cash flow. As your salary grows, consider prepaying to further reduce the outstanding principal.</p>
+      </div>
+      <div class="tradeoff-visual fu">
+        <div class="tradeoff-visual-title"><i class="bi bi-calculator" style="color:var(--sky);margin-right:6px;"></i> ₹30 Lakh loan at 8.5% — tenure comparison</div>
+        <div class="scenario-rows">
+          <div class="scenario-row best">
+            <div class="scenario-head">
+              <div class="scenario-tenure">10-year tenure</div>
+              <div class="scenario-emi">₹37,169 / month</div>
+            </div>
+            <div class="scenario-details">
+              <div class="scenario-detail">Total interest: <span>₹14.6L</span></div>
+              <div class="scenario-detail">Total repayment: <span>₹44.6L</span></div>
+              <div class="scenario-detail">Interest ratio: <span>33%</span></div>
+            </div>
+          </div>
+          <div class="scenario-row">
+            <div class="scenario-head">
+              <div class="scenario-tenure">15-year tenure</div>
+              <div class="scenario-emi" style="color:var(--sky);">₹29,517 / month</div>
+            </div>
+            <div class="scenario-details">
+              <div class="scenario-detail">Total interest: <span>₹23.1L</span></div>
+              <div class="scenario-detail">Total repayment: <span>₹53.1L</span></div>
+              <div class="scenario-detail">Interest ratio: <span>43%</span></div>
+            </div>
+          </div>
+          <div class="scenario-row">
+            <div class="scenario-head">
+              <div class="scenario-tenure">20-year tenure</div>
+              <div class="scenario-emi" style="color:var(--gold);">₹26,035 / month</div>
+            </div>
+            <div class="scenario-details">
+              <div class="scenario-detail">Total interest: <span>₹32.5L</span></div>
+              <div class="scenario-detail">Total repayment: <span>₹62.5L</span></div>
+              <div class="scenario-detail">Interest ratio: <span>52%</span></div>
+            </div>
+          </div>
+          <div class="scenario-row worst">
+            <div class="scenario-head">
+              <div class="scenario-tenure">30-year tenure</div>
+              <div class="scenario-emi">₹23,067 / month</div>
+            </div>
+            <div class="scenario-details">
+              <div class="scenario-detail">Total interest: <span>₹53.0L</span></div>
+              <div class="scenario-detail">Total repayment: <span>₹83.0L</span></div>
+              <div class="scenario-detail">Interest ratio: <span>64%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tradeoff-rule">
+          <i class="bi bi-info-circle-fill"></i>
+          Going from 10 years to 30 years saves ₹14,102/month on EMI — but costs ₹38.4 Lakh extra in interest. That's 128 months of the saved EMI handed back to the bank over the extended tenure.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — PREPAYMENT POWER
+══════════════════════════════════════ -->
+<section class="sec prepay-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightning-charge"></i> The prepayment advantage</div>
+      <h2 class="sec-title">One extra EMI a year — cuts years off your loan</h2>
+      <p class="sec-sub">Prepayment is the most underused tool in loan management. Small, consistent prepayments early in the tenure deliver returns that beat most fixed-income investments after accounting for interest saved.</p>
+    </div>
+    <div class="prepay-grid">
+      <div class="prepay-content fu">
+        <p>Prepaying a loan is mathematically equivalent to earning a guaranteed, risk-free return equal to your loan's interest rate — after tax and without market risk. On a home loan at 8.5%, every ₹1 Lakh prepaid in Year 2 <strong>saves approximately ₹2.2–2.6 Lakh in future interest</strong> (depending on remaining tenure). That's a 2.2–2.6× return on your prepayment.</p>
+        <p>The most practical prepayment strategy is to <strong>add one extra EMI per year</strong> — whenever you receive a bonus, LTA, or annual increment. On a ₹50 Lakh, 20-year loan at 8.5%, making one extra EMI of ~₹43,000 each year reduces your total tenure by approximately <strong>3.5 years and saves ₹15–18 Lakh in interest</strong>.</p>
+        <p>When prepaying, always choose to <strong>reduce tenure rather than EMI</strong> (most banks offer this choice). Keeping the EMI the same while cutting tenure maximises your interest savings. Reducing EMI keeps the tenure the same and saves proportionally less.</p>
+        <p>Check your loan agreement for prepayment charges — floating-rate home loans have <strong>no prepayment penalty by RBI regulation</strong>. Fixed-rate loans (car, personal) may charge 1–5% of prepaid amount.</p>
+      </div>
+      <div class="prepay-visual fu">
+        <div class="prepay-visual-title"><i class="bi bi-graph-down-arrow" style="color:var(--sky);margin-right:6px;"></i> Prepayment impact — ₹50L · 8.5% · 20-year home loan</div>
+        <div class="prepay-cases">
+          <div class="prepay-case base">
+            <div class="prepay-case-head">
+              <div class="prepay-case-label">No prepayment</div>
+              <div class="prepay-case-tag">Baseline</div>
+            </div>
+            <div class="prepay-stats">
+              <div class="prepay-stat">Total tenure: <span>20 years (240 EMIs)</span></div>
+              <div class="prepay-stat">Total interest: <span>₹54.1 Lakh</span></div>
+              <div class="prepay-stat">Total repayment: <span>₹1.04 Crore</span></div>
+            </div>
+          </div>
+          <div class="prepay-case good">
+            <div class="prepay-case-head">
+              <div class="prepay-case-label">+1 extra EMI/year (₹43K × 20 yrs)</div>
+              <div class="prepay-case-tag">Saves ₹16L</div>
+            </div>
+            <div class="prepay-stats">
+              <div class="prepay-stat">Tenure reduced: <span>~3.5 years shorter</span></div>
+              <div class="prepay-stat">Interest saved: <span>₹16.4 Lakh</span></div>
+              <div class="prepay-stat">Extra paid: <span>₹8.6 Lakh over time</span></div>
+            </div>
+          </div>
+          <div class="prepay-case better">
+            <div class="prepay-case-head">
+              <div class="prepay-case-label">₹2L lump-sum in Year 2 + ₹1L/yr</div>
+              <div class="prepay-case-tag">Saves ₹25L+</div>
+            </div>
+            <div class="prepay-stats">
+              <div class="prepay-stat">Tenure reduced: <span>~5.5 years shorter</span></div>
+              <div class="prepay-stat">Interest saved: <span>₹25+ Lakh</span></div>
+              <div class="prepay-stat">Best use of bonus: <span>Prepay in Year 1–3</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="prepay-note"><strong>RBI rule:</strong> Banks cannot charge prepayment penalty on floating-rate home loans to individual borrowers. For fixed-rate or personal loans, check the loan agreement — charges typically range from 1–5% of the prepaid amount after 12 months of EMIs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — FOIR & SAFE LIMITS
+══════════════════════════════════════ -->
+<section class="sec foir-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-shield-check"></i> Safe borrowing limits</div>
+      <h2 class="sec-title">The 40% rule — how much EMI is too much?</h2>
+      <p class="sec-sub">FOIR (Fixed Obligation to Income Ratio) is the metric every bank uses to decide your loan eligibility. It's also the best personal rule of thumb for safe borrowing.</p>
+    </div>
+    <div class="foir-grid">
+      <div class="foir-content fu">
+        <p>FOIR measures your <strong>total fixed monthly obligations as a percentage of your net monthly income</strong>. This includes all EMIs (existing loans + the new one), rent if applicable, and any other fixed commitments. Most banks in India approve loans where FOIR stays at or below 40–50%.</p>
+        <p>For personal financial safety, <strong>keep your total EMI burden below 35–40% of net take-home pay</strong>. This leaves 60–65% for living expenses, savings, investments, and emergencies. Breaching 50% FOIR means any income disruption — a job change, illness, or even a large unexpected expense — could make you miss an EMI, damaging your credit score.</p>
+        <p>Lenders may approve up to 60–70% FOIR for very high-income borrowers, but just because a bank will lend you more doesn't mean you should borrow more. The bank's risk is limited to collateral recovery; your risk is years of financial stress.</p>
+      </div>
+      <div class="foir-visual fu">
+        <div class="foir-visual-title"><i class="bi bi-speedometer2" style="color:var(--sky);margin-right:6px;"></i> FOIR zones — what banks and planners recommend</div>
+        <div class="foir-meter-wrap">
+          <div class="foir-meter-label">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+          <div class="foir-meter-track">
+            <div class="foir-zone safe">Safe &lt;40%</div>
+            <div class="foir-zone caution">Caution 40–55%</div>
+            <div class="foir-zone danger">&gt;55%</div>
+          </div>
+          <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+            <div class="foir-zone-label"><span class="dot" style="background:var(--green);border-radius:50%;display:inline-block;width:10px;height:10px;"></span><span style="font-size:.72rem;color:var(--ink-2);">Safe: &lt;40% — comfortable, eligible everywhere</span></div>
+            <div class="foir-zone-label"><span class="dot" style="background:var(--gold);border-radius:50%;display:inline-block;width:10px;height:10px;"></span><span style="font-size:.72rem;color:var(--ink-2);">Caution: 40–55% — eligible but tight</span></div>
+            <div class="foir-zone-label"><span class="dot" style="background:var(--rose);border-radius:50%;display:inline-block;width:10px;height:10px;"></span><span style="font-size:.72rem;color:var(--ink-2);">Risk: &gt;55% — likely rejection or higher rate</span></div>
+          </div>
+        </div>
+        <div class="foir-income-rows">
+          <div class="foir-income-row">
+            <div class="foir-income-row-lbl">Net monthly income ₹50,000 → safe EMI limit</div>
+            <div class="foir-income-row-val">≤ ₹20,000</div>
+          </div>
+          <div class="foir-income-row">
+            <div class="foir-income-row-lbl">Net monthly income ₹75,000 → safe EMI limit</div>
+            <div class="foir-income-row-val">≤ ₹30,000</div>
+          </div>
+          <div class="foir-income-row highlight">
+            <div class="foir-income-row-lbl">Net monthly income ₹1,00,000 → safe EMI limit</div>
+            <div class="foir-income-row-val">≤ ₹40,000</div>
+          </div>
+          <div class="foir-income-row">
+            <div class="foir-income-row-lbl">Net monthly income ₹1,50,000 → safe EMI limit</div>
+            <div class="foir-income-row-val">≤ ₹60,000</div>
+          </div>
+          <div class="foir-income-row">
+            <div class="foir-income-row-lbl">Net monthly income ₹2,50,000 → safe EMI limit</div>
+            <div class="foir-income-row-val">≤ ₹1,00,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — STATS STRIP
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">~60<span>%</span></div>
+        <div class="stat-box-lbl">Of your total repayment on a 20-year home loan is interest — not the loan you borrowed. Shorter tenure or prepayment is the only way to reduce this</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">40<span>%</span></div>
+        <div class="stat-box-lbl">Safe FOIR ceiling — total EMIs should not exceed 40% of net monthly income to maintain financial resilience and emergency buffer</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">2.5<span>×</span></div>
+        <div class="stat-box-lbl">Return on early prepayment — ₹1 Lakh prepaid in Year 2 of a home loan typically saves ₹2.5 Lakh in future interest. Better than most fixed-income returns</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">750<span>+</span></div>
+        <div class="stat-box-lbl">CIBIL score for the best loan rates. Each 50-point improvement can shave 0.25–0.5% off your interest rate — saving lakhs over a home loan tenure</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — PRO TIPS
+══════════════════════════════════════ -->
+<section class="sec tips-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Borrow smarter</div>
+      <h2 class="sec-title">4 moves that reduce your total loan cost significantly</h2>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card fu">
+        <div class="tip-number">1</div>
+        <div class="tip-icon"><i class="bi bi-graph-down-arrow"></i></div>
+        <div class="tip-title">Negotiate your rate — even 0.25% matters enormously</div>
+        <div class="tip-desc">On a ₹50 Lakh, 20-year home loan, reducing the rate from 8.75% to 8.5% saves ₹1.8 Lakh in total interest. Getting it from 8.75% to 8.25% saves ₹3.6 Lakh. Always negotiate — especially if you have a CIBIL score above 750, an existing salary account, or a competing offer from another bank. Banks with your salary account will usually offer the best rate to retain the relationship.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">2</div>
+        <div class="tip-icon"><i class="bi bi-calendar-check"></i></div>
+        <div class="tip-title">Deploy every bonus as a lump-sum prepayment</div>
+        <div class="tip-desc">Annual bonuses, LTA, and increments are the easiest source of prepayment capital. Every April — when you receive your appraisal increment and any variable pay — direct at least 50% towards your home loan principal. Even a ₹50,000 annual lump-sum prepayment on a ₹40 Lakh loan cuts tenure by 2+ years and saves ₹8–10 Lakh in interest over the life of the loan.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">3</div>
+        <div class="tip-icon"><i class="bi bi-star-fill"></i></div>
+        <div class="tip-title">Improve your CIBIL score before applying</div>
+        <div class="tip-desc">A CIBIL score of 750+ qualifies you for the best advertised rates. Scores below 700 often mean 1–3% higher rates or outright rejection. The six months before a major loan application are critical: pay all credit card bills on time, reduce utilisation below 30% of credit limit, avoid applying for any new credit, and check your credit report for errors. Even a 30-point improvement can save lakhs on a home loan.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">4</div>
+        <div class="tip-icon"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="tip-title">Refinance when rates drop by 50+ basis points</div>
+        <div class="tip-desc">Home loan rates float with the repo rate. If market rates have dropped more than 0.5% since you took your loan, consider refinancing (balance transfer to another lender) or requesting a rate reset from your existing lender. Refinancing mid-tenure can save ₹5–15 Lakh on large loans. Factor in the balance transfer charges (0.5–1% of outstanding principal) before deciding — the net saving must justify the switching cost.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — CREDIT SCORE GUIDE
+══════════════════════════════════════ -->
+<section class="sec credit-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-graph-up-arrow"></i> Your rate lever</div>
+      <h2 class="sec-title">Credit score & loan rates — the connection most borrowers miss</h2>
+      <p class="sec-sub">Your CIBIL score is the single most controllable factor that determines the interest rate on every loan you take. A 100-point improvement can save lakhs over the life of a home loan.</p>
+    </div>
+    <div class="credit-grid">
+      <div class="credit-list fu">
+        <div class="credit-item">
+          <div class="credit-item-icon"><i class="bi bi-credit-card-2-front"></i></div>
+          <div>
+            <div class="credit-item-title">Pay credit card bills in full, on time — every month</div>
+            <div class="credit-item-desc">Payment history accounts for ~35% of your CIBIL score. A single missed credit card payment drops your score by 50–100 points. Set auto-pay for at least the minimum (ideally full balance) on all cards. Even one late payment takes 12–18 months to fully recover from in your score.</div>
+          </div>
+        </div>
+        <div class="credit-item">
+          <div class="credit-item-icon"><i class="bi bi-percent"></i></div>
+          <div>
+            <div class="credit-item-title">Keep credit utilisation below 30%</div>
+            <div class="credit-item-desc">Credit utilisation — the ratio of outstanding credit card balance to total credit limit — contributes ~30% to your score. If your total credit limit is ₹2 Lakh, keeping your monthly outstanding below ₹60,000 significantly protects your score. If you regularly use more, request a credit limit increase rather than breaching 30%.</div>
+          </div>
+        </div>
+        <div class="credit-item">
+          <div class="credit-item-icon"><i class="bi bi-search"></i></div>
+          <div>
+            <div class="credit-item-title">Avoid multiple loan applications in a short window</div>
+            <div class="credit-item-desc">Each time you apply for a loan or credit card, the lender does a "hard inquiry" on your CIBIL report — which drops your score by 5–10 points per inquiry. Multiple applications in 6 months signal credit-hungriness to lenders. Use eligibility checkers (soft inquiries, no score impact) before formally applying.</div>
+          </div>
+        </div>
+        <div class="credit-item">
+          <div class="credit-item-icon"><i class="bi bi-file-earmark-check"></i></div>
+          <div>
+            <div class="credit-item-title">Check your credit report for errors annually</div>
+            <div class="credit-item-desc">CIBIL reports frequently contain errors — closed loans still showing as open, incorrect outstanding amounts, or accounts that don't belong to you. You're entitled to one free CIBIL report per year. Download it at cibil.com, check every entry, and raise a dispute for any inaccuracy. Correcting a wrong entry can instantly improve your score.</div>
+          </div>
+        </div>
+      </div>
+      <div class="credit-score-box fu">
+        <div class="credit-score-title"><i class="bi bi-bar-chart-fill" style="color:var(--sky);margin-right:6px;"></i> CIBIL score ranges & typical loan rates</div>
+        <div class="score-bands">
+          <div class="score-band excellent">
+            <div class="score-band-range">750–900</div>
+            <div class="score-band-label">Excellent</div>
+            <div class="score-band-rate">Best rate + <br>fast approval</div>
+          </div>
+          <div class="score-band good">
+            <div class="score-band-range">700–749</div>
+            <div class="score-band-label">Good</div>
+            <div class="score-band-rate">Standard rate <br>(+0.25–0.5%)</div>
+          </div>
+          <div class="score-band fair">
+            <div class="score-band-range">650–699</div>
+            <div class="score-band-label">Fair</div>
+            <div class="score-band-rate">Higher rate <br>(+1–2%), <br>stricter terms</div>
+          </div>
+          <div class="score-band poor">
+            <div class="score-band-range">&lt;650</div>
+            <div class="score-band-label">Poor / No history</div>
+            <div class="score-band-rate">Likely rejection <br>from banks</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.8rem;font-weight:600;color:var(--ink);margin-bottom:.6rem;">What impacts your CIBIL score</div>
+        <div style="display:flex;flex-direction:column;gap:.4rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="font-size:.75rem;color:var(--ink-2);flex:1;">Payment history (on-time payments)</div>
+            <div style="width:80px;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;"><div style="width:35%;height:100%;background:var(--sky);border-radius:100px;"></div></div>
+            <div style="font-size:.72rem;font-weight:600;color:var(--sky);width:28px;text-align:right;">35%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="font-size:.75rem;color:var(--ink-2);flex:1;">Credit utilisation ratio</div>
+            <div style="width:80px;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;"><div style="width:30%;height:100%;background:var(--green);border-radius:100px;"></div></div>
+            <div style="font-size:.72rem;font-weight:600;color:var(--green);width:28px;text-align:right;">30%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="font-size:.75rem;color:var(--ink-2);flex:1;">Length of credit history</div>
+            <div style="width:80px;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;"><div style="width:15%;height:100%;background:var(--gold);border-radius:100px;"></div></div>
+            <div style="font-size:.72rem;font-weight:600;color:var(--gold);width:28px;text-align:right;">15%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="font-size:.75rem;color:var(--ink-2);flex:1;">Credit mix (home + card + auto)</div>
+            <div style="width:80px;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;"><div style="width:10%;height:100%;background:var(--violet);border-radius:100px;"></div></div>
+            <div style="font-size:.72rem;font-weight:600;color:var(--violet);width:28px;text-align:right;">10%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="font-size:.75rem;color:var(--ink-2);flex:1;">New credit inquiries</div>
+            <div style="width:80px;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;"><div style="width:10%;height:100%;background:var(--rose);border-radius:100px;"></div></div>
+            <div style="font-size:.72rem;font-weight:600;color:var(--rose);width:28px;text-align:right;">10%</div>
+          </div>
+        </div>
+        <div class="credit-note"><strong>Pro tip:</strong> If you have no credit history, start with a secured credit card (against an FD) to build a track record. 12–18 months of on-time payments on a small card will take your score from 0 to 700+ — making you eligible for competitive loan rates.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Everything you need to know about EMIs, amortization, prepayment, and loan strategy in India.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is the difference between flat rate and reducing balance? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Flat rate and reducing balance (also called diminishing balance) are two methods of calculating interest. In a flat rate loan, interest is calculated on the original principal for the entire tenure — meaning you pay the same interest component every month regardless of how much you've repaid. In a reducing balance loan (used by all banks for home, car, and personal loans in India), interest is calculated on the outstanding balance — which decreases each month as you repay principal. A flat rate of 6% is actually equivalent to a reducing balance rate of approximately 11%, which is why flat rate quotes from older NBFCs or chit funds are misleading. Always compare loans on a reducing balance basis.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Should I prepay my home loan or invest the extra money? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>This is one of the most debated personal finance questions. The mathematical answer: if your loan rate is 8.5% and you can earn 11–12% post-tax from equity SIPs over the same period, invest. If you cannot stomach equity volatility, or your rate is above 10% (personal or high-rate home loan), prepay. A balanced approach works well in practice: prepay enough to keep your FOIR comfortable and loan tenure under 15 years, while simultaneously running a retirement-focused SIP. Don't make it binary — split excess cash 50:50 between prepayment and SIP, adjusting based on rates and market conditions.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What happens to my EMI if interest rates rise? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>For floating-rate loans (the default for home loans in India), when the RBI raises the repo rate, your lender's base rate (MCLR or Repo-linked lending rate) rises, and your effective loan rate increases. Banks typically respond by increasing your tenure while keeping EMI constant, or increasing both. When this happens, you have options: accept the higher tenure (costs you more interest over time), increase your EMI to match the original tenure, or make a lump-sum prepayment to bring the outstanding principal down. For fixed-rate loans (car, most personal loans), the rate is locked and repo rate changes don't affect you.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does paying off a loan early hurt my credit score? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Closing a loan early generally has a neutral to mildly positive effect on your CIBIL score — it demonstrates responsible repayment behaviour. However, it does reduce your active credit mix and shortens the average age of your accounts, which can cause a small temporary dip (5–15 points). This is not a reason to avoid prepaying a high-interest loan — the interest savings far outweigh any temporary credit score impact. If you plan to apply for a major loan (home loan) within 3–6 months of closing another loan, time the closure before rather than during the application process.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How do I calculate my eligibility for a home loan? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Lenders use FOIR to determine how much you can borrow. The general rule: your maximum allowable EMI is approximately 40–50% of your net monthly income. From there, work backward using this calculator. If your net income is ₹1 Lakh/month, your max EMI is ₹40,000–₹50,000. Enter ₹45,000 EMI, 8.5% interest, and 20-year tenure into the calculator — it implies a loan of approximately ₹49–52 Lakhs. Most banks also limit home loans to 75–85% of the property value (LTV), so the remaining 15–25% must come from you as a down payment. Use the Loan Eligibility Calculator for a precise estimate.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Are the EMI calculator results accurate for all lenders? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Yes — the calculator uses the standard reducing-balance EMI formula used by all RBI-regulated banks in India, which gives results accurate to within ₹1–2 per month due to rounding. Minor variations from lender to lender arise from: how they round the monthly rate (annual ÷ 12 vs exact calendar-day calculation), processing fees included in the disbursed amount, insurance premiums bundled with the loan, and the exact disbursement date vs first EMI date. Always ask your lender for the complete amortization schedule before signing — it must show every EMI and the principal/interest split for the full tenure.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 12 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Use these alongside the EMI Calculator for complete loan planning.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Property finance</div></div>
+      </a>
+      <a href="/calculators/car-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-car-front"></i></div>
+        <div><div class="related-card-name">Car Loan</div><div class="related-card-sub">Auto financing</div></div>
+      </a>
+      <a href="/calculators/personal-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person"></i></div>
+        <div><div class="related-card-name">Personal Loan</div><div class="related-card-sub">Unsecured credit</div></div>
+      </a>
+      <a href="/calculators/loan-eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Borrowing capacity</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Take-home pay</div></div>
+      </a>
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Grow your savings</div></div>
+      </a>
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Tax-free savings</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 13 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Know the true cost before you borrow</h2>
+    <p>The difference between a good loan and an expensive one is almost always in the tenure, the rate, and the prepayment strategy — not the loan amount itself. Use the calculator above to find your number, then borrow with complete clarity.</p>
+    <div class="final-btns">
+      <button class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i> Back to Calculator</button>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -1107,6 +2196,23 @@ window.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
   });
 });
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>

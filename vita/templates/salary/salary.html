@@ -11,7 +11,35 @@ Use the Vittarthi Salary Calculator to estimate in-hand salary, deductions, annu
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 {% block content %}
 <style>
-
+:root {
+  --ink:        #1c1207;
+  --ink-2:      #4a3a18;
+  --ink-3:      #8a7040;
+  --paper:      #fffdf5;
+  --surface:    #ffffff;
+  --s2:         #fef8e8;
+  --s3:         #fdefc8;
+  --amber:      #b45309;
+  --amber-2:    #d97706;
+  --amber-lt:   #fffbeb;
+  --amber-md:   #fde68a;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --blue:       #1b4fa6;
+  --blue-lt:    #e8effe;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(28,18,7,0.09);
+  --shadow:     0 4px 20px rgba(28,18,7,0.07);
+  --shadow-lg:  0 12px 48px rgba(28,18,7,0.11);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* ═══════════ RESET & BASE ═══════════ */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { scroll-behavior:smooth; }
@@ -294,112 +322,503 @@ tr.total-row { background:var(--surface2); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--amber);background:var(--amber-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* Pills */
+.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
+.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--amber-lt);color:var(--amber);padding:2px 8px;border-radius:100px;}
+.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
+.pill-t{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--teal-lt);color:var(--teal);padding:2px 8px;border-radius:100px;}
+.pill-i{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--blue-lt);color:var(--blue);padding:2px 8px;border-radius:100px;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--amber-md) 0,var(--amber-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--amber);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--amber-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. CTC vs GROSS vs NET HERO
+════════════════════════════════════ */
+.hero-sec{
+  background:var(--amber);
+  padding:clamp(3rem,7vw,5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.hero-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);background:rgba(255,255,255,.15);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.hero-title em{font-style:italic;color:#fef3c7;}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:1.5rem;}
+.hero-callout{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+}
+.hero-callout-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:#fef3c7;line-height:1;flex-shrink:0;
+}
+.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.84);line-height:1.6;}
+
+/* Salary funnel cards */
+.salary-funnel{display:flex;flex-direction:column;gap:.6rem;}
+.funnel-step{
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:1rem;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  transition:background .2s;
+}
+.funnel-step:hover{background:rgba(255,255,255,.2);}
+.funnel-tag{
+  font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;
+  color:#fef3c7;width:36px;flex-shrink:0;line-height:1;text-align:center;
+}
+.funnel-body{}
+.funnel-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
+.funnel-sub{font-size:.74rem;color:rgba(255,255,255,.74);line-height:1.55;}
+.funnel-pill{
+  display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;
+}
+.funnel-pill.minus{background:rgba(239,68,68,.25);color:#fca5a5;}
+.funnel-pill.result{background:rgba(52,211,153,.2);color:#6ee7b7;}
+.funnel-arrow{
+  text-align:center;font-size:.8rem;color:rgba(255,255,255,.4);
+  padding:.15rem 0;letter-spacing:2px;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   3. SALARY STRUCTURE BREAKDOWN
+════════════════════════════════════ */
+.structure-sec{background:var(--paper);}
+.structure-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;word-break: break-word;}
+.structure-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.structure-content strong{color:var(--ink);}
+
+.structure-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.structure-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.4rem;}
+.comp-rows{display:flex;flex-direction:column;gap:.5rem;}
+.comp-row{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.7rem .9rem;border-radius:var(--r-sm);
+  transition:background .15s;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.comp-row:hover{background:var(--s2);}
+.comp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.comp-name{font-size:.82rem;font-weight:500;color:var(--ink);flex:1;}
+.comp-desc{font-size:.74rem;color:var(--ink-3);flex:1.8;line-height:1.4;}
+.comp-badge{
+  font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:100px;
+  white-space:nowrap;flex-shrink:0;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.comp-badge.taxable{background:var(--rose-lt);color:var(--rose);}
+.comp-badge.exempt{background:var(--green-lt);color:var(--green);}
+.comp-badge.partial{background:var(--amber-lt);color:var(--amber);}
+.comp-section-label{
+  font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--ink-3);padding:.5rem .9rem .25rem;margin-top:.5rem;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.comp-section-label:first-child{margin-top:0;}
+
+/* Basic pay panel */
+.basic-panel{
+  background:var(--amber);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.basic-panel-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.basic-rows{display:flex;flex-direction:column;gap:.6rem;}
+.basic-row{
+  background:rgba(255,255,255,.13);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.basic-row-lbl{font-size:.78rem;color:rgba(255,255,255,.84);}
+.basic-row-val{font-size:.82rem;font-weight:600;color:#fff;}
+.basic-row-val.note{color:#fef3c7;}
+
+/* ════════════════════════════════════
+   4. OLD vs NEW TAX REGIME
+════════════════════════════════════ */
+.regime-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.regime-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.regime-card{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);transition:box-shadow .22s;}
+.regime-card:hover{box-shadow:var(--shadow-lg);}
+.regime-head{padding:1.5rem 1.5rem 1.25rem;display:flex;align-items:flex-start;gap:1rem;}
+.regime-card:nth-child(1) .regime-head{background:var(--blue);}
+.regime-card:nth-child(2) .regime-head{background:var(--amber);}
+.regime-icon{
+  width:52px;height:52px;border-radius:12px;
+  background:rgba(255,255,255,.16);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;flex-shrink:0;
+}
+.regime-head-title{font-size:1rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
+.regime-head-sub{font-size:.75rem;color:rgba(255,255,255,.74);line-height:1.5;}
+.regime-body{padding:1.25rem 1.5rem;background:var(--surface);}
+.regime-rows{display:flex;flex-direction:column;gap:.55rem;}
+.regime-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;
+  padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.8rem;
+}
+.regime-row:last-child{border-bottom:none;}
+.regime-row-lbl{color:var(--ink-3);flex-shrink:0;width:130px;}
+.regime-row-val{color:var(--ink);font-weight:500;text-align:right;line-height:1.5;}
+.regime-rec{
+  margin-top:1rem;padding:.75rem .9rem;border-radius:var(--r-sm);
+  font-size:.75rem;line-height:1.6;
+}
+.regime-card:nth-child(1) .regime-rec{background:var(--blue-lt);color:var(--blue);border:1px solid rgba(27,79,166,.2);}
+.regime-card:nth-child(2) .regime-rec{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(180,83,9,.2);}
+
+/* Slab table */
+.slab-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-top:2rem;    overflow: auto;}
+.slab-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.slab-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
+}
+.slab-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.slab-table tbody tr:last-child{border-bottom:none;}
+.slab-table tbody tr:hover{background:var(--s2);}
+.slab-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.slab-table td:first-child{color:var(--ink);font-weight:500;}
+.slab-table tr.highlight-row{background:var(--amber-lt);}
+.slab-table tr.highlight-row td:first-child{color:var(--amber);font-weight:600;}
+
+/* ════════════════════════════════════
+   5. HRA EXEMPTION EXPLAINER
+════════════════════════════════════ */
+.hra-sec{background:var(--paper);}
+.hra-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.hra-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.hra-content strong{color:var(--ink);}
+
+.hra-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.hra-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.hra-formula{
+  background:var(--amber);border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  margin-bottom:1.1rem;
+}
+.hra-formula-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.72);margin-bottom:.5rem;}
+.hra-formula-text{font-size:.82rem;color:#fff;line-height:1.65;}
+.hra-formula-text strong{color:#fef3c7;}
+.hra-cases{display:flex;flex-direction:column;gap:.65rem;}
+.hra-case{
+  border-radius:var(--r-sm);padding:.95rem 1.1rem;
+  border:1px solid var(--border);
+}
+.hra-case.metro{background:var(--amber-lt);border-color:rgba(180,83,9,.18);}
+.hra-case.non-metro{background:var(--teal-lt);border-color:rgba(14,116,144,.18);}
+.hra-case.tenant{background:var(--green-lt);border-color:var(--green-md);}
+.hra-case-title{font-size:.82rem;font-weight:600;margin-bottom:.3rem;}
+.hra-case.metro .hra-case-title{color:var(--amber);}
+.hra-case.non-metro .hra-case-title{color:var(--teal);}
+.hra-case.tenant .hra-case-title{color:var(--green);}
+.hra-case-desc{font-size:.75rem;color:var(--ink-2);line-height:1.55;}
+.hra-note{
+  background:var(--s2);border-radius:var(--r-sm);padding:.75rem .9rem;
+  font-size:.74rem;color:var(--ink-2);line-height:1.6;margin-top:.85rem;
+  border-left:3px solid var(--rose);
 }
 
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+/* ════════════════════════════════════
+   6. KEY DEDUCTIONS + INSIGHT STATS
+════════════════════════════════════ */
+.deductions-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.deductions-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.ded-list{display:flex;flex-direction:column;gap:.75rem;}
+.ded-item{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
 }
-.card { animation:fadeUp .45s ease both; }
+.ded-item:hover{border-color:rgba(180,83,9,.28);background:var(--amber-lt);}
+.ded-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--amber-lt);color:var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.ded-item:hover .ded-icon{background:var(--amber-md);}
+.ded-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.ded-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
 
+.insight-stats{display:flex;flex-direction:column;gap:1rem;}
+.istat{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem 1.4rem;
+  position:relative;overflow:hidden;
+}
+.istat::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:80px;height:80px;border-radius:50%;opacity:.08;
+}
+.istat.amber::after{background:var(--amber);}
+.istat.green::after{background:var(--green);}
+.istat.rose::after{background:var(--rose);}
+.istat-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem;}
+.istat-val{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;line-height:1;margin-bottom:.3rem;
+}
+.istat.amber .istat-val{color:var(--amber);}
+.istat.green .istat-val{color:var(--green);}
+.istat.rose .istat-val{color:var(--rose);}
+.istat-desc{font-size:.75rem;color:var(--ink-2);line-height:1.5;}
+
+/* ════════════════════════════════════
+   7. STATS STRIP
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--amber);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
+}
+.stat-box-num span{color:#fef3c7;}
+.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
+
+/* ════════════════════════════════════
+   8. PRO TIPS — 4 cards
+════════════════════════════════════ */
+.tips-sec{background:var(--paper);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.tip-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.tip-number{
+  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;
+  color:var(--amber);opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
+}
+.tip-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+  background:var(--amber);
+}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tip-card:hover::after{transform:scaleX(1);}
+.tip-icon{
+  width:40px;height:40px;border-radius:9px;
+  background:var(--amber-lt);color:var(--amber);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   9. CTC NEGOTIATION GUIDE
+════════════════════════════════════ */
+.negotiate-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.negotiate-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.neg-list{display:flex;flex-direction:column;gap:.75rem;}
+.neg-item{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:flex-start;gap:.85rem;
+  transition:border-color .2s,background .2s;
+}
+.neg-item:hover{border-color:rgba(180,83,9,.28);background:var(--amber-lt);}
+.neg-item-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--amber-lt);color:var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.neg-item:hover .neg-item-icon{background:var(--amber-md);}
+.neg-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.neg-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+.neg-info-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
+.neg-info-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
+.neg-section{margin-bottom:1.1rem;}
+.neg-section:last-child{margin-bottom:0;}
+.neg-section-label{
+  font-size:.67rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.5rem;
+}
+.neg-checklist{display:flex;flex-direction:column;gap:.4rem;}
+.neg-check{display:flex;align-items:flex-start;gap:.6rem;font-size:.78rem;color:var(--ink-2);line-height:1.5;}
+.neg-check i{color:var(--amber);font-size:12px;flex-shrink:0;margin-top:2px;}
+.neg-note{
+  background:var(--amber-lt);border:1px solid rgba(180,83,9,.2);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
+  font-size:.75rem;color:var(--amber);line-height:1.6;
+}
+.neg-note strong{color:var(--amber);}
+
+/* ════════════════════════════════════
+   10. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--amber);}
+.faq-item.open .faq-q{color:var(--amber);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   11. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;transition:all .22s;
+}
+.related-card:hover{background:var(--amber-lt);border-color:rgba(180,83,9,.28);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--amber-lt);color:var(--amber);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--amber-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   12. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(180,83,9,.45),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--amber);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero-inner,.structure-grid,.hra-grid,.deductions-grid,.negotiate-grid{grid-template-columns:1fr;}
+  .regime-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+}
 /* ════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
 ════════════════════════════════════════ */
@@ -452,6 +871,7 @@ details[open] summary::after {
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .tip-card:hover,.related-card:hover,.neg-item:hover,.ded-item:hover{transform:none;}
 }
 </style>
 
@@ -646,29 +1066,610 @@ details[open] summary::after {
     </div>
 
   </div>
+<br>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">From CTC to cash in hand — in 3 steps</h2>
+      <p class="sec-sub">Your offer letter says one number. Your bank account shows another. This calculator bridges that gap — breaking down exactly where every rupee of your CTC goes before it reaches you.</p>
+    </div>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Enter your CTC & salary structure</div>
+        <div class="step-desc">Input your annual CTC, the variable/bonus percentage included in it, and your Basic Pay as a percentage of fixed pay. These three inputs define the shape of your entire salary structure — HRA, PF deductions, allowances, and take-home are all derived from them.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">See the full breakdown instantly</div>
+        <div class="step-desc">The calculator splits your CTC into Basic, HRA, Special Allowance, Employer PF, and Variable Pay — then applies standard deductions (Employee PF and Professional Tax) to arrive at your Gross and Net monthly salary. The donut chart gives you a visual split at a glance.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Adjust & compare scenarios</div>
+        <div class="step-desc">Move the Basic Pay slider to see how a higher or lower Basic changes your PF deductions and take-home. Use the salary presets to benchmark your current package against Entry, Mid, Senior, and Executive levels. Note: TDS/income tax is excluded as it depends on your tax regime and personal deductions.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <section class="seo-content">
-    <h2>Salary Calculator – Know Your True In-Hand Income</h2>
-    <p>When HR offers you a package, they quote the CTC (Cost to Company). However, the amount that actually hits your bank account at the end of the month—your In-Hand Salary—is significantly lower. Our Salary Calculator helps you reverse-engineer your CTC to understand exactly where your money is going.</p>
-    
-    <h3>What is the difference between CTC, Gross, and Net Salary?</h3>
-    <ul class="seo-list">
-      <li><strong>CTC (Cost to Company):</strong> The total amount the company spends on you in a year. This includes your Basic, HRA, Allowances, Variable Bonus, and the Employer's contribution to your PF.</li>
-      <li><strong>Gross Salary:</strong> CTC minus the Variable Bonus and Employer's PF contribution. This is your fixed monthly earning before any deductions.</li>
-      <li><strong>Net In-Hand Salary:</strong> Gross Salary minus deductions like Employee PF, Professional Tax, and Income Tax (TDS). This is what you actually take home.</li>
-    </ul>
+<!-- ══════════════════════════════════════
+  SECTION 2 — CTC vs GROSS vs NET HERO
+══════════════════════════════════════ -->
+<section class="hero-sec">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-layers"></i> The salary hierarchy</div>
+      <div class="hero-title">CTC, Gross, Net —<br><em>three very different numbers</em></div>
+      <div class="hero-sub">Most employees know their CTC from their offer letter. Few know why their bank account sees 20–35% less. Three distinct salary definitions determine what you earn, what you receive, and what you keep — and confusing them is the most common financial mistake salaried Indians make.</div>
+      <div class="hero-callout">
+        <div class="hero-callout-num">~25%</div>
+        <div class="hero-callout-text">The typical gap between CTC and actual monthly in-hand salary — driven by Employer PF, Employee PF, Professional Tax, and any variable pay component that isn't paid monthly.</div>
+      </div>
+    </div>
+    <div class="fu">
+      <div class="salary-funnel">
+        <div class="funnel-step">
+          <div class="funnel-tag">C</div>
+          <div class="funnel-body">
+            <div class="funnel-title">CTC — Cost to Company <span class="funnel-pill result">Your offer number</span></div>
+            <div class="funnel-sub">Everything the company spends on you annually — Basic, HRA, all allowances, Employer PF, Variable bonus, and any other benefits. This is the number HR quotes. You never receive all of it in hand.</div>
+          </div>
+        </div>
+        <div class="funnel-arrow">↓ minus Variable Pay & Employer PF</div>
+        <div class="funnel-step">
+          <div class="funnel-tag">G</div>
+          <div class="funnel-body">
+            <div class="funnel-title">Gross Salary <span class="funnel-pill minus">smaller</span></div>
+            <div class="funnel-sub">CTC minus Variable Pay and Employer PF contribution. This is your fixed monthly earning before statutory deductions. It appears on your payslip as the "gross" figure before PF and Professional Tax are removed.</div>
+          </div>
+        </div>
+        <div class="funnel-arrow">↓ minus Employee PF + Prof. Tax + TDS</div>
+        <div class="funnel-step">
+          <div class="funnel-tag">N</div>
+          <div class="funnel-body">
+            <div class="funnel-title">Net In-Hand Salary <span class="funnel-pill result">What hits your bank</span></div>
+            <div class="funnel-sub">Gross minus Employee PF (12% of Basic), Professional Tax (≈₹200/month), and TDS/Income Tax. This is what you actually receive every month. For most employees, this is 65–75% of annual CTC ÷ 12.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <h3>Understanding Standard Deductions</h3>
-    <p>Even if you fall in the 0% tax bracket, your salary will have some standard statutory deductions:</p>
-    <ul class="seo-list">
-      <li><strong>EPF (Employee Provident Fund):</strong> By law, 12% of your Basic Salary is deducted as your contribution to the PF account. (The employer also contributes a matching 12%, which is part of your CTC).</li>
-      <li><strong>Professional Tax (PT):</strong> A state-level tax levied on salaried employees. It usually amounts to around ₹200 per month (₹2,400 annually) depending on the state.</li>
-    </ul>
+<!-- ══════════════════════════════════════
+  SECTION 3 — SALARY STRUCTURE BREAKDOWN
+══════════════════════════════════════ -->
+<section class="sec structure-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-diagram-3"></i> Inside your payslip</div>
+      <h2 class="sec-title">Every component of a typical Indian salary structure</h2>
+      <p class="sec-sub">A standard corporate salary in India isn't one number — it's 6–8 components, each with different tax treatment and different implications for your take-home pay.</p>
+    </div>
+    <div class="structure-grid">
+      <div class="fu">
+        <div class="structure-content">
+          <p>Indian salary structures are designed with both employer cost-efficiency and employee tax optimisation in mind. The split between Basic, HRA, and Special Allowance is not arbitrary — it directly determines how much of your salary is taxable.</p>
+          <p><strong>Basic Pay</strong> is the foundation. Everything else — HRA (typically 50% of Basic in metros, 40% elsewhere), Employer PF (12% of Basic), Employee PF (12% of Basic), and often Gratuity — is calculated as a percentage of it. A <strong>lower Basic Pay means lower PF deductions and higher take-home</strong>, but also a smaller retirement corpus and lower HRA exemption.</p>
+          <p>The <strong>Special Allowance</strong> is a catch-all component that makes up the difference between your total fixed salary and the sum of all other components. It is fully taxable but carries no deductions — which is why companies use it to pad salaries without increasing PF liability.</p>
+        </div>
+        <div class="basic-panel">
+          <div class="basic-panel-title"><i class="bi bi-bar-chart-fill"></i> Basic Pay impact — ₹12L fixed CTC example</div>
+          <div class="basic-rows">
+            <div class="basic-row">
+              <div class="basic-row-lbl">Basic at 40% → Employee PF/month</div>
+              <div class="basic-row-val">₹4,800</div>
+            </div>
+            <div class="basic-row">
+              <div class="basic-row-lbl">Basic at 50% → Employee PF/month</div>
+              <div class="basic-row-val">₹6,000</div>
+            </div>
+            <div class="basic-row">
+              <div class="basic-row-lbl">Extra PF deduction at 50% vs 40%</div>
+              <div class="basic-row-val note">−₹1,200/month</div>
+            </div>
+            <div class="basic-row">
+              <div class="basic-row-lbl">But extra retirement corpus (25 yrs)</div>
+              <div class="basic-row-val">+₹20L tax-free</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fu">
+        <div class="structure-visual">
+          <div class="structure-visual-title"><i class="bi bi-receipt" style="color:var(--amber);margin-right:6px;"></i> Typical payslip components & tax treatment</div>
+          <div class="comp-rows">
+            <div class="comp-section-label">Earnings</div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--amber);"></div>
+              <div class="comp-name">Basic Pay</div>
+              <div class="comp-desc">Core salary; base for all calculations</div>
+              <div class="comp-badge taxable">Taxable</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--amber-2);"></div>
+              <div class="comp-name">HRA</div>
+              <div class="comp-desc">House Rent Allowance (50% / 40% of Basic)</div>
+              <div class="comp-badge partial">Partly exempt</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--teal);"></div>
+              <div class="comp-name">Leave Travel Allowance</div>
+              <div class="comp-desc">Reimbursement for travel on leave</div>
+              <div class="comp-badge partial">Partly exempt</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--blue);"></div>
+              <div class="comp-name">Special Allowance</div>
+              <div class="comp-desc">Balancing component; no deduction benefit</div>
+              <div class="comp-badge taxable">Fully taxable</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--green);"></div>
+              <div class="comp-name">Food / Meal Allowance</div>
+              <div class="comp-desc">Up to ₹2,200/month via meal card</div>
+              <div class="comp-badge exempt">Tax-free</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:#8b5cf6;"></div>
+              <div class="comp-name">Variable / Performance Bonus</div>
+              <div class="comp-desc">Paid quarterly or annually; not monthly</div>
+              <div class="comp-badge taxable">Taxable</div>
+            </div>
+            <div class="comp-section-label" style="margin-top:.5rem;">Deductions</div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:var(--rose);"></div>
+              <div class="comp-name">Employee PF</div>
+              <div class="comp-desc">12% of Basic; into your EPF account</div>
+              <div class="comp-badge exempt">80C eligible</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:#f97316;"></div>
+              <div class="comp-name">Professional Tax</div>
+              <div class="comp-desc">State-level tax; ~₹200/month</div>
+              <div class="comp-badge partial">State-specific</div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-dot" style="background:#6366f1;"></div>
+              <div class="comp-name">TDS / Income Tax</div>
+              <div class="comp-desc">Depends on regime & investments</div>
+              <div class="comp-badge taxable">Slab rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <h3>Why is my Basic Pay Important?</h3>
-    <p>Your Basic Pay is the core of your salary structure. Usually, it is set between 40% to 50% of your Fixed CTC. It is highly crucial because your PF contributions and Gratuity are calculated as a percentage of your Basic Pay. A very high Basic Pay means higher PF deductions (lowering your in-hand), but it also ensures a massive retirement corpus.</p>
+<!-- ══════════════════════════════════════
+  SECTION 4 — OLD vs NEW TAX REGIME
+══════════════════════════════════════ -->
+<section class="sec regime-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-balance-scale"></i> The big decision</div>
+      <h2 class="sec-title">Old vs New tax regime — which puts more in your pocket?</h2>
+      <p class="sec-sub">From FY 2023-24, the New Tax Regime is the default for all salaried employees. Understanding both helps you choose the one that keeps more money in hand.</p>
+    </div>
+    <div class="regime-grid">
+      <div class="regime-card fu">
+        <div class="regime-head">
+          <div class="regime-icon"><i class="bi bi-receipt-cutoff"></i></div>
+          <div>
+            <div class="regime-head-title">Old Tax Regime</div>
+            <div class="regime-head-sub">Higher tax rates, but deductions reduce your taxable income significantly. Worth it only when your 80C/80D/HRA/NPS deductions exceed ~₹3.5–4L.</div>
+          </div>
+        </div>
+        <div class="regime-body">
+          <div class="regime-rows">
+            <div class="regime-row"><div class="regime-row-lbl">Basic exemption</div><div class="regime-row-val">₹2.5 Lakh</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Standard deduction</div><div class="regime-row-val">₹50,000</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">80C deduction</div><div class="regime-row-val">Up to ₹1.5 Lakh (PF, PPF, ELSS, LIC…)</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">HRA exemption</div><div class="regime-row-val">On actual rent — can be substantial</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">80CCD(1B) — NPS</div><div class="regime-row-val">Extra ₹50,000 deduction</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Home loan interest</div><div class="regime-row-val">Up to ₹2L (Sec 24b)</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Tax at ₹10L income</div><div class="regime-row-val">~₹75,400 (with ₹3.5L deductions)</div></div>
+          </div>
+          <div class="regime-rec"><strong>Best for:</strong> People with substantial deductions — home loan, HRA in metro, NPS investment, and heavy 80C investments. Typically beneficial above ₹15L CTC for active investors.</div>
+        </div>
+      </div>
+      <div class="regime-card fu">
+        <div class="regime-head">
+          <div class="regime-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+          <div>
+            <div class="regime-head-title">New Tax Regime</div>
+            <div class="regime-head-sub">Lower slab rates, ₹3L basic exemption, ₹50K standard deduction — but almost no other deductions allowed. Simple, and now the default for all employees.</div>
+          </div>
+        </div>
+        <div class="regime-body">
+          <div class="regime-rows">
+            <div class="regime-row"><div class="regime-row-lbl">Basic exemption</div><div class="regime-row-val">₹3 Lakh (higher than old)</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Standard deduction</div><div class="regime-row-val">₹75,000 (increased FY 2024-25)</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">80C / HRA / NPS</div><div class="regime-row-val">Not available</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Tax-free up to</div><div class="regime-row-val">₹7 Lakh (with rebate u/s 87A)</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Employer NPS (80CCD2)</div><div class="regime-row-val">Still available — up to 14%</div></div>
+            <div class="regime-row"><div class="regime-row-lbl">Tax at ₹10L income</div><div class="regime-row-val">~₹54,600 (no deductions needed)</div></div>
+          </div>
+          <div class="regime-rec"><strong>Best for:</strong> People below ₹15L CTC without home loans or heavy deductions, and those below ₹7L income (zero tax). Simpler to file — no investment proofs needed.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slab-wrap fu">
+      <table class="slab-table">
+        <thead>
+          <tr><th>Income Slab</th><th>New Regime Rate</th><th>Old Regime Rate</th><th>Difference</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Up to ₹3,00,000</td><td><span class="pill-g">Nil</span></td><td><span class="pill-m">Nil (up to ₹2.5L)</span></td><td>—</td></tr>
+          <tr class="highlight-row"><td>₹3L – ₹7L</td><td><span class="pill-g">5%</span></td><td><span class="pill-m">5% (₹2.5L–₹5L)</span></td><td>Zero tax up to ₹7L (rebate)</td></tr>
+          <tr><td>₹7L – ₹10L</td><td><span class="pill-g">10%</span></td><td><span class="pill-b">20%</span></td><td>New regime saves ₹30,000</td></tr>
+          <tr><td>₹10L – ₹12L</td><td><span class="pill-g">15%</span></td><td><span class="pill-b">30%</span></td><td>New regime saves ₹30,000+</td></tr>
+          <tr><td>₹12L – ₹15L</td><td><span class="pill-g">20%</span></td><td><span class="pill-b">30%</span></td><td>New regime saves ₹30,000+</td></tr>
+          <tr><td>Above ₹15L</td><td><span class="pill-m">30%</span></td><td><span class="pill-b">30%</span></td><td>Deductions determine winner</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
-  </section>
+<!-- ══════════════════════════════════════
+  SECTION 5 — HRA EXEMPTION
+══════════════════════════════════════ -->
+<section class="sec hra-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-house-door"></i> The most valuable allowance</div>
+      <h2 class="sec-title">HRA exemption — often the biggest tax saver in your payslip</h2>
+      <p class="sec-sub">For employees paying rent in metros, the HRA exemption under the old tax regime can save ₹40,000–₹1,00,000+ in taxes annually — making it one of the most powerful salary components to optimise.</p>
+    </div>
+    <div class="hra-grid">
+      <div class="hra-content fu">
+        <p>HRA (House Rent Allowance) is included in your salary to help cover rental costs. The <strong>exemption on HRA reduces your taxable income</strong> — but it's only available under the Old Tax Regime, and only if you are actually paying rent.</p>
+        <p>The exemption is the <strong>lowest of three amounts</strong>: the actual HRA received, 50% of Basic in metros (40% in non-metros), or actual rent paid minus 10% of Basic. The minimum of these three determines your exemption — which is why optimising Basic Pay, HRA component, and rent paid together can significantly lower your tax outgo.</p>
+        <p>If you pay rent to a parent, you can claim HRA exemption — but the rent must be genuine, paid by bank transfer, and the parent must declare it as rental income. This is fully legal and one of the most widely used but underutilised tax strategies in India.</p>
+        <p>Employees in the New Tax Regime <strong>cannot claim HRA exemption</strong> — the lower slab rates are meant to compensate, but for high-rent metro employees, the old regime + HRA exemption often wins.</p>
+      </div>
+      <div class="hra-visual fu">
+        <div class="hra-visual-title"><i class="bi bi-calculator" style="color:var(--amber);margin-right:6px;"></i> How HRA exemption is calculated</div>
+        <div class="hra-formula">
+          <div class="hra-formula-label">The HRA Exemption = Minimum of these 3</div>
+          <div class="hra-formula-text">
+            <strong>①</strong> Actual HRA received from employer<br>
+            <strong>②</strong> 50% of Basic (metro) / 40% of Basic (non-metro)<br>
+            <strong>③</strong> Actual rent paid − 10% of Basic Salary
+          </div>
+        </div>
+        <div class="hra-cases">
+          <div class="hra-case metro">
+            <div class="hra-case-title"><i class="bi bi-buildings" style="margin-right:4px;"></i> Metro city (Mumbai, Delhi, Chennai, Kolkata)</div>
+            <div class="hra-case-desc">HRA component = 50% of Basic. If your Basic is ₹40,000, HRA = ₹20,000/month. Paying rent of ₹22,000? Your exemption is min(₹20K, ₹20K, ₹22K−₹4K=₹18K) = <strong>₹18,000/month</strong> tax-free.</div>
+          </div>
+          <div class="hra-case non-metro">
+            <div class="hra-case-title"><i class="bi bi-building" style="margin-right:4px;"></i> Non-metro city (Pune, Bengaluru, Hyderabad…)</div>
+            <div class="hra-case-desc">HRA component = 40% of Basic. Note: Bengaluru, Hyderabad, and Pune are not classified as metros under the old tax rules — so they get the 40% limit even though they're major expensive cities.</div>
+          </div>
+          <div class="hra-case tenant">
+            <div class="hra-case-title"><i class="bi bi-house-heart" style="margin-right:4px;"></i> Paying rent to parents — fully legal</div>
+            <div class="hra-case-desc">You can pay rent to a parent who owns the property, claim HRA exemption on it, and the parent declares the rent as income (often offset by municipal taxes and 30% standard deduction on rental income). Net tax saving for the family can be substantial.</div>
+          </div>
+        </div>
+        <div class="hra-note">⚠️ Rent receipts are mandatory for HRA claims above ₹1 Lakh/year. PAN of the landlord must be quoted if annual rent exceeds ₹1 Lakh. Not claimable under the New Tax Regime.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — KEY DEDUCTIONS + STATS
+══════════════════════════════════════ -->
+<section class="sec deductions-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-dash-circle"></i> What gets deducted</div>
+      <h2 class="sec-title">Every mandatory deduction from your salary — explained</h2>
+    </div>
+    <div class="deductions-grid">
+      <div class="ded-list fu">
+        <div class="ded-item">
+          <div class="ded-icon"><i class="bi bi-briefcase-fill"></i></div>
+          <div>
+            <div class="ded-title">Employee PF — 12% of Basic</div>
+            <div class="ded-desc">Mandatory for employees earning up to ₹15,000 Basic; voluntary for others. Goes into your EPF account at 8.25% p.a. tax-free. Your employer contributes another 12% (3.67% to EPF, 8.33% to EPS). Qualifies for 80C deduction — essentially your most automatic tax-saving investment.</div>
+          </div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-icon"><i class="bi bi-bank"></i></div>
+          <div>
+            <div class="ded-title">Professional Tax — ≈ ₹200/month</div>
+            <div class="ded-desc">A state-level levy on salaried employees. Varies by state — Maharashtra charges ₹200/month (₹2,400/year), Karnataka ₹200, West Bengal uses a slab system. Some states like Delhi, Haryana, and Rajasthan don't charge it at all. Fully deductible from taxable income under both tax regimes.</div>
+          </div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-icon"><i class="bi bi-file-earmark-text"></i></div>
+          <div>
+            <div class="ded-title">TDS — Tax Deducted at Source</div>
+            <div class="ded-desc">Your employer deducts income tax monthly from your salary based on your declared tax regime and investments. At the start of each financial year, submit your Form 12BB to your employer declaring all planned deductions (80C, HRA, home loan, NPS). If you under-declare, excess TDS is deducted. If you over-declare, you get a refund when filing ITR.</div>
+          </div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+          <div>
+            <div class="ded-title">ESIC — for salaries below ₹21,000</div>
+            <div class="ded-desc">Employees' State Insurance Corporation contribution applies only if your gross monthly salary is ₹21,000 or less. Employee contributes 0.75% and employer contributes 3.25% of gross wages. Provides medical, disability, maternity, and funeral benefits. Most corporate employees above this threshold are not covered.</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-stats fu">
+        <div class="istat amber">
+          <div class="istat-label">Typical CTC-to-in-hand conversion</div>
+          <div class="istat-val">68–75<span style="font-size:1.4rem;">%</span></div>
+          <div class="istat-desc">For a ₹12L CTC employee with 50% Basic, standard deductions and no TDS, monthly in-hand is approximately ₹68,000–₹75,000 out of ₹1L monthly CTC equivalent. The rest is Employer PF and variable pay.</div>
+        </div>
+        <div class="istat green">
+          <div class="istat-label">Standard deduction (both regimes)</div>
+          <div class="istat-val">₹75<span style="font-size:1.2rem;">K</span></div>
+          <div class="istat-desc">From FY 2024-25, the standard deduction for salaried employees is ₹75,000 under the New Regime (up from ₹50,000). This flat deduction is available to every salaried employee with zero documentation required.</div>
+        </div>
+        <div class="istat rose">
+          <div class="istat-label">Tax-free income under New Regime</div>
+          <div class="istat-val">₹7<span style="font-size:1.2rem;">L</span></div>
+          <div class="istat-desc">With the ₹3L basic exemption, ₹75K standard deduction, and Section 87A rebate, total income up to ₹7 Lakhs attracts zero income tax under the New Regime — with no investment proof needed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — STATS STRIP
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">₹7<span>L</span></div>
+        <div class="stat-box-lbl">Zero tax threshold under New Regime — total income up to ₹7 Lakh is completely tax-free with the 87A rebate</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">~25<span>%</span></div>
+        <div class="stat-box-lbl">Typical gap between CTC and in-hand pay — driven by Employer PF, Employee PF, Professional Tax, and deferred variable pay</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">₹75<span>K</span></div>
+        <div class="stat-box-lbl">Standard deduction from FY 2024-25 under the New Regime — available to all salaried employees with zero paperwork</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">12<span>%</span></div>
+        <div class="stat-box-lbl">Employee PF deduction on Basic Pay — your most automatic tax-saving and retirement investment, happening every month without effort</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — PRO TIPS
+══════════════════════════════════════ -->
+<section class="sec tips-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Maximise your take-home</div>
+      <h2 class="sec-title">4 ways to legally increase your in-hand salary</h2>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card fu">
+        <div class="tip-number">1</div>
+        <div class="tip-icon"><i class="bi bi-sliders"></i></div>
+        <div class="tip-title">Choose the right tax regime — it's worth calculating every year</div>
+        <div class="tip-desc">The New Regime's lower slabs beat the Old Regime for most people below ₹15L CTC. But if you have a home loan, pay metro rent, and max out NPS + 80C, the Old Regime can save ₹50,000–₹1,20,000 more annually. Recalculate at the start of every financial year — your salary, deductions, or life situation may have changed.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">2</div>
+        <div class="tip-icon"><i class="bi bi-house-door"></i></div>
+        <div class="tip-title">Optimise your HRA + rent agreement</div>
+        <div class="tip-desc">If you're on the Old Regime and paying rent, ensure your rent agreement reflects actual rent paid (not a lower figure) and submit rent receipts on time to HR. For metro employees paying ₹20,000+/month rent, HRA exemption alone can save ₹50,000–₹80,000 in taxes annually — far outweighing the benefit of switching to the New Regime.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">3</div>
+        <div class="tip-icon"><i class="bi bi-building"></i></div>
+        <div class="tip-title">Ask HR about flexible benefit plans (flexi-pay)</div>
+        <div class="tip-desc">Many companies offer a Flexi Benefit Plan where you can allocate salary towards tax-exempt components — food coupons (up to ₹2,200/month), phone/internet reimbursement, fuel & driver allowance, uniform allowance, and Leave Travel Allowance. Properly structured, a flexi plan can save ₹20,000–₹60,000/year in taxes with zero impact on your CTC.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">4</div>
+        <div class="tip-icon"><i class="bi bi-person-badge"></i></div>
+        <div class="tip-title">Negotiate employer NPS contribution in your CTC</div>
+        <div class="tip-desc">Employer NPS contributions up to 14% of Basic are deductible under 80CCD(2) — this deduction is available even under the New Tax Regime, unlike almost all others. If your company allows CTC restructuring, shifting part of your Special Allowance to employer NPS can legally reduce tax liability by ₹30,000–₹60,000+ for senior employees without reducing CTC.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — CTC NEGOTIATION GUIDE
+══════════════════════════════════════ -->
+<section class="sec negotiate-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-chat-dots"></i> When you get an offer</div>
+      <h2 class="sec-title">How to negotiate and decode your offer letter</h2>
+      <p class="sec-sub">The CTC number in an offer letter is just the starting point. Knowing what to look for — and what to push back on — can mean ₹10,000–₹20,000 more in hand every month.</p>
+    </div>
+    <div class="negotiate-grid">
+      <div class="neg-list fu">
+        <div class="neg-item">
+          <div class="neg-item-icon"><i class="bi bi-search"></i></div>
+          <div>
+            <div class="neg-item-title">Check what's included in the CTC</div>
+            <div class="neg-item-desc">Some companies include Gratuity (4.81% of Basic), Group Health Insurance premium, annual bonuses, and even company car perks inside the CTC. These inflate the number without adding to monthly cash. Always ask for a breakup before comparing offers.</div>
+          </div>
+        </div>
+        <div class="neg-item">
+          <div class="neg-item-icon"><i class="bi bi-graph-up"></i></div>
+          <div>
+            <div class="neg-item-title">Negotiate variable pay ratio carefully</div>
+            <div class="neg-item-desc">A 20–25% variable component sounds small, but it ties a quarter of your income to performance and business conditions. Push for a lower variable percentage (10–15%) if cash flow predictability matters to you — especially for EMI commitments. Fixed-to-variable ratio is negotiable in most companies.</div>
+          </div>
+        </div>
+        <div class="neg-item">
+          <div class="neg-item-icon"><i class="bi bi-percent"></i></div>
+          <div>
+            <div class="neg-item-title">Ask about the Basic Pay percentage</div>
+            <div class="neg-item-desc">Companies sometimes set Basic at 30–35% to keep PF liability low. For you, a higher Basic (40–50%) means better EPF corpus, higher HRA exemption eligibility, and higher gratuity — at the cost of slightly lower monthly take-home. Understand the trade-off before accepting.</div>
+          </div>
+        </div>
+        <div class="neg-item">
+          <div class="neg-item-icon"><i class="bi bi-gift"></i></div>
+          <div>
+            <div class="neg-item-title">Push for reimbursements over allowances</div>
+            <div class="neg-item-desc">Reimbursements (phone bills, fuel, internet) are tax-free up to actual usage, while cash allowances are fully taxable. If a company offers ₹3,000/month phone allowance vs ₹3,000 phone reimbursement, the reimbursement saves you ~₹900/month in the 30% bracket — same cost to employer.</div>
+          </div>
+        </div>
+      </div>
+      <div class="neg-info-box fu">
+        <div class="neg-info-title"><i class="bi bi-file-earmark-text" style="color:var(--amber);margin-right:6px;"></i> What to check in every offer letter</div>
+        <div class="neg-section">
+          <div class="neg-section-label">Fixed vs variable split</div>
+          <div class="neg-checklist">
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>What % of CTC is guaranteed fixed pay?</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>Is variable pay target-based or discretionary?</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>What was last year's average variable payout %?</div>
+          </div>
+        </div>
+        <div class="neg-section">
+          <div class="neg-section-label">CTC components to verify</div>
+          <div class="neg-checklist">
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>Is Gratuity included in CTC? (Reduces effective monthly salary)</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>Is Group Medical Insurance premium inside CTC?</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>Are joining bonus / retention bonus one-time or recurring?</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>Are ESOPs / stock grants included in the CTC quote?</div>
+          </div>
+        </div>
+        <div class="neg-section">
+          <div class="neg-section-label">Questions to ask HR before signing</div>
+          <div class="neg-checklist">
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>"Can you share a sample payslip for this grade?"</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>"Does the company offer Flexi Benefit Plan / NPS?"</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>"What is the Basic Pay % of fixed CTC?"</div>
+            <div class="neg-check"><i class="bi bi-check-circle-fill"></i>"What is the increment cycle and typical range?"</div>
+          </div>
+        </div>
+        <div class="neg-note">
+          <strong>Rule of thumb:</strong> For a quick estimate, your monthly in-hand salary ≈ (Annual Fixed CTC × 0.72) ÷ 12 for a 50% Basic structure with standard PF deductions and no income tax. The exact figure depends on Basic %, variable component, Professional Tax state, and your TDS liability.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Everything you need to know about salary structures, deductions, tax regimes, and in-hand pay.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Why is my in-hand salary so much lower than my CTC? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Several components of your CTC never appear as cash in your bank account. The Employer PF contribution (12% of Basic) is part of CTC but goes directly to your EPF account, not your salary. Variable pay (bonus) is paid quarterly or annually, not monthly. Gratuity accrues over your tenure and is paid only on exit. Additionally, the Employee PF deduction (12% of Basic), Professional Tax (≈₹200/month), and TDS/Income Tax are deducted from your gross salary before the remainder reaches you. Together, these typically reduce CTC to 65–75% of the quoted number in monthly in-hand terms.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Should I choose the Old or New Tax Regime? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Use this simple rule: Add up all your deductions — 80C investments (PF already counts), HRA exemption, home loan interest (Sec 24b), NPS (80CCD(1B)), and standard deduction of ₹50K. If your total deductions exceed ₹3.75 Lakh, the Old Regime likely saves more tax. Below that, the New Regime with its lower slab rates and ₹75K standard deduction wins. Importantly, recalculate at the start of each financial year — circumstances change. You can switch between regimes annually when filing your ITR (with some restrictions for business income).</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does my salary calculator include income tax / TDS? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>No — and deliberately so. TDS depends on your chosen tax regime (Old vs New), your personal 80C investments, HRA exemption (which depends on rent paid), home loan interest, NPS contribution, and any other deductions you declare via Form 12BB. These are highly individual and change year to year. The calculator shows your pre-TDS in-hand — which is accurate for PF, Professional Tax, and structure. To calculate your post-TDS in-hand, subtract your estimated monthly income tax from the figure shown.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is gratuity and is it part of my CTC? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Gratuity is a statutory benefit paid by an employer when an employee completes 5 or more years of continuous service. It is calculated as: (Last Drawn Basic Salary × 15 × Years of Service) ÷ 26. Many companies include the gratuity accrual in their CTC calculation (typically 4.81% of Basic annually). This inflates the CTC without adding to your monthly cash. Gratuity is received only when you resign after 5 years, retire, or are terminated. It is tax-free up to ₹20 Lakhs.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is there a way to increase in-hand without negotiating CTC? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Yes — salary restructuring within the same CTC can increase in-hand meaningfully. If your company offers a Flexi Benefit Plan, restructure part of your Special Allowance into tax-exempt components: food coupons (up to ₹26,400/year tax-free), phone/internet reimbursement (actual bills, tax-free), LTA (₹2 fares tax-free every 2 years), and fuel reimbursement. You can also optimise towards the New Tax Regime (no investment commitments) if your deductions are low. These tweaks can add ₹1,000–₹5,000/month to in-hand with zero increase in CTC.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How does a salary increment affect my in-hand pay? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>An increment increases your CTC — but the in-hand increase is proportionally smaller. A 20% CTC hike does not mean 20% more in hand. Additional salary typically falls in higher tax slabs (especially if crossing ₹10L or ₹15L), increasing TDS. Employee PF deductions also rise (12% of higher Basic). So a ₹2L annual increment might add only ₹10,000–₹12,000/month to in-hand after TDS and PF. Use the salary calculator to model your new structure before assuming the increment's full impact.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Use these alongside the Salary Calculator to plan your full financial picture.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/pf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-briefcase"></i></div>
+        <div><div class="related-card-name">EPF Calculator</div><div class="related-card-sub">Retirement corpus</div></div>
+      </a>
+      <a href="/calculators/nps" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person-badge"></i></div>
+        <div><div class="related-card-name">NPS Calculator</div><div class="related-card-sub">Pension planning</div></div>
+      </a>
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Tax-free savings</div></div>
+      </a>
+      <a href="/calculators/retirement" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-clock-history"></i></div>
+        <div><div class="related-card-name">Retirement Planner</div><div class="related-card-sub">Target corpus</div></div>
+      </a>
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Loan planning</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Housing finance</div></div>
+      </a>
+      <a href="/calculators/loan-eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Borrowing capacity</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 12 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Know your salary — then make it work harder</h2>
+    <p>Understanding your in-hand pay is just step one. The right tax regime, a well-structured salary, and the correct deductions can put ₹20,000–₹60,000 more in your pocket every year. Use the calculator above and then act on what you find.</p>
+    <div class="final-btns">
+      <button class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i> Back to Calculator</button>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -684,7 +1685,23 @@ function fmt(n) {
   if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
   return '₹' + Math.round(n);
 }
-
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* Salary Math Engine */
 let salaryData = { monthly: {}, yearly: {} };
 let currentTab = 'monthly';

@@ -21,7 +21,36 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
-
+:root {
+  --ink:        #1f0508;
+  --ink-2:      #58202a;
+  --ink-3:      #9a6070;
+  --paper:      #fff9f9;
+  --surface:    #ffffff;
+  --s2:         #fef2f3;
+  --s3:         #fce7ea;
+  --crimson:    #9f1239;
+  --crimson-2:  #be123c;
+  --crimson-lt: #fff1f2;
+  --crimson-md: #fecdd3;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b45309;
+  --gold-lt:    #fffbeb;
+  --gold-md:    #fde68a;
+  --blue:       #1b4fa6;
+  --blue-lt:    #e8effe;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(31,5,8,0.09);
+  --shadow:     0 4px 20px rgba(31,5,8,0.07);
+  --shadow-lg:  0 12px 48px rgba(31,5,8,0.12);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* Mobile drawer */
 .drawer {
   display:none; position:fixed;
@@ -299,111 +328,477 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad); border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--crimson);background:var(--crimson-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* Pills */
+.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
+.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:100px;}
+.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--crimson-lt);color:var(--crimson);padding:2px 8px;border-radius:100px;}
+.pill-i{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--blue-lt);color:var(--blue);padding:2px 8px;border-radius:100px;}
+.pill-t{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--teal-lt);color:var(--teal);padding:2px 8px;border-radius:100px;}
+
+/* ════════════════════════════════════
+   1. HOW IT WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--crimson-md) 0,var(--crimson-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--crimson);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--crimson-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. INFLATION HERO
+════════════════════════════════════ */
+.hero-sec{
+  background:var(--crimson);
+  padding:clamp(3rem,7vw,5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.hero-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);background:rgba(255,255,255,.14);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.hero-title em{font-style:italic;color:var(--gold-md);}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:1.5rem;}
+.hero-callout{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+}
+.hero-callout-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--gold-md);line-height:1;flex-shrink:0;
+}
+.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.84);line-height:1.6;}
+
+/* Inflation erosion bars */
+.inflation-cards{display:flex;flex-direction:column;gap:.75rem;}
+.inf-card{
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.17);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  transition:background .2s;
+}
+.inf-card:hover{background:rgba(255,255,255,.19);}
+.inf-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
+.inf-card-label{font-size:.8rem;font-weight:600;color:#fff;}
+.inf-card-year{font-size:.7rem;color:rgba(255,255,255,.65);}
+.inf-track{height:8px;background:rgba(255,255,255,.15);border-radius:100px;overflow:hidden;margin-bottom:.4rem;}
+.inf-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold-md),rgba(253,230,138,.5));}
+.inf-values{display:flex;justify-content:space-between;}
+.inf-now{font-size:.72rem;color:rgba(255,255,255,.8);}
+.inf-future{font-size:.72rem;color:var(--gold-md);font-weight:600;}
+.inf-warn{
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--r-sm);padding:.85rem 1.1rem;
+  font-size:.75rem;color:rgba(255,255,255,.84);line-height:1.6;
+  display:flex;align-items:flex-start;gap:.65rem;
+}
+.inf-warn i{color:var(--gold-md);font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* ════════════════════════════════════
+   3. HOW MUCH DO YOU NEED?
+════════════════════════════════════ */
+.corpus-sec{background:var(--paper);}
+.corpus-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.corpus-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.corpus-content strong{color:var(--ink);}
+.corpus-panel{background:var(--crimson);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;}
+.corpus-panel-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.corpus-rows{display:flex;flex-direction:column;gap:.6rem;}
+.corpus-row{
+  background:rgba(255,255,255,.12);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.corpus-row-lbl{font-size:.78rem;color:rgba(255,255,255,.84);}
+.corpus-row-val{font-size:.82rem;font-weight:600;}
+.corpus-row-val.good{color:#6ee7b7;}
+.corpus-row-val.note{color:var(--gold-md);}
+.corpus-row-val.plain{color:#fff;}
+
+/* 4% Rule visual */
+.rule-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.rule-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.rule-formula{
+  background:var(--crimson);border-radius:var(--r-sm);
+  padding:1.1rem 1.25rem;margin-bottom:1.1rem;text-align:center;
+}
+.rule-formula-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.72);margin-bottom:.4rem;}
+.rule-formula-eq{
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;line-height:1.3;
+}
+.rule-formula-eq span{color:var(--gold-md);}
+.rule-examples{display:flex;flex-direction:column;gap:.55rem;}
+.rule-ex{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:.7rem .9rem;background:var(--s2);border-radius:var(--r-sm);
+  border:1px solid var(--border);transition:background .15s;
+}
+.rule-ex:hover{background:var(--crimson-lt);}
+.rule-ex-expense{font-size:.8rem;color:var(--ink-2);}
+.rule-ex-corpus{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--crimson);}
+.rule-note{
+  background:var(--crimson-lt);border:1px solid var(--crimson-md);
+  border-radius:var(--r-sm);padding:.75rem .9rem;margin-top:.85rem;
+  font-size:.74rem;color:var(--crimson);line-height:1.6;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   4. FIRE PATHS COMPARISON
+════════════════════════════════════ */
+.fire-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.fire-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+.fire-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  transition:transform .22s,box-shadow .22s;
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.fire-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+.fire-card-head{
+  padding:1.25rem 1.5rem 1rem;
+  position:relative;overflow:hidden;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.fire-card:nth-child(1) .fire-card-head{background:var(--crimson);}
+.fire-card:nth-child(2) .fire-card-head{background:var(--teal);}
+.fire-card:nth-child(3) .fire-card-head{background:var(--gold);}
+.fire-card:nth-child(4) .fire-card-head{background:var(--green);}
+.fire-emoji{font-size:1.6rem;margin-bottom:.4rem;display:block;}
+.fire-card-title{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:.2rem;}
+.fire-card-sub{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
+.fire-body{padding:1.25rem 1.5rem;}
+.fire-rows{display:flex;flex-direction:column;gap:.45rem;margin-bottom:.85rem;}
+.fire-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.78rem;padding:.35rem 0;border-bottom:1px solid var(--border);
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.fire-row:last-child{border-bottom:none;}
+.fire-row-lbl{color:var(--ink-3);}
+.fire-row-val{font-weight:600;color:var(--ink);}
+.fire-insight{
+  font-size:.75rem;color:var(--ink-2);line-height:1.6;
+  padding:.65rem .85rem;border-radius:var(--r-sm);
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
-}
+.fire-card:nth-child(1) .fire-insight{background:var(--crimson-lt);color:var(--crimson);}
+.fire-card:nth-child(2) .fire-insight{background:var(--teal-lt);color:var(--teal);}
+.fire-card:nth-child(3) .fire-insight{background:var(--gold-lt);color:var(--gold);}
+.fire-card:nth-child(4) .fire-insight{background:var(--green-lt);color:var(--green);}
 
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
+/* ════════════════════════════════════
+   5. GLIDE PATH — ASSET ALLOCATION
+════════════════════════════════════ */
+.glide-sec{background:var(--paper);}
+.glide-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.glide-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.glide-content strong{color:var(--ink);}
 
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+.glide-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.glide-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.glide-stages{display:flex;flex-direction:column;gap:.65rem;}
+.glide-stage{border-radius:var(--r-sm);padding:1rem 1.1rem;border:1px solid var(--border);background:var(--s2);}
+.glide-stage-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.65rem;}
+.glide-stage-label{font-size:.82rem;font-weight:600;color:var(--ink);}
+.glide-stage-years{font-size:.72rem;color:var(--ink-3);}
+.glide-bars{display:flex;gap:.4rem;height:10px;border-radius:100px;overflow:hidden;margin-bottom:.45rem;}
+.glide-eq{background:#3730a3;border-radius:100px 0 0 100px;}
+.glide-debt{background:var(--teal);}
+.glide-gold{background:var(--gold);border-radius:0 100px 100px 0;}
+.glide-legend{display:flex;gap:.85rem;flex-wrap:wrap;}
+.glide-legend-item{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--ink-2);}
+.glide-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ════════════════════════════════════
+   6. RETIREMENT INCOME SOURCES
+════════════════════════════════════ */
+.sources-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.sources-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.source-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  display:flex;flex-direction:column;gap:.65rem;
+  transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
 }
-.card { animation:fadeUp .45s ease both; }
+.source-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.source-card:nth-child(1)::before{background:linear-gradient(90deg,#3730a3,#818cf8);}
+.source-card:nth-child(2)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.source-card:nth-child(3)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.source-card:nth-child(4)::before{background:linear-gradient(90deg,var(--green),#34d399);}
+.source-card:nth-child(5)::before{background:linear-gradient(90deg,var(--crimson),#fb7185);}
+.source-card:nth-child(6)::before{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.source-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.source-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.source-card:nth-child(1) .source-icon{background:var(--blue-lt);color:#3730a3;}
+.source-card:nth-child(2) .source-icon{background:var(--teal-lt);color:var(--teal);}
+.source-card:nth-child(3) .source-icon{background:var(--gold-lt);color:var(--gold);}
+.source-card:nth-child(4) .source-icon{background:var(--green-lt);color:var(--green);}
+.source-card:nth-child(5) .source-icon{background:var(--crimson-lt);color:var(--crimson);}
+.source-card:nth-child(6) .source-icon{background:var(--blue-lt);color:var(--blue);}
+.source-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.source-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+.source-badge{
+  font-size:.73rem;font-weight:600;padding:.3rem .75rem;border-radius:100px;align-self:flex-start;
+}
+.source-card:nth-child(1) .source-badge{background:var(--blue-lt);color:#3730a3;}
+.source-card:nth-child(2) .source-badge{background:var(--teal-lt);color:var(--teal);}
+.source-card:nth-child(3) .source-badge{background:var(--gold-lt);color:var(--gold);}
+.source-card:nth-child(4) .source-badge{background:var(--green-lt);color:var(--green);}
+.source-card:nth-child(5) .source-badge{background:var(--crimson-lt);color:var(--crimson);}
+.source-card:nth-child(6) .source-badge{background:var(--blue-lt);color:var(--blue);}
+
+/* ════════════════════════════════════
+   7. STATS STRIP
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--crimson);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
+}
+.stat-box-num span{color:var(--gold-md);}
+.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
+
+/* ════════════════════════════════════
+   8. PRO TIPS — 4 cards
+════════════════════════════════════ */
+.tips-sec{background:var(--paper);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.tip-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.tip-number{
+  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;
+  color:var(--crimson);opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
+}
+.tip-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+  background:var(--crimson);
+}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tip-card:hover::after{transform:scaleX(1);}
+.tip-icon{
+  width:40px;height:40px;border-radius:9px;
+  background:var(--crimson-lt);color:var(--crimson);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   9. PORTFOLIO BUILDING GUIDE
+════════════════════════════════════ */
+.portfolio-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.portfolio-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.port-list{display:flex;flex-direction:column;gap:.75rem;}
+.port-item{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
+}
+.port-item:hover{border-color:var(--crimson-md);background:var(--crimson-lt);}
+.port-item-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--crimson-lt);color:var(--crimson);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.port-item:hover .port-item-icon{background:var(--crimson-md);}
+.port-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.port-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+.port-info-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
+.port-info-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
+.port-section{margin-bottom:1.1rem;}
+.port-section:last-child{margin-bottom:0;}
+.port-section-label{
+  font-size:.67rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.6rem;
+}
+.port-alloc-rows{display:flex;flex-direction:column;gap:.5rem;}
+.port-alloc-row{display:flex;align-items:center;gap:.75rem;}
+.port-alloc-name{font-size:.78rem;font-weight:500;color:var(--ink);width:140px;flex-shrink:0;}
+.port-alloc-track{flex:1;background:var(--s3);border-radius:100px;height:8px;overflow:hidden;}
+.port-alloc-fill{height:100%;border-radius:100px;}
+.port-alloc-pct{font-size:.74rem;font-weight:600;color:var(--ink-2);width:32px;text-align:right;flex-shrink:0;}
+.port-note{
+  background:var(--crimson-lt);border:1px solid var(--crimson-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
+  font-size:.75rem;color:var(--crimson);line-height:1.6;
+}
+.port-note strong{color:var(--crimson);}
+
+/* ════════════════════════════════════
+   10. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--crimson);}
+.faq-item.open .faq-q{color:var(--crimson);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   11. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;transition:all .22s;
+}
+.related-card:hover{background:var(--crimson-lt);border-color:var(--crimson-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--crimson-lt);color:var(--crimson);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--crimson-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   12. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(159,18,57,.5),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--crimson);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero-inner,.corpus-grid,.glide-grid,.portfolio-grid{grid-template-columns:1fr;}
+  .fire-grid{grid-template-columns:1fr;}
+  .sources-grid{grid-template-columns:1fr 1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .sources-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .related-grid{grid-template-columns:1fr 1fr;}
+}
 
 /* ════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
@@ -457,6 +852,7 @@ details[open] summary::after {
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .fire-card:hover,.source-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
 }
 </style>
 <body>
@@ -663,41 +1059,663 @@ details[open] summary::after {
 
   </div>
 <br>
-  <section class="seo-content">
-    <h2>Retirement Calculator – Plan Your Golden Years</h2>
-    <p>Retirement planning is not an age, it is a financial number. Whether you plan to work until you are 60 or join the FIRE (Financial Independence, Retire Early) movement at 45, knowing your target corpus is the most important step in personal finance. Our Retirement Calculator helps you combine your existing savings with your monthly investments to forecast your future wealth.</p>
-    
-    <h3>Why is Retirement Planning Crucial?</h3>
-    <p>With increasing life expectancy and rising healthcare costs, you might spend 25 to 30 years in retirement without a regular paycheck. Unlike previous generations, most private-sector employees today do not have a guaranteed government pension. Relying solely on EPF or PPF might not be enough due to the silent wealth-killer: <strong>Inflation</strong>.</p>
-
-    <h3>The Impact of Inflation</h3>
-    <p>If your monthly household expenses are ₹50,000 today, at a 6% inflation rate, you will need approximately ₹1,60,000 per month just to maintain the exact same lifestyle 20 years from now. This is why investing purely in safe, low-yield instruments like FDs might actually deplete your purchasing power over time. You need a balanced portfolio of equity (Mutual Funds/SIPs) and debt (EPF/PPF) to comfortably beat inflation.</p>
-
-    <h3>How to Use This Calculator</h3>
-    <ul class="seo-list">
-      <li><strong>Current Age & Retirement Age:</strong> Sets your investment horizon. The wider this gap, the harder compounding works in your favor.</li>
-      <li><strong>Existing Corpus:</strong> Enter the sum of your current FDs, EPF, PPF, and Mutual Fund holdings earmarked for retirement.</li>
-      <li><strong>Monthly SIP:</strong> The fresh money you will invest every month specifically for your retirement goal.</li>
-      <li><strong>Expected Return:</strong> A realistic estimate. Historically, a balanced portfolio of Nifty 50 Index funds and debt provides around 10% to 12% long-term returns.</li>
-    </ul>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>What is the 4% Rule in Retirement?</summary>
-        <div class="faq-content">The 4% rule is a rule of thumb used to determine how much you can safely withdraw from your retirement funds each year without running out of money. For example, if you need ₹12 Lakhs a year (₹1 Lakh/month) in retirement, your total corpus should be at least ₹3 Crores (since 4% of 3 Cr = 12 Lakhs).</div>
-      </details>
-      <details name="faq">
-        <summary>Should I reduce equity exposure as I get closer to retirement?</summary>
-        <div class="faq-content">Yes. This is called "Glide Path" investing. When you are 20 years away from retirement, you can afford 70-80% equity risk. But 3 years before retirement, you should shift a large portion of your corpus into safe debt instruments to protect it from a sudden stock market crash.</div>
-      </details>
-      <details name="faq">
-        <summary>Is ₹1 Crore enough to retire in India?</summary>
-        <div class="faq-content">It depends on your lifestyle, city of residence, and when you retire. However, for a 30-year-old retiring at 60, ₹1 Crore will not be sufficient due to 30 years of inflation. Use the calculator to set a realistic goal.</div>
-      </details>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">From today's savings to your retirement number</h2>
+      <p class="sec-sub">Retirement planning has one non-negotiable truth: you need a number before you can build a plan. This calculator gives you that number — then shows you exactly how to reach it.</p>
     </div>
-    <br>
-  </section>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Set your timeline and existing corpus</div>
+        <div class="step-desc">Enter your current age, target retirement age, and the value of everything you've already saved for retirement — EPF balance, PPF, mutual funds, FDs. This existing corpus is your compounding head start. Even ₹5 Lakh saved at 30 becomes ₹87 Lakh by 60 at 10% without adding another rupee.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Set your monthly SIP and expected return</div>
+        <div class="step-desc">Enter your fresh monthly investment committed specifically to retirement. A balanced portfolio of Nifty 50 index funds and debt has historically returned 10–12% p.a. over 20-year horizons. Use 10% for conservative estimates, 12% for realistic historical returns, never more than 13% for long-range planning.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">See your corpus and what it sustains</div>
+        <div class="step-desc">The calculator projects your total corpus at retirement from both your existing savings and monthly SIP — with compounding applied to both streams. Cross-reference the result against the 4% rule below to see how many years your corpus will last, and whether you need to adjust your monthly investment upward.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 2 — INFLATION HERO
+══════════════════════════════════════ -->
+<section class="hero-sec">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-fire"></i> The silent wealth killer</div>
+      <div class="hero-title">Inflation doesn't feel dangerous —<br><em>until it's too late to act</em></div>
+      <div class="hero-sub">₹1 Crore sounds like a lot. At 6% inflation, it buys the same things in 2044 that ₹31 Lakh buys today. Every decade you delay planning, the target corpus you need roughly doubles. The most expensive retirement mistake isn't a bad investment — it's starting late.</div>
+      <div class="hero-callout">
+        <div class="hero-callout-num">3.2×</div>
+        <div class="hero-callout-text">Your monthly expenses will be 3.2× higher in 20 years at 6% inflation. If you spend ₹50,000/month today, you'll need ₹1,60,000/month for the same lifestyle at retirement. Your corpus must generate that — every month, for 25–30 years.</div>
+      </div>
+    </div>
+    <div class="inflation-cards fu">
+      <div class="inf-card">
+        <div class="inf-card-head">
+          <div class="inf-card-label">Monthly household expenses</div>
+          <div class="inf-card-year">Today → 20 years later</div>
+        </div>
+        <div class="inf-track"><div class="inf-fill" style="width:100%;"></div></div>
+        <div class="inf-values">
+          <div class="inf-now">₹50,000 today</div>
+          <div class="inf-future">₹1,60,344 needed @ 6% inflation</div>
+        </div>
+      </div>
+      <div class="inf-card">
+        <div class="inf-card-head">
+          <div class="inf-card-label">Healthcare costs (rise faster than CPI)</div>
+          <div class="inf-card-year">Today → 20 years later @ 8%</div>
+        </div>
+        <div class="inf-track"><div class="inf-fill" style="width:100%;"></div></div>
+        <div class="inf-values">
+          <div class="inf-now">₹15,000/month today</div>
+          <div class="inf-future">₹69,914/month in 20 years</div>
+        </div>
+      </div>
+      <div class="inf-card">
+        <div class="inf-card-head">
+          <div class="inf-card-label">Purchasing power of ₹1 Crore</div>
+          <div class="inf-card-year">Value eroded by inflation over time</div>
+        </div>
+        <div class="inf-track"><div class="inf-fill" style="width:55%;"></div></div>
+        <div class="inf-values">
+          <div class="inf-now">₹1 Cr today</div>
+          <div class="inf-future">Worth only ₹31L after 20 years @ 6%</div>
+        </div>
+      </div>
+      <div class="inf-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div><strong style="color:var(--gold-md);">The FD trap:</strong> A bank FD at 7% in the 30% tax bracket earns a post-tax real return of ~0.9% after 6% inflation. You're barely standing still. Equity returns of 11–12% p.a. historically deliver 5–6% real returns — the only way to actually grow wealth against inflation over the long run.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — HOW MUCH DO YOU NEED?
+══════════════════════════════════════ -->
+<section class="sec corpus-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-bullseye"></i> Your retirement target</div>
+      <h2 class="sec-title">How much do you actually need to retire?</h2>
+      <p class="sec-sub">The answer isn't a single number — it depends on your lifestyle, the age you retire, and how long you expect to live. But the 4% Rule gives you the most reliable formula in personal finance.</p>
+    </div>
+    <div class="corpus-grid">
+      <div class="fu">
+        <div class="corpus-content">
+          <p>The <strong>4% Rule</strong> — developed from decades of market data — states that you can safely withdraw 4% of your retirement corpus annually without ever running out of money over a 30-year retirement horizon. Put differently: your corpus should be <strong>25× your annual retirement expenses</strong>.</p>
+          <p>This accounts for a diversified portfolio returning 7–10% annually while inflation erodes 3–4% of purchasing power each year. The remaining 3–4% is your "safe withdrawal rate" — enough to sustain withdrawals for 30+ years without depleting the principal in most market scenarios.</p>
+          <p>In India, the rule needs a small adjustment: inflation runs slightly higher (5–6% vs 3% in the US), and equity returns are broadly comparable. A <strong>3.5% withdrawal rate</strong> (corpus = 28.6× annual expenses) is more conservative and suitable for early retirees with a 35-year horizon.</p>
+        </div>
+        <div class="corpus-panel">
+          <div class="corpus-panel-title"><i class="bi bi-bar-chart-fill"></i> Corpus needed by lifestyle — at today's expenses</div>
+          <div class="corpus-rows">
+            <div class="corpus-row">
+              <div class="corpus-row-lbl">₹30K/month expenses → need</div>
+              <div class="corpus-row-val note">₹90 Lakh corpus</div>
+            </div>
+            <div class="corpus-row">
+              <div class="corpus-row-lbl">₹50K/month expenses → need</div>
+              <div class="corpus-row-val note">₹1.5 Crore corpus</div>
+            </div>
+            <div class="corpus-row">
+              <div class="corpus-row-lbl">₹1L/month expenses → need</div>
+              <div class="corpus-row-val good">₹3 Crore corpus</div>
+            </div>
+            <div class="corpus-row">
+              <div class="corpus-row-lbl">₹2L/month expenses → need</div>
+              <div class="corpus-row-val good">₹6 Crore corpus</div>
+            </div>
+            <div class="corpus-row">
+              <div class="corpus-row-lbl">Add ~3× for 20 yrs of 6% inflation</div>
+              <div class="corpus-row-val plain">Multiply all by ~3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rule-visual fu">
+        <div class="rule-visual-title"><i class="bi bi-calculator" style="color:var(--crimson);margin-right:6px;"></i> The 4% Rule — in plain numbers</div>
+        <div class="rule-formula">
+          <div class="rule-formula-label">Retirement Corpus = Annual Expenses ÷ 4%</div>
+          <div class="rule-formula-eq">Corpus = <span>Expenses × 25</span></div>
+        </div>
+        <div class="rule-examples">
+          <div class="rule-ex">
+            <div class="rule-ex-expense">₹25,000/month (₹3L/year)</div>
+            <div class="rule-ex-corpus">₹75L corpus</div>
+          </div>
+          <div class="rule-ex">
+            <div class="rule-ex-expense">₹50,000/month (₹6L/year)</div>
+            <div class="rule-ex-corpus">₹1.5 Cr corpus</div>
+          </div>
+          <div class="rule-ex">
+            <div class="rule-ex-expense">₹75,000/month (₹9L/year)</div>
+            <div class="rule-ex-corpus">₹2.25 Cr corpus</div>
+          </div>
+          <div class="rule-ex">
+            <div class="rule-ex-expense">₹1,00,000/month (₹12L/year)</div>
+            <div class="rule-ex-corpus">₹3 Cr corpus</div>
+          </div>
+          <div class="rule-ex">
+            <div class="rule-ex-expense">₹1,50,000/month (₹18L/year)</div>
+            <div class="rule-ex-corpus">₹4.5 Cr corpus</div>
+          </div>
+        </div>
+        <div class="rule-note">
+          <strong>Important:</strong> These figures are in today's rupees. Your actual target corpus must be inflated by 6% per year for every year until retirement. A ₹3 Crore corpus needed today becomes ₹9.6 Crore if you're 20 years from retirement. Always use the inflation-adjusted figure as your goal — the calculator does this automatically.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — FIRE PATHS
+══════════════════════════════════════ -->
+<section class="sec fire-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-lightning-charge"></i> Retirement scenarios</div>
+      <h2 class="sec-title">Four retirement paths — find yours</h2>
+      <p class="sec-sub">Whether you're chasing FIRE at 45 or catching up at 40, the numbers look very different. Here's what each path demands from your monthly savings.</p>
+    </div>
+    <div class="fire-grid">
+      <div class="fire-card fu">
+        <div class="fire-card-head">
+          <span class="fire-emoji">🔥</span>
+          <div class="fire-card-title">FIRE — Retire at 45</div>
+          <div class="fire-card-sub">Financial Independence, Retire Early. Aggressive savings, high equity allocation, lean lifestyle discipline.</div>
+        </div>
+        <div class="fire-body">
+          <div class="fire-rows">
+            <div class="fire-row"><div class="fire-row-lbl">Start age</div><div class="fire-row-val">25</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Target retirement</div><div class="fire-row-val">45 (20 years)</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">SIP needed (₹50K/month target)</div><div class="fire-row-val">~₹55,000/month</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Equity allocation</div><div class="fire-row-val">80–90%</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Expected return assumed</div><div class="fire-row-val">12% p.a.</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Corpus needed at 45</div><div class="fire-row-val">~₹4.5 Crore+</div></div>
+          </div>
+          <div class="fire-insight">Demands saving 50–60% of income and tolerating high equity volatility. Requires a 3% withdrawal rate (45-year horizon) and significant lifestyle discipline. Most achievable with dual income households or high-salary tech/finance roles.</div>
+        </div>
+      </div>
+      <div class="fire-card fu">
+        <div class="fire-card-head">
+          <span class="fire-emoji">🏢</span>
+          <div class="fire-card-title">Standard Career — Retire at 60</div>
+          <div class="fire-card-sub">The most common path. Steady 12% EPF + PPF + SIP combination. Balanced portfolio. Compound interest does the heavy lifting.</div>
+        </div>
+        <div class="fire-body">
+          <div class="fire-rows">
+            <div class="fire-row"><div class="fire-row-lbl">Start age</div><div class="fire-row-val">28</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Target retirement</div><div class="fire-row-val">60 (32 years)</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">SIP needed (₹1L/month target)</div><div class="fire-row-val">~₹8,000/month</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Equity allocation</div><div class="fire-row-val">60–70% (glide path)</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Expected return assumed</div><div class="fire-row-val">10–11% p.a.</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Corpus expected at 60</div><div class="fire-row-val">~₹3–5 Crore</div></div>
+          </div>
+          <div class="fire-insight">The most achievable path for most salaried Indians. EPF + PPF handles the debt allocation automatically. A ₹8,000–₹15,000/month equity SIP started at 28 reaches ₹3–5 Crore by 60 with reasonable hike-based step-ups.</div>
+        </div>
+      </div>
+      <div class="fire-card fu">
+        <div class="fire-card-head">
+          <span class="fire-emoji">🏃</span>
+          <div class="fire-card-title">Late Starter — Begin at 40</div>
+          <div class="fire-card-sub">Behind schedule but not hopeless. Requires aggressive catch-up SIPs, high equity exposure, and accepting a higher work-year commitment.</div>
+        </div>
+        <div class="fire-body">
+          <div class="fire-rows">
+            <div class="fire-row"><div class="fire-row-lbl">Start age</div><div class="fire-row-val">40</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Target retirement</div><div class="fire-row-val">60 (20 years)</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">SIP needed (₹1L/month target)</div><div class="fire-row-val">~₹25,000/month</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Equity allocation</div><div class="fire-row-val">70–75% initially</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Expected return assumed</div><div class="fire-row-val">10% p.a.</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Corpus expected at 60</div><div class="fire-row-val">~₹1.9 Crore</div></div>
+          </div>
+          <div class="fire-insight">Achievable but demands intensity. Step-up SIPs (increasing 15% per year with salary) close the gap faster than flat contributions. Every year of delay now costs ₹3–5 Lakh in final corpus. Start immediately and consider NPS for the extra ₹50K 80CCD(1B) tax benefit.</div>
+        </div>
+      </div>
+      <div class="fire-card fu">
+        <div class="fire-card-head">
+          <span class="fire-emoji">🏖️</span>
+          <div class="fire-card-title">Early Out — Retire at 50</div>
+          <div class="fire-card-sub">Not full FIRE, but 10 years early. Requires a moderate-high savings rate starting at 28–30 and a disciplined 35-year corpus sustenance plan.</div>
+        </div>
+        <div class="fire-body">
+          <div class="fire-rows">
+            <div class="fire-row"><div class="fire-row-lbl">Start age</div><div class="fire-row-val">28</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Target retirement</div><div class="fire-row-val">50 (22 years)</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">SIP needed (₹1L/month target)</div><div class="fire-row-val">~₹22,000/month</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Equity allocation</div><div class="fire-row-val">75% initially</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Expected return assumed</div><div class="fire-row-val">11% p.a.</div></div>
+            <div class="fire-row"><div class="fire-row-lbl">Corpus expected at 50</div><div class="fire-row-val">~₹2.8 Crore</div></div>
+          </div>
+          <div class="fire-insight">More realistic than FIRE for most dual-income families. Use 3.5% withdrawal rate for a 35-year horizon. Factor in that NPS cannot be touched until 60 — plan a separate liquid corpus for the 50–60 bridge decade. PPF and equity funds are your primary tools here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — THE GLIDE PATH
+══════════════════════════════════════ -->
+<section class="sec glide-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-graph-down-arrow"></i> Asset allocation over time</div>
+      <h2 class="sec-title">The glide path — how to shift your portfolio as you age</h2>
+      <p class="sec-sub">The single biggest portfolio risk near retirement is a market crash 2–3 years before you stop working. A glide path — gradually shifting from equity to debt as you age — protects the corpus you've built.</p>
+    </div>
+    <div class="glide-grid">
+      <div class="glide-content fu">
+        <p>When you're 25 and have 35 years before retirement, a market crash is a buying opportunity — you have time to recover. When you're 57 with 3 years to go, the same crash could permanently reduce your corpus by 30–40% with no time to rebuild. This is why asset allocation must change with age.</p>
+        <p>The glide path principle: <strong>start aggressive, finish conservative</strong>. In your 20s and early 30s, 75–80% in equity is appropriate. By age 55, shift to 40–50% equity. In the final 3 years before retirement, reduce equity below 30% and move the corpus into short-duration debt funds, FDs, and liquid funds that won't collapse in a bad market.</p>
+        <p>In practice, the simplest implementation is through <strong>NPS Auto Choice (LC-75)</strong> which does this automatically — or a manual annual rebalance of your mutual fund portfolio using a simple age-based rule: equity % = 100 minus your age.</p>
+        <p>Rebalancing also forces you to book profits from equity during bull markets and add to debt — selling high, maintaining discipline. Do this once a year, in April, when you review your financial year.</p>
+      </div>
+      <div class="glide-visual fu">
+        <div class="glide-visual-title"><i class="bi bi-sliders" style="color:var(--crimson);margin-right:6px;"></i> Recommended asset allocation by life stage</div>
+        <div class="glide-stages">
+          <div class="glide-stage">
+            <div class="glide-stage-head">
+              <div class="glide-stage-label">Age 25–35 — Accumulation (Aggressive)</div>
+              <div class="glide-stage-years">30–35 yrs to retirement</div>
+            </div>
+            <div class="glide-bars">
+              <div class="glide-eq" style="width:75%;"></div>
+              <div class="glide-debt" style="width:20%;"></div>
+              <div class="glide-gold" style="width:5%;"></div>
+            </div>
+            <div class="glide-legend">
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:#3730a3;"></div>Equity 75%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--teal);"></div>Debt 20%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--gold);"></div>Gold 5%</div>
+            </div>
+          </div>
+          <div class="glide-stage">
+            <div class="glide-stage-head">
+              <div class="glide-stage-label">Age 36–45 — Growth (Moderate)</div>
+              <div class="glide-stage-years">15–24 yrs to retirement</div>
+            </div>
+            <div class="glide-bars">
+              <div class="glide-eq" style="width:65%;"></div>
+              <div class="glide-debt" style="width:25%;"></div>
+              <div class="glide-gold" style="width:10%;"></div>
+            </div>
+            <div class="glide-legend">
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:#3730a3;"></div>Equity 65%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--teal);"></div>Debt 25%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--gold);"></div>Gold 10%</div>
+            </div>
+          </div>
+          <div class="glide-stage">
+            <div class="glide-stage-head">
+              <div class="glide-stage-label">Age 46–55 — Pre-retirement (Conservative)</div>
+              <div class="glide-stage-years">5–14 yrs to retirement</div>
+            </div>
+            <div class="glide-bars">
+              <div class="glide-eq" style="width:45%;"></div>
+              <div class="glide-debt" style="width:45%;"></div>
+              <div class="glide-gold" style="width:10%;"></div>
+            </div>
+            <div class="glide-legend">
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:#3730a3;"></div>Equity 45%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--teal);"></div>Debt 45%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--gold);"></div>Gold 10%</div>
+            </div>
+          </div>
+          <div class="glide-stage" style="border-color:var(--crimson-md);background:var(--crimson-lt);">
+            <div class="glide-stage-head">
+              <div class="glide-stage-label" style="color:var(--crimson);">Age 56–60 — Final Approach (Capital Protection)</div>
+              <div class="glide-stage-years">0–4 yrs to retirement</div>
+            </div>
+            <div class="glide-bars">
+              <div class="glide-eq" style="width:25%;"></div>
+              <div class="glide-debt" style="width:65%;"></div>
+              <div class="glide-gold" style="width:10%;"></div>
+            </div>
+            <div class="glide-legend">
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:#3730a3;"></div>Equity 25%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--teal);"></div>Debt 65%</div>
+              <div class="glide-legend-item"><div class="glide-legend-dot" style="background:var(--gold);"></div>Gold 10%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — RETIREMENT INCOME SOURCES
+══════════════════════════════════════ -->
+<section class="sec sources-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-layers"></i> Building your income stack</div>
+      <h2 class="sec-title">Six streams that fund your retirement</h2>
+      <p class="sec-sub">The most resilient retirement plans don't rely on a single source. Here are the six instruments every Indian investor should consider — each playing a distinct role in the retirement income stack.</p>
+    </div>
+    <div class="sources-grid">
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-briefcase-fill"></i></div>
+        <div class="source-title">EPF / VPF</div>
+        <div class="source-desc">The most automatic retirement savings vehicle for salaried employees. 8.25% guaranteed, EEE tax status, employer-matched contributions. The backbone of the debt allocation for most private sector employees. Activate VPF to accelerate this stream significantly.</div>
+        <div class="source-badge">8.25% guaranteed · EEE</div>
+      </div>
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-shield-fill-check"></i></div>
+        <div class="source-title">PPF</div>
+        <div class="source-desc">15-year EEE savings with government backing. Ideal complement to EPF for self-employed individuals and for salaried employees wanting to build beyond EPF. The 15+5+5 extension strategy can compound ₹1.5L/year into a ₹1 Crore+ tax-free corpus over 25 years.</div>
+        <div class="source-badge">7.1% guaranteed · EEE</div>
+      </div>
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-person-badge"></i></div>
+        <div class="source-title">NPS</div>
+        <div class="source-desc">Market-linked, low-cost pension with mandatory annuity at 60. The exclusive 80CCD(1B) deduction of ₹50,000 makes it tax-efficient even on top of maxed-out 80C. The built-in annuity provides guaranteed monthly income — the closest thing to a pension for private sector employees.</div>
+        <div class="source-badge">10–13% market · EET</div>
+      </div>
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="source-title">Equity Mutual Funds (SIP)</div>
+        <div class="source-desc">The primary wealth-creation engine. Nifty 50 index funds have compounded at 12–14% p.a. over 20-year rolling periods. A ₹10,000/month SIP at 12% for 30 years becomes ₹3.5 Crore. Taxed at 10% LTCG above ₹1 Lakh/year — still the most tax-efficient equity vehicle available.</div>
+        <div class="source-badge">12–14% historical · LTCG 10%</div>
+      </div>
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-house-fill"></i></div>
+        <div class="source-title">Real Estate (Rental Income)</div>
+        <div class="source-desc">A paid-off property generating rental income can provide ₹15,000–₹50,000/month in retirement — partially inflation-hedged as rents typically rise 5–8% per year. Not a liquid asset, but a powerful income diversifier. Over-concentration in real estate (most Indian portfolios) is a liquidity risk to manage carefully.</div>
+        <div class="source-badge">5–8% rental yield · Rental income taxable</div>
+      </div>
+      <div class="source-card fu">
+        <div class="source-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="source-title">Senior Citizen Savings Scheme (SCSS)</div>
+        <div class="source-desc">Available from age 60, SCSS offers 8.2% p.a. (quarterly payouts) on deposits up to ₹30 Lakh. Government-backed, low risk. Interest is taxable but the rate is among the highest for safe instruments post-retirement. An ideal parking spot for the debt portion of your corpus after retirement.</div>
+        <div class="source-badge">8.2% p.a. · Quarterly payout</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — STATS STRIP
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">25<span>×</span></div>
+        <div class="stat-box-lbl">The 4% Rule — your target corpus should be 25× your annual retirement expenses to sustain 30 years of withdrawals</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">6<span>%</span></div>
+        <div class="stat-box-lbl">India's average long-run inflation rate — the reason ₹1 Crore today needs to become ₹3.2 Crore in 20 years to buy the same things</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">25–30<span>yrs</span></div>
+        <div class="stat-box-lbl">Expected retirement duration — with rising life expectancy, your corpus must last longer than any previous generation planned for</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">10<span>×</span></div>
+        <div class="stat-box-lbl">The cost of waiting — starting SIP at 35 instead of 25 requires roughly 10× more monthly investment to reach the same corpus at 60</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — PRO TIPS
+══════════════════════════════════════ -->
+<section class="sec tips-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Plan smarter</div>
+      <h2 class="sec-title">4 retirement planning moves that compound over decades</h2>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card fu">
+        <div class="tip-number">1</div>
+        <div class="tip-icon"><i class="bi bi-arrow-up-circle"></i></div>
+        <div class="tip-title">Step up your SIP by 10% every April</div>
+        <div class="tip-desc">A flat ₹10,000/month SIP for 30 years at 12% gives ₹3.5 Crore. The same SIP stepped up 10% every year gives ₹8.5 Crore — 2.4× more, for a modest annual increase that tracks salary growth. Set a calendar reminder every April 1st to increase your SIP by 10% or your increment percentage — whichever is higher.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">2</div>
+        <div class="tip-icon"><i class="bi bi-piggy-bank"></i></div>
+        <div class="tip-title">Treat every windfall as a retirement accelerator</div>
+        <div class="tip-desc">Annual bonuses, LTA, gratuity on job change, maturity of an FD — every windfall is an opportunity to lump-sum invest into your retirement portfolio. A ₹3 Lakh lump sum invested at 40 at 11% grows to ₹43 Lakh by 60. Most people spend windfalls. Investors deploy even half into the retirement corpus and keep the rest for enjoyment.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">3</div>
+        <div class="tip-icon"><i class="bi bi-clock-history"></i></div>
+        <div class="tip-title">Don't touch retirement money — ever</div>
+        <div class="tip-desc">The most damaging retirement mistake is withdrawing EPF when switching jobs, breaking PPF early, or stopping SIPs during a market crash. Each withdrawal doesn't just remove the amount withdrawn — it removes all future compounding on that amount. A ₹5 Lakh EPF withdrawal at 35 forfeits ₹80+ Lakh in corpus at 60 (at 10%, 25 years). Treat retirement money as completely untouchable.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">4</div>
+        <div class="tip-icon"><i class="bi bi-heart-pulse"></i></div>
+        <div class="tip-title">Solve healthcare separately — don't raid the corpus</div>
+        <div class="tip-desc">Healthcare is the most underestimated retirement cost. Hospital costs rise at 8–10% annually — faster than general inflation. A single hospitalisation at 70 can cost ₹5–15 Lakh. Buy a comprehensive health insurance policy (₹25–50 Lakh cover) as early as possible to lock in a lower premium. This protects your retirement corpus from being the emergency healthcare fund — which is the fastest way to deplete it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — PORTFOLIO BUILDING GUIDE
+══════════════════════════════════════ -->
+<section class="sec portfolio-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-pie-chart"></i> Build it right</div>
+      <h2 class="sec-title">How to structure your retirement portfolio — by age</h2>
+      <p class="sec-sub">A retirement portfolio isn't one product — it's a layered stack of instruments with different risk profiles, tax treatments, and liquidity. Here's how to build it at every life stage.</p>
+    </div>
+    <div class="portfolio-grid">
+      <div class="port-list fu">
+        <div class="port-item">
+          <div class="port-item-icon"><i class="bi bi-1-circle-fill"></i></div>
+          <div>
+            <div class="port-item-title">Start with mandatory instruments first</div>
+            <div class="port-item-desc">EPF is already running if you're salaried. Ensure you're contributing the minimum ₹500/year to PPF to keep it active. Open NPS Tier I and contribute at least ₹50,000 for the exclusive 80CCD(1B) tax benefit. These three together give you a guaranteed 7–8.25% foundation with EEE tax status — your retirement bedrock.</div>
+          </div>
+        </div>
+        <div class="port-item">
+          <div class="port-item-icon"><i class="bi bi-2-circle-fill"></i></div>
+          <div>
+            <div class="port-item-title">Add a Nifty 50 / Flexicap SIP for equity growth</div>
+            <div class="port-item-desc">A simple Nifty 50 index fund SIP is the most reliable equity vehicle for a 25–30 year horizon. No fund manager risk, 0.1–0.2% expense ratio, proven 12–14% historical CAGR over 20-year rolling periods. Pair with a flexicap or mid-cap fund for modest diversification. Keep it simple — 2 funds maximum for the equity portion.</div>
+          </div>
+        </div>
+        <div class="port-item">
+          <div class="port-item-icon"><i class="bi bi-3-circle-fill"></i></div>
+          <div>
+            <div class="port-item-title">Add gold as a 5–10% inflation hedge</div>
+            <div class="port-item-desc">Gold performs well during equity drawdowns and high inflation — making it a true portfolio diversifier, not just a cultural asset. Gold ETFs or Sovereign Gold Bonds (2.5% additional interest + capital gains) are more efficient than physical gold. Keep exposure at 5–10% — enough to matter without dragging returns in bull markets.</div>
+          </div>
+        </div>
+        <div class="port-item">
+          <div class="port-item-icon"><i class="bi bi-4-circle-fill"></i></div>
+          <div>
+            <div class="port-item-title">Build a 1–3 year "runway" fund near retirement</div>
+            <div class="port-item-desc">In the final 3–5 years before retirement, progressively shift 30–40% of your equity corpus into short-duration debt funds, liquid funds, and FDs. This "runway fund" means you can start retirement withdrawals without ever being forced to sell equities during a market crash — protecting the remaining equity from sequence-of-returns risk.</div>
+          </div>
+        </div>
+      </div>
+      <div class="port-info-box fu">
+        <div class="port-info-title"><i class="bi bi-pie-chart-fill" style="color:var(--crimson);margin-right:6px;"></i> Suggested allocation — age 30, 30-year horizon</div>
+        <div class="port-section">
+          <div class="port-section-label">Equity (Target: 70%)</div>
+          <div class="port-alloc-rows">
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">Nifty 50 Index Fund</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:50%;background:#3730a3;"></div></div>
+              <div class="port-alloc-pct">50%</div>
+            </div>
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">Flexicap / Midcap Fund</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:20%;background:#6366f1;"></div></div>
+              <div class="port-alloc-pct">20%</div>
+            </div>
+          </div>
+        </div>
+        <div class="port-section">
+          <div class="port-section-label">Debt (Target: 25%)</div>
+          <div class="port-alloc-rows">
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">EPF / VPF</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:15%;background:var(--teal);"></div></div>
+              <div class="port-alloc-pct">15%</div>
+            </div>
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">PPF</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:7%;background:#0891b2;"></div></div>
+              <div class="port-alloc-pct">7%</div>
+            </div>
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">NPS (debt component)</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:3%;background:#22d3ee;"></div></div>
+              <div class="port-alloc-pct">3%</div>
+            </div>
+          </div>
+        </div>
+        <div class="port-section">
+          <div class="port-section-label">Alternatives (Target: 5%)</div>
+          <div class="port-alloc-rows">
+            <div class="port-alloc-row">
+              <div class="port-alloc-name">Sovereign Gold Bonds</div>
+              <div class="port-alloc-track"><div class="port-alloc-fill" style="width:5%;background:var(--gold);"></div></div>
+              <div class="port-alloc-pct">5%</div>
+            </div>
+          </div>
+        </div>
+        <div class="port-note">
+          <strong>Rebalance annually — every April.</strong> If equity has run up to 80%, sell enough to bring it back to 70% and put the proceeds into debt. This forces you to sell high and buy low automatically — the most underrated retirement planning habit.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">The most important questions about retirement planning in India — answered plainly.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is ₹1 Crore enough to retire in India? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Almost certainly not — for most people. At the 4% withdrawal rate, ₹1 Crore sustains ₹4 Lakh/year (₹33,000/month) in today's rupees. If inflation runs at 6% and you're 30 years from retirement, ₹33,000/month today will have the purchasing power of only ₹6,000–7,000/month when you retire. The true target depends on your lifestyle, city, retirement age, and life expectancy. For a 30-year-old in a metro targeting ₹1 Lakh/month retirement expenses (in today's rupees), the inflation-adjusted corpus needed at 60 is approximately ₹8–10 Crore. Use the calculator with your actual numbers rather than benchmarking against any round figure.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How much should I save for retirement every month? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>A commonly cited rule is to save 15–20% of gross income specifically for retirement. For a 28-year-old earning ₹1 Lakh/month, this means ₹15,000–₹20,000/month. Note that EPF deductions (typically ₹5,000–₹8,000/month for a ₹1L CTC employee) count towards this — so the actual fresh SIP needed may be ₹7,000–₹15,000/month. The earlier you start, the lower the percentage required. A 22-year-old needs to save just 8–10% while a 40-year-old needs 25–35% to achieve a similar corpus. Use this calculator to find your specific number.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is the best investment for retirement in India? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>There is no single best instrument — a combination wins. For most salaried Indians: EPF provides automatic debt accumulation with an employer match; PPF adds EEE debt outside EPF; a Nifty 50 index fund SIP provides equity growth; and NPS adds a pension stream with unique tax benefits. This four-instrument combination covers equity, debt, tax efficiency, guaranteed returns, market-linked returns, and a lifetime pension. The exact allocation between them depends on your age, income, tax bracket, and retirement timeline — but for most people under 45, equity should be 60–75% of the total retirement portfolio.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Should I continue SIPs even during a market crash? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Yes — unambiguously yes for anyone with more than 7 years to retirement. A market crash is when SIPs are most valuable: the same ₹10,000/month buys significantly more units at lower NAVs, compounding your returns when markets recover. Historically, every major market crash in India (2008, 2020, 2022) has fully recovered within 1–3 years. Investors who stopped SIPs during crashes and resumed later permanently reduced their corpus compared to those who continued. Pausing a SIP during a crash is the equivalent of selling low and buying high — the exact opposite of wealth creation.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What is the FIRE movement and is it realistic in India? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>FIRE (Financial Independence, Retire Early) means accumulating enough wealth to live entirely off investment returns — typically at ages 35–50 rather than 60. In India, it's achievable but demanding. The main challenges are: higher inflation than Western countries (requiring a larger corpus), the 40% mandatory NPS annuity (locking funds until 60), healthcare insurance becoming expensive or unavailable with age, and the psychological adjustment to not earning. For Indian FIRE, the target corpus is typically 30–35× annual expenses (3–3.5% withdrawal rate), and the bridge decade (50–60 before NPS matures) needs a separate liquid corpus of 10–12 years of expenses.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">How do I handle retirement income after I stop working? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>The withdrawal strategy matters as much as the accumulation strategy. On retirement: move 2–3 years of expenses into a liquid fund or FD as a buffer; keep the NPS annuity as baseline monthly income; use SCSS (up to ₹30L, 8.2% p.a.) for quarterly income from the debt portion; withdraw from equity mutual funds only in portions — ideally with a Systematic Withdrawal Plan (SWP). Never withdraw from equity during a market downturn — use the liquid buffer instead and let equity recover. Review the corpus and withdrawal rate annually against actual returns and expenses.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Build every layer of your retirement plan using these tools together.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Equity corpus builder</div></div>
+      </a>
+      <a href="/calculators/nps" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person-badge"></i></div>
+        <div><div class="related-card-name">NPS Calculator</div><div class="related-card-sub">Pension planning</div></div>
+      </a>
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Tax-free guaranteed returns</div></div>
+      </a>
+      <a href="/calculators/pf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-briefcase"></i></div>
+        <div><div class="related-card-name">EPF Calculator</div><div class="related-card-sub">Provident fund corpus</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Take-home & deductions</div></div>
+      </a>
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Loan planning</div></div>
+      </a>
+      <a href="/calculators/loan-eligibility" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-check-circle"></i></div>
+        <div><div class="related-card-name">Loan Eligibility</div><div class="related-card-sub">Borrowing capacity</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 12 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>The best time to plan for retirement was 10 years ago. The next best time is now.</h2>
+    <p>Every month you delay costs you years of compounding that can never be recovered. Use the calculator above to find your target corpus — then start your SIP today, even if it's ₹500.</p>
+    <div class="final-btns">
+      <button class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i> Back to Calculator</button>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
+
 
 </div>
 
@@ -706,6 +1724,23 @@ details[open] summary::after {
 </footer> -->
 
 <script>
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';

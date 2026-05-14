@@ -22,6 +22,36 @@ body {
   -webkit-font-smoothing:antialiased;
   transition:background .3s, color .3s;
 }
+:root {
+  --ink:        #0a1e22;
+  --ink-2:      #3a5a62;
+  --ink-3:      #7a9aa2;
+  --paper:      #f4fafb;
+  --surface:    #ffffff;
+  --s2:         #eaf6f8;
+  --s3:         #d4edf2;
+  --teal:       #0e7490;
+  --teal-2:     #0891b2;
+  --teal-lt:    #e0f4f8;
+  --teal-md:    #a5d8e8;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b8720a;
+  --gold-lt:    #fdf3e3;
+  --gold-md:    #fde68a;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --amber:      #b45309;
+  --amber-lt:   #fff7ed;
+  --border:     rgba(10,30,34,0.09);
+  --shadow:     0 4px 20px rgba(10,30,34,0.07);
+  --shadow-lg:  0 12px 48px rgba(10,30,34,0.11);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1200px;
+}
 /* Mobile drawer */
 .drawer {
   display:none; position:fixed;
@@ -299,111 +329,535 @@ td.gold { color:var(--gold); font-weight:600; }
 .qf-val.accent { color:var(--accent); }
 
 /* ═══════════ SEO CONTENT AREA ═══════════ */
-.seo-content {
-  max-width: 900px;
-  margin: 5rem auto 2rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border);
+.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--teal);background:var(--teal-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
 }
-.seo-content h2 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: var(--text);
-  margin: 2.5rem 0 1rem;
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
 }
-.seo-content h3 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 1.5rem 0 0.5rem;
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .6s ease both;}
+
+/* Pills */
+.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
+.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:100px;}
+.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
+.pill-t{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--teal-lt);color:var(--teal);padding:2px 8px;border-radius:100px;}
+.pill-a{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--amber-lt);color:var(--amber);padding:2px 8px;border-radius:100px;}
+
+/* ════════════════════════════════════
+   1. HOW EPF WORKS — 3 steps
+════════════════════════════════════ */
+.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;
+  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
+  height:2px;
+  background:repeating-linear-gradient(90deg,var(--teal-md) 0,var(--teal-md) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
 }
-.seo-content p {
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-bottom: 1.2rem;
+.step{text-align:center;padding:.5rem;}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--teal);color:#fff;
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--teal-lt);
+  position:relative;z-index:1;
 }
-.seo-list {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
+.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   2. EEE HERO
+════════════════════════════════════ */
+.hero-sec{
+  background:var(--teal);
+  padding:clamp(3rem,7vw,5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
 }
-.seo-list li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
+.hero-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:22px 22px;pointer-events:none;
 }
-.seo-list li::before {
-  content: '•';
-  color: var(--accent);
-  font-size: 1.8rem;
-  position: absolute;
-  left: 0;
-  top: -6px;
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
 }
-.seo-list li strong {
-  color: var(--text);
-  font-weight: 600;
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.7);background:rgba(255,255,255,.14);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.hero-title em{font-style:italic;color:var(--gold-md);}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.8);line-height:1.8;margin-bottom:1.5rem;}
+.hero-callout{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+  border-radius:var(--r-sm);padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:.85rem;
+}
+.hero-callout-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--gold-md);line-height:1;flex-shrink:0;
+}
+.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.82);line-height:1.6;}
+.hero-cards{display:flex;flex-direction:column;gap:.85rem;}
+.hero-card{
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:flex-start;gap:1rem;transition:background .2s;
+}
+.hero-card:hover{background:rgba(255,255,255,.2);}
+.hero-card-icon{
+  width:38px;height:38px;border-radius:9px;
+  background:rgba(255,255,255,.16);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.hero-tag{
+  display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  background:rgba(253,230,138,.2);color:var(--gold-md);
+  padding:1px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;
+}
+.hero-card-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.3rem;}
+.hero-card-sub{font-size:.75rem;color:rgba(255,255,255,.74);line-height:1.6;}
+.hero-warn{
+  background:rgba(253,230,138,.1);border:1px solid rgba(253,230,138,.28);
+  border-radius:var(--r-sm);padding:.85rem 1.1rem;
+  font-size:.75rem;color:rgba(255,255,255,.84);line-height:1.6;
+  display:flex;align-items:flex-start;gap:.65rem;
+}
+.hero-warn i{color:var(--gold-md);font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* ════════════════════════════════════
+   3. THE 12% SPLIT
+════════════════════════════════════ */
+.split-sec{background:var(--paper);}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
+.split-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.split-content strong{color:var(--ink);}
+
+.split-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.split-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.4rem;}
+.split-source{
+  background:var(--teal);border-radius:var(--r-sm);
+  padding:1rem 1.25rem;text-align:center;margin-bottom:.5rem;
+}
+.split-source-label{font-size:.72rem;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:1px;margin-bottom:.25rem;}
+.split-source-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;}
+.split-source-sub{font-size:.72rem;color:rgba(255,255,255,.72);margin-top:.2rem;}
+.split-divider{font-size:.72rem;color:var(--ink-3);text-align:center;margin:.7rem 0 .4rem;font-style:italic;}
+.split-source.employer{background:var(--ink-2);}
+.split-buckets{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+.split-bucket{border-radius:var(--r-sm);padding:1rem 1.1rem;border:1px solid transparent;}
+.split-bucket.epf{background:var(--teal-lt);border-color:var(--teal-md);}
+.split-bucket.eps{background:var(--gold-lt);border-color:rgba(184,114,10,.2);}
+.split-bucket.full{background:var(--green-lt);border-color:var(--green-md);}
+.split-bucket-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;}
+.split-bucket.epf .split-bucket-label{color:var(--teal);}
+.split-bucket.eps .split-bucket-label{color:var(--gold);}
+.split-bucket.full .split-bucket-label{color:var(--green);}
+.split-bucket-pct{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;line-height:1;margin-bottom:.25rem;}
+.split-bucket.epf .split-bucket-pct{color:var(--teal);}
+.split-bucket.eps .split-bucket-pct{color:var(--gold);}
+.split-bucket.full .split-bucket-pct{color:var(--green);}
+.split-bucket-desc{font-size:.72rem;color:var(--ink-2);line-height:1.5;}
+.split-rows{display:flex;flex-direction:column;gap:.55rem;margin-top:1rem;}
+.split-row{
+  background:var(--s2);border-radius:var(--r-sm);
+  padding:.65rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.split-row-lbl{font-size:.78rem;color:var(--ink-2);}
+.split-row-val{font-size:.82rem;font-weight:600;color:var(--ink);}
+.split-row.total{background:var(--teal);}
+.split-row.total .split-row-lbl{color:rgba(255,255,255,.82);}
+.split-row.total .split-row-val{color:#fff;}
+
+/* ════════════════════════════════════
+   4. VPF SUPERPOWER
+════════════════════════════════════ */
+.vpf-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.vpf-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.vpf-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
+.vpf-content strong{color:var(--ink);}
+.vpf-box{background:var(--teal);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;}
+.vpf-box-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.vpf-rows{display:flex;flex-direction:column;gap:.6rem;}
+.vpf-row{
+  background:rgba(255,255,255,.12);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.vpf-row-lbl{font-size:.78rem;color:rgba(255,255,255,.82);}
+.vpf-row-val{font-size:.82rem;font-weight:600;}
+.vpf-row-val.good{color:#6ee7b7;}
+.vpf-row-val.note{color:var(--gold-md);}
+.vpf-row-val.plain{color:#fff;}
+
+.vpf-visual{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.vpf-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
+.vpf-bar-group{display:flex;flex-direction:column;gap:1.1rem;}
+.vpf-bar-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem;}
+.vpf-bar-scenario{font-size:.78rem;font-weight:600;color:var(--ink);}
+.vpf-bar-corpus{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;}
+.vpf-bar-corpus.c1{color:var(--teal);}
+.vpf-bar-corpus.c2{color:#0369a1;}
+.vpf-bar-corpus.c3{color:var(--green);}
+.vpf-bar-track{height:10px;background:var(--s2);border-radius:100px;overflow:hidden;}
+.vpf-bar-fill{height:100%;border-radius:100px;}
+.vpf-bar-fill.c1{background:var(--teal);}
+.vpf-bar-fill.c2{background:#0891b2;}
+.vpf-bar-fill.c3{background:var(--green);}
+.vpf-bar-sub{font-size:.7rem;color:var(--ink-3);margin-top:.3rem;}
+.vpf-note{
+  background:var(--teal-lt);border:1px solid var(--teal-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1.1rem;
+  font-size:.75rem;color:var(--teal);line-height:1.6;
+}
+.vpf-note strong{color:var(--teal);}
+.vpf-assumption{
+  background:var(--s2);border-radius:var(--r-sm);padding:.65rem .85rem;
+  font-size:.71rem;color:var(--ink-3);margin-top:.85rem;line-height:1.55;
 }
 
-/* FAQ Accordion */
-.faq-box { margin-top: 2rem; }
-details {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: box-shadow .2s;
+/* ════════════════════════════════════
+   5. EPF vs OTHERS
+════════════════════════════════════ */
+.compare-sec{background:var(--paper);}
+.compare-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);overflow: auto;}
+.compare-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.compare-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
 }
-details:hover { box-shadow: var(--shadow); }
-summary {
-  padding: 1.2rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text);
-  font-size: 1.05rem;
+.compare-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.compare-table tbody tr:last-child{border-bottom:none;}
+.compare-table tbody tr:hover{background:var(--s2);}
+.compare-table tbody tr.epf-row{background:var(--teal-lt);}
+.compare-table tbody tr.epf-row:hover{background:var(--teal-lt);}
+.compare-table td{padding:.8rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.compare-table td:first-child{color:var(--ink);font-weight:600;}
+.compare-table tr.epf-row td:first-child{color:var(--teal);}
+
+/* ════════════════════════════════════
+   6. COMPOUNDING TIMELINE
+════════════════════════════════════ */
+.timeline-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.timeline-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.timeline-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:.9rem;}
+.timeline-content strong{color:var(--ink);}
+.tl-highlight{background:var(--teal);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;}
+.tl-hl-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.tl-rows{display:flex;flex-direction:column;gap:.6rem;}
+.tl-row{
+  background:rgba(255,255,255,.12);border-radius:var(--r-sm);
+  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after {
-  content: '\F282';
-  font-family: 'bootstrap-icons';
-  font-size: 1rem;
-  transition: transform 0.3s;
-  color: var(--muted);
+.tl-row-lbl{font-size:.78rem;color:rgba(255,255,255,.82);}
+.tl-row-val{font-size:.82rem;font-weight:600;}
+.tl-row-val.good{color:#6ee7b7;}
+.tl-row-val.note{color:var(--gold-md);}
+.tl-row-val.plain{color:#fff;}
+.timeline-visual{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
+.timeline-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
+.the-timeline{display:flex;flex-direction:column;gap:.85rem;position:relative;}
+.the-timeline::before{
+  content:'';position:absolute;left:19px;top:8px;bottom:8px;
+  width:2px;background:var(--teal-md);border-radius:2px;
 }
-details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--accent);
+.t-milestone{display:flex;align-items:flex-start;gap:.85rem;position:relative;}
+.t-dot{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;position:relative;z-index:1;
+  border:3px solid var(--paper);
 }
-.faq-content {
-  padding: 0 1.5rem 1.2rem;
-  color: var(--muted);
-  font-size: .95rem;
-  line-height: 1.7;
+.t-year{font-size:.72rem;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.25rem;}
+.t-corpus{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:.25rem;}
+.t-desc{font-size:.73rem;color:var(--ink-2);line-height:1.55;}
+.t-desc strong{color:var(--ink);}
+.t-assumption{
+  background:var(--s2);border-radius:var(--r-sm);padding:.65rem .85rem;
+  font-size:.71rem;color:var(--ink-3);margin-top:.5rem;line-height:1.55;
 }
 
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+/* ════════════════════════════════════
+   7. WITHDRAWAL RULES — 3 cards
+════════════════════════════════════ */
+.rules-sec{background:var(--paper);}
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.rule-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  display:flex;flex-direction:column;gap:.65rem;
+  transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
 }
-.card { animation:fadeUp .45s ease both; }
+.rule-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.rule-card:nth-child(1)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.rule-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),#34d399);}
+.rule-card:nth-child(3)::before{background:linear-gradient(90deg,var(--rose),#f87171);}
+.rule-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.rule-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.rule-card:nth-child(1) .rule-icon{background:var(--teal-lt);color:var(--teal);}
+.rule-card:nth-child(2) .rule-icon{background:var(--green-lt);color:var(--green);}
+.rule-card:nth-child(3) .rule-icon{background:var(--rose-lt);color:var(--rose);}
+.rule-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.rule-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+.rule-badge{
+  font-size:.73rem;font-weight:600;padding:.3rem .75rem;border-radius:100px;align-self:flex-start;
+}
+.rule-card:nth-child(1) .rule-badge{background:var(--teal-lt);color:var(--teal);}
+.rule-card:nth-child(2) .rule-badge{background:var(--green-lt);color:var(--green);}
+.rule-card:nth-child(3) .rule-badge{background:var(--rose-lt);color:var(--rose);}
+
+/* Partial advance table */
+.partial-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);box-shadow:var(--shadow);margin-top:1rem;
+  overflow: auto;
+}
+.partial-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.partial-table thead th{
+  padding:.7rem 1rem;text-align:left;
+  font-size:.65rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
+}
+.partial-table tbody tr{border-bottom:1px solid var(--border);}
+.partial-table tbody tr:last-child{border-bottom:none;}
+.partial-table tbody tr:hover{background:var(--s2);}
+.partial-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:middle;}
+.partial-table td:first-child{color:var(--ink);font-weight:600;}
+
+/* ════════════════════════════════════
+   8. KEY STATS STRIP
+════════════════════════════════════ */
+.stats-sec{
+  background:var(--teal);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r);padding:1.25rem;text-align:center;
+}
+.stat-box-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
+}
+.stat-box-num span{color:var(--gold-md);}
+.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.74);line-height:1.4;}
+
+/* ════════════════════════════════════
+   9. PRO TIPS — 4 cards
+════════════════════════════════════ */
+.tips-sec{background:var(--paper);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+.tip-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem;
+  display:flex;flex-direction:column;gap:.6rem;
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.tip-number{
+  font-family:'Playfair Display',serif;
+  font-size:2.5rem;font-weight:700;color:var(--teal);
+  opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
+}
+.tip-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+  background:var(--teal);
+}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.tip-card:hover::after{transform:scaleX(1);}
+.tip-icon{
+  width:40px;height:40px;border-radius:9px;
+  background:var(--teal-lt);color:var(--teal);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
+
+/* ════════════════════════════════════
+   10. UAN & ACCOUNT GUIDE
+════════════════════════════════════ */
+.uan-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.uan-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
+.uan-list{display:flex;flex-direction:column;gap:.75rem;}
+.uan-item{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  transition:border-color .2s,background .2s;
+}
+.uan-item:hover{border-color:var(--teal-md);background:var(--teal-lt);}
+.uan-item-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--teal-lt);color:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.uan-item:hover .uan-item-icon{background:var(--teal-md);}
+.uan-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.uan-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+.uan-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
+.uan-box-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
+.uan-section{margin-bottom:1.1rem;}
+.uan-section:last-child{margin-bottom:0;}
+.uan-section-label{
+  font-size:.67rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.5rem;
+}
+.uan-checklist{display:flex;flex-direction:column;gap:.35rem;}
+.uan-check{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--ink-2);}
+.uan-check i{color:var(--teal);font-size:12px;flex-shrink:0;}
+.uan-note{
+  background:var(--teal-lt);border:1px solid var(--teal-md);
+  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
+  font-size:.75rem;color:var(--teal);line-height:1.6;
+}
+.uan-note strong{color:var(--teal);}
+
+/* ════════════════════════════════════
+   11. FAQ
+════════════════════════════════════ */
+.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:1.1rem 1.25rem;cursor:pointer;
+  font-size:.88rem;font-weight:600;color:var(--ink);
+  transition:background .18s;user-select:none;
+}
+.faq-q:hover{background:var(--s2);}
+.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--teal);}
+.faq-item.open .faq-q{color:var(--teal);}
+.faq-a{
+  display:none;padding:0 1.25rem 1.1rem;
+  font-size:.8rem;color:var(--ink-2);line-height:1.75;
+  border-top:1px solid var(--border);
+}
+.faq-a p{padding-top:.9rem;}
+.faq-item.open .faq-a{display:block;}
+
+/* ════════════════════════════════════
+   12. RELATED CALCULATORS
+════════════════════════════════════ */
+.related-sec{background:var(--surface);border-top:1px solid var(--border);}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+.related-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:.75rem;transition:all .22s;
+}
+.related-card:hover{background:var(--teal-lt);border-color:var(--teal-md);transform:translateY(-2px);}
+.related-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--teal-lt);color:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.related-card:hover .related-card-icon{background:var(--teal-md);}
+.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* ════════════════════════════════════
+   13. FINAL CTA
+════════════════════════════════════ */
+.final-note{
+  background:var(--ink);
+  padding:clamp(2rem,5vw,3.5rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.final-note::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,rgba(14,116,144,.5),transparent 65%);
+  pointer-events:none;
+}
+.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.final-note h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
+}
+.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
+.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-w{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--teal);
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
+}
+.btn-w:hover{opacity:.9;}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:#fff;
+  padding:.65rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.35);
+  transition:border-color .2s,background .2s;
+}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero-inner,.split-grid,.vpf-grid,.timeline-grid,.uan-grid{grid-template-columns:1fr;}
+  .rules-grid{grid-template-columns:1fr 1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .steps-grid::before{display:none;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .rules-grid{grid-template-columns:1fr;}
+  .related-grid{grid-template-columns:1fr 1fr;}
+  .split-buckets{grid-template-columns:1fr 1fr;}
+}
 
 /* ════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
@@ -457,6 +911,7 @@ details[open] summary::after {
 @media (hover:none) {
   input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
   .tip:hover, .metric:hover { transform:none; }
+  .rule-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
 }
 </style>
 
@@ -665,42 +1120,744 @@ details[open] summary::after {
     </div>
 
   </div>
-
-  <section class="seo-content">
-    <h2>EPF Calculator – Plan Your Employees' Provident Fund</h2>
-    <p>The Employees' Provident Fund (EPF) is one of the most reliable and primary retirement savings schemes for salaried employees in India. Backed by the Government of India and managed by the EPFO, it provides guaranteed, risk-free returns. Our EPF Calculator helps you forecast your retirement corpus by factoring in your basic salary, regular increments, and employer contributions.</p>
-    
-    <h3>How is EPF Contribution Calculated?</h3>
-    <p>As a salaried employee, a portion of your Basic Salary + Dearness Allowance (DA) goes into the PF account. Here is the standard breakdown:</p>
-    <ul class="seo-list">
-      <li><strong>Employee's Contribution:</strong> 12% of your Basic Salary + DA is deducted and goes entirely into your EPF account.</li>
-      <li><strong>Employer's Contribution:</strong> The employer also matches this 12%. However, it is split: <strong>3.67%</strong> goes to your EPF account, and <strong>8.33%</strong> goes to the Employees' Pension Scheme (EPS).</li>
-    </ul>
-    <p><em>Note: This calculator specifically projects your EPF corpus. The EPS amount provides a monthly pension after retirement and is calculated differently based on years of service.</em></p>
-
-    <h3>What is VPF (Voluntary Provident Fund)?</h3>
-    <p>If you want to invest more than the mandatory 12% in this high-interest, risk-free scheme, you can opt for VPF. You can increase your contribution up to 100% of your Basic Salary + DA. The interest rate for VPF is exactly the same as EPF. You can use the "Your Contribution (VPF %)" slider in our calculator to see how a small increase builds massive wealth.</p>
-
-    <h3>EPF Interest Rate and Compounding</h3>
-    <p>The EPFO declares the interest rate every year (historically between 8.1% to 8.5%). A unique feature of EPF is how interest is calculated: it is calculated on your monthly running balance, but it is credited to your account only at the end of the financial year. This yearly compounding over 20-30 years creates a massive snowball effect on your wealth.</p>
-
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-box">
-      <details name="faq">
-        <summary>Is EPF withdrawal completely tax-free?</summary>
-        <div class="faq-content">Yes, EPF falls under the EEE (Exempt-Exempt-Exempt) category. However, there are two exceptions: 1) Withdrawing before completing 5 years of continuous service attracts TDS. 2) As per new rules, if your own yearly contribution exceeds ₹2.5 Lakhs, the interest earned on the excess amount becomes taxable.</div>
-      </details>
-      <details name="faq">
-        <summary>Can I withdraw from my EPF account before retirement?</summary>
-        <div class="faq-content">Yes, EPFO allows partial withdrawals (advances) for specific reasons like buying a house, medical emergencies, marriage, or education. However, doing so breaks the compounding chain and severely reduces your final retirement corpus.</div>
-      </details>
-      <details name="faq">
-        <summary>What happens if I change my job?</summary>
-        <div class="faq-content">Your EPF account is linked to your UAN (Universal Account Number). When you switch jobs, you simply provide your UAN to the new employer, and your EPF account continues seamlessly, preserving your compounding benefits.</div>
-      </details>
+<br>
+<section class="sec steps-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-map"></i> How it works</div>
+      <h2 class="sec-title">How EPF quietly builds your retirement wealth</h2>
+      <p class="sec-sub">Mandatory for most organised-sector employees and backed by the Government of India — EPF builds a tax-free retirement corpus on autopilot, straight from your payslip, every single month.</p>
     </div>
-    <br>
-  </section>
+    <div class="steps-grid fu">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">12% deducted automatically each month</div>
+        <div class="step-desc">Your employer deducts 12% of your Basic Salary + DA and deposits it into your EPF account. Your employer also contributes a matching 12% — but only 3.67% goes to your EPF balance. The remaining 8.33% funds your Employees' Pension Scheme (EPS). Activate VPF to go beyond 12%.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Interest compounds monthly, credited annually</div>
+        <div class="step-desc">EPFO calculates interest every month on your running balance at 8.25% p.a., but credits it only on March 31st. This unique mechanism means deposits made in April earn more interest than deposits in March — early-year contributions compound harder over the full financial year.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Withdraw tax-free after 5 years of service</div>
+        <div class="step-desc">After 5 continuous years of employment (tracked across jobs via your UAN), the full EPF balance — principal plus all accumulated interest — is completely tax-free on withdrawal. Stay invested until retirement and decades of compounding come out without a single rupee of tax.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 2 — EEE HERO
+══════════════════════════════════════ -->
+<section class="hero-sec">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-shield-fill-check"></i> EEE tax status</div>
+      <div class="hero-title">Tax-free at every stage —<br><em>the EPF triple advantage</em></div>
+      <div class="hero-sub">EPF is an EEE instrument — Exempt at contribution (80C), Exempt on interest earned, and Exempt on full withdrawal after 5 years. For a salaried employee, this means mandatory savings are already inside India's most tax-efficient wrapper, with zero extra effort required.</div>
+      <div class="hero-callout">
+        <div class="hero-callout-num">₹46,800</div>
+        <div class="hero-callout-text">Annual tax saving for a 30% bracket employee filling the full ₹1.5L 80C limit — which EPF contributions often fill automatically without any separate investment decision.</div>
+      </div>
+    </div>
+    <div class="hero-cards fu">
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="bi bi-box-seam"></i></div>
+        <div>
+          <div class="hero-card-title">Exempt — Contribution <span class="hero-tag">Section 80C</span></div>
+          <div class="hero-card-sub">Your 12% employee EPF contribution qualifies for deduction under Section 80C within the ₹1.5L ceiling. For many salaried employees, EPF alone fills a large part of the 80C bucket — reducing taxable income without any active investment decision needed.</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="bi bi-percent"></i></div>
+        <div>
+          <div class="hero-card-title">Exempt — Interest earned <span class="hero-tag">Up to ₹2.5L/yr*</span></div>
+          <div class="hero-card-sub">Interest earned on EPF is fully tax-free as long as your total annual employee contribution stays at or below ₹2.5 Lakhs. Above this threshold — relevant mainly for high-salary VPF investors — interest on the excess becomes taxable. For most employees, the full interest stays exempt.</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="bi bi-cash-coin"></i></div>
+        <div>
+          <div class="hero-card-title">Exempt — Withdrawal after 5 years</div>
+          <div class="hero-card-sub">The entire EPF corpus — principal plus all accumulated interest — is tax-free on withdrawal after 5 years of continuous/cumulative service. No Capital Gains Tax, no TDS, no income tax. Withdrawing before 5 years triggers TDS at 10% (with PAN) or 30% (without PAN) on the taxable portion.</div>
+        </div>
+      </div>
+      <div class="hero-warn">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div><strong style="color:var(--gold-md);">FY 2021-22 onwards:</strong> Interest on employee EPF contributions exceeding ₹2.5 Lakhs/year is now taxable as income. This typically affects only those with a Basic Salary above ~₹1.74L/month or those using heavy VPF contributions. For most salaried employees, the full interest remains fully exempt.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 3 — THE 12% SPLIT EXPLAINED
+══════════════════════════════════════ -->
+<section class="sec split-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-diagram-3"></i> Understanding your contributions</div>
+      <h2 class="sec-title">The 12% split — where your money actually goes</h2>
+      <p class="sec-sub">Your employer contributes 12% — but not all of it reaches your EPF account. This split is the most misunderstood aspect of EPF, and it directly affects your retirement corpus forecast.</p>
+    </div>
+    <div class="split-grid">
+      <div class="fu">
+        <div class="split-content">
+          <p>Every month, two streams flow into your EPF ecosystem. Your own 12% goes <strong>entirely into your EPF account</strong>. Your employer's matching 12% is split between two schemes that serve very different purposes.</p>
+          <p>The <strong>Employees' Pension Scheme (EPS)</strong> receives 8.33% of your employer's contribution — calculated on a salary cap of ₹15,000/month (maximum ₹1,250/month). EPS does not build a personal corpus; it funds a defined monthly pension at retirement based on your years of service and pensionable salary. For most private sector employees, this pension is modest — typically ₹1,000–₹4,000/month.</p>
+          <p>Only the remaining <strong>3.67% of your employer's contribution</strong> goes into your EPF balance and earns the declared annual interest rate along with your own 12%.</p>
+        </div>
+        <div class="split-rows">
+          <div class="split-row">
+            <div class="split-row-lbl">Your contribution (12% of Basic + DA)</div>
+            <div class="split-row-val">→ 100% to EPF ✓</div>
+          </div>
+          <div class="split-row">
+            <div class="split-row-lbl">Employer's EPF share (3.67%)</div>
+            <div class="split-row-val">→ EPF account ✓</div>
+          </div>
+          <div class="split-row">
+            <div class="split-row-lbl">Employer's EPS share (8.33%, max ₹15K)</div>
+            <div class="split-row-val">→ Pension scheme</div>
+          </div>
+          <div class="split-row total">
+            <div class="split-row-lbl">Effective EPF corpus rate per month</div>
+            <div class="split-row-val">12% + 3.67% = 15.67%</div>
+          </div>
+        </div>
+      </div>
+      <div class="fu">
+        <div class="split-visual">
+          <div class="split-visual-title"><i class="bi bi-diagram-3" style="color:var(--teal);margin-right:6px;"></i> Monthly flow — ₹50,000 Basic salary example</div>
+          <div class="split-source">
+            <div class="split-source-label">Your salary deduction (employee)</div>
+            <div class="split-source-val">₹6,000 / month</div>
+            <div class="split-source-sub">12% of ₹50,000 · goes 100% to your EPF</div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div class="split-bucket full" style="text-align:center;margin-top:.5rem;">
+              <div class="split-bucket-label">Your EPF Contribution</div>
+              <div class="split-bucket-pct">₹6,000</div>
+              <div class="split-bucket-desc">Full 12% → credited to your EPF balance</div>
+            </div>
+          </div>
+          <div class="split-divider">+ Employer's matching 12% — split below</div>
+          <div class="split-source employer">
+            <div class="split-source-label">Employer contribution</div>
+            <div class="split-source-val">₹6,000 / month</div>
+            <div class="split-source-sub">12% of ₹50,000 · split between EPF and EPS</div>
+          </div>
+          <div class="split-buckets" style="margin-top:.5rem;">
+            <div class="split-bucket epf">
+              <div class="split-bucket-label">To your EPF</div>
+              <div class="split-bucket-pct">₹1,835</div>
+              <div class="split-bucket-desc">3.67% of Basic → your EPF balance</div>
+            </div>
+            <div class="split-bucket eps">
+              <div class="split-bucket-label">To EPS (Pension)</div>
+              <div class="split-bucket-pct">₹1,250</div>
+              <div class="split-bucket-desc">8.33%, capped at ₹15K salary → monthly pension later</div>
+            </div>
+          </div>
+          <div class="split-rows">
+            <div class="split-row total" style="margin-top:.75rem;">
+              <div class="split-row-lbl">Total added to your EPF each month</div>
+              <div class="split-row-val">₹7,835</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 4 — VPF: THE HIDDEN SUPERPOWER
+══════════════════════════════════════ -->
+<section class="sec vpf-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightning-charge"></i> The underused accelerator</div>
+      <h2 class="sec-title">VPF — the most underrated investment in India</h2>
+      <p class="sec-sub">Voluntary Provident Fund lets you contribute up to 100% of your Basic + DA into EPF — at the same 8.25% guaranteed rate, with the same EEE tax status, and zero additional paperwork.</p>
+    </div>
+    <div class="vpf-grid">
+      <div class="fu">
+        <div class="vpf-content">
+          <p>You can voluntarily contribute <strong>any amount above 12% — up to 100% of your Basic + DA</strong> into your EPF. This is VPF (Voluntary Provident Fund). It earns exactly the same interest as EPF (8.25% p.a.) and carries the identical EEE tax treatment.</p>
+          <p>Compared to alternatives: a bank FD gives 6.5–7.5% with interest fully taxable as income. A debt mutual fund at 7% creates a taxable gain. VPF at 8.25% — entirely tax-free — is the pre-tax equivalent of <strong>~12% for a 30% bracket investor</strong>. No market risk. No separate account. One email to HR activates it.</p>
+          <p>The only key limit is the <strong>₹2.5 Lakh per year rule</strong> — interest on employee contributions above this is now taxable. For most employees below ₹1.74L/month Basic, VPF remains fully exempt at any contribution level.</p>
+        </div>
+        <div class="vpf-box">
+          <div class="vpf-box-title"><i class="bi bi-bar-chart-fill"></i> VPF impact — ₹50,000 Basic, 25 years @ 8.25%</div>
+          <div class="vpf-rows">
+            <div class="vpf-row">
+              <div class="vpf-row-lbl">Standard 12% EPF only</div>
+              <div class="vpf-row-val note">₹82.8 Lakh</div>
+            </div>
+            <div class="vpf-row">
+              <div class="vpf-row-lbl">20% contribution (+8% VPF)</div>
+              <div class="vpf-row-val good">₹1.10 Crore</div>
+            </div>
+            <div class="vpf-row">
+              <div class="vpf-row-lbl">30% contribution (+18% VPF)</div>
+              <div class="vpf-row-val good">₹1.38 Crore</div>
+            </div>
+            <div class="vpf-row">
+              <div class="vpf-row-lbl">Extra corpus (20% vs 12%)</div>
+              <div class="vpf-row-val plain">+₹27.2 Lakh</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fu">
+        <div class="vpf-visual">
+          <div class="vpf-visual-title"><i class="bi bi-graph-up-arrow" style="color:var(--teal);margin-right:6px;"></i> Corpus by contribution rate — ₹50K Basic · 8% hike · 25 years</div>
+          <div class="vpf-bar-group">
+            <div>
+              <div class="vpf-bar-head">
+                <span class="vpf-bar-scenario">12% EPF only (standard)</span>
+                <span class="vpf-bar-corpus c1">₹82.8L</span>
+              </div>
+              <div class="vpf-bar-track"><div class="vpf-bar-fill c1" style="width:55%;"></div></div>
+              <div class="vpf-bar-sub">Mandatory minimum · ₹7,835/month into EPF</div>
+            </div>
+            <div>
+              <div class="vpf-bar-head">
+                <span class="vpf-bar-scenario">20% (+8% VPF top-up)</span>
+                <span class="vpf-bar-corpus c2">₹1.10 Cr</span>
+              </div>
+              <div class="vpf-bar-track"><div class="vpf-bar-fill c2" style="width:73%;"></div></div>
+              <div class="vpf-bar-sub">Just ₹4,000 extra/month now — tax-free growth for 25 years</div>
+            </div>
+            <div>
+              <div class="vpf-bar-head">
+                <span class="vpf-bar-scenario">30% (+18% VPF top-up)</span>
+                <span class="vpf-bar-corpus c3">₹1.38 Cr</span>
+              </div>
+              <div class="vpf-bar-track"><div class="vpf-bar-fill c3" style="width:92%;"></div></div>
+              <div class="vpf-bar-sub">₹9,000 extra/month — the max-VPF wealth accelerator</div>
+            </div>
+          </div>
+          <div class="vpf-assumption">ℹ️ Assumes 8.25% p.a., 8% annual salary hike, starting Basic ₹50,000. Illustrative. VPF interest above ₹2.5L/year contribution is taxable.</div>
+          <div class="vpf-note">
+            <strong><i class="bi bi-lightbulb" style="margin-right:4px;"></i>How to activate VPF:</strong> Submit a written request to your HR or payroll team specifying the extra percentage. It's effective from the next payroll cycle and stays on autopilot — no further action needed until you choose to change it.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 5 — EPF vs OTHER INSTRUMENTS
+══════════════════════════════════════ -->
+<section class="sec compare-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-arrow-left-right"></i> How it stacks up</div>
+      <h2 class="sec-title">EPF vs other fixed-income & retirement options</h2>
+      <p class="sec-sub">When it comes to safe, guaranteed, tax-efficient retirement savings — how does EPF measure up against PPF, NPS, FDs, and debt funds?</p>
+    </div>
+    <div class="compare-wrap fu">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Instrument</th>
+            <th>Interest / Returns</th>
+            <th>Risk</th>
+            <th>Tax on returns</th>
+            <th>Liquidity</th>
+            <th>Employer match</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="epf-row">
+            <td>EPF / VPF 🏆</td>
+            <td><span class="pill-g">8.25% fixed</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-g">EEE (up to ₹2.5L/yr)</span></td>
+            <td><span class="pill-m">Partial (conditions)</span></td>
+            <td><span class="pill-g">Yes — free 3.67%</span></td>
+          </tr>
+          <tr>
+            <td>PPF</td>
+            <td><span class="pill-m">7.1% fixed</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-g">Fully EEE</span></td>
+            <td><span class="pill-b">15-year lock-in</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+          <tr>
+            <td>NPS (Tier I)</td>
+            <td><span class="pill-g">10–13% (market)</span></td>
+            <td><span class="pill-m">Low–moderate</span></td>
+            <td><span class="pill-m">EET — 60% tax-free</span></td>
+            <td><span class="pill-b">Locked till 60</span></td>
+            <td><span class="pill-m">Optional via corporate</span></td>
+          </tr>
+          <tr>
+            <td>Bank FD (5-yr tax saver)</td>
+            <td><span class="pill-m">6.5–7.5% fixed</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-b">Fully taxable as income</span></td>
+            <td><span class="pill-b">5-year lock-in</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+          <tr>
+            <td>Debt Mutual Fund</td>
+            <td><span class="pill-m">6–8% (market)</span></td>
+            <td><span class="pill-m">Low</span></td>
+            <td><span class="pill-b">Taxable as income (post 2023)</span></td>
+            <td><span class="pill-g">Highly liquid</span></td>
+            <td><span class="pill-b">No</span></td>
+          </tr>
+          <tr>
+            <td>Sukanya Samriddhi</td>
+            <td><span class="pill-g">8.2% fixed</span></td>
+            <td><span class="pill-g">Zero</span></td>
+            <td><span class="pill-g">Fully EEE</span></td>
+            <td><span class="pill-b">21-year lock-in</span></td>
+            <td><span class="pill-b">No (girl child only)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 6 — COMPOUNDING TIMELINE
+══════════════════════════════════════ -->
+<section class="sec timeline-sec">
+  <div class="sec-inner">
+    <div class="timeline-grid">
+      <div class="fu">
+        <div class="label"><i class="bi bi-graph-up-arrow"></i> The snowball effect</div>
+        <h2 class="sec-title">30 years of EPF — how the snowball becomes an avalanche</h2>
+        <div class="timeline-content">
+          <p>EPF's compounding is uniquely powerful: interest is calculated monthly on your running balance, but credited annually — so the interest itself forms part of next year's principal. Over 30 years, your contributions become a progressively smaller share of your corpus, with interest-on-interest dominating the final decade.</p>
+          <p>A ₹30,000 Basic salary at age 28 — with 8% annual increments and 12% EPF — produces a <strong>₹2.16 Crore tax-free corpus at age 58</strong>. Only ₹56.4 Lakh is your own money. The remaining ₹1.6 Crore is pure compounding — money generated entirely by your money.</p>
+          <p>Your annual salary hike is the silent multiplier: an 8% increment on Basic doesn't just raise take-home pay — it grows the EPF contribution base, compounding every future year further.</p>
+        </div>
+        <div class="tl-highlight">
+          <div class="tl-hl-title"><i class="bi bi-bar-chart-fill"></i> Same 12% EPF — different hike rates, 30 years @ 8.25%</div>
+          <div class="tl-rows">
+            <div class="tl-row">
+              <div class="tl-row-lbl">0% annual hike (flat salary)</div>
+              <div class="tl-row-val note">₹63.7 Lakh</div>
+            </div>
+            <div class="tl-row">
+              <div class="tl-row-lbl">5% annual hike</div>
+              <div class="tl-row-val good">₹1.23 Crore</div>
+            </div>
+            <div class="tl-row">
+              <div class="tl-row-lbl">8% annual hike</div>
+              <div class="tl-row-val good">₹2.16 Crore</div>
+            </div>
+            <div class="tl-row">
+              <div class="tl-row-lbl">Starting Basic assumed</div>
+              <div class="tl-row-val plain">₹30,000/month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-visual fu">
+        <div class="timeline-visual-title"><i class="bi bi-clock-history" style="color:var(--teal);margin-right:6px;"></i> ₹30K Basic · 8% annual hike · 12% EPF · 8.25% interest</div>
+        <div class="the-timeline">
+          <div class="t-milestone">
+            <div class="t-dot"><i class="bi bi-flag-fill" style="font-size:11px;"></i></div>
+            <div>
+              <div class="t-year">Age 28 — Start</div>
+              <div class="t-corpus">₹0</div>
+              <div class="t-desc">EPF starts automatically on joining. Monthly EPF credit: ~₹4,700 (12% employee + 3.67% employer on ₹30K Basic).</div>
+            </div>
+          </div>
+          <div class="t-milestone">
+            <div class="t-dot"><i class="bi bi-1-circle-fill" style="font-size:13px;"></i></div>
+            <div>
+              <div class="t-year">Age 33 — Year 5</div>
+              <div class="t-corpus" style="color:var(--teal);">₹4.3L</div>
+              <div class="t-desc">Tax-free withdrawal now possible. Basic has risen to ~₹44K via hikes. <strong>Monthly contribution ~₹7,000.</strong> But resist withdrawing — compounding is just beginning.</div>
+            </div>
+          </div>
+          <div class="t-milestone">
+            <div class="t-dot"><i class="bi bi-2-circle-fill" style="font-size:13px;"></i></div>
+            <div>
+              <div class="t-year">Age 38 — Year 10</div>
+              <div class="t-corpus" style="color:var(--teal);">₹15.2L</div>
+              <div class="t-desc">Basic ~₹64K. Annual interest (~₹1.1L) now exceeds <strong>2 months of total contributions.</strong> The snowball is forming.</div>
+            </div>
+          </div>
+          <div class="t-milestone">
+            <div class="t-dot"><i class="bi bi-3-circle-fill" style="font-size:13px;"></i></div>
+            <div>
+              <div class="t-year">Age 48 — Year 20</div>
+              <div class="t-corpus" style="color:var(--teal);">₹73.5L</div>
+              <div class="t-desc">Basic now ~₹1.4L. Annual interest (~₹5.4L) is <strong>more than 3× your yearly contributions.</strong> Your money is working harder than you are.</div>
+            </div>
+          </div>
+          <div class="t-milestone">
+            <div class="t-dot" style="background:var(--gold);"><i class="bi bi-star-fill" style="font-size:10px;"></i></div>
+            <div>
+              <div class="t-year">Age 58 — Retirement</div>
+              <div class="t-corpus" style="color:var(--gold);">₹2.16 Crore 🎯</div>
+              <div class="t-desc">You contributed: <strong>₹56.4 Lakh.</strong> Tax-free interest earned: <strong>₹1.60 Crore.</strong> The last 10 years alone added ₹1.42 Crore — more than all prior 20 years combined.</div>
+            </div>
+          </div>
+        </div>
+        <div class="t-assumption">ℹ️ Assumes 8.25% p.a. interest, 8% annual salary increment, 12% contribution rate, from age 28 to 58. Figures are illustrative. EPS component not included.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 7 — WITHDRAWAL RULES
+══════════════════════════════════════ -->
+<section class="sec rules-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-file-earmark-text"></i> Key rules</div>
+      <h2 class="sec-title">Withdrawal, partial advance & closure rules</h2>
+      <p class="sec-sub">EPF is a retirement fund by design — but EPFO permits access in specific circumstances. Knowing these rules helps you plan liquidity without breaking the compounding chain unnecessarily.</p>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="rule-title">Partial withdrawal — specific purposes only</div>
+        <div class="rule-desc">EPFO allows partial withdrawals (advances) for specific life events — each with its own eligibility, limit, and minimum service requirement. Withdrawals for approved purposes are <strong>completely tax-free regardless of years of service</strong>. Processed via the EPFO member portal and typically settled in 7–10 working days without employer attestation for KYC-verified members.</div>
+        <div class="rule-badge">Tax-free if purpose qualifies</div>
+      </div>
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-calendar-check"></i></div>
+        <div class="rule-title">Full withdrawal — retirement or 2 months unemployed</div>
+        <div class="rule-desc">You can withdraw your full EPF balance at age 58 (normal retirement) or age 55 (with permission). If unemployed for <strong>2 consecutive months</strong>, you can withdraw the full balance before retirement. The 5-year service count is cumulative across all employers linked via UAN — so transferring instead of withdrawing when switching jobs preserves this clock. <strong>Fully tax-free after 5 cumulative years.</strong></div>
+        <div class="rule-badge">Tax-free after 5 yrs service</div>
+      </div>
+      <div class="rule-card fu">
+        <div class="rule-icon"><i class="bi bi-exclamation-triangle"></i></div>
+        <div class="rule-title">Early withdrawal — TDS below 5 years</div>
+        <div class="rule-desc">Withdrawing before completing <strong>5 years of continuous/cumulative service</strong> makes the amount taxable. TDS is deducted at <strong>10% (PAN provided)</strong> or 30% (no PAN). The amount is added to your income and taxed at slab rate. Employer contributions and interest are also taxable. This is a <em>double penalty</em> — tax hit plus permanently lost compounding. Avoid early withdrawal unless absolutely necessary.</div>
+        <div class="rule-badge">10% TDS if &lt; 5 years</div>
+      </div>
+    </div>
+    <div class="fu" style="margin-top:2rem;">
+      <div class="sec-hdr" style="margin-bottom:1rem;">
+        <div class="label"><i class="bi bi-table"></i> Partial advances</div>
+        <h3 class="sec-title" style="font-size:1.3rem;">When can you make a partial withdrawal — and how much?</h3>
+      </div>
+      <div class="partial-wrap">
+        <table class="partial-table">
+          <thead>
+            <tr><th>Purpose</th><th>Min. service</th><th>Limit</th><th>Times allowed</th><th>Taxable?</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>House purchase / construction</td>
+              <td>5 years</td>
+              <td>Up to 90% of total balance</td>
+              <td>Once (lifetime)</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Home loan repayment</td>
+              <td>10 years</td>
+              <td>Up to 90% of total balance</td>
+              <td>Once (lifetime)</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Marriage (self / child / sibling)</td>
+              <td>7 years</td>
+              <td>50% of own contributions</td>
+              <td>Up to 3 times</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Education (self / child)</td>
+              <td>7 years</td>
+              <td>50% of own contributions</td>
+              <td>Up to 3 times</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Medical treatment (self / family)</td>
+              <td>None</td>
+              <td>6× monthly salary or employee share (lower)</td>
+              <td>No limit</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Natural calamity / disaster</td>
+              <td>None</td>
+              <td>75% of balance or 3 months salary (lower)</td>
+              <td>Once per calamity</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+            <tr>
+              <td>Retirement (within 1 year of age 57)</td>
+              <td>None</td>
+              <td>Up to 90% of total balance</td>
+              <td>Once</td>
+              <td><span class="pill-g">Tax-free</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 8 — STATS STRIP
+══════════════════════════════════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-box-num">8.25<span>%</span></div>
+        <div class="stat-box-lbl">Current EPF interest rate p.a. for FY 2023-24 — among the highest guaranteed, risk-free returns available in India</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">15.67<span>%</span></div>
+        <div class="stat-box-lbl">Effective monthly contribution rate — your 12% plus employer's 3.67%. A free 30% boost on every rupee you put in</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">EEE</div>
+        <div class="stat-box-lbl">Tax status — contributions deductible (80C), interest tax-free (up to ₹2.5L/yr), full withdrawal tax-free after 5 years</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-box-num">₹2.16<span>Cr</span></div>
+        <div class="stat-box-lbl">Projected corpus for ₹30K basic at 28, 8% hikes, 12% rate, 30 years at 8.25% — entirely tax-free</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 9 — PRO TIPS
+══════════════════════════════════════ -->
+<section class="sec tips-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-lightbulb"></i> Maximise your EPF</div>
+      <h2 class="sec-title">4 strategies to supercharge your EPF corpus</h2>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card fu">
+        <div class="tip-number">1</div>
+        <div class="tip-icon"><i class="bi bi-lightning-charge"></i></div>
+        <div class="tip-title">Activate VPF — even a 3% bump changes everything</div>
+        <div class="tip-desc">Adding just 3% VPF on a ₹50,000 Basic means ₹1,500 extra/month into a guaranteed 8.25% tax-free account. Over 25 years with salary hikes, that one decision adds ₹20–30 Lakh to your corpus. Ask HR today — it takes one email and runs on autopilot forever after.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">2</div>
+        <div class="tip-icon"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="tip-title">Always transfer — never withdraw when switching jobs</div>
+        <div class="tip-desc">The most common and most damaging EPF mistake. A ₹3 Lakh withdrawal at age 30 forfeits ₹28+ Lakh in tax-free growth by age 58 (at 8.25%, 28 years). Transfer via UAN in 3 minutes on the EPFO portal. Let the compounding run completely unbroken through every job change.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">3</div>
+        <div class="tip-icon"><i class="bi bi-building"></i></div>
+        <div class="tip-title">Verify your employer deposits every quarter</div>
+        <div class="tip-desc">Employers must deposit EPF contributions by the 15th of each month. Delayed deposits mean lost interest — and that loss falls on you, not your employer. Check your EPF passbook at passbook.epfindia.gov.in quarterly. If deposits are late or missing, file a complaint via the EPFiGMS grievance portal.</div>
+      </div>
+      <div class="tip-card fu">
+        <div class="tip-number">4</div>
+        <div class="tip-icon"><i class="bi bi-person-fill-check"></i></div>
+        <div class="tip-title">Keep KYC, nominee & bank details current</div>
+        <div class="tip-desc">Outdated KYC is the single biggest cause of EPF withdrawal delays. Link and verify Aadhaar, PAN, and your active bank account on the EPFO member portal. Add a nominee (Form 2) — it takes 5 minutes and lets your family access the corpus without a succession certificate. Link UAN to your current employer the day you join.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 10 — UAN & ACCOUNT GUIDE
+══════════════════════════════════════ -->
+<section class="sec uan-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-person-vcard"></i> Your UAN</div>
+      <h2 class="sec-title">UAN — your EPF identity, for life</h2>
+      <p class="sec-sub">The Universal Account Number is a 12-digit permanent identifier for your EPF account — the same number across every job you'll ever hold. Mastering it takes minutes and protects decades of savings.</p>
+    </div>
+    <div class="uan-grid">
+      <div class="uan-list fu">
+        <div class="uan-item">
+          <div class="uan-item-icon"><i class="bi bi-upc-scan"></i></div>
+          <div>
+            <div class="uan-item-title">What is UAN and where to find it</div>
+            <div class="uan-item-desc">EPFO assigns your UAN when you first join EPF. It appears on your salary slip and in HR communications. Find it anytime by entering your PAN, Aadhaar, or member ID on the EPFO member portal at unifiedmember.epfindia.gov.in. Keep it accessible — you'll need it every time you change employers.</div>
+          </div>
+        </div>
+        <div class="uan-item">
+          <div class="uan-item-icon"><i class="bi bi-arrow-left-right"></i></div>
+          <div>
+            <div class="uan-item-title">Transfer EPF when switching jobs</div>
+            <div class="uan-item-desc">Log into the EPFO portal → Online Services → One Member - One EPF Account (Transfer Request). Select your previous employer and member ID and submit. Your old balance transfers to your active account in 7–15 working days. Your cumulative 5-year service clock continues unbroken, preserving your tax-free withdrawal status.</div>
+          </div>
+        </div>
+        <div class="uan-item">
+          <div class="uan-item-icon"><i class="bi bi-book"></i></div>
+          <div>
+            <div class="uan-item-title">Check your passbook regularly</div>
+            <div class="uan-item-desc">Visit passbook.epfindia.gov.in and log in with your UAN. The passbook shows all contributions month-by-month, interest credits, and the current balance. Verify employer deposits appear on time — the passbook is your ground truth, not your payslip. Quarterly checks catch problems before they compound.</div>
+          </div>
+        </div>
+        <div class="uan-item">
+          <div class="uan-item-icon"><i class="bi bi-phone"></i></div>
+          <div>
+            <div class="uan-item-title">UMANG app — manage on the go</div>
+            <div class="uan-item-desc">The UMANG app (Android + iOS) lets you check balance, raise withdrawal claims, verify claim status, and update KYC — entirely from your phone. For KYC-verified members, composite withdrawal claims (full or partial) are processed without employer attestation, making EPF access faster than ever before.</div>
+          </div>
+        </div>
+      </div>
+      <div class="uan-box fu">
+        <div class="uan-box-title"><i class="bi bi-file-earmark-check" style="color:var(--teal);margin-right:6px;"></i> UAN KYC checklist</div>
+        <div class="uan-section">
+          <div class="uan-section-label">Mandatory KYC — verify on EPFO portal</div>
+          <div class="uan-checklist">
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Aadhaar — required for online withdrawals and claim settlement</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>PAN — required to avoid 30% TDS on early withdrawals</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Bank account + IFSC — name must match your EPF profile exactly</div>
+          </div>
+        </div>
+        <div class="uan-section">
+          <div class="uan-section-label">Recommended actions</div>
+          <div class="uan-checklist">
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Add a nominee (Form 2) — prevents succession certificate requirement</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Link UAN to your current employer's member ID</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Merge all old inactive EPF accounts via UAN transfer</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Check passbook quarterly for employer deposit compliance</div>
+          </div>
+        </div>
+        <div class="uan-section">
+          <div class="uan-section-label">Online services available (no employer needed)</div>
+          <div class="uan-checklist">
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Full withdrawal claim (Form 19 + 10C) if Aadhaar linked</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Partial advance (Form 31) — medical, marriage, housing</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Transfer between employers via UAN</div>
+            <div class="uan-check"><i class="bi bi-check-circle-fill"></i>Passbook download and full contribution history</div>
+          </div>
+        </div>
+        <div class="uan-note">
+          <strong>Exempted establishments:</strong> Some large companies (TCS, Infosys, Wipro, etc.) run their own PFRDA-approved private PF trusts instead of depositing with EPFO directly. If you're at one, your passbook won't appear on the EPFO portal — contact HR for balance statements. Rules, interest rates, and withdrawal terms remain identical to EPFO.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 11 — FAQ
+══════════════════════════════════════ -->
+<section class="sec faq-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="sec-title">Frequently asked questions</h2>
+      <p class="sec-sub">Everything you need to know about EPF — contributions, EPS, withdrawals, and common edge cases.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does my employer's full 12% go into my EPF account? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>No. Your employer contributes 12% of your Basic + DA, but it is split. Only 3.67% goes into your EPF balance. The remaining 8.33% (capped at a monthly salary of ₹15,000, so a maximum of ₹1,250/month) is deposited into the Employees' Pension Scheme (EPS). EPS doesn't build a personal corpus — it pays a defined monthly pension at retirement, calculated based on years of service and average pensionable salary. For most private sector employees, this pension is ₹1,000–₹4,000/month.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Is the interest on my EPF always completely tax-free? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>For most employees, yes. However, from FY 2021-22 onwards, interest on employee EPF contributions exceeding ₹2.5 Lakhs per year is taxable as income. Only the interest on the excess amount — not all interest — becomes taxable. This typically affects only employees with a very high Basic Salary (above ~₹1.74L/month) or those making aggressive VPF contributions. The employer's contribution to EPF is not counted towards this ₹2.5L threshold.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What happens to my EPF when I change jobs? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Your EPF account is linked to your UAN, which is yours permanently regardless of employer. When you change jobs, provide your UAN to the new employer — they'll link a new member ID to it. You can then initiate an online transfer of your old balance via the EPFO portal (Online Services → Transfer Request). Your balance, interest, and cumulative service period all transfer seamlessly. Never withdraw — transferring preserves your compounding chain and keeps the 5-year service clock intact for tax-free withdrawal status.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">What happens if my EPF account goes dormant? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>An EPF account that has received no contributions for 3 consecutive years is classified as "inoperative." From October 2023 onwards, even inoperative accounts continue to earn interest until the member reaches age 58 — this changed from the earlier rule where dormant accounts stopped earning interest. However, you cannot make fresh contributions to an inoperative account. To reactivate it, transfer it to an active employer via your UAN. Leaving balances untransferred across multiple old accounts is the most common cause of EPF claim delays and complications.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I withdraw EPF to buy a house? How much? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>Yes. After 5 years of EPF membership, you can withdraw up to 90% of your total EPF balance (employee + employer contributions + interest) for purchase or construction of a first residential property registered in your name or jointly with your spouse. This is a one-time lifetime withdrawal for this purpose. The amount is completely tax-free. You can also withdraw up to 90% within one year of retirement (from age 57 onwards) without any property-related condition.</p></div>
+      </div>
+
+      <div class="faq-item fu" onclick="toggleFaq(this)">
+        <div class="faq-q">Does EPF apply to contract workers and gig economy workers? <i class="bi bi-plus-lg tog"></i></div>
+        <div class="faq-a"><p>EPF is mandatory for all employers with 20 or more employees and for employees earning Basic + DA up to ₹15,000/month — though many employers extend it to higher-salary employees voluntarily. Contract workers employed through a principal employer or contractor are covered if conditions are met. Gig workers working directly for platforms (Swiggy, Ola, etc.) are typically not covered as they're classified as independent contractors, not employees. For self-employed or gig workers without EPF, PPF (EEE, 7.1% guaranteed) and NPS (market-linked, exclusive ₹50K tax benefit under 80CCD(1B)) serve equivalent retirement savings purposes.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 12 — RELATED CALCULATORS
+══════════════════════════════════════ -->
+<section class="sec related-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> Related tools</div>
+      <h2 class="sec-title">Explore more calculators</h2>
+      <p class="sec-sub">Build a complete retirement and financial plan alongside your EPF projection.</p>
+    </div>
+    <div class="related-grid">
+      <a href="/calculators/ppf" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-shield-check"></i></div>
+        <div><div class="related-card-name">PPF Calculator</div><div class="related-card-sub">Tax-free guaranteed wealth</div></div>
+      </a>
+      <a href="/calculators/nps" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-person-badge"></i></div>
+        <div><div class="related-card-name">NPS Calculator</div><div class="related-card-sub">Retirement + pension</div></div>
+      </a>
+      <a href="/calculators/retirement" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-clock-history"></i></div>
+        <div><div class="related-card-name">Retirement Planner</div><div class="related-card-sub">Target corpus</div></div>
+      </a>
+      <a href="/calculators/salary" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-cash-stack"></i></div>
+        <div><div class="related-card-name">Salary Calculator</div><div class="related-card-sub">Take-home & deductions</div></div>
+      </a>
+      <a href="/calculators/sip" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="related-card-name">SIP Calculator</div><div class="related-card-sub">Equity wealth building</div></div>
+      </a>
+      <a href="/calculators/emi" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-credit-card"></i></div>
+        <div><div class="related-card-name">EMI Calculator</div><div class="related-card-sub">Loan planning</div></div>
+      </a>
+      <a href="/calculators/home-loan" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-house"></i></div>
+        <div><div class="related-card-name">Home Loan</div><div class="related-card-sub">Housing finance</div></div>
+      </a>
+      <a href="/calculators/" class="related-card fu">
+        <div class="related-card-icon"><i class="bi bi-grid"></i></div>
+        <div><div class="related-card-name">All Calculators</div><div class="related-card-sub">11+ free tools</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  SECTION 13 — FINAL CTA
+══════════════════════════════════════ -->
+<div class="final-note">
+  <div class="final-note-inner">
+    <h2>Your EPF is working — make sure it's working harder</h2>
+    <p>You're already contributing. But have you activated VPF? Are you transferring instead of withdrawing? Is your KYC current? Use the calculator above to see your full projected corpus — then take the one action that matters most.</p>
+    <div class="final-btns">
+      <button class="btn-w" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i> Back to Calculator</button>
+      <a href="/resources/blogs/" class="btn-o"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -709,6 +1866,23 @@ details[open] summary::after {
 </footer> -->
 
 <script>
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 70) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 /* helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
