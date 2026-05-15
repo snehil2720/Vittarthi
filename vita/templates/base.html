@@ -579,6 +579,11 @@ color: white;
 .drawer-submenu.open {
     display: block;
 }
+.logo{
+    height: clamp(55px, 5vw, 52px) !important;
+    width: auto;
+    margin-left: -20px;
+}
 </style>
 </head>
 
@@ -586,8 +591,9 @@ color: white;
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <a class="nav-brand" href="/">
-    <i class="bi bi-wallet2" style="font-size: 1.4rem;"></i> Vita₹thi
+
+    <a class="nav-brand" href="/">
+    <img src="{% static 'images/vitt2.png' %}" alt="Vita₹thi Logo" class="logo">
   </a>
 
   <!-- Desktop Menu -->
