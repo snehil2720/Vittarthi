@@ -931,7 +931,7 @@ def contact_submit(request):
             message=f'''
         Hi {contact.first_name},
         Your Ticket ID :
-        {{contact.ticket_id}}
+        {contact.ticket_id}
         Thank you for contacting Vittarthi.
         We’ve received your message regarding:
         "{contact.subject}"
