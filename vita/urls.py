@@ -56,7 +56,7 @@ urlpatterns = [
     path('contact-submit/',views.contact_submit, name='contact_submit'),
     #path('privacy/', views.privacy_policy, name='privacy'),
 
-    path('<slug:slug>/', views.legal_page, name='legal_page'),
+    path('legal/<slug:slug>/', views.legal_page, name='legal_page'),
 
 
 ]
