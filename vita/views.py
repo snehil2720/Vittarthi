@@ -909,7 +909,7 @@ def contact_submit(request):
     try:
         print("CONTACT API HIT")
         data = json.loads(request.body)
-        #print(data)
+        print(data)
         if data.get('website'):
             return JsonResponse({
                 'status': 'error',
@@ -919,7 +919,7 @@ def contact_submit(request):
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
             email=data.get('email'),
-            category=data.get('category'),
+            category=data.get('categoryInput'),
             calculator=data.get('calculator'),
             subject=data.get('subject'),
             message=data.get('message'),
@@ -1007,3 +1007,10 @@ def legal_page(request, slug):
     return render(request, "vita/legal_page.html", {
         "page": page
     })
+
+def aboutus(request):
+
+    return render(
+        request,
+        'vita/aboutus.html'
+    )

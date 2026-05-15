@@ -1,0 +1,864 @@
+{% extends 'base.html' %}
+
+{% block title %}
+About Us — Vittarthi | Free Financial Calculators
+{% endblock %}
+
+{% block meta_description %}
+Learn about Vittarthi — why we built free financial calculators for India, our mission to make financial clarity accessible to every Indian, and what guides every tool we create.
+{% endblock %}
+
+
+{% load static %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --ink:        #0d1240;
+  --ink-2:      #3d4480;
+  --ink-3:      #7a80b8;
+  --paper:      #f4f5fb;
+  --surface:    #ffffff;
+  --s2:         #eef0f8;
+  --s3:         #e0e3f0;
+  --indigo:     #3730a3;
+  --indigo-2:   #4338ca;
+  --indigo-lt:  #eef2ff;
+  --indigo-md:  #c7d2fe;
+  --green:      #1a6b4a;
+  --green-lt:   #e6f2ec;
+  --green-md:   #c8e6d6;
+  --gold:       #b45309;
+  --gold-lt:    #fffbeb;
+  --gold-md:    #fde68a;
+  --rose:       #a0363a;
+  --rose-lt:    #fdeaeb;
+  --teal:       #0e7490;
+  --teal-lt:    #e0f4f8;
+  --border:     rgba(13,18,64,0.09);
+  --shadow:     0 4px 20px rgba(13,18,64,0.07);
+  --shadow-lg:  0 12px 48px rgba(13,18,64,0.12);
+  --r:          14px;
+  --r-sm:       8px;
+  --pad:        clamp(1.25rem,5vw,2.5rem);
+  --max:        1268px;
+  --max-text:   720px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;}
+.fu.on{animation:fadeUp .65s ease both;}
+
+/* ════════════════════════
+   HERO
+════════════════════════ */
+.hero{
+  background:var(--indigo);
+  padding:clamp(4rem,9vw,7rem) var(--pad) clamp(3rem,5vw,3rem);
+  position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:24px 24px;pointer-events:none;
+}
+.hero::after{
+  content:'Vittarthi';
+  font-family:'Playfair Display',serif;font-size:clamp(8rem,18vw,18rem);
+  font-weight:700;color:rgba(255,255,255,.04);
+  position:absolute;bottom:-2rem;right:-1rem;line-height:1;
+  pointer-events:none;white-space:nowrap;
+}
+.hero-inner{
+  max-width:var(--max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(2rem,5vw,5rem);align-items:center;
+  position:relative;z-index:1;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
+  padding:4px 12px;border-radius:100px;margin-bottom:1.25rem;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.2rem,5vw,3.8rem);font-weight:700;
+  color:#fff;line-height:1.08;letter-spacing:-.5px;margin-bottom:1.1rem;
+}
+.hero-title em{font-style:italic;color:var(--gold-md);}
+.hero-body{font-size:.96rem;color:rgba(255,255,255,.8);line-height:1.85;margin-bottom:1.75rem;}
+.hero-btns{display:flex;gap:.75rem;flex-wrap:wrap;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--indigo);
+  padding:.7rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:600;transition:opacity .2s;
+}
+.btn-primary:hover{opacity:.9;text-decoration:none;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.12);color:#fff;
+  padding:.7rem 1.5rem;border-radius:var(--r-sm);
+  font-size:.88rem;font-weight:500;
+  border:1.5px solid rgba(255,255,255,.28);
+  transition:background .2s,border-color .2s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5);text-decoration:none;}
+
+/* Hero right — mission visual */
+.hero-visual{
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r);padding:1.75rem;
+}
+.hero-visual-title{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:700;color:#fff;margin-bottom:1.1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.hero-visual-title i{color:var(--gold-md);}
+.mission-points{display:flex;flex-direction:column;gap:.75rem;}
+.mp{
+  display:flex;align-items:flex-start;gap:.85rem;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r-sm);padding:.9rem 1rem;
+  transition:background .2s;
+}
+.mp:hover{background:rgba(255,255,255,.14);}
+.mp-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(255,255,255,.12);color:var(--gold-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.mp-text{}
+.mp-title{font-size:.84rem;font-weight:600;color:#fff;margin-bottom:.15rem;}
+.mp-sub{font-size:.73rem;color:rgba(255,255,255,.68);line-height:1.5;}
+
+/* ════════════════════════
+   SECTION SHARED
+════════════════════════ */
+.sec{padding:clamp(3.5rem,7vw,3.5rem) var(--pad);}
+.sec-inner{max-width:var(--max);margin:0 auto;}
+.label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--indigo);background:var(--indigo-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
+}
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;
+  line-height:1.12;letter-spacing:-.3px;color:var(--ink);margin-bottom:.8rem;
+}
+.sec-title em{font-style:italic;color:var(--indigo);}
+.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.85;max-width:560px;}
+.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
+.sec-hdr.center{text-align:center;}
+.sec-hdr.center .sec-sub{margin:0 auto;}
+
+/* ════════════════════════
+   PROBLEM / WHY
+════════════════════════ */
+.why-sec{background:var(--surface);border-top:1px solid var(--border);}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,5rem);align-items:center;}
+.why-body p{font-size:.92rem;color:var(--ink-2);line-height:1.9;margin-bottom:1rem;}
+.why-body p:last-child{margin-bottom:0;}
+.why-body strong{color:var(--ink);}
+.why-body em{color:var(--indigo);font-style:italic;}
+.pull-quote{
+  border-left:4px solid var(--indigo);
+  padding:.85rem 1.25rem;margin:1.5rem 0;
+  background:var(--indigo-lt);border-radius:0 var(--r-sm) var(--r-sm) 0;
+}
+.pull-quote p{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;font-weight:500;font-style:italic;
+  color:var(--indigo);line-height:1.6;margin:0;
+}
+
+/* Problem cards */
+.problem-cards{display:flex;flex-direction:column;gap:.75rem;}
+.problem-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
+  display:flex;align-items:flex-start;gap:.9rem;
+  transition:border-color .2s,background .2s;
+}
+.problem-card:hover{border-color:var(--indigo-md);background:var(--indigo-lt);}
+.problem-card-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.problem-card:hover .problem-card-icon{background:var(--indigo-md);}
+.problem-card-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.2rem;}
+.problem-card-sub{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+/* ════════════════════════
+   WHAT MAKES US DIFFERENT
+════════════════════════ */
+.diff-sec{background:var(--paper);}
+.diff-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+.diff-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.75rem;
+  display:flex;flex-direction:column;gap:.75rem;
+  transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
+}
+.diff-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.diff-card:nth-child(1)::before{background:linear-gradient(90deg,var(--indigo),#818cf8);}
+.diff-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),#34d399);}
+.diff-card:nth-child(3)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.diff-card:nth-child(4)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
+.diff-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.diff-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.diff-card:nth-child(1) .diff-icon{background:var(--indigo-lt);color:var(--indigo);}
+.diff-card:nth-child(2) .diff-icon{background:var(--green-lt);color:var(--green);}
+.diff-card:nth-child(3) .diff-icon{background:var(--gold-lt);color:var(--gold);}
+.diff-card:nth-child(4) .diff-icon{background:var(--teal-lt);color:var(--teal);}
+.diff-title{font-size:1rem;font-weight:700;color:var(--ink);}
+.diff-body{font-size:.82rem;color:var(--ink-2);line-height:1.75;}
+.diff-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:100px;align-self:flex-start;
+}
+.diff-card:nth-child(1) .diff-tag{background:var(--indigo-lt);color:var(--indigo);}
+.diff-card:nth-child(2) .diff-tag{background:var(--green-lt);color:var(--green);}
+.diff-card:nth-child(3) .diff-tag{background:var(--gold-lt);color:var(--gold);}
+.diff-card:nth-child(4) .diff-tag{background:var(--teal-lt);color:var(--teal);}
+
+/* ════════════════════════
+   TOOLS SHOWCASE
+════════════════════════ */
+.tools-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.tools-category{margin-bottom:2rem;}
+.tools-category:last-child{margin-bottom:0;}
+.tools-cat-label{
+  font-size:.72rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;
+}
+.tools-cat-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.tools-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.65rem;}
+.tool-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:.9rem 1rem;
+  display:flex;align-items:center;gap:.75rem;
+  transition:all .22s;
+}
+.tool-card:hover{background:var(--indigo-lt);border-color:var(--indigo-md);transform:translateY(-2px);text-decoration:none;}
+.tool-card-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;transition:background .2s;
+}
+.tool-card:hover .tool-card-icon{background:var(--indigo-md);}
+.tool-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
+.tool-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
+
+/* New badge */
+.new-badge{
+  display:inline-block;font-size:.58rem;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;background:var(--indigo);color:#fff;
+  padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;
+}
+
+/* ════════════════════════
+   STATS STRIP
+════════════════════════ */
+.stats-sec{
+  background:var(--indigo);
+  padding:clamp(2.5rem,5vw,4rem) var(--pad);
+  position:relative;overflow:hidden;
+}
+.stats-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.stat-box{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--r);padding:1.5rem;text-align:center;
+}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:#fff;
+  line-height:1;margin-bottom:.3rem;
+}
+.stat-num span{color:var(--gold-md);}
+.stat-lbl{font-size:.78rem;color:rgba(255,255,255,.72);line-height:1.45;}
+.stat-icon{font-size:1.25rem;color:rgba(255,255,255,.4);margin-bottom:.5rem;}
+
+/* ════════════════════════
+   PRINCIPLES
+════════════════════════ */
+.principles-sec{background:var(--paper);}
+.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.principle-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  display:flex;flex-direction:column;gap:.55rem;
+  transition:border-color .2s,box-shadow .22s;
+}
+.principle-card:hover{border-color:var(--indigo-md);box-shadow:var(--shadow);}
+.principle-num{
+  font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;
+  color:var(--indigo);opacity:.18;line-height:1;align-self:flex-end;
+  margin-top:-.25rem;
+}
+.principle-icon{
+  width:44px;height:44px;border-radius:11px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.principle-title{font-size:.92rem;font-weight:700;color:var(--ink);}
+.principle-body{font-size:.78rem;color:var(--ink-2);line-height:1.7;}
+
+/* ════════════════════════
+   FOUNDER NOTE
+════════════════════════ */
+.founder-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.founder-inner{max-width:var(--max-text);margin:0 auto;}
+.founder-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--indigo);background:var(--indigo-lt);
+  padding:4px 12px;border-radius:100px;margin-bottom:1.5rem;
+}
+.founder-quote{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.3rem,2.5vw,1.75rem);font-weight:500;font-style:italic;
+  color:var(--ink);line-height:1.5;margin-bottom:1.75rem;
+}
+.founder-quote::before{content:'\201C';color:var(--indigo-md);font-size:3rem;line-height:0;vertical-align:-.5rem;margin-right:.2rem;}
+.founder-quote::after{content:'\201D';color:var(--indigo-md);font-size:3rem;line-height:0;vertical-align:-.5rem;margin-left:.1rem;}
+.founder-body p{font-size:.92rem;color:var(--ink-2);line-height:1.9;margin-bottom:1rem;}
+.founder-body p:last-child{margin-bottom:0;}
+.founder-body strong{color:var(--ink);}
+.founder-sig{
+  display:flex;align-items:center;gap:1rem;margin-top:2rem;
+  padding-top:1.5rem;border-top:1px solid var(--border);
+}
+.founder-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--indigo);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;
+  flex-shrink:0;
+}
+.founder-name{font-size:.88rem;font-weight:600;color:var(--ink);}
+.founder-role{font-size:.76rem;color:var(--ink-3);margin-top:.1rem;}
+
+/* ════════════════════════
+   COMMITMENTS
+════════════════════════ */
+.commit-sec{background:var(--paper);}
+.commit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;}
+.commit-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:1.25rem 1.4rem;
+  display:flex;align-items:flex-start;gap:.85rem;
+  transition:border-color .2s,background .2s;
+}
+.commit-card:hover{border-color:var(--indigo-md);background:var(--indigo-lt);}
+.commit-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--indigo-lt);color:var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.commit-card:hover .commit-icon{background:var(--indigo-md);}
+.commit-title{font-size:.86rem;font-weight:600;color:var(--ink);margin-bottom:.2rem;}
+.commit-body{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
+
+/* ════════════════════════
+   CTA
+════════════════════════ */
+.cta-sec{
+  background:var(--ink);
+  padding:clamp(3rem,6vw,3rem) var(--pad);
+  text-align:center;position:relative;overflow:hidden;
+  border-radius: 20px;
+}
+.cta-sec::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(55,48,163,.5),transparent 65%);
+  pointer-events:none;
+}
+.cta-inner{max-width:640px;margin:0 auto;position:relative;z-index:1;}
+.cta-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.55);background:rgba(255,255,255,.1);
+  padding:4px 12px;border-radius:100px;margin-bottom:1.25rem;
+}
+.cta-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:700;
+  color:#fff;line-height:1.12;letter-spacing:-.3px;margin-bottom:.9rem;
+}
+.cta-title em{font-style:italic;color:var(--gold-md);}
+.cta-body{font-size:.92rem;color:rgba(255,255,255,.7);line-height:1.8;margin-bottom:2rem;}
+.cta-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .hero-inner,.why-grid{grid-template-columns:1fr;}
+  .diff-grid{grid-template-columns:1fr 1fr;}
+  .principles-grid{grid-template-columns:1fr 1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .hero::after{display:none;}
+}
+@media(max-width:640px){
+  .nav-links{display:none;}
+  .diff-grid{grid-template-columns:1fr;}
+  .principles-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(hover:none){
+  .diff-card:hover,.tool-card:hover,.principle-card:hover,.commit-card:hover{transform:none;}
+}
+</style>
+<body>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="fu">
+      <div class="hero-badge"><i class="bi bi-flag-fill"></i> Our story</div>
+      <h1 class="hero-title">Built for every Indian who deserves <em>financial clarity</em></h1>
+      <p class="hero-body">Vittarthi started with a simple frustration: financial tools in India were either too complex, too expensive, or designed to sell you something. We built something different — free, honest, and genuinely useful for the decisions that matter.</p>
+      <div class="hero-btns">
+        <a href="/calculators/" class="btn-primary"><i class="bi bi-calculator"></i> Explore Calculators</a>
+        <a href="/resources/blogs/" class="btn-ghost"><i class="bi bi-book"></i> Read Our Guides</a>
+      </div>
+    </div>
+    <div class="hero-visual fu">
+      <div class="hero-visual-title"><i class="bi bi-stars"></i> What drives everything we build</div>
+      <div class="mission-points">
+        <div class="mp">
+          <div class="mp-icon"><i class="bi bi-lock-fill"></i></div>
+          <div>
+            <div class="mp-title">Free. Always. No catches.</div>
+            <div class="mp-sub">Every calculator, every article, every tool — free forever. No paywalls, no sign-up required, no hidden premium tiers.</div>
+          </div>
+        </div>
+        <div class="mp">
+          <div class="mp-icon"><i class="bi bi-shield-fill-check"></i></div>
+          <div>
+            <div class="mp-title">Your data stays with you</div>
+            <div class="mp-sub">Calculator inputs never leave your browser. We never see your salary, loan amount, or any financial number you enter.</div>
+          </div>
+        </div>
+        <div class="mp">
+          <div class="mp-icon"><i class="bi bi-chat-square-text-fill"></i></div>
+          <div>
+            <div class="mp-title">Clarity, not complexity</div>
+            <div class="mp-sub">Plain language, real numbers, no jargon. We explain what a result means — not just what it is.</div>
+          </div>
+        </div>
+        <div class="mp">
+          <div class="mp-icon"><i class="bi bi-geo-alt-fill"></i></div>
+          <div>
+            <div class="mp-title">Built specifically for India</div>
+            <div class="mp-sub">EPF, PPF, NPS, HRA, 80C — our tools are built around the actual financial system Indians live in, not Western models.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHY WE EXIST ════════ -->
+<section class="sec why-sec">
+  <div class="sec-inner">
+    <div class="why-grid">
+      <div class="fu">
+        <div class="label"><i class="bi bi-lightbulb"></i> Why we exist</div>
+        <h2 class="sec-title">Most Indians make their biggest financial decisions <em>without the right tools</em></h2>
+        <div class="why-body">
+          <p>Think about the last time someone in your family took a home loan, started a SIP, or tried to understand their in-hand salary. They probably made the decision based on what a bank told them, what a friend suggested, or simply what felt right at the time.</p>
+          <p>Not because they were careless. But because <strong>genuinely useful, honest financial tools were simply not easy to find.</strong> The good ones cost money, required sign-ups, or came bundled with advice that was really sales in disguise.</p>
+          <div class="pull-quote">
+            <p>Financial clarity shouldn't be a privilege. It should be the starting point for every person making a financial decision — regardless of income, education, or location.</p>
+          </div>
+          <p>That's the gap Vittarthi was built to fill. Not to manage your money, not to advise you on what to buy — but to give you <strong>the numbers you need to make your own informed decisions.</strong> A calculator that tells you the true cost of a 20-year home loan before you sign. A tool that shows how much your EPF actually accumulates over 30 years. A breakdown of what your CTC actually means in monthly take-home pay.</p>
+          <p>Simple. Free. Honest. Made in India, for India.</p>
+        </div>
+      </div>
+      <div class="fu">
+        <div class="problem-cards">
+          <div class="problem-card">
+            <div class="problem-card-icon"><i class="bi bi-question-circle"></i></div>
+            <div>
+              <div class="problem-card-title">Complexity used as a moat</div>
+              <div class="problem-card-sub">Too many financial tools deliberately obscure how numbers are calculated — so you depend on an "advisor" who earns a commission to explain them. We show you the formula, the breakdown, and the result together.</div>
+            </div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card-icon"><i class="bi bi-currency-rupee"></i></div>
+            <div>
+              <div class="problem-card-title">Good tools hidden behind paywalls</div>
+              <div class="problem-card-sub">Premium financial planning software costs thousands per year. A person deciding whether to take a ₹50 Lakh home loan deserves the same quality analysis as someone who can afford a financial planner.</div>
+            </div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card-icon"><i class="bi bi-megaphone"></i></div>
+            <div>
+              <div class="problem-card-title">Tools designed to sell, not inform</div>
+              <div class="problem-card-sub">Many "free" calculators are lead generation tools that funnel you toward products. Our calculators have no referral links, no affiliated products, and no incentive to push any particular financial decision.</div>
+            </div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card-icon"><i class="bi bi-translate"></i></div>
+            <div>
+              <div class="problem-card-title">Content written for experts, not users</div>
+              <div class="problem-card-sub">Financial literacy resources in India are often either too simplified to be useful or too technical to be readable. We write for the person who is intelligent but new to this — not the CFA holder, not the five-year-old.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHAT MAKES US DIFFERENT ════════ -->
+<section class="sec diff-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-stars"></i> What we stand for</div>
+      <h2 class="sec-title">Four things that make Vittarthi different</h2>
+      <p class="sec-sub">Anyone can build a calculator. These are the choices we made — and won't compromise on — that define what Vittarthi is.</p>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card fu">
+        <div class="diff-icon"><i class="bi bi-gift"></i></div>
+        <div class="diff-title">Free forever — not a freemium trick</div>
+        <div class="diff-body">Every calculator on Vittarthi is and will remain completely free. No credits, no usage limits, no sign-up wall before seeing results. Financial clarity is most valuable at the moment you need it most — which is rarely the moment you'd plan ahead to pay for a subscription.</div>
+        <div class="diff-tag"><i class="bi bi-check-circle-fill"></i> Our commitment</div>
+      </div>
+      <div class="diff-card fu">
+        <div class="diff-icon"><i class="bi bi-incognito"></i></div>
+        <div class="diff-title">Your numbers never touch our servers</div>
+        <div class="diff-body">Every calculation happens entirely inside your browser. When you type ₹50 Lakh into the home loan calculator, that number never leaves your device. We have no database of what you earn, what you owe, or what you're planning — and we deliberately built it that way.</div>
+        <div class="diff-tag"><i class="bi bi-shield-fill-check"></i> Privacy by design</div>
+      </div>
+      <div class="diff-card fu">
+        <div class="diff-icon"><i class="bi bi-patch-exclamation"></i></div>
+        <div class="diff-title">No advice, no agenda, no commissions</div>
+        <div class="diff-body">We are not registered with SEBI, IRDAI, or any other financial regulator — because we are not a financial advisor. We don't recommend products, earn referral fees, or have any financial incentive in what you decide. Our only interest is helping you understand your numbers clearly.</div>
+        <div class="diff-tag"><i class="bi bi-award-fill"></i> Honest by design</div>
+      </div>
+      <div class="diff-card fu">
+        <div class="diff-icon"><i class="bi bi-geo-alt"></i></div>
+        <div class="diff-title">Built for India's actual financial reality</div>
+        <div class="diff-body">Our tools cover EPF employer splits, PPF's 5th of month rule, NPS's 80CCD(1B) deduction, HRA metro vs non-metro distinctions, and the Old vs New Tax Regime — because these are the real decisions real Indian employees face. Not models borrowed from the US or UK personal finance world.</div>
+        <div class="diff-tag"><i class="bi bi-flag-fill"></i> India-first</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ TOOLS SHOWCASE ════════ -->
+<section class="sec tools-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr fu">
+      <div class="label"><i class="bi bi-grid"></i> What we've built</div>
+      <h2 class="sec-title">{{ total_calculators }} free calculators covering every major financial decision</h2>
+      <p class="sec-sub">From your first EMI to your retirement corpus — tools that cover the entire financial journey of a working Indian.</p>
+    </div>
+
+    <div class="tools-category fu">
+      <div class="tools-cat-label"><i class="bi bi-graph-up-arrow"></i> Investments & Savings</div>
+      <div class="tools-row">
+        <a href="/calculators/sip" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div><div class="tool-card-name">SIP Calculator <span class="new-badge">New</span></div><div class="tool-card-sub">Equity wealth builder</div></div>
+        </a>
+        <a href="/calculators/ppf" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-shield-check"></i></div>
+          <div><div class="tool-card-name">PPF Calculator</div><div class="tool-card-sub">Tax-free guaranteed returns</div></div>
+        </a>
+        <a href="/calculators/nps" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-person-badge"></i></div>
+          <div><div class="tool-card-name">NPS Calculator</div><div class="tool-card-sub">Pension & retirement</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="tools-category fu">
+      <div class="tools-cat-label"><i class="bi bi-credit-card"></i> Loans & EMI</div>
+      <div class="tools-row">
+        <a href="/calculators/emi" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-credit-card"></i></div>
+          <div><div class="tool-card-name">EMI Calculator</div><div class="tool-card-sub">Any loan type</div></div>
+        </a>
+        <a href="/calculators/home-loan" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-house"></i></div>
+          <div><div class="tool-card-name">Home Loan</div><div class="tool-card-sub">Property finance</div></div>
+        </a>
+        <a href="/calculators/car-loan" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-car-front"></i></div>
+          <div><div class="tool-card-name">Car Loan</div><div class="tool-card-sub">Auto financing</div></div>
+        </a>
+        <a href="/calculators/personal-loan" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-person"></i></div>
+          <div><div class="tool-card-name">Personal Loan</div><div class="tool-card-sub">Unsecured credit</div></div>
+        </a>
+        <a href="/calculators/loan-eligibility" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-check-circle"></i></div>
+          <div><div class="tool-card-name">Loan Eligibility</div><div class="tool-card-sub">Borrowing capacity</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="tools-category fu">
+      <div class="tools-cat-label"><i class="bi bi-briefcase"></i> Income & Retirement</div>
+      <div class="tools-row">
+        <a href="/calculators/salary" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-cash-stack"></i></div>
+          <div><div class="tool-card-name">Salary Calculator</div><div class="tool-card-sub">CTC to in-hand</div></div>
+        </a>
+        <a href="/calculators/pf" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-briefcase"></i></div>
+          <div><div class="tool-card-name">EPF Calculator</div><div class="tool-card-sub">Provident fund corpus</div></div>
+        </a>
+        <a href="/calculators/retirement" class="tool-card">
+          <div class="tool-card-icon"><i class="bi bi-clock-history"></i></div>
+          <div><div class="tool-card-name">Retirement Planner</div><div class="tool-card-sub">Target corpus</div></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════ STATS ════════ -->
+<section class="stats-sec">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box fu">
+        <div class="stat-icon"><i class="bi bi-calculator"></i></div>
+        <div class="stat-num">{{ total_calculators }}<span>+</span></div>
+        <div class="stat-lbl">Free calculators covering investments, loans, income, and retirement planning</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-icon"><i class="bi bi-people"></i></div>
+        <div class="stat-num">{{ monthly_users }}<span>+</span></div>
+        <div class="stat-lbl">Monthly users making smarter financial decisions with Vittarthi tools</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-icon"><i class="bi bi-book"></i></div>
+        <div class="stat-num">₹0</div>
+        <div class="stat-lbl">Cost to you — every calculator, every article, every tool. Free forever, no exceptions</div>
+      </div>
+      <div class="stat-box fu">
+        <div class="stat-icon"><i class="bi bi-shield-lock"></i></div>
+        <div class="stat-num">0<span>bytes</span></div>
+        <div class="stat-lbl">Of your financial data sent to our servers — all calculations happen in your browser</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PRINCIPLES ════════ -->
+<section class="sec principles-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-compass"></i> How we work</div>
+      <h2 class="sec-title">Six principles that guide every tool we build</h2>
+      <p class="sec-sub">These aren't aspirations on a wall. They're decisions that show up in every calculator, every article, every design choice we make.</p>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-translate"></i></div>
+          <div class="principle-num">01</div>
+        </div>
+        <div class="principle-title">Plain language, always</div>
+        <div class="principle-body">We write for someone who is intelligent but new to personal finance. No jargon without explanation, no assumption of prior knowledge. If a 22-year-old just starting their first job can't understand the result, the tool isn't done.</div>
+      </div>
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-eye"></i></div>
+          <div class="principle-num">02</div>
+        </div>
+        <div class="principle-title">Show the full picture</div>
+        <div class="principle-body">An EMI calculator should show total interest paid, not just the monthly number. A retirement calculator should show the inflation-adjusted figure, not just the nominal one. We design every output to make the full truth visible — including the parts that are uncomfortable.</div>
+      </div>
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-arrow-clockwise"></i></div>
+          <div class="principle-num">03</div>
+        </div>
+        <div class="principle-title">Stay current</div>
+        <div class="principle-body">EPF interest rates change. Tax slabs are revised every Budget. PPF rules get updated. We review our calculators and content regularly to reflect current rates, current rules, and current tax laws — so the numbers you see reflect how things actually work today.</div>
+      </div>
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-patch-check"></i></div>
+          <div class="principle-num">04</div>
+        </div>
+        <div class="principle-title">Accuracy over speed</div>
+        <div class="principle-body">We'd rather launch a calculator that's been carefully tested than launch fast and be wrong. EPF's 12% split, PPF's 5th-of-month rule, NPS's mandatory annuity — these details matter enormously to the people relying on the result. We get them right.</div>
+      </div>
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-hand-thumbs-up"></i></div>
+          <div class="principle-num">05</div>
+        </div>
+        <div class="principle-title">Recommend professionals honestly</div>
+        <div class="principle-body">Our tools help you understand numbers. But we consistently point people toward qualified financial advisers, CAs, and SEBI-registered professionals for decisions that warrant expert guidance — not because we're required to, but because it's the right thing to do.</div>
+      </div>
+      <div class="principle-card fu">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div class="principle-icon"><i class="bi bi-heart"></i></div>
+          <div class="principle-num">06</div>
+        </div>
+        <div class="principle-title">Made with care</div>
+        <div class="principle-body">Every piece of content we publish, every line of calculator code we write, every design decision we make is done with the thought: "Is this genuinely useful for the person who needs it?" Not "Is it good enough to ship?" but "Is it something we'd be proud to send to someone we care about?"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOUNDER NOTE ════════ -->
+<section class="sec founder-sec">
+  <div class="sec-inner">
+    <div class="founder-inner fu">
+      <div class="founder-eyebrow"><i class="bi bi-pen"></i> A note from the founder</div>
+      <div class="founder-quote">
+        I built Vittarthi because I kept watching people I cared about make major financial decisions with incomplete information — not because they didn't care, but because the right tools simply weren't easy to find.
+      </div>
+      <div class="founder-body">
+        <p>When my younger sibling was offered their first job, they called me excited about the CTC. I had to explain that the number on the offer letter and the number in their bank account would be very different — and I walked them through the calculation on a spreadsheet because there was no simple, honest tool that did it clearly.</p>
+        <p>When a family friend was deciding between a 15-year and a 20-year home loan, the bank's EMI calculator only showed the monthly number. Nobody showed them that the 20-year option would cost them ₹18 Lakh more in interest over the full tenure. They took the 20-year loan because the EMI looked "manageable."</p>
+        <p>These are not unusual stories. They happen every day, to millions of people across India. <strong>The cost of financial fog — of making big decisions without clear numbers — is enormous.</strong> And it falls hardest on people who don't have a financial planner on speed dial.</p>
+        <p>Vittarthi is my attempt to change that, one calculator at a time. It will always be free. It will never try to sell you anything. And every tool on it will be built with the same question in mind: <em>"If someone I care about is about to make this decision, what do they actually need to know?"</em></p>
+      </div>
+      <div class="founder-sig">
+        <div class="founder-avatar">S&J</div>
+        <div>
+          <div class="founder-name">Snehil Singh & Jayesh Chaubey</div>
+          <div class="founder-role">Founder, Vittarthi · Made with care in India 🇮🇳</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ COMMITMENTS ════════ -->
+<section class="sec commit-sec">
+  <div class="sec-inner">
+    <div class="sec-hdr center fu">
+      <div class="label"><i class="bi bi-shield-fill-check"></i> Our promise to you</div>
+      <h2 class="sec-title">What you can always count on from Vittarthi</h2>
+    </div>
+    <div class="commit-grid">
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-infinity"></i></div>
+        <div>
+          <div class="commit-title">Free forever, no exceptions</div>
+          <div class="commit-body">No tool on this site will ever require payment, a subscription, or an account to use. We believe financial clarity is too important to put behind a paywall.</div>
+        </div>
+      </div>
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-person-x"></i></div>
+        <div>
+          <div class="commit-title">No sign-up required for any calculator</div>
+          <div class="commit-body">Open a calculator, enter your numbers, get your result. No email required, no account creation, no verification code. Your time is more valuable than our CRM list.</div>
+        </div>
+      </div>
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-shield-lock"></i></div>
+        <div>
+          <div class="commit-title">Your financial data is never collected</div>
+          <div class="commit-body">The numbers you enter into our calculators stay in your browser. We have never seen your salary, your loan amount, or your investment figures — and we never will.</div>
+        </div>
+      </div>
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-ban"></i></div>
+        <div>
+          <div class="commit-title">No financial product promotions</div>
+          <div class="commit-body">We don't promote specific mutual funds, insurance products, banks, or financial instruments. No affiliate deals, no sponsored calculator results, no commission-driven recommendations. Ever.</div>
+        </div>
+      </div>
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-arrow-clockwise"></i></div>
+        <div>
+          <div class="commit-title">Rates and rules kept current</div>
+          <div class="commit-body">We review our tools regularly to reflect the latest EPF rates, PPF interest, tax slabs, and regulatory changes. When things change, we update — and we note the revision date clearly.</div>
+        </div>
+      </div>
+      <div class="commit-card fu">
+        <div class="commit-icon"><i class="bi bi-chat-dots"></i></div>
+        <div>
+          <div class="commit-title">Responsive to feedback</div>
+          <div class="commit-body">If a calculation seems wrong, if an article is outdated, or if a tool is confusing — tell us. We take every accuracy report seriously and respond to every genuine query we receive.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CTA ════════ -->
+<section class="cta-sec">
+  <div class="cta-inner">
+    <div class="cta-label fu"><i class="bi bi-calculator"></i> Try it yourself</div>
+    <h2 class="cta-title fu">Start with the decision <em>in front of you right now</em></h2>
+    <p class="cta-body fu">Whether you're comparing home loan tenures, calculating your EPF corpus, or trying to understand your actual take-home salary — there's a tool here that will give you the number you need in under a minute. Free. No sign-up. No agenda.</p>
+    <div class="cta-btns fu">
+      <a href="/calculators/" class="btn-primary"><i class="bi bi-grid"></i> All Calculators</a>
+      <a href="/resources/blogs/" class="btn-ghost"><i class="bi bi-book"></i> Read Finance Guides</a>
+    </div>
+  </div>
+</section>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const siblings = Array.from(e.target.parentNode?.children || []);
+      const idx = siblings.indexOf(e.target);
+      e.target.style.animationDelay = (idx * 80) + 'ms';
+      e.target.classList.add('on');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
+  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+}
+function closeOnOverlay(e) {
+  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
+}
+</script>
+
+</body>
+</html>
+{% endblock %}

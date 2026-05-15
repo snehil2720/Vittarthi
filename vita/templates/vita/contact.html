@@ -474,7 +474,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);-
 
         <form id="contactForm" onsubmit="handleSubmit(event)">
           {% csrf_token %}
-          <!-- <input type="hidden" id="categoryInput" value="general"> -->
+          <input type="hidden" id="categoryInput" value="general">
             <input type="text" id="website" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0; height:0; width:0; pointer-events:none;">
 
           <div class="field-row">
@@ -802,6 +802,8 @@ async function handleSubmit(e) {
             document.getElementById('email').value,
         website:
             document.getElementById('website').value,
+        categoryInput:
+            document.getElementById('categoryInput').value,
         calculator:
             document.getElementById('calculator').value,
         subject:

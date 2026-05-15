@@ -7,6 +7,7 @@ urlpatterns = [
     # path('blogs/', views.blogs, name='blogs'),
     path('products/', views.products, name='products'),
     path('contact/', views.contact_page, name='contact'),
+    path('about-us/', views.aboutus, name='aboutus'),
     
     path('calculators/sip', views.sip_calculator, name='sip'),
     path('calculators/emi', views.emi_calculator, name='emi'),

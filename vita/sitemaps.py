@@ -1,7 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
-from .models import Blog, PrimaryCategory
+from .models import Blog, PrimaryCategory,LegalPage
 
 
 class PostsSitemap(Sitemap):
@@ -29,18 +29,29 @@ class PagesSitemap(Sitemap):
 
     changefreq = "weekly"
     priority = 0.7
-
+    
     def items(self):
 
-        return [
+        static_pages=  [
             'home',
             'calculators',
             'contact',
+            'aboutus',
         ]
+        legal_pages = LegalPage.objects.all()
+        return static_pages + list(legal_pages)
 
     def location(self, item):
-        return reverse(item)
+        if isinstance(item, str):
+            return reverse(item)
 
+        return reverse('legal_page', kwargs={'slug': item.slug})
+        #return reverse(item)
+    
+    def lastmod(self, item):
+        if hasattr(item, 'updated_at'):
+            return item.updated_at
+        return None
 
 class CategoriesSitemap(Sitemap):
 
