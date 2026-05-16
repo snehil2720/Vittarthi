@@ -41,7 +41,7 @@ urlpatterns = [
     path('ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
     path('ckeditor/browse/', ckeditor_views.browse, name='ckeditor_browse'),
     path('smart/', include('smartvitarthi.urls')),
-    path('sitemap/', sitemap_ui, name='sitemap_ui'),
+    path('sitemap', sitemap_ui, name='sitemap_ui'),
     path(
         'sitemap.xml',
         index,

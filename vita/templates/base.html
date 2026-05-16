@@ -607,18 +607,18 @@ color: white;
   <!-- Desktop Menu -->
   <ul class="nav-desktop">
     <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-    <li><a href="/calculators/" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
+    <li><a href="/calculators" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
     <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
 <li class="dropdown">
   <a href="javascript:void(0)" class="{% if 'resources' in request.path %}active{% endif %}">Resources ▾</a> 
   <ul class="dropdown-menu">
-    <li><a href="/resources/blogs/">Blogs</a></li>
-    <li><a href="/resources/case-study/">Case Study</a></li>
-    <li><a href="/resources/news/">News</a></li>
+    <li><a href="/resources/blogs">Blogs</a></li>
+    <li><a href="/resources/case-study">Case Study</a></li>
+    <li><a href="/resources/news">News</a></li>
   </ul>
 </li>
-    <li><a href="/contact/" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
-    <li><a href="/about-us/" class="{% if 'about-us' in request.path %}active{% endif %}">About Us</a></li>
+    <li><a href="/contact" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
+    <li><a href="/about-us" class="{% if 'about-us' in request.path %}active{% endif %}">About Us</a></li>
 
     <!-- {% if user.is_authenticated %}
         <li>
@@ -651,7 +651,7 @@ color: white;
   <div class="drawer-panel">
 
     <a href="/">Home</a>
-    <a href="/calculators/">Calculators</a>
+    <a href="/calculators">Calculators</a>
 
     <div class="drawer-item">
     <div class="drawer-link" onclick="toggleResources()">
@@ -659,14 +659,14 @@ color: white;
     </div>
 
       <div class="drawer-submenu" id="resourcesMenu">
-        <a href="/resources/blogs/">Blogs</a>
-        <a href="/resources/case-study/">Case Study</a>
-        <a href="/resources/news/">News</a>
+        <a href="/resources/blogs">Blogs</a>
+        <a href="/resources/case-study">Case Study</a>
+        <a href="/resources/news">News</a>
       </div>
 
     </div>
-      <a href="/contact/">Contact</a>
-      <a href="/about-us/">About Us</a>
+      <a href="/contact">Contact</a>
+      <a href="/about-us">About Us</a>
 
     <!-- {% if user.is_authenticated %}
         <div style="padding:.5rem .8rem; font-weight:600;">
@@ -692,7 +692,7 @@ color: white;
 }
 function toggleResources() {
     const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
+    const arrow = document.getElsementById("arrow");
 
     menu.classList.toggle("open");
 

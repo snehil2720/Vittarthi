@@ -177,8 +177,9 @@ def blog_detail(request, primary_slug,slug):
 
 def delete_blog(request, slug):
     blog = Blog.objects.get(slug=slug)
+    primary_slug = blog.primary_category.slug
     blog.delete()
-    return redirect('/blogs/')
+    return redirect('resource_list', primary_slug=primary_slug)
 def generate_unique_slug(title, slug_input=None, instance=None):
     base_slug = slugify(slug_input) if slug_input else slugify(title)
     slug = base_slug
