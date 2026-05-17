@@ -22,7 +22,7 @@ class PostsSitemap(Sitemap):
         if obj.primary_category:
             primary_slug = obj.primary_category.slug
 
-        return f'/resources/{primary_slug}/{obj.slug}/'
+        return f'/resources/{primary_slug}/{obj.slug}'
 
 
 class PagesSitemap(Sitemap):
@@ -63,7 +63,7 @@ class CategoriesSitemap(Sitemap):
 
     def location(self, obj):
 
-        return f'/resources/{obj.slug}/'
+        return f'/resources/{obj.slug}'
 
 
 class CalculatorsSitemap(Sitemap):
