@@ -21,7 +21,30 @@
 
 <!-- <script src="{% static 'js/bootstrap.bundle.min.js' %}" defer></script>
 <script src="{% static 'js/chart.min.js' %}" defer></script> -->
+{% if breadcrumbs %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
 
+        {% for crumb in breadcrumbs %}
+        {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "name": "{{ crumb.name }}"
+
+            {% if crumb.url %}
+            ,
+            "item": "https://vittarthi.com{{ crumb.url }}"
+            {% endif %}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+
+    ]
+}
+</script>
+{% endif %}
 <style>
 
 /* DARK MODE */
@@ -594,6 +617,63 @@ color: white;
     width: auto;
     margin-left: -20px;
 }
+/* Breadcrumb Container Styling */
+.breadcrumb-wrap {
+    padding: 12px 20px;
+    background-color: #f8f9fa; /* Light clean background */
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); /* Subtle shadow for depth */
+}
+
+/* List Structure */
+.breadcrumb-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+}
+
+/* Individual List Items */
+.breadcrumb-list li {
+    display: inline-flex;
+    align-items: center;
+    color: #6c757d;
+}
+
+/* The Separator (›) between items */
+.breadcrumb-list li + li::before {
+    content: "\203A"; /* Unicode for Right-Pointing Angle Quotation Mark */
+    padding: 0 12px;
+    color: #adb5bd;
+    font-size: 20px;
+    line-height: 1;
+    margin-top: -2px; /* Slight adjustment for visual center */
+}
+
+/* Links Styling */
+.breadcrumb-list a {
+    text-decoration: none;
+    color: #0d6efd; /* Modern Blue */
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover Effect for Links */
+.breadcrumb-list a:hover {
+    color: #0a58ca; /* Darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Active/Current Page Styling */
+.breadcrumb-list .active {
+    color: #212529; /* Dark text for active item */
+    font-weight: 600;
+}
 </style>
 </head>
 
@@ -611,14 +691,16 @@ color: white;
     <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
     <li><a href="/calculators" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
     <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
-<li class="dropdown">
-  <a href="javascript:void(0)" class="{% if 'resources' in request.path %}active{% endif %}">Resources ▾</a> 
-  <ul class="dropdown-menu">
-    <li><a href="/resources/blogs">Blogs</a></li>
-    <li><a href="/resources/case-study">Case Study</a></li>
-    <li><a href="/resources/news">News</a></li>
-  </ul>
-</li>
+    <li class="dropdown">
+      <a href="/resources" class="{% if 'resources' in request.path %}active{% endif %}">
+        Resources ▾
+      </a> 
+      <ul class="dropdown-menu">
+        <li><a href="/resources/blogs">Blogs</a></li>
+        <li><a href="/resources/case-study">Case Study</a></li>
+        <li><a href="/resources/news">News</a></li>
+      </ul>
+    </li>
     <li><a href="/contact" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
     <li><a href="/about-us" class="{% if 'about-us' in request.path %}active{% endif %}">About Us</a></li>
 
@@ -684,7 +766,31 @@ color: white;
 
 <!-- CONTENT -->
 <div class="container mt-4">
+  {% if breadcrumbs %}
+  <div class="container">
+      <nav aria-label="breadcrumb" class="breadcrumb-wrap">
+          <ol class="breadcrumb-list">
+              {% for crumb in breadcrumbs %}
+                  
+                  {% if not forloop.last %}
+                      <li>
+                          <a href="{{ crumb.url }}">
+                              {{ crumb.name }}
+                          </a>
+                      </li>
+                  {% else %}
+                      <li class="active">
+                          {{ crumb.name }}
+                      </li>
+                  {% endif %}
+
+              {% endfor %}
+          </ol>
+      </nav>
+  </div>
+  {% endif %}
     {% block content %}
+
     {% endblock %}
 </div>
 {% include "footer/footer.html" %}

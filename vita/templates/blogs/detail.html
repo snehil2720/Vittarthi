@@ -1,469 +1,1206 @@
 {% extends 'base.html' %}
+
 {% block title %}
-    {{ blog.meta_title|default:blog.title }} | Vita₹thi
+{{ blog.meta_title|default:blog.title }} | Vittarthi
 {% endblock %}
 
 {% block meta_description %}
-    {{ blog.meta_description|default:blog.summary|truncatechars:160 }}
+{{ blog.meta_description|default:blog.summary|truncatechars:160 }}
 {% endblock %}
 
 {% block meta_keywords %}
-    {{ blog.focus_keyword }}
+{{ blog.focus_keyword }}
 {% endblock %}
+
 {% block content %}
+
 <head>
 <link rel="canonical" href="{{ request.build_absolute_uri }}">
-<meta property="og:title" content="{{ blog.meta_title }}">
-<meta property="og:description" content="{{ blog.meta_description }}">
+
+<meta property="og:title" content="{{ blog.meta_title|default:blog.title }}">
+<meta property="og:description" content="{{ blog.meta_description|default:blog.summary }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:type" content="article">
+
 {% if blog.image %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
 {% endif %}
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
-<meta property="og:type" content="article">
-</head>
-<style>
-  /* ══════════ PROGRESS BAR ══════════ */
-  #progressBar {
-    position: fixed;
-    top: 0; left: 0; width: 0%; height: 4px;
-    background: var(--accent);
-    z-index: 9999;
-    transition: width 0.1s;
-  }
-
-  /* ══════════ LAYOUT ══════════ */
-  .detail-page {
-    max-width: 1300px;
-    /* margin: 2rem auto; */
-    /* padding: 0 clamp(1rem, 4vw, 2rem); */
-  }
-
-  .content-layout {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr) 300px;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    align-items: start;
-  }
-
-  /* ══════════ LEFT TOC ══════════ */
-  .toc-col {
-    position: sticky;
-    top: 80px; 
-    background: var(--surface);
-    padding: 0.5rem;
-    border-radius: var(--r);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  .toc-title {
-    font-weight: 700;
-    font-size: 1.05rem;
-    margin-bottom: 1rem;
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .toc-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .toc-nav a {
-    text-decoration: none;
-    color: var(--muted);
-    font-size: 0.9rem;
-    transition: all 0.2s;
-    line-height: 1.4;
-  }
-  .toc-nav a:hover, .toc-nav a.active {
-    color: var(--accent);
-    transform: translateX(4px);
-  }
-
-  /* ══════════ MAIN ARTICLE ══════════ */
-  .article-col {
-    animation: fadeUp 0.5s ease both;
-  }
-  .blog-cover {
-    width: 100%;
-    height: clamp(250px, 40vw, 400px);
-    object-fit: contain;
-    border-radius: var(--r);
-    margin-bottom: 2rem;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  
-  .article-badge {
-    background: var(--accent-lt);
-    color: var(--accent);
-    padding: 6px 14px;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-block;
-    margin-bottom: 1rem;
-  }
-
-  .article-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 4vw, 2.2rem);
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-  }
-
-  .article-meta {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-  .meta-author { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); }
-  .meta-author img { width: 30px; height: 30px; border-radius: 50%; }
-
-  .article-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text);
-  }
-  .article-content h2, .article-content h3 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    color: var(--text);
-    font-weight: 700;
-  }
-  .article-content img {
-    max-width: 100%;
-    border-radius: 12px;
-    margin: 1.5rem 0;
-  }
-
-  /* ══════════ SHARE & AUTHOR BOX ══════════ */
-  .share-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 3rem 0;
-    padding: 1.5rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .share-btn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    background: var(--surface2);
-    color: var(--text);
-    text-decoration: none;
-    transition: 0.2s;
-  }
-  .share-btn:hover { background: var(--accent); color: white; transform: translateY(-3px); }
-
-  .author-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 1.5rem;
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    margin-bottom: 3rem;
-  }
-  .author-box i { font-size: 3rem; color: var(--muted); }
-  .author-info h4 { margin-bottom: 5px; color: var(--text); }
-  .author-info p { margin: 0; color: var(--muted); font-size: 0.9rem; }
-
-  /* ══════════ RIGHT SIDEBAR ══════════ */
-  .sidebar-col {
-    position: sticky;
-    top: 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  .widget {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-  .sb-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .sb-links { display: flex; flex-direction: column; gap: 10px; }
-  .sb-links a {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px;
-    background: var(--surface2);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--text);
-    font-weight: 500;
-    transition: 0.2s;
-  }
-  .sb-links a:hover { background: var(--accent-lt); color: var(--accent); }
-
-  .qf-card {
-    background: linear-gradient(135deg, var(--accent-lt), var(--surface));
-    border-left: 4px solid var(--accent);
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  /* ══════════ RESPONSIVE ══════════ */
-  @media (max-width: 1024px) {
-    .content-layout { grid-template-columns: 1fr 300px; }
-    .toc-col { display: none; } 
-  }
-  @media (max-width: 768px) {
-    .content-layout { grid-template-columns: 1fr; }
-    .sidebar-col { position: static; } /* Remove sticky on mobile */
-    .article-meta { flex-wrap: wrap; gap: 10px; }
-  }
-  .ai-summary {
-    background: linear-gradient(135deg, #f8fafc, #eef2ff);
-    border-left: 4px solid var(--accent);
-    padding: 16px 20px;
-    margin: 20px 0;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: var(--text);
-    line-height: 1.6;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    position: relative;
-}
-
-/* optional label */
-.ai-summary::before {
-    content: "✨ Quick Summary";
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.ai-summary:hover {
-    transform: translateY(-2px);
-    transition: 0.3s;
-}
-.breadcrumb {
-    font-size: 14px;
-    margin-bottom: 15px;
-    color: #777;
-}
-
-.breadcrumb a {
-    color: #555;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    color: #000;
-}
-</style>
-
-
-<div id="progressBar"></div>
-<nav class="breadcrumb">
-    <a href="/">Home</a> >
-    <a href="/resources/blogs/">Blogs</a> >
-    <a href="/resources/{{ blog.primary_category.slug }}/">
-        {{ blog.primary_category.name }}
-    </a> >
-    <span>{{ blog.title }}</span>
-</nav>
-<div class="page detail-page">
-  <div class="content-layout">
-
-    <aside class="toc-col">
-      <div class="toc-title"><i class="bi bi-list-nested"></i> In this article</div>
-      <nav class="toc-nav" id="toc">
-        </nav>
-    </aside>
-
-    <main class="article-col">
-      
-      {% if blog.category %}
-      <div class="article-badge">{{ blog.category.name }}</div>
-      {% endif %}
-
-      <h1 class="article-title">{{ blog.title }}</h1>
-
-      <div class="article-meta">
-        <div class="meta-author">
-          <i class="bi bi-person-circle fs-4"></i> {{ blog.author.username }}
-        </div>
-        <div><i class="bi bi-calendar3"></i> {{ blog.created_at|date:"M d, Y" }}</div>
-        <div><i class="bi bi-clock"></i> {{ read_time|default:"5" }} min read</div>
-        <div><i class="bi bi-eye"></i> {{ blog.views|default:"100" }} views</div>
-      </div>
-
-      {% if blog.image %}
-          <img src="{{ blog.image.url }}" class="blog-cover" alt="{{ blog.title }}">
-      {% endif %}
-      <!-- {% if blog.summary %}
-      <div class="ai-summary">
-          {{ blog.summary }}
-      </div>
-      {% endif %} -->
-      <div class="article-content" id="blogContent">
-        {{ blog.content|safe }}
-      </div>
-
-      <div class="share-bar">
-        <strong>Share this guide:</strong>
-        <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}" target="_blank" class="share-btn"><i class="bi bi-whatsapp"></i></a>
-        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ blog.title }}" target="_blank" class="share-btn"><i class="bi bi-twitter-x"></i></a>
-        <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}" target="_blank" class="share-btn"><i class="bi bi-linkedin"></i></a>
-      </div>
-
-      <div class="author-box">
-        <i class="bi bi-person-bounding-box"></i>
-        <div class="author-info">
-          <h4>Written by {{ blog.author.first_name|default:blog.author.username }}</h4>
-        </div>
-      </div>
-
-    </main>
-
-    <aside class="sidebar-col">
-
-      <div class="widget">
-        <div class="sb-title">Financial Calculators</div>
-        <div class="sb-links">
-          <a href="/sip/"><i class="bi bi-graph-up-arrow text-success"></i> SIP Calculator</a>
-          <a href="/emi/"><i class="bi bi-calculator text-primary"></i> EMI Calculator</a>
-          <a href="/retirement/"><i class="bi bi-clock-history text-warning"></i> Retirement Planner</a>
-         <a href="/loan/home/"><i class="bi bi-house-door" style="color:var(--blue);"></i> Home Loan</a>
-        <a href="/loan/car/"><i class="bi bi-car-front" style="color:var(--red);"></i> Car Loan</a>
-        <a href="/loan/personal/"><i class="bi bi-person-badge" style="color:var(--purple);"></i> Personal Loan</a>
-
-        <a href="/ppf/"><i class="bi bi-safe" style="color:var(--accent);"></i> PPF Calc</a>
-        <a href="/nps/"><i class="bi bi-shield-check" style="color:var(--yellow);"></i> NPS Calc</a>
-        <a href="/salary/"><i class="bi bi-cash-stack" style="color:var(--purple);"></i> Salary Calc</a>
-        <a href="/pf/"><i class="bi bi-wallet2" style="color:var(--accent);"></i> EPF Calc</a>
-        <a href="/eligibility/"><i class="bi bi-check2-circle" style="color:var(--blue);"></i> Loan Eligibility</a>
-        </div>
-      </div>
-
-      <div class="widget">
-        <div class="sb-title">💡 Vita₹thi Pro Tip</div>
-        <div class="qf-card">
-          <strong>Did you know?</strong><br>
-          Paying just <em>one extra EMI</em> every year can reduce your 20-year home loan tenure by almost 3.5 years, saving you lakhs in interest!
-        </div>
-      </div>
-
-    </aside>
-
-  </div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // 1. Reading Progress Bar
-    window.addEventListener('scroll', () => {
-        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        let scrolled = (winScroll / height) * 100;
-        document.getElementById("progressBar").style.width = scrolled + "%";
-    });
-
-    // 2. Auto-generate Table of Contents (TOC)
-    const content = document.getElementById("blogContent");
-    const toc = document.getElementById("toc");
-
-    if (!content || !toc) return;
-
-    toc.innerHTML = "";
-
-    const headings = content.querySelectorAll("h2");
-
-    headings.forEach((heading, index) => {
-
-        // 🔥 sirf direct text (child h3 ignore)
-        let text = "";
-
-        heading.childNodes.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE) {
-                text += node.textContent;
-            }
-        });
-
-        text = text.trim();
-
-        if (!text) return;
-
-        const id = `heading-${index}`;
-        heading.id = id;
-
-        const link = document.createElement("a");
-        link.href = `#${id}`;
-        link.innerText = text;
-
-        toc.appendChild(link);
-    });
-
-});
-</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "{{ blog.meta_title|default:blog.title|escapejs }}",
-  "description": "{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
-  {% if blog.image %}
-  "image": "{{ blog.image.url }}",
-  {% endif %}
+
+  "headline": "{{ blog.title|escapejs }}",
+
+  "description": "{{ blog.meta_description|default:blog.title|escapejs }}",
+
+  "image": [
+    "https://vittarthi.com{{ blog.image.url }}"
+  ],
+
   "author": {
     "@type": "Person",
-    "name": "{{ blog.author.username }}"
+    "name": "{{ blog.author_profile.name|escapejs }}"
   },
+
   "publisher": {
     "@type": "Organization",
-    "name": "Vita₹thi"
+    "name": "Vittarthi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vittarthi.com/static/images/vitt2.webp"
+    }
   },
+
   "datePublished": "{{ blog.created_at|date:'c' }}",
+
   "dateModified": "{{ blog.updated_at|date:'c' }}",
+
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "{{ request.build_absolute_uri }}"
+    "@id": "https://vittarthi.com{{ request.path }}"
   }
-}
-{
- "@context": "https://schema.org",
- "@type": "BreadcrumbList",
- "itemListElement": [
-   {
-     "@type": "ListItem",
-     "position": 1,
-     "name": "home",
-     "item": "https://yourdomain.com"
-   },
-   {
-     "@type": "ListItem",
-     "position": 2,
-     "name": "Blogs",
-     "item": "https://yourdomain.com/resources/blogs/"
-   }
- ]
+
 }
 </script>
+</head>
+
+<style>
+
+*, *::before, *::after{
+  box-sizing:border-box;
+}
+
+:root{
+  --navy:#1a2340;
+  --navy-light:#2d3a5c;
+
+  --green:#1a6b3c;
+  --green-mid:#2e9e5b;
+  --green-light:#e8f5ee;
+
+  --gray-50:#f9fafb;
+  --gray-100:#f3f4f6;
+  --gray-200:#e5e7eb;
+  --gray-400:#9ca3af;
+  --gray-600:#6b7280;
+  --gray-800:#374151;
+
+  --border:#e5e7eb;
+  --white:#ffffff;
+
+  --radius:14px;
+  --radius-sm:8px;
+
+  --shadow:0 4px 16px rgba(0,0,0,0.07);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* ═════════════ PROGRESS BAR ═════════════ */
+
+#progressBar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:0%;
+  height:4px;
+  background:var(--green);
+  z-index:99999;
+}
+
+/* ═════════════ ARTICLE WRAP ═════════════ */
+
+.article-wrap{
+  max-width:860px;
+  margin:auto;
+  padding:28px 20px 80px;
+}
+
+/* ═════════════ BREADCRUMB ═════════════ */
+
+.breadcrumb{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+
+  margin-bottom:24px;
+
+  font-size:13px;
+  color:var(--gray-400);
+}
+
+.breadcrumb a{
+  color:var(--gray-400);
+  text-decoration:none;
+}
+
+.breadcrumb a:hover{
+  color:var(--green);
+}
+
+/* ═════════════ CATEGORY ═════════════ */
+
+.article-category{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  padding:6px 14px;
+
+  border-radius:999px;
+
+  background:var(--green-light);
+  color:var(--green);
+
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+
+  margin-bottom:22px;
+}
+
+/* ═════════════ TITLE ═════════════ */
+
+.article-title{
+  font-family:'DM Serif Display', serif;
+  font-size:clamp(2.2rem,4vw,3rem);
+  line-height:1.15;
+  color:var(--navy);
+
+  margin-bottom:18px;
+}
+
+/* ═════════════ SUMMARY ═════════════ */
+
+.article-subtitle{
+  font-size:18px;
+  line-height:1.7;
+  color:var(--gray-600);
+
+  margin-bottom:28px;
+}
+
+/* ═════════════ BYLINE ═════════════ */
+
+.byline-bar{
+  display:flex;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+
+  overflow:hidden;
+
+  background:var(--gray-50);
+
+  margin-bottom:28px;
+}
+
+.byline-item{
+  flex:1;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  padding:18px;
+}
+
+.byline-item + .byline-item{
+  border-left:1px solid var(--border);
+}
+
+.byline-avatar{
+  width:44px;
+  height:44px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#fff;
+
+  font-size:18px;
+  font-family:'DM Serif Display', serif;
+}
+
+.byline-avatar.writer{
+  background:linear-gradient(135deg,var(--green),var(--green-mid));
+}
+.byline-avatar.reviewer{
+  background:linear-gradient(135deg,var(--green),var(--green-mid));
+}
+
+.byline-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.byline-role{
+  font-size:10px;
+  font-weight:700;
+
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+
+  color:var(--gray-400);
+
+  margin-bottom:4px;
+}
+
+.byline-name a{
+  color:var(--navy);
+  text-decoration:none;
+
+  font-weight:700;
+}
+
+.byline-name a:hover{
+  color:var(--green);
+}
+
+/* ═════════════ META INFO ═════════════ */
+
+.article-info{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+
+  padding-bottom:24px;
+  margin-bottom:34px;
+
+  border-bottom:1px solid var(--border);
+
+  font-size:13px;
+  color:var(--gray-400);
+}
+
+/* ═════════════ HERO IMAGE ═════════════ */
+
+.blog-cover{
+  width:100%;
+  border-radius:var(--radius);
+  margin-bottom:40px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+
+/* ═════════════ CONTENT ═════════════ */
+
+.article-content{
+  font-size:18px;
+  line-height:1.9;
+  color:var(--gray-800);
+}
+
+.article-content p{
+  margin-bottom:22px;
+}
+
+.article-content h2{
+  font-family:'DM Serif Display', serif;
+
+  font-size:2rem;
+  line-height:1.3;
+
+  margin-top:46px;
+  margin-bottom:18px;
+
+  color:var(--navy);
+}
+
+.article-content h3{
+  font-size:1.25rem;
+  line-height:1.4;
+
+  margin-top:32px;
+  margin-bottom:14px;
+
+  color:var(--navy);
+}
+
+.article-content ul,
+.article-content ol{
+  padding-left:24px;
+  margin-bottom:24px;
+}
+
+.article-content li{
+  margin-bottom:10px;
+}
+
+.article-content img{
+  max-width:100%;
+  border-radius:14px;
+  margin:28px 0;
+}
+
+.article-content table{
+  width:100%;
+  border-collapse:collapse;
+  margin:30px 0;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  display:block;
+}
+
+.article-content table th{
+  background:var(--navy);
+  color:#fff;
+  padding:14px;
+  font-size:13px;
+}
+
+.article-content table td{
+  padding:14px;
+  border-bottom:1px solid var(--border);
+}
+
+.article-content blockquote{
+  background:var(--green-light);
+  border-left:4px solid var(--green);
+
+  padding:18px 22px;
+
+  margin:30px 0;
+
+  border-radius:0 10px 10px 0;
+
+  color:var(--navy);
+}
+
+/* ═════════════ SHARE ═════════════ */
+
+.share-bar{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:14px;
+
+  padding:30px 0;
+
+  margin-top:40px;
+
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+
+.share-btn{
+  width:42px;
+  height:42px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  background:var(--gray-100);
+  color:var(--navy);
+
+  transition:0.25s;
+}
+
+.share-btn:hover{
+  transform:translateY(-3px);
+  background:var(--green);
+  color:#fff;
+}
+
+/* ═════════════ TAGS ═════════════ */
+
+.article-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+
+  margin:38px 0 10px;
+}
+
+.article-tag{
+  font-size:12px;
+
+  padding:7px 14px;
+
+  border-radius:999px;
+
+  background:var(--gray-100);
+  border:1px solid var(--border);
+
+  color:var(--gray-600);
+  text-decoration:none;
+}
+
+.article-tag:hover{
+  color:var(--green);
+  border-color:var(--green);
+  background:var(--green-light);
+}
+
+/* ═════════════ AUTHOR SECTION ═════════════ */
+
+.author-cards-section{
+  border-top:2px solid var(--border);
+
+  padding-top:40px;
+  margin-top:50px;
+}
+
+.author-cards-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  margin-bottom:22px;
+
+  font-size:11px;
+  font-weight:700;
+
+  letter-spacing:2px;
+  text-transform:uppercase;
+
+  color:var(--gray-400);
+}
+
+.author-cards-label::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+.author-card{
+  display:flex;
+  gap:20px;
+
+  padding:24px;
+
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+
+  background:var(--gray-50);
+
+  margin-bottom:18px;
+
+  transition:0.25s;
+}
+
+.author-card:hover{
+  border-color:var(--green);
+  box-shadow:var(--shadow);
+}
+
+.author-card-avatar{
+  width:72px;
+  height:72px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:28px;
+  font-family:'DM Serif Display', serif;
+
+  background:linear-gradient(135deg,var(--green),var(--green-mid));
+
+  color:#fff;
+}
+
+.author-card-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.author-card-role{
+  font-size:10px;
+  font-weight:700;
+
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+
+  color:var(--green);
+
+  margin-bottom:4px;
+}
+
+.author-card-name{
+  font-family:'DM Serif Display', serif;
+  font-size:24px;
+
+  color:var(--navy);
+
+  margin-bottom:4px;
+}
+
+.author-card-name a{
+  color:var(--navy);
+  text-decoration:none;
+}
+
+.author-card-name a:hover{
+  color:var(--green);
+}
+
+.author-card-title{
+  font-size:14px;
+  color:var(--gray-400);
+
+  margin-bottom:14px;
+}
+
+.author-card-bio{
+  font-size:15px;
+  line-height:1.8;
+  color:var(--gray-600);
+}
+
+.author-card-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+
+  gap:12px;
+
+  margin-top:18px;
+}
+
+.author-card-social{
+  display:flex;
+  gap:10px;
+}
+
+.author-social-btn{
+  padding:7px 14px;
+
+  border-radius:999px;
+
+  background:#fff;
+  border:1px solid var(--border);
+
+  text-decoration:none;
+
+  color:var(--gray-600);
+
+  font-size:13px;
+  font-weight:600;
+}
+
+.author-social-btn:hover{
+  border-color:var(--green);
+  color:var(--green);
+}
+
+.author-profile-link{
+  color:var(--green);
+  text-decoration:none;
+
+  font-size:13px;
+  font-weight:700;
+}
+
+/* ═════════════ CTA ═════════════ */
+
+.tools-cta{
+  margin-top:40px;
+
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+
+  border-radius:var(--radius);
+
+  padding:30px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.tools-cta h3{
+  font-family:'DM Serif Display', serif;
+  color:#fff;
+  font-size:1.5rem;
+
+  margin-bottom:8px;
+}
+
+.tools-cta p{
+  color:rgba(255,255,255,0.7);
+  font-size:14px;
+}
+
+.tools-cta-btn{
+  background:var(--green);
+
+  color:#fff;
+  text-decoration:none;
+
+  padding:14px 22px;
+
+  border-radius:10px;
+
+  font-size:14px;
+  font-weight:700;
+
+  white-space:nowrap;
+}
+
+.tools-cta-btn:hover{
+  background:var(--green-mid);
+}
+
+/* ═════════════ RESPONSIVE ═════════════ */
+
+@media(max-width:768px){
+
+  .article-wrap{
+    padding:20px 16px 60px;
+  }
+
+  .byline-bar{
+    flex-direction:column;
+  }
+
+  .byline-item + .byline-item{
+    border-left:none;
+    border-top:1px solid var(--border);
+  }
+
+  .author-card{
+    flex-direction:column;
+  }
+
+  .author-card-avatar{
+    width:62px;
+    height:62px;
+    font-size:22px;
+  }
+
+  .tools-cta{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .article-content{
+    font-size:17px;
+  }
+
+}
+.secondary-category-wrap{
+  margin-bottom:20px;
+}
+
+.secondary-category-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px;
+  border-radius:999px;
+  background:#eef7f1;
+  color:var(--green);
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  transition:.2s;
+}
+
+.secondary-category-pill:hover{
+  background:#dff3e6;
+}
+.expertise-box{
+    margin-top:40px;
+    margin-bottom:30px;
+    padding:18px 22px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:linear-gradient(135deg,#f8fafc,#f1f5f9);
+}
+
+.expertise-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--green);
+    margin-bottom:8px;
+}
+
+.expertise-text{
+    font-size:15px;
+    line-height:1.8;
+    color:var(--text);
+}
+
+</style>
+
+<div id="progressBar"></div>
+
+<article class="article-wrap">
+
+  <!-- BREADCRUMB -->
+
+  <!-- <nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span>›</span>
+    <a href="/resources/blogs">Blogs</a>
+    {% if blog.primary_category %}
+    <span>›</span>
+    <a href="/resources/{{ blog.primary_category.slug }}">
+      {{ blog.primary_category.name }}
+    </a>
+    {% endif %}
+  </nav> -->
+{% if blog.secondary_category %}
+<div class="secondary-category-wrap">
+
+    <a href="/resources/{{ blog.secondary_category.slug }}"
+       class="secondary-category-pill">
+
+        {{ blog.secondary_category.name }}
+
+    </a>
+
+</div>
+{% endif %}
+  <!-- CATEGORY -->
+
+  {% if blog.category %}
+  <div class="article-category">
+    {{ blog.category.name }}
+  </div>
+  {% endif %}
+
+  <!-- TITLE -->
+
+  <h1 class="article-title">
+    {{ blog.title }}
+  </h1>
+
+  <!-- SUBTITLE -->
+
+  <!-- {% if blog.summary %}
+  <p class="article-subtitle">
+    {{ blog.summary }}
+  </p>
+  {% endif %} -->
+
+  <!-- BYLINE -->
+
+<div class="byline-bar">
+
+    {% if blog.author_profile %}
+    <div class="byline-item">
+
+        <div class="byline-avatar writer">
+            {{ blog.author_profile.name|first }}
+        </div>
+
+        <div class="byline-text">
+            <div class="byline-role">
+                {{ blog.author_profile.role|default:"Written by" }}
+            </div>
+
+            <div class="byline-name">
+
+                {% if blog.author_profile.slug %}
+                <a href="{% url 'author_detail' blog.author_profile.slug %}">
+                    {{ blog.author_profile.name }}
+                </a>
+                {% else %}
+                    {{ blog.author_profile.name }}
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+
+    {% if blog.reviewed_by %}
+    <div class="byline-item">
+
+        <div class="byline-avatar reviewer">
+            {{ blog.reviewed_by.name|first }}
+        </div>
+
+        <div class="byline-text">
+
+            <div class="byline-role">
+                {{ blog.reviewed_by.role|default:"Reviewed by" }}
+            </div>
+
+            <div class="byline-name">
+
+                {% if blog.reviewed_by.slug %}
+                <a href="{% url 'author_detail' blog.reviewed_by.slug %}">
+                    {{ blog.reviewed_by.name }}
+                </a>
+                {% else %}
+                    {{ blog.reviewed_by.name }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+  <!-- ARTICLE INFO -->
+
+  <div class="article-info">
+
+    <span>
+      📅 {{ blog.created_at|date:"M d, Y" }}
+    </span>
+
+    <span>
+      ⏱ {{ read_time|default:"5" }} min read
+    </span>
+
+    <span>
+      👁 {{ blog.views|default:"100" }} views
+    </span>
+
+  </div>
+
+  <!-- IMAGE -->
+
+  {% if blog.image %}
+  <img src="{{ blog.image.url }}"
+       class="blog-cover"
+       alt="{{ blog.title }}">
+  {% endif %}
+
+  <!-- CONTENT -->
+
+  <div class="article-content" id="blogContent">
+    {{ blog.content|safe }}
+  </div>
+
+  {% if blog.author_profile.expertise %}
+<div class="expertise-box">
+
+    <div class="expertise-label">
+        Expertise
+    </div>
+
+    <div class="expertise-text">
+        {{ blog.author_profile.expertise }}
+    </div>
+
+</div>
+{% endif %}
+  <!-- SHARE -->
+
+  <div class="share-bar">
+
+    <strong>Share this guide:</strong>
+
+    <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}"
+       target="_blank"
+       class="share-btn">
+      <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ blog.title }}"
+       target="_blank"
+       class="share-btn">
+      <i class="bi bi-twitter-x"></i>
+    </a>
+
+    <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}"
+       target="_blank"
+       class="share-btn">
+      <i class="bi bi-linkedin"></i>
+    </a>
+
+  </div>
+
+  <!-- TAGS -->
+
+  {% if blog.tags.all %}
+  <div class="article-tags">
+
+    {% for tag in blog.tags.all %}
+    <a href="#"
+       class="article-tag">
+      {{ tag.name }}
+    </a>
+    {% endfor %}
+
+  </div>
+  {% endif %}
+
+  <!-- AUTHOR SECTION -->
+
+  {% if blog.author_profile %}
+
+  <div class="author-cards-section">
+
+    <div class="author-cards-label">
+      About the Author
+    </div>
+
+{% if blog.author_profile and blog.author_profile.slug %}
+<div class="author-card">
+    
+    <div class="author-card-avatar writer">
+        {% if blog.author_profile.image %}
+            <img src="{{ blog.author_profile.image.url }}"
+                 alt="{{ blog.author_profile.name }}">
+        {% else %}
+            {{ blog.author_profile.name|first }}
+        {% endif %}
+    </div>
+
+    <div class="author-card-body">
+
+        <div class="author-card-role writer">
+            Written by
+        </div>
+
+        <div class="author-card-name">
+            <a href="{% url 'author_detail' blog.author_profile.slug %}">
+                {{ blog.author_profile.name }}
+            </a>
+        </div>
+
+        {% if blog.author_profile.designation %}
+        <div class="author-card-title">
+            {{ blog.author_profile.designation }}
+        </div>
+        {% endif %}
+
+        {% if blog.author_profile.bio %}
+        <p class="author-card-bio">
+            {{ blog.author_profile.bio }}
+        </p>
+        {% endif %}
+
+        <div class="author-card-footer">
+
+            <div class="author-card-social">
+
+                {% if blog.author_profile.linkedin %}
+                <a href="{{ blog.author_profile.linkedin }}"
+                   target="_blank"
+                   class="author-social-btn">
+                    LinkedIn
+                </a>
+                {% endif %}
+
+                {% if blog.author_profile.twitter %}
+                <a href="{{ blog.author_profile.twitter }}"
+                   target="_blank"
+                   class="author-social-btn">
+                    Twitter / X
+                </a>
+                {% endif %}
+
+            </div>
+
+            <a href="{% url 'author_detail' blog.author_profile.slug %}"
+               class="author-profile-link">
+                View all articles →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+{% endif %}
+{% if blog.reviewed_by %}
+<div class="author-card">
+
+    <div class="author-card-avatar reviewer">
+
+        {% if blog.reviewed_by.image %}
+            <img src="{{ blog.reviewed_by.image.url }}"
+                 alt="{{ blog.reviewed_by.name }}">
+        {% else %}
+            {{ blog.reviewed_by.name|first }}
+        {% endif %}
+
+    </div>
+
+    <div class="author-card-body">
+
+        <div class="author-card-role reviewer">
+            {{ blog.reviewed_by.role|default:"Reviewed by" }}
+        </div>
+
+        <div class="author-card-name">
+
+            {% if blog.reviewed_by.slug %}
+            <a href="{% url 'author_detail' blog.reviewed_by.slug %}">
+                {{ blog.reviewed_by.name }}
+            </a>
+            {% else %}
+                {{ blog.reviewed_by.name }}
+            {% endif %}
+
+        </div>
+
+        {% if blog.reviewed_by.designation %}
+        <div class="author-card-title">
+            {{ blog.reviewed_by.designation }}
+        </div>
+        {% endif %}
+
+        {% if blog.reviewed_by.bio %}
+        <p class="author-card-bio">
+            {{ blog.reviewed_by.bio }}
+        </p>
+        {% endif %}
+
+        <div class="author-card-footer">
+
+            <div class="author-card-social">
+
+                {% if blog.reviewed_by.linkedin %}
+                <a href="{{ blog.reviewed_by.linkedin }}"
+                   target="_blank"
+                   class="author-social-btn">
+                    LinkedIn
+                </a>
+                {% endif %}
+
+                {% if blog.reviewed_by.twitter %}
+                <a href="{{ blog.reviewed_by.twitter }}"
+                   target="_blank"
+                   class="author-social-btn">
+                    Twitter / X
+                </a>
+                {% endif %}
+
+            </div>
+
+            {% if blog.reviewed_by.slug %}
+            <a href="{% url 'author_detail' blog.reviewed_by.slug %}"
+               class="author-profile-link">
+                View all articles →
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% endif %}
+  </div>
+
+  {% endif %}
+
+  <!-- CTA -->
+
+  <div class="tools-cta">
+
+    <div>
+
+      <h3>
+        Explore Financial Calculators
+      </h3>
+
+      <p>
+        Use Vittarthi calculators to plan loans, SIPs, retirement and taxes smarter.
+      </p>
+
+    </div>
+
+    <a href="/calculators"
+       class="tools-cta-btn">
+      Open Calculator →
+    </a>
+
+  </div>
+
+</article>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  // PROGRESS BAR
+
+  window.addEventListener('scroll', () => {
+
+    let winScroll =
+      document.body.scrollTop ||
+      document.documentElement.scrollTop;
+
+    let height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+
+    let scrolled = (winScroll / height) * 100;
+
+    document.getElementById("progressBar").style.width =
+      scrolled + "%";
+
+  });
+
+});
+
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BlogPosting",
+  "headline":"{{ blog.meta_title|default:blog.title|escapejs }}",
+  "description":"{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
+
+  {% if blog.image %}
+  "image":"{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}",
+  {% endif %}
+
+  "author":{
+    "@type":"Person",
+    {% if blog.author_profile %}
+    "name":"{{ blog.author_profile.name|escapejs }}",
+    "url":"https://vittarthi.com/authors/{{ blog.author_profile.slug }}"
+    {% else %}
+    "name":"{{ blog.author.username|escapejs }}"
+    {% endif %}
+  },
+
+  "publisher":{
+    "@type":"Organization",
+    "name":"Vittarthi"
+  },
+
+  "datePublished":"{{ blog.created_at|date:'c' }}",
+  "dateModified":"{{ blog.updated_at|date:'c' }}",
+
+  "mainEntityOfPage":{
+    "@type":"WebPage",
+    "@id":"{{ request.build_absolute_uri }}"
+  }
+}
+</script>
+
 {% endblock %}

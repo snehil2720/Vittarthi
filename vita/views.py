@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage
+from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage,Author
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
@@ -15,11 +15,13 @@ from .utils import generate_ai_summary
 import requests
 import yfinance as yf
 import certifi
-from django.db.models import Count
+from django.db.models import Count,Q
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
-
+from django.core.paginator import Paginator
+from django.utils.html import strip_tags
+from bs4 import BeautifulSoup
 def auth_page(request):
     return render(request, "authentication/auth.html")
 
@@ -149,11 +151,16 @@ def blog_list(request, primary_slug):
         blogs = blogs.filter(secondary_category__slug=secondary_slug)
 
     secondary_categories = SecondaryCategory.objects.filter(primary=primary)
-
+    breadcrumbs = [
+        {'name': 'Home', 'url': '/'},
+        {'name': 'Resources', 'url': '/resources'},
+        {'name': primary.name, 'url': ''}
+    ]
     return render(request, 'blogs/list.html', {
         'blogs': blogs,
         'primary': primary,
-        'secondary_categories': secondary_categories
+        'secondary_categories': secondary_categories,
+        'breadcrumbs': breadcrumbs
     })
 def get_secondary(request, primary_id):
     cats = SecondaryCategory.objects.filter(primary_id=primary_id)
@@ -164,15 +171,28 @@ def blog_detail(request, primary_slug,slug):
     blog = get_object_or_404(
         Blog,
         slug=slug,
+        status='published',
         primary_category__slug=primary_slug  
     )
     text = re.sub('<[^<]+?>', '', blog.content)
     words = len(text.split())
     read_time = math.ceil(words / 200)
     #return render(request, 'blogs/detail.html', {'blog': blog})
+    breadcrumbs = [
+        {'name': 'Home', 'url': '/'},
+        {
+            'name': blog.primary_category.name,
+            'url': f'/resources/{blog.primary_category.slug}'
+        },
+        {
+            'name': blog.title,
+            'url': ''
+        }
+    ]
     return render(request, 'blogs/detail.html', {
         'blog': blog,
-        'read_time': read_time
+        'read_time': read_time,
+        'breadcrumbs': breadcrumbs
     })
 
 def delete_blog(request, slug):
@@ -218,7 +238,7 @@ def write_blog(request):
         summary = generate_ai_summary(content)
 
         # ✅ SAFE SEO
-        meta_title = (meta_title or f"{title} | Vita₹thi")[:200]
+        meta_title = (meta_title or f"{title} | Vittarthi")[:200]
         meta_description = (meta_description or summary[:160])[:160]
 
         Blog.objects.create(
@@ -1015,3 +1035,194 @@ def aboutus(request):
         request,
         'vita/aboutus.html'
     )
+
+def authors(request):
+
+    authors = Author.objects.filter(
+        is_active=True
+    )
+
+    for author in authors:
+
+        # WRITTEN
+        author.total_written = Blog.objects.filter(
+            author_profile=author,
+            status='published'
+        ).count()
+
+        # REVIEWED
+        author.total_reviewed = Blog.objects.filter(
+            reviewed_by=author,
+            status='published'
+        ).count()
+
+        # EDITED
+        author.total_edited = Blog.objects.filter(
+            edited_by=author,
+            status='published'
+        ).count()
+
+        # TOTAL
+        author.total_articles = (
+            author.total_written +
+            author.total_reviewed +
+            author.total_edited
+        )
+
+    return render(
+        request,
+        'author/authors.html',
+        {
+            'authors': authors
+        }
+    )
+def author_detail(request, slug):
+
+    author = get_object_or_404(Author, slug=slug)
+
+    written_articles_qs = Blog.objects.filter(
+        author_profile=author,
+        status='published'
+    ).select_related(
+        'primary_category',
+        'secondary_category'
+    ).order_by('-created_at')
+
+    reviewed_articles_qs = Blog.objects.filter(
+        reviewed_by=author,
+        status='published'
+    ).select_related(
+        'primary_category',
+        'secondary_category'
+    ).order_by('-created_at')
+
+    edited_articles_qs = Blog.objects.filter(
+        edited_by=author,
+        status='published'
+    ).select_related(
+        'primary_category',
+        'secondary_category'
+    ).order_by('-created_at')
+
+    paginator = Paginator(written_articles_qs, 3)
+
+    page_number = request.GET.get('page')
+
+    written_articles = paginator.get_page(page_number)
+
+    total_articles = written_articles_qs.count()
+    total_reviewed = reviewed_articles_qs.count()
+    total_edited = edited_articles_qs.count()
+
+    # EXPERTISE
+    expertise_categories = []
+    seen = set()
+
+    source_queryset = written_articles_qs
+
+    if author.role.lower() == 'reviewer':
+        source_queryset = reviewed_articles_qs
+
+    elif author.role.lower() == 'editor':
+        source_queryset = edited_articles_qs
+
+    for blog in source_queryset:
+
+        if blog.secondary_category:
+
+            slug = blog.secondary_category.slug
+
+            if slug not in seen:
+
+                expertise_categories.append({
+                    'name': blog.secondary_category.name,
+                    'slug': slug,
+                    'primary_slug': blog.primary_category.slug
+                })
+
+                seen.add(slug)
+    breadcrumbs = [
+        {'name': 'Home', 'url': '/'},
+        {'name': 'Authors', 'url': '/authors'},
+        {'name': author.name, 'url': ''}
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'author': author,
+
+        'written_articles': written_articles_qs,
+        'reviewed_articles': reviewed_articles_qs,
+        'edited_articles': edited_articles_qs,
+
+        'total_articles': total_articles,
+        'total_reviewed': total_reviewed,
+        'total_edited': total_edited,
+
+        'expertise_categories': expertise_categories,
+
+        'is_writer': author.role.lower() == 'writer',
+        'is_reviewer': author.role.lower() == 'reviewer',
+        'is_editor': author.role.lower() == 'editor',
+
+        'written_articles_paginated': written_articles,
+    }
+
+    return render(request, 'author/author_detail.html', context)
+
+def resources(request):
+
+    blogs = Blog.objects.filter(
+        status='published'
+    ).filter(
+        Q(primary_category__slug='blogs') |
+        Q(secondary_category__slug='blogs')
+    ).order_by('-created_at')[:3]
+
+    news = Blog.objects.filter(
+        status='published'
+    ).filter(
+        Q(primary_category__slug='news') |
+        Q(secondary_category__slug='news')
+    ).order_by('-created_at')[:3]
+
+    case_studies = Blog.objects.filter(
+        status='published'
+    ).filter(
+        Q(primary_category__slug='case-study') |
+        Q(secondary_category__slug='case-study')
+    ).order_by('-created_at')[:3]
+    for section in [blogs, news, case_studies]:
+        for item in section:
+
+            soup = BeautifulSoup(item.content, "html.parser")
+
+            # remove style & script tags completely
+            for tag in soup(["style", "script"]):
+                tag.decompose()
+
+            clean_text = soup.get_text(separator=" ", strip=True)
+
+            item.content = clean_text
+    context = {
+        'blogs': blogs,
+        'news': news,
+        'case_studies': case_studies,
+    }
+
+    return render(request, 'blogs/blog_home.html', context)
+
+def resource_category(request, primary_slug):
+
+    blogs = Blog.objects.filter(
+        status='published'
+    ).filter(
+        Q(primary_category__slug=primary_slug) |
+        Q(secondary_category__slug=primary_slug)
+    ).distinct().order_by('-created_at')
+
+    context = {
+        'blogs': blogs,
+        'primary_slug': primary_slug
+    }
+
+    return render(request, 'blogs/list.html', context)

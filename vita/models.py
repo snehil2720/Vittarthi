@@ -8,6 +8,9 @@ from django.utils.text import slugify
 import re
 from django.utils.html import strip_tags
 import uuid
+import math
+from django.utils.html import strip_tags
+from django.urls import reverse
 # class Category(models.Model):
 #     name = models.CharField(max_length=100, unique=True)
 #     slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
@@ -36,6 +39,55 @@ class SecondaryCategory(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+class Author(models.Model):
+    name = models.CharField(max_length=120)
+    slug = models.SlugField(unique=True, blank=True)
+
+    designation = models.CharField(max_length=200, blank=True)
+
+    bio = models.TextField(blank=True)
+    role = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+    image = models.ImageField(
+        upload_to='authors/',
+        blank=True,
+        null=True
+    )
+
+    email = models.EmailField(blank=True)
+
+    linkedin = models.URLField(blank=True)
+    twitter = models.URLField(blank=True)
+    website = models.URLField(blank=True)
+
+    joined_year = models.CharField(
+        max_length=10,
+        blank=True
+    )
+    expertise = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        super().save(*args, **kwargs)
+
+    @property
+    def expertise_list(self):
+
+        if self.expertise:
+            return self.expertise.split(',')
+
+        return []
+    def __str__(self):
+        return self.name
     
 class Blog(models.Model):
     STATUS_CHOICES = (
@@ -83,13 +135,39 @@ class Blog(models.Model):
     #author = models.ForeignKey(User, on_delete=models.CASCADE)
     #author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author_profile = models.ForeignKey(
+        Author,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='blogs'
+    )
+    reviewed_by = models.ForeignKey(
+        Author,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_blogs'
+    )
+    edited_by = models.ForeignKey(
+        Author,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='edited_blogs'
+    )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = RichTextUploadingField()
     likes = models.IntegerField(default=0)
- 
+    def read_time(self):
+
+        words = strip_tags(self.content).split()
+        minutes = math.ceil(len(words) / 200)
+
+        return max(1, minutes)
     def __str__(self):
         return self.title
 
@@ -233,3 +311,12 @@ class LegalPage(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.title
+    
+def get_absolute_url(self):
+    return reverse(
+        'blog_detail',
+        kwargs={
+            'primary_slug': self.primary_category.slug,
+            'slug': self.slug
+        }
+    )

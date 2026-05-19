@@ -1,0 +1,844 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ author.name }} — Author at Vittarthi{% endblock %}
+
+{% block meta_description %}
+{{ author.bio|truncatechars:150 }}
+{% endblock %}
+
+{% block content %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a2340;
+      --navy-light: #2d3a5c;
+      --green: #1a6b3c;
+      --green-light: #e8f5ee;
+      --green-mid: #2e9e5b;
+      --accent: #f0a500;
+      --accent-soft: #fff8e8;
+      --gray-100: #f7f8fa;
+      --gray-200: #eef0f4;
+      --gray-400: #9ca3af;
+      --gray-600: #6b7280;
+      --gray-800: #374151;
+      --white: #ffffff;
+      --text: #1a2340;
+      --border: #e5e7eb;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
+    }
+
+    /* ── PROFILE HERO ── */
+    .profile-hero {
+      background: linear-gradient(135deg, var(--gray-100) 0%, var(--green-light) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 40px 48px;
+      border-radius: 35px;
+    }
+    .profile-hero-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; gap: 40px; align-items: flex-start;
+    }
+    .author-avatar {
+      flex-shrink: 0;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px; color: var(--white);
+      border: 4px solid var(--white);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .author-badge {
+      position: absolute; bottom: -4px; right: -4px;
+      background: var(--green); color: var(--white);
+      font-size: 10px; font-weight: 600;
+      padding: 3px 7px; border-radius: 20px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      border: 2px solid var(--white);
+    }
+    .profile-meta { flex: 1; }
+    .profile-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 10px;
+    }
+    .profile-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px; color: var(--navy);
+      line-height: 1.15; margin-bottom: 6px;
+    }
+    .profile-title {
+      font-size: 15px; color: var(--gray-600);
+      font-weight: 400; margin-bottom: 18px;
+    }
+    .profile-bio {
+      font-size: 15px; color: var(--gray-800);
+      line-height: 1.7; max-width: 580px; margin-bottom: 24px;
+    }
+    .profile-stats {
+      display: flex; gap: 32px; margin-bottom: 24px;
+    }
+    .stat { text-align: left; }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px; color: var(--navy);
+      line-height: 1;
+    }
+    .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+    .profile-social {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .social-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      text-decoration: none; transition: all .2s;
+      border: 1px solid var(--border);
+      background: var(--white); color: var(--gray-800);
+    }
+    .social-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .social-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── MAIN LAYOUT ── */
+    .main-content {
+      max-width: 900px; margin: 0 auto;
+      padding: 48px 40px;
+      display: grid; grid-template-columns: 1fr 280px; gap: 48px;
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--green);
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .section-eyebrow::before {
+      content: ''; display: block;
+      width: 20px; height: 2px; background: var(--green);
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px; color: var(--navy);
+      margin-bottom: 6px; line-height: 1.25;
+    }
+    .section-subtitle {
+      font-size: 14px; color: var(--gray-600); margin-bottom: 28px;
+    }
+
+    /* ── EXPERTISE TAGS ── */
+    .expertise-wrap { margin-bottom: 44px; }
+    .tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green-light); color: var(--green);
+      font-size: 13px; font-weight: 500;
+      padding: 7px 14px; border-radius: 20px;
+      border: 1px solid rgba(26,107,60,.15);
+    }
+    .tag svg { width: 13px; height: 13px; }
+
+    /* ── ARTICLES ── */
+    .articles-section { margin-bottom: 44px; }
+    .article-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px; margin-bottom: 16px;
+      transition: box-shadow .2s, border-color .2s;
+      text-decoration: none; display: block;
+      background: var(--white);
+    }
+    .article-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--green);
+    }
+    .article-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .article-cat {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--green);
+      background: var(--green-light);
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .article-date { font-size: 12px; color: var(--gray-400); }
+    .article-read { font-size: 12px; color: var(--gray-400); }
+    .article-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px; color: var(--navy);
+      line-height: 1.3; margin-bottom: 8px;
+    }
+    .article-excerpt {
+      font-size: 13.5px; color: var(--gray-600);
+      line-height: 1.6;
+    }
+    .article-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .read-more {
+      font-size: 13px; font-weight: 600; color: var(--green);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .read-more svg { width: 14px; height: 14px; transition: transform .2s; }
+    .article-card:hover .read-more svg { transform: translateX(3px); }
+    .article-views { font-size: 12px; color: var(--gray-400); display: flex; align-items: center; gap: 4px; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {}
+    .sidebar-card {
+      background: var(--gray-100); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-size: 13px; font-weight: 600; color: var(--navy);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    /* Quick tools */
+    .tool-links { display: flex; flex-direction: column; gap: 8px; }
+    .tool-link {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--gray-800);
+      font-size: 13.5px; font-weight: 500;
+      padding: 9px 12px; border-radius: var(--radius-sm);
+      background: var(--white); border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .tool-link:hover { color: var(--green); border-color: var(--green); background: var(--green-light); }
+    .tool-link-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: var(--green-light); color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0;
+    }
+
+    /* Topics */
+    .topic-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .topic-tag {
+      font-size: 12px; color: var(--gray-800);
+      padding: 5px 12px; border-radius: 20px;
+      background: var(--white); border: 1px solid var(--border);
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .topic-tag:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+    /* Disclaimer box */
+    .disclaimer-card {
+      background: var(--accent-soft); border: 1px solid #f5d98a;
+      border-radius: var(--radius); padding: 18px;
+      font-size: 12px; color: var(--gray-800); line-height: 1.6;
+    }
+    .disclaimer-card strong { color: var(--navy); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .profile-hero { padding: 36px 20px 32px; }
+      .profile-hero-inner { flex-direction: column; gap: 24px; }
+      .author-avatar { width: 88px; height: 88px; font-size: 32px; }
+      .profile-name { font-size: 28px; }
+      .profile-stats { gap: 20px; }
+      .main-content { padding: 32px 20px; grid-template-columns: 1fr; gap: 32px; }
+    }
+    .reviewed-section{
+  margin-top:60px;
+}
+
+.section-heading{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:24px;
+
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--gray-400);
+}
+
+.section-heading::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+.author-articles-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+}
+
+.author-article-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  text-decoration:none;
+  transition:all .25s ease;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+
+.author-article-card:hover{
+  transform:translateY(-5px);
+  border-color:var(--green);
+  box-shadow:0 14px 30px rgba(0,0,0,.08);
+}
+
+.author-article-card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  background:#f5f5f5;
+}
+
+.article-card-body{
+  padding:20px;
+}
+
+.article-card-cat{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  background:var(--green-light);
+  color:var(--green);
+
+  padding:5px 12px;
+  border-radius:999px;
+
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+
+  margin-bottom:14px;
+}
+
+.author-article-card h3{
+  font-family:'DM Serif Display', serif;
+  font-size:22px;
+  line-height:1.35;
+  color:var(--navy);
+  margin-bottom:16px;
+
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.article-card-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:13px;
+  font-weight:600;
+  color:var(--gray-500);
+}
+
+.article-card-meta::before{
+  content:"✓";
+  width:22px;
+  height:22px;
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:var(--green-light);
+  color:var(--green);
+
+  font-size:12px;
+  font-weight:700;
+}
+
+@media(max-width:768px){
+
+  .reviewed-section{
+    margin-top:45px;
+  }
+
+  .author-articles-grid{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .author-article-card h3{
+    font-size:20px;
+  }
+
+  .author-article-card img{
+    height:200px;
+  }
+
+}
+.pagination-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:40px;
+  flex-wrap:wrap;
+}
+
+.page-btn{
+  min-width:42px;
+  height:42px;
+  padding:0 16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  background:#fff;
+  color:var(--navy);
+
+  text-decoration:none;
+  font-size:14px;
+  font-weight:600;
+
+  transition:.2s ease;
+}
+
+.page-btn:hover{
+  border-color:var(--green);
+  color:var(--green);
+  transform:translateY(-2px);
+}
+
+.page-btn.active{
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+  </style>
+</head>
+<body>
+
+<!-- ── AUTHOR HERO ── -->
+<section class="profile-hero">
+  <div class="profile-hero-inner">
+
+    <div class="author-avatar">
+      {{ author.name|slice:":1" }}
+      <span class="author-badge">
+        {{ author.role }}
+      </span>
+    </div>
+
+    <div class="profile-meta">
+
+      <p class="profile-label">
+        ✦ {{ author.role }} at Vittarthi
+      </p>
+
+      <h1 class="profile-name">
+        {{ author.name }}
+      </h1>
+
+      <p class="profile-title">
+        {{ author.designation }}
+      </p>
+
+      <p class="profile-bio">
+        {{ author.bio }}
+      </p>
+
+      <div class="profile-stats">
+
+        <div class="stat">
+          <div class="stat-num">
+            {{ total_articles|add:total_reviewed }}+
+          </div>
+          <div class="stat-label">
+            Articles {{ author.role }}
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-num">
+            {{ author.expertise.all|length }}+
+          </div>
+          <div class="stat-label">
+            Topics covered
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-num">
+            {{ author.created_at|date:"Y" }}
+          </div>
+          <div class="stat-label">
+            Writing since
+          </div>
+        </div>
+
+      </div>
+
+      <div class="profile-social">
+
+        {% if author.linkedin %}
+        <a href="{{ author.linkedin }}" class="social-btn" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+          LinkedIn
+        </a>
+        {% endif %}
+
+        {% if author.twitter %}
+        <a href="{{ author.twitter }}" class="social-btn" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+          </svg>
+          Twitter / X
+        </a>
+        {% endif %}
+
+        {% if author.email %}
+        <a href="mailto:{{ author.email }}" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Get in Touch
+        </a>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+{% if reviewed_articles %}
+<section class="reviewed-section">
+
+  <div class="section-heading">
+    Reviewed Articles
+  </div>
+
+  <div class="author-articles-grid">
+
+    {% for blog in reviewed_articles %}
+    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="author-article-card">
+
+      {% if blog.image %}
+      <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
+      {% endif %}
+
+      <div class="article-card-body">
+
+        {% if blog.primary_category %}
+        <div class="article-card-cat">
+          {{ blog.primary_category.name }}
+        </div>
+        {% endif %}
+
+        <h3>
+          {{ blog.title }}
+        </h3>
+
+        <div class="article-card-meta">
+          Reviewed article
+        </div>
+
+      </div>
+
+    </a>
+    {% endfor %}
+
+  </div>
+
+</section>
+{% endif %}
+<!-- ── MAIN CONTENT ── -->
+<div class="main-content">
+
+  <!-- LEFT SIDE -->
+  <div>
+
+    <!-- Expertise -->
+    <div class="expertise-wrap">
+
+      <div class="section-eyebrow">
+        Expertise
+      </div>
+
+      <h2 class="section-title">
+        Topics {{ author.name.split.0 }} Covers
+      </h2>
+
+      <p class="section-subtitle">
+        Finance topics written for real Indians making real money decisions.
+      </p>
+
+        <div class="tag-grid">
+
+        {% for category in expertise_categories %}
+
+        <a href="/resources/{{ category.primary_slug }}?secondary={{ category.slug }}"
+            class="tag">
+
+            <svg viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+
+            </svg>
+
+            {{ category.name }}
+
+        </a>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- ARTICLES -->
+    <div class="articles-section">
+
+    <div class="section-eyebrow">
+        Articles
+    </div>
+
+    {% if is_writer %}
+        <h2 class="section-title">
+        Written by {{ author.name.split.0 }}
+        </h2>
+
+        <p class="section-subtitle">
+        Financial guides and detailed articles written by {{ author.name.split.0 }}.
+        </p>
+
+        {% for blog in written_articles_paginated %}
+
+        <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+            class="article-card">
+
+            <div class="article-meta">
+
+            {% if blog.primary_category %}
+            <span class="article-cat">
+                {{ blog.primary_category.name }}
+            </span>
+            {% endif %}
+
+            <span class="article-date">
+                {{ blog.created_at|date:"M d, Y" }}
+            </span>
+
+            <span class="article-read">
+                · {{ blog.read_time }} min read
+            </span>
+
+            </div>
+
+            <div class="article-title">
+            {{ blog.title }}
+            </div>
+
+            <div class="article-excerpt">
+            {{ blog.summary|truncatechars:170 }}
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    {% elif is_reviewer %}
+
+        <h2 class="section-title">
+        Reviewed by {{ author.name.split.0 }}
+        </h2>
+
+        <p class="section-subtitle">
+        Expert-reviewed financial content verified by {{ author.name.split.0 }}.
+        </p>
+
+        {% for blog in reviewed_articles %}
+
+        <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+            class="article-card">
+
+            <div class="article-title">
+            {{ blog.title }}
+            </div>
+
+            <div class="article-excerpt">
+            Reviewed article
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    {% elif is_editor %}
+
+        <h2 class="section-title">
+        Edited by {{ author.name.split.0 }}
+        </h2>
+
+        <p class="section-subtitle">
+        Financial content edited and quality checked by {{ author.name.split.0 }}.
+        </p>
+
+        {% for blog in edited_articles %}
+
+        <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
+            class="article-card">
+
+            <div class="article-title">
+            {{ blog.title }}
+            </div>
+
+            <div class="article-excerpt">
+            Edited article
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    {% endif %}
+
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Quick Tools -->
+    <div class="sidebar-card">
+
+      <div class="sidebar-title">
+        🧮 Quick Tools
+      </div>
+
+      <div class="tool-links">
+
+        <a href="/calculators/sip" class="tool-link">
+          <span class="tool-link-icon">📈</span>
+          SIP Calculator
+        </a>
+
+        <a href="/calculators/emi" class="tool-link">
+          <span class="tool-link-icon">🏦</span>
+          EMI Calculator
+        </a>
+
+        <a href="/calculators/salary" class="tool-link">
+          <span class="tool-link-icon">💼</span>
+          Salary Calculator
+        </a>
+
+        <a href="/calculators/retirement" class="tool-link">
+          <span class="tool-link-icon">🎯</span>
+          Retirement Planner
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- Topics -->
+    <div class="sidebar-card">
+
+      <div class="sidebar-title">
+        🏷️ Browse by Topic
+      </div>
+
+      <div class="topic-tags">
+
+        {% for category in expertise_categories %}
+        <a href="/resources/{{ category.slug }}" class="topic-tag">
+          {{ category.name }}
+        </a>
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer-card">
+
+      <strong>Editorial note:</strong>
+
+      Articles by {{ author.name }} are for financial education only and do not constitute investment advice. Vittarthi is not SEBI-registered. Please consult a licensed financial advisor before making investment decisions.
+
+    </div>
+
+  </aside>
+        {% if written_articles_paginated.has_other_pages %}
+
+        <div class="pagination-wrap">
+
+        {% if written_articles_paginated.has_previous %}
+            <a href="?page={{ written_articles_paginated.previous_page_number }}" class="page-btn">
+            ← Prev
+            </a>
+        {% endif %}
+
+        {% for num in written_articles_paginated.paginator.page_range %}
+
+            {% if written_articles_paginated.number == num %}
+            <span class="page-btn active">
+                {{ num }}
+            </span>
+            {% else %}
+            <a href="?page={{ num }}" class="page-btn">
+                {{ num }}
+            </a>
+            {% endif %}
+
+        {% endfor %}
+
+        {% if written_articles_paginated.has_next %}
+            <a href="?page={{ written_articles_paginated.next_page_number }}" class="page-btn">
+            Next →
+            </a>
+        {% endif %}
+
+        </div>
+
+        {% endif %}
+
+        </div>
+</div>
+
+
+
+
+</body>
+</html>
+{% endblock %}

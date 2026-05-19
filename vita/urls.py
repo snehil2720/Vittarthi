@@ -53,11 +53,21 @@ urlpatterns = [
     path('delete-secondary/<int:id>/', views.delete_secondary),
 
     path('resources/<slug:primary_slug>', views.blog_list, name='resource_list'),
+    path('resources', views.resources, name='resources'),
+    path(
+        'resources/<slug:primary_slug>',
+        views.resource_category,
+        name='resource_category'
+    ),
+
     path('get-secondary/<int:primary_id>/', views.get_secondary),
     path('contact-submit',views.contact_submit, name='contact_submit'),
     #path('privacy/', views.privacy_policy, name='privacy'),
 
     path('legal/<slug:slug>', views.legal_page, name='legal_page'),
+
+    path('authors',views.authors,name='authors'),
+    path('authors/<slug:slug>',views.author_detail,name='author_detail'),
 
 
 ]

@@ -842,7 +842,7 @@ body.dark-mode .like-btn {
                 <div class="d-flex align-items-center gap-2">
                   <div class="author-avatar"><i class="bi bi-person-fill"></i></div>
                   <div>
-                    <div class="author-name">{{ blog.author.username }}</div>
+                    <div class="author-name"> {{ blog.author_profile.name|default_if_none:"Vittarthi Team"|default:"Vittarthi Team" }} </div>
                     <div class="author-date">{{ blog.created_at|date:"M d, Y" }}</div>
                   </div>
                 </div>
@@ -906,7 +906,7 @@ body.dark-mode .like-btn {
                 <div class="d-flex align-items-center gap-2">
                   <div class="author-avatar"><i class="bi bi-person-fill"></i></div>
                   <div>
-                    <div class="author-name">{{ blog.author.username }}</div>
+                    <div class="author-name">{{ blog.author_profile.name }}</div>
                     <div class="author-date">{{ blog.created_at|date:"M d, Y" }}</div>
                   </div>
                 </div>

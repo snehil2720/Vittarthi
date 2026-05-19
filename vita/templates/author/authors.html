@@ -1,0 +1,722 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Authors — Vittarthi{% endblock %}
+
+{% block meta_description %}
+Meet the writers and analysts behind Vittarthi's financial guides, calculators, and market insights.
+{% endblock %}
+
+{% block content %}
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --navy: #1a2340;
+    --navy-light: #2d3a5c;
+    --green: #1a6b3c;
+    --green-light: #e8f5ee;
+    --green-mid: #2e9e5b;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-400: #9ca3af;
+    --gray-600: #6b7280;
+    --gray-800: #374151;
+    --white: #ffffff;
+    --text: #1a2340;
+    --border: #e5e7eb;
+    --accent-soft: #fff8e8;
+    --radius: 14px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.07);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page-hero {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--green-light) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 40px 48px;
+    text-align: center;
+  }
+
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+
+  .page-eyebrow::before,
+  .page-eyebrow::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--green);
+    opacity: .5;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .page-title em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--gray-600);
+    max-width: 540px;
+    margin: 0 auto 32px;
+    line-height: 1.65;
+  }
+
+  .trust-strip {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 10px 24px;
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  .trust-strip-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .trust-strip-item strong {
+    color: var(--navy);
+  }
+
+  .trust-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 40px 80px;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--green);
+  }
+
+  .section-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .author-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: .25s;
+  }
+
+  .author-card:hover {
+    box-shadow: var(--shadow);
+    border-color: var(--green);
+    transform: translateY(-2px);
+  }
+
+  .author-card-band {
+    height: 6px;
+    width: 100%;
+  }
+
+  .band-green {
+    background: linear-gradient(90deg, var(--green), var(--green-mid));
+  }
+
+  .band-navy {
+    background: linear-gradient(90deg, var(--navy), var(--navy-light));
+  }
+
+  .band-teal {
+    background: linear-gradient(90deg, #0d7377, #14a085);
+  }
+
+  .author-card-inner {
+    padding: 28px 32px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .author-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--white);
+    flex-shrink: 0;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 1px rgba(0,0,0,.08), var(--shadow-sm);
+    position: relative;
+  }
+
+  .avatar-green {
+    background: linear-gradient(145deg, var(--green), var(--green-mid));
+  }
+
+  .avatar-navy {
+    background: linear-gradient(145deg, var(--navy), var(--navy-light));
+  }
+
+  .avatar-teal {
+    background: linear-gradient(145deg, #0d7377, #14a085);
+  }
+
+  .author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .author-badge {
+    position: absolute;
+    bottom: -2px;
+    right: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 20px;
+    border: 2px solid var(--white);
+    white-space: nowrap;
+  }
+
+  .badge-writer {
+    background: var(--green);
+    color: var(--white);
+  }
+
+  .badge-reviewer {
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  .badge-editor {
+    background: #0d7377;
+    color: var(--white);
+  }
+
+  .author-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .author-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+    line-height: 1.15;
+  }
+
+  .author-role-pill {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .pill-writer {
+    background: var(--green-light);
+    color: var(--green);
+  }
+
+  .pill-reviewer {
+    background: #eef0fa;
+    color: var(--navy-light);
+  }
+
+  .pill-editor {
+    background: #e8f6f5;
+    color: #0d7377;
+  }
+
+  .author-title {
+    font-size: 14px;
+    color: var(--gray-400);
+    margin-bottom: 14px;
+  }
+
+  .author-bio {
+    font-size: 14.5px;
+    color: var(--gray-600);
+    line-height: 1.75;
+    margin-bottom: 18px;
+  }
+
+  .expertise-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .exp-tag {
+    font-size: 12px;
+    color: var(--gray-800);
+    padding: 4px 11px;
+    border-radius: 20px;
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+  }
+
+  .author-stats {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 20px;
+  }
+
+  .a-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .a-stat-label {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .author-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 32px 20px;
+    border-top: 1px solid var(--gray-100);
+    background: var(--gray-50);
+  }
+
+  .social-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    text-decoration: none;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    transition: .2s;
+  }
+
+  .social-link:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .view-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    text-decoration: none;
+    padding: 8px 18px;
+    border: 1.5px solid var(--green);
+    border-radius: 7px;
+    transition: .2s;
+  }
+
+  .view-profile:hover {
+    background: var(--green);
+    color: var(--white);
+  }
+
+  .editorial-note {
+    background: var(--accent-soft);
+    border: 1px solid #f5d98a;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 48px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .editorial-note-text {
+    font-size: 13px;
+    color: var(--gray-800);
+    line-height: 1.7;
+  }
+
+  .write-cta {
+    margin-top: 32px;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: var(--gray-50);
+  }
+
+  .write-cta-text h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 5px;
+  }
+
+  .write-cta-text p {
+    font-size: 13.5px;
+    color: var(--gray-600);
+  }
+
+  .write-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (max-width: 680px) {
+
+    .page-hero {
+      padding: 40px 20px 36px;
+    }
+
+    .page-wrap {
+      padding: 40px 20px 60px;
+    }
+
+    .author-card-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .author-card-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+
+<section class="page-hero">
+
+  <div class="page-eyebrow">
+    Meet the Team
+  </div>
+
+  <h1 class="page-title">
+    Written by <em>real people.</em><br>
+    Reviewed by experts.
+  </h1>
+
+  <p class="page-subtitle">
+    Every article on Vittarthi is written and fact-checked by people who understand India's actual financial system.
+  </p>
+
+  <div class="trust-strip">
+
+    <div class="trust-strip-item">
+      <span>✍️</span>
+      <span>
+        <strong>{{ authors.count }}</strong> Authors
+      </span>
+    </div>
+
+    <div class="trust-dot"></div>
+
+    <div class="trust-strip-item">
+      <span>✅</span>
+      <span>
+        Every article <strong>fact-checked</strong>
+      </span>
+    </div>
+
+    <div class="trust-dot"></div>
+
+    <div class="trust-strip-item">
+      <span>🇮🇳</span>
+      <span>
+        Built <strong>for India</strong>
+      </span>
+    </div>
+
+  </div>
+
+</section>
+
+
+<div class="page-wrap">
+
+  <div class="section-eyebrow">
+    Our Authors
+  </div>
+
+
+  {% for author in authors %}
+
+  <div class="author-card">
+
+    <div class="author-card-band {% cycle 'band-green' 'band-navy' 'band-teal' %}"></div>
+
+    <div class="author-card-inner">
+
+      <div class="author-avatar {% cycle 'avatar-green' 'avatar-navy' 'avatar-teal' %}">
+
+        {% if author.image %}
+          <img src="{{ author.image.url }}" alt="{{ author.name }}">
+        {% else %}
+          {{ author.name|slice:":1" }}
+        {% endif %}
+
+        <span class="author-badge {% cycle 'badge-writer' 'badge-editor' 'badge-reviewer' %}">
+          {{ author.role }}
+        </span>
+
+      </div>
+
+
+      <div class="author-info">
+
+        <div class="author-name-row">
+
+          <div class="author-name">
+            {{ author.name }}
+          </div>
+
+          <span class="author-role-pill {% cycle 'pill-writer' 'pill-editor' 'pill-reviewer' %}">
+            {{ author.designation }}
+          </span>
+
+        </div>
+
+
+        <div class="author-title">
+          {{ author.designation }} · Vittarthi
+        </div>
+
+
+        <p class="author-bio">
+          {{ author.bio }}
+        </p>
+
+
+        <div class="expertise-row">
+
+          {% for tag in author.expertise_list %}
+
+            <span class="exp-tag">
+              {{ tag }}
+            </span>
+
+          {% endfor %}
+
+        </div>
+
+
+        <div class="author-stats">
+
+          <div class="a-stat">
+            <div class="a-stat-num">
+              {{ author.total_articles }}+
+            </div>
+
+            <div class="a-stat-label">
+              Articles {{ author.role }}
+            </div>
+          </div>
+
+
+          <div class="a-stat">
+            <div class="a-stat-num">
+              {{ author.joined_year }}
+            </div>
+
+            <div class="a-stat-label">
+              At Vittarthi Since
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="author-card-footer">
+
+      <div class="social-links">
+
+        {% if author.linkedin %}
+        <a href="{{ author.linkedin }}"
+           class="social-link"
+           target="_blank">
+
+          LinkedIn
+
+        </a>
+        {% endif %}
+
+
+        {% if author.twitter %}
+        <a href="{{ author.twitter }}"
+           class="social-link"
+           target="_blank">
+
+          Twitter
+
+        </a>
+        {% endif %}
+
+
+        {% if author.email %}
+        <a href="mailto:{{ author.email }}"
+           class="social-link">
+
+          Email
+
+        </a>
+        {% endif %}
+
+      </div>
+
+
+      <a href="{% url 'author_detail' author.slug %}"
+         class="view-profile">
+
+        View Profile &amp; Articles →
+
+      </a>
+
+    </div>
+
+  </div>
+
+  {% endfor %}
+
+
+  <div class="editorial-note">
+
+    <div>
+      📋
+    </div>
+
+    <div class="editorial-note-text">
+
+      <strong>Editorial integrity:</strong>
+
+      All articles on Vittarthi go through a two-step process —
+      written by a subject-matter writer and independently reviewed
+      by a financial analyst.
+
+    </div>
+
+  </div>
+
+
+  <div class="write-cta">
+
+    <div class="write-cta-text">
+
+      <h3>
+        Want to write for Vittarthi?
+      </h3>
+
+      <p>
+        We're always looking for finance writers who understand India's real financial landscape.
+      </p>
+
+    </div>
+
+    <a href="/contact"
+       class="write-cta-btn">
+
+      Get in Touch →
+
+    </a>
+
+  </div>
+
+</div>
+
+{% endblock %}

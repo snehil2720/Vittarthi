@@ -1,0 +1,668 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Resources - Vittarthi{% endblock %}
+
+{% block meta_description %}
+Resources — Financial Guides, News & Case Studies | Vittarthi
+{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+
+  <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #1a2340;
+      --navy-light:   #2d3a5c;
+      --green:        #1a6b3c;
+      --green-light:  #e8f5ee;
+      --green-mid:    #2e9e5b;
+      --teal:         #0d7377;
+      --teal-light:   #e6f4f4;
+      --amber:        #b45309;
+      --amber-light:  #fef3c7;
+      --gray-50:      #f9fafb;
+      --gray-100:     #f3f4f6;
+      --gray-200:     #e5e7eb;
+      --gray-400:     #9ca3af;
+      --gray-600:     #6b7280;
+      --gray-800:     #374151;
+      --white:        #ffffff;
+      --text:         #1a2340;
+      --border:       #e5e7eb;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --shadow:       0 4px 20px rgba(0,0,0,0.07);
+      --shadow-sm:    0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--green-light) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 40px 52px;
+      text-align: center;
+      border-radius: 35px;
+    }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 16px;
+    }
+    .page-eyebrow::before,
+    .page-eyebrow::after {
+      content: ''; display: block;
+      width: 24px; height: 2px; background: var(--green); opacity: .5;
+    }
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(30px, 5vw, 46px);
+      color: var(--navy); line-height: 1.18;
+      margin-bottom: 14px;
+    }
+    .page-title em { font-style: italic; color: var(--green); }
+    .page-subtitle {
+      font-size: 16px; color: var(--gray-600);
+      max-width: 520px; margin: 0 auto 32px;
+      line-height: 1.65;
+    }
+
+    /* Tab filter */
+    .tab-bar {
+      display: inline-flex; gap: 4px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 40px; padding: 4px;
+    }
+    .tab {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 20px; border-radius: 30px;
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      text-decoration: none; transition: all .2s; cursor: pointer;
+      border: none; background: transparent;
+    }
+    .tab.active,
+    .tab:hover {
+      background: var(--navy); color: var(--white);
+    }
+    .tab-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+    .dot-news   { background: var(--amber); }
+    .dot-blog   { background: var(--green); }
+    .dot-case   { background: var(--teal); }
+    .tab.active .tab-dot { background: var(--white); }
+
+    /* ── MAIN WRAP ── */
+    .page-wrap {
+      max-width: 1060px; margin: 0 auto;
+      padding: 60px 40px 80px;
+      display: flex; flex-direction: column; gap: 72px;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .section-left {}
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .eyebrow-news  { color: var(--amber); }
+    .eyebrow-blog  { color: var(--green); }
+    .eyebrow-case  { color: var(--teal);  }
+    .eyebrow-news::before  { content: '●'; font-size: 7px; }
+    .eyebrow-blog::before  { content: '●'; font-size: 7px; }
+    .eyebrow-case::before  { content: '●'; font-size: 7px; }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px; color: var(--navy);
+      line-height: 1.2; margin-bottom: 4px;
+    }
+    .section-desc {
+      font-size: 14px; color: var(--gray-600); max-width: 480px;
+    }
+    .view-all-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600;
+      text-decoration: none; padding: 9px 20px;
+      border-radius: 8px; border: 1.5px solid; white-space: nowrap;
+      transition: all .2s; flex-shrink: 0;
+    }
+    .view-all-link svg { width: 14px; height: 14px; transition: transform .2s; }
+    .view-all-link:hover svg { transform: translateX(3px); }
+    .link-news  { color: var(--amber); border-color: var(--amber); }
+    .link-news:hover  { background: var(--amber); color: var(--white); }
+    .link-blog  { color: var(--green); border-color: var(--green); }
+    .link-blog:hover  { background: var(--green); color: var(--white); }
+    .link-case  { color: var(--teal);  border-color: var(--teal); }
+    .link-case:hover  { background: var(--teal); color: var(--white); }
+
+    /* ── DIVIDER LINE UNDER SECTION HEADER ── */
+    .section-rule {
+      border: none;
+      height: 1px;
+      margin-bottom: 0;
+    }
+    .rule-news  { background: linear-gradient(90deg, var(--amber), transparent); }
+    .rule-blog  { background: linear-gradient(90deg, var(--green), transparent); }
+    .rule-case  { background: linear-gradient(90deg, var(--teal), transparent); }
+
+    /* ════════════════════════════════════
+       NEWS GRID — horizontal cards (list style)
+    ════════════════════════════════════ */
+    .news-grid { display: flex; flex-direction: column; gap: 1px; }
+
+    .news-card {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      transition: none;
+    }
+    .news-card:first-child { border-top: 1px solid var(--border); }
+    .news-card:hover .news-title { color: var(--amber); }
+
+    .news-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px; color: var(--gray-200);
+      line-height: 1; min-width: 44px;
+      padding-top: 4px; flex-shrink: 0;
+      transition: color .2s;
+    }
+    .news-card:hover .news-number { color: var(--amber-light); }
+
+    .news-body { flex: 1; }
+    .news-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 7px;
+    }
+    .news-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: var(--amber-light); color: var(--amber);
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .news-date { font-size: 12px; color: var(--gray-400); }
+    .news-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 19px; color: var(--navy);
+      line-height: 1.3; margin-bottom: 7px;
+      transition: color .2s;
+    }
+    .news-excerpt {
+      font-size: 13.5px; color: var(--gray-600);
+      line-height: 1.65; max-width: 600px;
+    }
+    .news-read {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 600; color: var(--amber);
+      margin-top: 10px;
+    }
+    .news-read svg { width: 13px; height: 13px; }
+
+    /* News image thumb */
+    .news-thumb {
+      width: 96px; height: 72px; border-radius: var(--radius-sm);
+      background: var(--amber-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+      border: 1px solid rgba(180,83,9,.1);
+    }
+
+    /* ════════════════════════════════════
+       BLOG GRID — 3 card columns
+    ════════════════════════════════════ */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .blog-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--white); overflow: hidden;
+      display: flex; flex-direction: column;
+      text-decoration: none;
+      transition: box-shadow .25s, border-color .25s, transform .2s;
+    }
+    .blog-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--green);
+      transform: translateY(-3px);
+    }
+    .blog-card-image {
+      height: 150px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+    .blog-img-1 { background: linear-gradient(135deg, #e8f5ee, #d1fae5); }
+    .blog-img-2 { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+    .blog-img-3 { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+
+    .blog-card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .blog-cat {
+      display: inline-block;
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: var(--green-light); color: var(--green);
+      padding: 3px 9px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .blog-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px; color: var(--navy);
+      line-height: 1.3; margin-bottom: 10px;
+      flex: 1;
+    }
+    .blog-excerpt {
+      font-size: 13px; color: var(--gray-600);
+      line-height: 1.65; margin-bottom: 16px;
+    }
+    .blog-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 14px; border-top: 1px solid var(--gray-100);
+    }
+    .blog-author-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .blog-author-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--green); color: var(--white);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .blog-author-name { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+    .blog-date { font-size: 12px; color: var(--gray-400); }
+    .blog-read-link {
+      font-size: 12px; font-weight: 600; color: var(--green);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .blog-read-link svg { width: 13px; height: 13px; }
+
+    /* ════════════════════════════════════
+       CASE STUDY GRID — 3 horizontal cards
+    ════════════════════════════════════ */
+    .case-grid { display: flex; flex-direction: column; gap: 16px; }
+    .case-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--white); overflow: hidden;
+      display: grid; grid-template-columns: 6px 1fr;
+      text-decoration: none;
+      transition: box-shadow .25s, border-color .25s;
+    }
+    .case-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--teal);
+    }
+    .case-accent { background: var(--teal); }
+
+    .case-body {
+      padding: 24px 28px;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 20px; align-items: center;
+    }
+    .case-left {}
+    .case-tag-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .case-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: var(--teal-light); color: var(--teal);
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .case-topic {
+      font-size: 10px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase;
+      background: var(--gray-100); color: var(--gray-600);
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .case-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px; color: var(--navy);
+      line-height: 1.3; margin-bottom: 8px;
+    }
+    .case-excerpt {
+      font-size: 13.5px; color: var(--gray-600);
+      line-height: 1.65; max-width: 580px;
+    }
+    .case-meta-row {
+      display: flex; align-items: center; gap: 16px; margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .case-meta-item {
+      font-size: 12px; color: var(--gray-400);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .case-meta-item svg { width: 13px; height: 13px; }
+
+    /* Outcome badge */
+    .case-outcome {
+      text-align: center; flex-shrink: 0;
+      padding: 18px 24px;
+      background: var(--teal-light);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(13,115,119,.12);
+    }
+    .case-outcome-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px; color: var(--teal);
+      line-height: 1;
+    }
+    .case-outcome-label {
+      font-size: 11px; color: var(--teal);
+      font-weight: 500; margin-top: 4px;
+      white-space: nowrap;
+    }
+
+    /* ── NEWSLETTER CTA ── */
+    .newsletter-cta {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      border-radius: var(--radius);
+      padding: 40px 48px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 32px;
+      flex-wrap: wrap;
+    }
+    .newsletter-text h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .newsletter-text p {
+      font-size: 14px; color: rgba(255,255,255,.6);
+      max-width: 380px; line-height: 1.65;
+    }
+    .newsletter-form {
+      display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap;
+    }
+    .newsletter-input {
+      padding: 11px 18px; border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      color: var(--white); font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      width: 240px; outline: none;
+      transition: border-color .2s;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,.4); }
+    .newsletter-input:focus { border-color: var(--green-mid); }
+    .newsletter-btn {
+      padding: 11px 22px; border-radius: 8px;
+      background: var(--green); color: var(--white);
+      font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      border: none; cursor: pointer;
+      transition: background .2s; white-space: nowrap;
+    }
+    .newsletter-btn:hover { background: var(--green-mid); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .blog-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page-hero { padding: 40px 20px 36px; }
+      .tab-bar { flex-wrap: wrap; border-radius: 16px; }
+      .page-wrap { padding: 40px 20px 60px; gap: 56px; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .news-card { flex-direction: column; gap: 12px; }
+      .news-thumb { width: 100%; height: 120px; }
+      .case-body { grid-template-columns: 1fr; }
+      .case-outcome { display: none; }
+      .newsletter-cta { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
+      .newsletter-input { width: 100%; }
+    }
+  </style>
+
+<body>
+
+<!-- ================= HERO ================= -->
+<section class="page-hero">
+  <div class="page-eyebrow">Knowledge Hub</div>
+  <h1 class="page-title">Guides, news & stories <br><em>for smarter money decisions</em></h1>
+</section>
+
+
+<div class="page-wrap">
+
+<!-- ================= NEWS ================= -->
+<section id="news">
+
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow eyebrow-news">● Market News</div>
+      <h2 class="section-title">Latest Market Updates</h2>
+    </div>
+<a href="{% url 'resource_category' 'news' %}" class="view-all-link link-news">
+  All News
+</a>
+  </div>
+
+  <hr class="section-rule rule-news"/>
+
+  <div class="news-grid">
+
+    {% for item in news %}
+    <a href="{% url 'blog_detail' item.primary_category.slug item.slug %}" class="news-card">
+
+      <div class="news-number">
+        {{ forloop.counter|stringformat:"02d" }}
+      </div>
+
+      <div class="news-body">
+
+        <div class="news-meta">
+          <span class="news-tag">
+            {% if item.secondary_category %}
+                {{ item.secondary_category.name }}
+            {% else %}
+                {{ item.primary_category.name }}
+            {% endif %}
+          </span>
+
+          <span class="news-date">
+            {{ item.created_at|date:"M d, Y" }}
+          </span>
+        </div>
+
+        <div class="news-title">
+          {{ item.title }}
+        </div>
+
+        <div class="news-excerpt">
+          {{ item.excerpt|default:item.content|striptags|cut:"html"|truncatechars:180 }}
+        </div>
+
+        <div class="news-read">
+          Read more →
+        </div>
+
+      </div>
+
+      <div class="news-thumb">📊</div>
+
+    </a>
+    {% empty %}
+      <p>No news available.</p>
+    {% endfor %}
+
+  </div>
+
+</section>
+
+
+<!-- ================= BLOGS ================= -->
+<section id="blogs">
+
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow eyebrow-blog">● Financial Guides</div>
+      <h2 class="section-title">Financial Learning Articles</h2>
+    </div>
+        <a href="{% url 'resource_category' 'blogs' %}" class="view-all-link link-blog">
+        All Blogs
+        </a>
+  </div>
+
+  <hr class="section-rule rule-blog"/>
+
+  <div class="blog-grid">   
+
+    {% for item in blogs %}
+    <a href="{% url 'blog_detail' item.primary_category.slug item.slug %}" class="blog-card">
+
+      <div class="blog-card-image">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" style="width:100%;height:100%;object-fit:cover;">
+        {% else %}
+          💰
+        {% endif %}
+      </div>
+
+      <div class="blog-card-body">
+
+        <span class="blog-cat">
+            {% if item.secondary_category %}
+                {{ item.secondary_category.name }}
+            {% else %}
+                {{ item.primary_category.name }}
+            {% endif %}
+        </span>
+
+        <div class="blog-title">
+          {{ item.title }}
+        </div>
+
+        <div class="blog-excerpt">
+          {{ item.excerpt|default:item.content|striptags|truncatechars:160 }}
+        </div>
+
+        <div class="blog-footer">
+
+          <div>
+            <div class="blog-author-name">
+              {{ item.author_profile.name|default:"Vittarthi Team" }}
+            </div>
+
+            <div class="blog-date">
+              {{ item.created_at|date:"M Y" }}
+            </div>
+          </div>
+
+          <span class="blog-read-link">Read →</span>
+
+        </div>
+
+      </div>
+
+    </a>
+    {% empty %}
+      <p>No blogs available.</p>
+    {% endfor %}
+
+  </div>
+</section>
+
+
+<!-- ================= CASE STUDIES ================= -->
+<section id="case-studies">
+
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow eyebrow-case">● Case Studies</div>
+      <h2 class="section-title">Real Financial Stories</h2>
+    </div>
+        <a href="{% url 'resource_category' 'case-study' %}" class="view-all-link link-case">
+        All Case Studies
+        </a>
+  </div>
+
+  <hr class="section-rule rule-case"/>
+
+  <div class="case-grid">
+
+    {% for item in case_studies %}
+    <a href="{% url 'blog_detail' item.primary_category.slug item.slug %}" class="case-card">
+
+      <div class="case-accent"></div>
+
+      <div class="case-body">
+
+        <div>
+
+          <div class="case-tag-row">
+            <span class="case-tag">Case Study</span>
+            <span class="case-topic">
+            {% if item.secondary_category %}
+                {{ item.secondary_category.name }}
+            {% else %}
+                {{ item.primary_category.name }}
+            {% endif %}
+            </span>
+          </div>
+
+          <div class="case-title">
+            {{ item.title }}
+          </div>
+
+          <div class="case-excerpt">
+            {{ item.excerpt|default:item.content|striptags|truncatechars:200 }}
+          </div>
+
+          <div class="case-meta-row">
+            <span class="case-meta-item">
+              {{ item.created_at|date:"M Y" }}
+            </span>
+
+            <span class="case-meta-item">
+              {{ item.read_time|default:"5" }} min read
+            </span>
+
+            {% if item.reviewed_by %}
+            <span class="case-meta-item" style="color: var(--teal);font-weight: 600; ">
+                Reviewed by {{ item.reviewed_by.name }}
+            </span>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <div class="case-outcome">
+          <div class="case-outcome-num">CASE</div>
+          <div class="case-outcome-label">Study</div>
+        </div>
+
+      </div>
+
+    </a>
+
+    {% empty %}
+      <p>No case studies available.</p>
+    {% endfor %}
+
+  </div>
+</section>
+
+</body>
+</html>
+{% endblock %}
