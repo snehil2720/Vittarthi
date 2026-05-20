@@ -895,7 +895,7 @@ body.dark-mode .like-btn {
               </a>
 
               <p class="blog-desc">
-                {{ blog.content|striptags|truncatechars:110 }}
+                {{ blog.summary|striptags|truncatechars:110 }}
               </p>
 
               <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="inline-read-more">
