@@ -97,7 +97,7 @@ class Blog(models.Model):
 
     title = models.CharField(max_length=250)
     content = RichTextUploadingField()
-    image = models.ImageField(upload_to='blogs/', default='default.jpg')
+    image = models.ImageField(upload_to='blogs/', default='blogs/default.webp')
     #category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
     primary_category = models.ForeignKey(
         PrimaryCategory,
@@ -130,6 +130,8 @@ class Blog(models.Model):
             self.meta_title = self.title[:250]
         if not self.meta_description:
             self.meta_description = self.summary[:160]
+        if not self.image:
+            self.image = 'blogs/default.webp'
         super().save(*args, **kwargs)
 
     #author = models.ForeignKey(User, on_delete=models.CASCADE)

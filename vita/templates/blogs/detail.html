@@ -35,9 +35,9 @@
 
   "description": "{{ blog.meta_description|default:blog.title|escapejs }}",
 
-  "image": [
-    "https://vittarthi.com{{ blog.image.url }}"
-  ],
+"image": [
+  "{% if blog.image %}{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/media/images/default.webp{% endif %}"
+],
 
   "author": {
     "@type": "Person",
@@ -888,9 +888,11 @@
   <!-- IMAGE -->
 
   {% if blog.image %}
-  <img src="{{ blog.image.url }}"
-       class="blog-cover"
-       alt="{{ blog.title }}">
+<img 
+  src="{% if blog.image %}{{ blog.image.url }}{% else %}/media/images/default.webp{% endif %}"
+  class="blog-cover"
+  alt="{{ blog.title }}"
+>
   {% endif %}
 
   <!-- CONTENT -->

@@ -1188,7 +1188,7 @@ summary{
     <div class="hub-img-wrap">
 
       {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
       {% endif %}
 
     </div>
@@ -1421,7 +1421,7 @@ function filterResources(type, btn){
 
       <div class="hub-img-wrap">
         {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
         {% endif %}
       </div>
 
@@ -1458,7 +1458,7 @@ function filterResources(type, btn){
 
       <div class="hub-img-wrap">
         {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'default.webp' }}">
         {% endif %}
       </div>
 
@@ -1495,7 +1495,7 @@ function filterResources(type, btn){
 
       <div class="hub-img-wrap">
         {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
         {% endif %}
       </div>
 
@@ -1532,7 +1532,7 @@ function filterResources(type, btn){
 
       <div class="hub-img-wrap">
         {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
         {% endif %}
       </div>
 
