@@ -184,7 +184,7 @@
             <h2>Welcome Back</h2>
             <p class="subtitle">Access your digital vault</p>
 
-            <form method="POST" action="/signin/">
+            <form method="POST" action="/signin">
                 {% csrf_token %}
                 <label>Identifier</label>
                 <input type="text" name="username" placeholder="Username" required>
@@ -210,7 +210,7 @@
             <h2>Get Started</h2>
             <p class="subtitle">Secure your financial future</p>
 
-            <form method="POST" action="/signup/">
+            <form method="POST" action="/signup">
                 {% csrf_token %}
                 <label>Username</label>
                 <input type="text" name="username" placeholder="Choose a handle" required>
