@@ -361,7 +361,11 @@
                 filebrowserUploadMethod: 'form',
                 uiColor: '#ffffff',
                 removePlugins: 'elementspath',
-                resize_enabled: false
+                resize_enabled: false,
+                allowedContent: true,
+                contentsCss: [
+                    "{% static 'css/article-content.css' %}"
+                ]
             });
         }
         if (CKEDITOR) {
