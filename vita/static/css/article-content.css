@@ -69,74 +69,41 @@
 }
 
 @media (max-width: 768px) {
-
+    /* Summary & Also Read Mobile Fixes */
     .summary-box {
         display: block;
         width: 100%;
         padding: 18px;
     }
-
     .summary-heading {
         font-size: 20px;
     }
-
     .news-summary ul li {
         font-size: 15px;
         line-height: 1.7;
     }
-
-    .article-table,
-    .article-table thead,
-    .article-table tbody,
-    .article-table th,
-    .article-table td,
-    .article-table tr {
-        display: block;
-        width: auto !important;
+    .also-read-box {
+        padding: 16px 18px;
+        margin: 24px 0;
+    }
+    .also-read-link {
+        font-size: 16px;
+        line-height: 1.5;
     }
 
+    /* ══════ MOBILE TABLE FIX (LAPTOP LOOK WITH SCROLL) ══════ */
     .article-table {
-        border: none;
-        background: transparent;
-    }
-
-    .article-table thead {
-        display: none;
-    }
-
-    .article-table tr {
-        margin-bottom: 18px;
+        display: block; /* Table ko block element banayega */
+        width: 100%;
+        overflow-x: auto; /* Horizontal scrollbar add karega */
+        -webkit-overflow-scrolling: touch; /* iPhones par smooth scrolling ke liye */
         border: 1px solid #e5e7eb;
-        background: #ffffff;
     }
-
-.article-table tbody td {
-    position: relative;
-    padding: 14px 14px 14px 42% !important;
-    border: none;
-    border-bottom: 1px solid #f3f4f6;
-    text-align: left;
-    white-space: normal;
-    word-break: break-word;
-    line-height: 1.6;
-    font-size: 14px;
-    min-height: 52px;
-    box-sizing: border-box;
-}
-.article-table tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 14px;
-    top: 14px;
-    width: 34%;
-    font-weight: 700;
-    color: #111827;
-    font-size: 13px;
-    line-height: 1.4;
-}
-
-    .article-table tbody td:last-child {
-        border-bottom: none;
+    
+    /* Header aur data ko ek hi line mein rakhne ke liye */
+    .article-table th,
+    .article-table td {
+        white-space: nowrap; 
     }
 }
 
