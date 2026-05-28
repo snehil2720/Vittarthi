@@ -92,7 +92,7 @@
     .article-table td,
     .article-table tr {
         display: block;
-        width: 100%;
+        width: auto !important;
     }
 
     .article-table {
