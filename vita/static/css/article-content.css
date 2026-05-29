@@ -93,17 +93,17 @@
 
     /* ══════ MOBILE TABLE FIX (LAPTOP LOOK WITH SCROLL) ══════ */
     .article-table {
-        display: block; /* Table ko block element banayega */
+        display: block !important; /* Table ko block element banayega */
         width: 100%;
-        overflow-x: auto; /* Horizontal scrollbar add karega */
-        -webkit-overflow-scrolling: touch; /* iPhones par smooth scrolling ke liye */
+        overflow-x: auto !important; /* Horizontal scrollbar add karega */
+        -webkit-overflow-scrolling: touch !important; /* iPhones par smooth scrolling ke liye */
         border: 1px solid #e5e7eb;
     }
     
     /* Header aur data ko ek hi line mein rakhne ke liye */
     .article-table th,
     .article-table td {
-        white-space: nowrap; 
+        white-space: nowrap !important; 
     }
 }
 
