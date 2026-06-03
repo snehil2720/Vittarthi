@@ -113,7 +113,7 @@
 .article-wrap{
   max-width:860px;
   margin:auto;
-  padding:28px 20px 80px;
+  padding:28px 0px 80px;
 }
 
 /* ═════════════ BREADCRUMB ═════════════ */
@@ -786,7 +786,21 @@
     {{ blog.category.name }}
   </div>
   {% endif %}
+<!-- {% if user.role == 'admin' or user.role == 'writer' %}
+  <div class="admin-btns" style="display: flex; gap: 12px; margin-bottom: 20px;">
+    
+    <a href="{% url 'my_blogs' %}" class="btn-manage" style="padding: 8px 16px; border-radius: 8px; background: rgba(100, 116, 139, 0.1); color: #475569; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(100, 116, 139, 0.2);">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+      Manage Blogs
+    </a>
 
+    <a href="{% url 'edit_blog' blog.id %}" class="btn-edit" style="padding: 8px 16px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); color: #2563eb; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+      Edit This Blog
+    </a>
+
+  </div>
+  {% endif %} -->
   <!-- TITLE -->
 
   <h1 class="article-title">
