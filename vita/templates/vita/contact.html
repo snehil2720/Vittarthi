@@ -812,7 +812,7 @@ async function handleSubmit(e) {
             document.getElementById('message').value
     };
     try {
-        const response = await fetch('/contact-submit/', {
+        const response = await fetch('/contact-submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
