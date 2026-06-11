@@ -780,7 +780,7 @@
       <div class="topic-tags">
 
         {% for category in expertise_categories %}
-        <a href="/resources/{{ category.slug }}" class="topic-tag">
+        <a href="/resources/{{ category.primary_slug }}?secondary={{ category.slug }}" class="topic-tag">
           {{ category.name }}
         </a>
         {% endfor %}
