@@ -1,6 +1,7 @@
 from django.urls import path,include
 from . import views
 from ckeditor_uploader import views as ckeditor_views
+from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.home, name='home'),
     path('calculators', views.calculators, name='calculators'),
@@ -44,6 +45,7 @@ urlpatterns = [
     path('logout', views.signout, name='logout'),
     path('login', views.auth_page, name='auth'),
 
+    path('forgot-password',views.forgot_password,name='forgot_password'),
     path('subscribe/', views.subscribe_newsletter, name='subscribe_newsletter'),
 
     path('calc-count/', views.calc_count, name='calc_count'),
@@ -68,7 +70,47 @@ urlpatterns = [
 
     path('authors',views.authors,name='authors'),
     path('authors/<slug:slug>',views.author_detail,name='author_detail'),
+    path(
+        'admin-dashboard',
+        views.admin_dashboard,
+        name='admin_dashboard'
+    ),
+    path(
+        'change-role/<int:user_id>',
+        views.change_role,
+        name='change_role'
+    ),
+    path(
+    'forgot-password/',
+        auth_views.PasswordResetView.as_view(
+            template_name='authentication/forgot_password.html'
+        ),
+        name='password_reset'
+    ),
 
+    path(
+        'forgot-password/done/',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name='authentication/password_reset_done.html'
+        ),
+        name='password_reset_done'
+    ),
+
+    path(
+        'reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='authentication/password_reset_confirm.html'
+        ),
+        name='password_reset_confirm'
+    ),
+
+    path(
+        'reset-complete/',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='authentication/password_reset_complete.html'
+        ),
+        name='password_reset_complete'
+    ),
 
 ]
 

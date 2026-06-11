@@ -1,31 +1,202 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<style>
+    /* ══════════ MODERN GLASSMORPHISM LAYOUT ══════════ */
+    .blog-list-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
 
-<h2>📂 My Blogs</h2>
+    .page-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 2rem;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
+    /* ══════════ PREMIUM TABLE ══════════ */
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 12px; /* Creates space between rows */
+    }
 
-    <tbody>
-        {% for blog in blogs %}
-        <tr>
-            <td>{{ blog.title }}</td>
-            <td>{{ blog.status }}</td>
-            <td>
-                <a href="{% url 'edit_blog' blog.id %}" class="btn btn-sm btn-primary">
-                    Edit
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    .modern-table th {
+        text-align: left;
+        padding: 0 20px 10px 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        border-bottom: 2px solid #e2e8f0;
+    }
 
+    .modern-table tbody tr {
+        background: #ffffff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .modern-table tbody tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .modern-table td {
+        padding: 16px 20px;
+        vertical-align: middle;
+    }
+
+    /* Rounded corners for individual table rows */
+    .modern-table td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+    .modern-table td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+    /* ══════════ ROW CONTENT ══════════ */
+    .blog-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .blog-thumbnail {
+        width: 64px;
+        height: 44px;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+    }
+
+    .blog-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1.05rem;
+        margin: 0 0 4px 0;
+    }
+
+    .blog-date {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* ══════════ BADGES & BUTTONS ══════════ */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-published { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-draft { background: rgba(100, 116, 139, 0.1); color: #475569; border: 1px solid rgba(100, 116, 139, 0.2); }
+
+    .btn-edit {
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: rgba(59, 130, 246, 0.05);
+        color: #2563eb;
+        border: 1px solid #3b82f6;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-edit:hover {
+        background: #3b82f6;
+        color: #ffffff;
+    }
+</style>
+
+<div class="blog-list-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <span style="font-size: 1.2em;">📂</span> My Blogs
+        </h2>
+    </div>
+
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for blog in blogs %}
+            <tr>
+                <td>
+                    <div class="blog-info">
+                        
+                        <!-- Thumbnail Image Logic -->
+                        {% if blog.image %}
+                            <img src="{{ blog.image.url }}" alt="Thumbnail" class="blog-thumbnail">
+                        {% else %}
+                            <div class="blog-thumbnail" style="display:flex; align-items:center; justify-content:center; color:#cbd5e1; font-size:0.75rem;">No Img</div>
+                        {% endif %}
+                        
+                        <div>
+                            <h3 class="blog-title">{{ blog.title }}</h3>
+                            <div class="blog-date">
+                                <!-- Calendar Icon -->
+                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ blog.created_at|date:"d M, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <!-- Dynamic Badge Color Based on Status -->
+                    <span class="status-badge {% if blog.status == 'published' %}status-published{% else %}status-draft{% endif %}">
+                        {{ blog.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'edit_blog' blog.id %}" class="btn-edit">
+                        <!-- Edit Pen Icon -->
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align:center; padding: 40px; color:#64748b; font-family:'Inter', sans-serif;">
+                    No blogs found. Start writing your first post!
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+</div>
 {% endblock %}

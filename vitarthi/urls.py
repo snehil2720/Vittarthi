@@ -59,13 +59,21 @@ path(
             )
         ),
     name='django.contrib.sitemaps.views.sitemap'
-),
-    path(
-    "robots.txt",
-    TemplateView.as_view(
-        template_name="robots.txt",
-        content_type="text/plain"
     ),
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain"
+        ),
+    ),
+    path(
+        'financial-advisor',
+        include('financial_advisor.urls')
+    ),
+    path(
+        'accounts/',
+        include('allauth.urls')
     ),
 ]
 

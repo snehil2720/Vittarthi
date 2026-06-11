@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Blog,PrimaryCategory,SecondaryCategory,ContactMessage,PrivacyPolicy,LegalPage,Author
-
+from .models import Blog,PrimaryCategory,SecondaryCategory,ContactMessage,PrivacyPolicy,LegalPage,Author,CustomUser
+from django.contrib.auth.admin import UserAdmin
 admin.site.register(SecondaryCategory)
 admin.site.register(PrimaryCategory)
 admin.site.register(PrivacyPolicy)
@@ -38,4 +38,32 @@ class ContactMessageAdmin(admin.ModelAdmin):
         'ip_address',
         'user_agent',
         'created_at'
+    )
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+
+    list_display = (
+        'username',
+        'email',
+        'role',
+        'is_staff',
+        'is_active',
+    )
+
+    fieldsets = UserAdmin.fieldsets + (
+        (
+            'Role Management',
+            {
+                'fields': ('role',)
+            }
+        ),
+    )
+
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (
+            'Role Management',
+            {
+                'fields': ('role',)
+            }
+        ),
     )

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Resources - Vittarthi{% endblock %}
+{% block title %} Resources - Vitharthi{% endblock %}
 
 {% block meta_description %}
-Resources — Financial Guides, News & Case Studies | Vittarthi
+Resources — Financial Guides, News & Case Studies | Vitharthi
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Serif+Display&display=swap" rel="stylesheet" />
 
   <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --navy:         #1a2340;
@@ -222,11 +222,15 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
 
     /* News image thumb */
     .news-thumb {
-      width: 96px; height: 72px; border-radius: var(--radius-sm);
+      width: auto; height: 150px; border-radius: var(--radius-sm);
       background: var(--amber-light);
       display: flex; align-items: center; justify-content: center;
       font-size: 24px; flex-shrink: 0;
       border: 1px solid rgba(180,83,9,.1);
+      overflow: hidden; /* Important for fitting images */
+    }
+    .news-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
     }
 
     /* ════════════════════════════════════
@@ -354,7 +358,7 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
     }
     .case-meta-item svg { width: 13px; height: 13px; }
 
-    /* Outcome badge */
+    /* Outcome / Case Thumb badge */
     .case-outcome {
       text-align: center; flex-shrink: 0;
       padding: 18px 24px;
@@ -371,6 +375,17 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
       font-size: 11px; color: var(--teal);
       font-weight: 500; margin-top: 4px;
       white-space: nowrap;
+    }
+
+    .case-thumb {
+      width: auto; height: 150px; border-radius: var(--radius-sm);
+      overflow: hidden; flex-shrink: 0;
+      border: 1px solid rgba(13,115,119,.12);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--teal-light);
+    }
+    .case-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
     }
 
     /* ── NEWSLETTER CTA ── */
@@ -426,9 +441,9 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
       .section-header { flex-direction: column; align-items: flex-start; gap: 14px; }
       .blog-grid { grid-template-columns: 1fr; }
       .news-card { flex-direction: column; gap: 12px; }
-      .news-thumb { width: 100%; height: 120px; }
+      .news-thumb { width: 100%; height: auto; }
       .case-body { grid-template-columns: 1fr; }
-      .case-outcome { display: none; }
+      /* .case-outcome, .case-thumb { display: none; } hide both thumb and text outcome on mobile */
       .newsletter-cta { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
       .newsletter-input { width: 100%; }
     }
@@ -453,9 +468,9 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
       <div class="section-eyebrow eyebrow-news">● Market News</div>
       <h2 class="section-title">Latest Market Updates</h2>
     </div>
-<a href="{% url 'resource_category' 'news' %}" class="view-all-link link-news">
-  All News
-</a>
+    <a href="{% url 'resource_category' 'news' %}" class="view-all-link link-news">
+      All News
+    </a>
   </div>
 
   <hr class="section-rule rule-news"/>
@@ -499,7 +514,13 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
 
       </div>
 
-      <div class="news-thumb">📊</div>
+      <div class="news-thumb">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.title }}">
+        {% else %}
+          📊
+        {% endif %}
+      </div>
 
     </a>
     {% empty %}
@@ -561,7 +582,7 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
 
           <div>
             <div class="blog-author-name">
-              {{ item.author_profile.name|default:"Vittarthi Team" }}
+              {{ item.author_profile.name|default:"Vitharthi Team" }}
             </div>
 
             <div class="blog-date">
@@ -647,10 +668,16 @@ Resources — Financial Guides, News & Case Studies | Vittarthi
 
         </div>
 
+        {% if item.image %}
+        <div class="case-thumb">
+          <img src="{{ item.image.url }}" alt="{{ item.title }}">
+        </div>
+        {% else %}
         <div class="case-outcome">
           <div class="case-outcome-num">CASE</div>
           <div class="case-outcome-label">Study</div>
         </div>
+        {% endif %}
 
       </div>
 

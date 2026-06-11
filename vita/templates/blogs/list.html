@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-Financial Planning Guides & Calculator Insights | Vittarthi
+Financial Planning Guides & Calculator Insights | Vitharthi
 {% endblock %}
 
 {% block meta_description %}
-Explore financial planning guides, calculator explainers, SIP strategies, loan tips, tax-saving insights, and investment knowledge on Vita₹thi.
+Explore financial planning guides, calculator explainers, SIP strategies, loan tips, tax-saving insights, and investment knowledge on Vitharthi.
 {% endblock %}
 
 {% block content %}
@@ -39,23 +39,15 @@ Explore financial planning guides, calculator explainers, SIP strategies, loan t
   --shadow-lg:  0 16px 48px rgba(21,128,61,.15);
   --shadow-btn: 0 6px 18px rgba(21,128,61,.35);
 }
-
-/* Dark mode variable overrides */
-/* body.dark :root,
-body.dark-mode :root {
-  --g-surface:  #0a1a0f;
-  --g-pale:     #14532d30;
-  --text-primary:   #e2f5e8;
-  --text-secondary: #86efac;
-  --text-muted:     #4ade80;
-} */
-
+*, *::before, *::after {
+  box-sizing: border-box !important;
+  max-width: 100%;
+}
 /* ── PAGE WRAPPER ─────────────────────────────────────── */
 .page {
   max-width: 1320px;
   margin: 0 auto;
   padding: 2rem clamp(1rem, 4vw, 2rem);
-  /* background: var(--g-surface); */
   min-height: 100vh;
   font-family: 'DM Sans', sans-serif;
 }
@@ -63,8 +55,8 @@ body.dark-mode :root {
 /* ── LAYOUT GRID ──────────────────────────────────────── */
 .content-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: clamp(2rem, 4vw, 3rem);
+  grid-template-columns: 1fr 330px;
+  gap: clamp(2rem, 4vw, 2.5rem);
   align-items: start;
 }
 
@@ -73,39 +65,43 @@ body.dark-mode :root {
 ════════════════════════════════════════════════════════ */
 .archive-header {
   text-align: center;
-  margin-bottom: 3rem;
+  padding: 2.5rem 1.5rem 2rem;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--g-pale);
+  margin-bottom: 2rem;
   position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Decorative line above title */
+/* Top gradient accent stripe */
 .archive-header::before {
   content: '';
-  display: block;
-  width: 60px;
+  position: absolute;
+  top: 0; left: 0; right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--g-base), var(--g-gold));
-  border-radius: 99px;
-  margin: 0 auto 1.5rem;
+  background: linear-gradient(90deg, var(--g-base), var(--g-gold), var(--g-bright));
 }
 
 .archive-header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
   font-weight: 900;
   background: linear-gradient(135deg, var(--g-darkest) 0%, var(--g-mid) 50%, var(--g-bright) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 1rem;
-  letter-spacing: -1px;
-  line-height: 1.1;
+  margin-bottom: 0.7rem;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
 }
 
 .archive-header p {
-  margin: 0 auto 2rem;
-  font-size: 1.1rem;
+  margin: 0 auto 1.5rem;
+  font-size: 1rem;
   color: var(--text-secondary);
-  max-width: 520px;
+  max-width: 480px;
   line-height: 1.6;
 }
 
@@ -113,18 +109,19 @@ body.dark-mode :root {
 .archive-header .admin-btns {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 1.8rem;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .btn-write {
   background: linear-gradient(135deg, var(--g-base), var(--g-dark));
   color: #fff !important;
   border: none;
-  padding: 11px 28px;
+  padding: 10px 24px;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -135,18 +132,18 @@ body.dark-mode :root {
 }
 .btn-write:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(21,128,61,.45);
+  box-shadow: 0 10px 24px rgba(21,128,61,.45);
   color: #fff !important;
 }
 
 .btn-manage {
-  background: transparent;
+  background: #fff;
   color: var(--g-base) !important;
-  border: 2px solid var(--g-pale);
-  padding: 11px 28px;
+  border: 1.5px solid var(--g-pale);
+  padding: 10px 24px;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -155,32 +152,34 @@ body.dark-mode :root {
   font-family: 'DM Sans', sans-serif;
 }
 .btn-manage:hover {
-  background: var(--g-pale);
+  background: var(--g-surface);
   border-color: var(--g-light);
   color: var(--g-dark) !important;
 }
 
 /* ── SEARCH BAR ───────────────────────────────────────── */
+.search-wrap { display: flex; justify-content: center; }
+
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #fff;
-  border: 2px solid var(--g-pale);
+  gap: 10px;
+  background: var(--g-surface);
+  border: 1.5px solid var(--g-pale);
   border-radius: 50px;
-  padding: 13px 26px;
-  max-width: 580px;
-  margin: 0 auto;
-  box-shadow: var(--shadow-md);
+  padding: 11px 22px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-sm);
   transition: border-color 0.25s, box-shadow 0.25s;
 }
 .search-bar:focus-within {
   border-color: var(--g-light);
-  box-shadow: 0 0 0 4px rgba(21,128,61,.10), var(--shadow-md);
+  box-shadow: 0 0 0 4px rgba(21,128,61,.10);
 }
 .search-bar i {
   color: var(--g-base);
-  font-size: 1.1rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 .search-bar input {
@@ -188,76 +187,138 @@ body.dark-mode :root {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
   font-family: 'DM Sans', sans-serif;
 }
 .search-bar input::placeholder { color: var(--text-muted); }
 
 /* ════════════════════════════════════════════════════════
-   CATEGORY NAV PILLS
+   SECTION SWITCHER  (pill container)
 ════════════════════════════════════════════════════════ */
+.switcher-wrap {
+  margin-bottom: 1.4rem;
+}
+
+.content-switcher {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: #fff;
+  border: 1.5px solid var(--g-pale);
+  border-radius: 50px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.switch-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.82rem;
+  transition: all .22s;
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.switch-pill .cnt {
+  background: var(--g-pale);
+  color: var(--g-base);
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.switch-pill:hover {
+  background: var(--g-surface);
+  color: var(--g-dark);
+}
+
+.switch-pill.active {
+  background: linear-gradient(135deg, var(--g-base), var(--g-dark));
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(21,128,61,.3);
+}
+
+.switch-pill.active .cnt {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
+/* ── CATEGORY NAV ─────────────────────────────────────── */
 .category-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding: 10px 2px 14px;
+  padding: 0 2px 1.5rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .category-nav::-webkit-scrollbar { display: none; }
 
 .category-nav .pill {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 10px 22px;
+  padding: 7px 18px;
   border-radius: 999px;
   background: #fff;
   border: 1.5px solid var(--g-pale);
   color: var(--g-mid);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
-  transition: all 0.25s ease;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-.category-nav .pill::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -120%;
-  width: 70%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
-  transition: left .55s ease;
+  transition: all 0.22s ease;
 }
 .category-nav .pill:hover {
-  transform: translateY(-2px);
-  background: var(--g-pale);
+  background: var(--g-surface);
   border-color: var(--g-light);
   color: var(--g-dark);
-  box-shadow: var(--shadow-md);
 }
-.category-nav .pill:hover::before { left: 120%; }
 .category-nav .pill.active {
-  background: linear-gradient(135deg, var(--g-base), var(--g-dark));
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 8px 22px rgba(21,128,61,.35);
+  background: var(--g-surface);
+  color: var(--g-darkest);
+  border-color: var(--g-base);
+  font-weight: 700;
 }
 
 /* ════════════════════════════════════════════════════════
-   FEATURED CARD (HERO STYLE)
+   FEATURED CARD
 ════════════════════════════════════════════════════════ */
 .featured-section { margin-bottom: 2.5rem; }
 
+/* Label above featured card */
+.featured-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--g-gold);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 1rem;
+}
+.featured-label::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--g-gold);
+  border-radius: 2px;
+}
+
 .featured-card {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
   background: #fff;
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -270,9 +331,7 @@ body.dark-mode :root {
 }
 
 .featured-card .img-wrapper {
-  flex: 1.1;
-  min-height: 340px;
-  max-height: 420px;
+  min-height: 320px;
   overflow: hidden;
   position: relative;
 }
@@ -280,124 +339,127 @@ body.dark-mode :root {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(5,46,22,.25), transparent 60%);
+  background: linear-gradient(135deg, rgba(5,46,22,.2), transparent 60%);
 }
 .featured-card .blog-img {
   width: 100%; height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.6s ease;
 }
 .featured-card:hover .blog-img { transform: scale(1.05); }
 
 .featured-card .blog-body {
-  flex: 1;
-  padding: 2.5rem 2.8rem;
+  padding: 2.2rem 2.4rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .featured-card .cat-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: var(--g-gold-lt);
   color: var(--g-gold);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: .8px;
   text-transform: uppercase;
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: 999px;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   border: 1px solid #fde68a;
   width: fit-content;
 }
 
 .featured-card .blog-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 700;
   color: var(--g-darkest);
   line-height: 1.25;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   transition: color 0.2s;
 }
 .featured-card:hover .blog-title { color: var(--g-base); }
 
 .featured-card .blog-desc {
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-size: 0.97rem;
+  line-height: 1.65;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.read-more-link {
+.featured-card .read-more-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   color: #fff !important;
   background: linear-gradient(135deg, var(--g-base), var(--g-dark));
-  padding: 12px 24px;
+  padding: 11px 22px;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   text-decoration: none !important;
   width: fit-content;
   box-shadow: var(--shadow-btn);
   transition: all 0.25s;
+  margin-bottom: 1.8rem;
 }
-.read-more-link:hover {
+.featured-card .read-more-link:hover {
   transform: translateX(4px);
   box-shadow: 0 10px 28px rgba(21,128,61,.45);
 }
-.read-more-link i { transition: transform 0.2s; }
-.read-more-link:hover i { transform: translateX(4px); }
+.featured-card .read-more-link i { transition: transform 0.2s; }
+.featured-card .read-more-link:hover i { transform: translateX(4px); }
 
-/* ── BLOG FOOTER (FEATURED) ─────────────────────────── */
+/* ── BLOG FOOTER ─────────────────────────────────────── */
 .blog-footer {
-  margin-top: 1.8rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1.2rem;
+  padding-top: 1.1rem;
   border-top: 1px solid var(--g-pale);
+  margin-top: auto;
 }
 
 .author-avatar {
-  width: 38px; height: 38px;
+  width: 34px; height: 34px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--g-base), var(--g-bright));
   display: flex; align-items: center; justify-content: center;
   color: #fff;
-  font-weight: 700; font-size: 0.85rem;
-  box-shadow: 0 3px 10px rgba(21,128,61,.3);
+  font-weight: 700; font-size: 0.8rem;
+  box-shadow: 0 2px 8px rgba(21,128,61,.3);
+  flex-shrink: 0;
 }
-.author-avatar i { color: #fff; }
 
 .author-name {
   font-weight: 700;
   color: var(--text-primary);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
 }
 .author-date {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
-/* Like button */
 .like-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 50px;
   background: var(--g-surface);
   border: 1.5px solid var(--g-pale);
   transition: all 0.2s;
   font-family: 'DM Sans', sans-serif;
+  user-select: none;
 }
 .like-btn:hover {
   background: #fff0f0;
@@ -410,254 +472,10 @@ body.dark-mode :root {
 .like-btn .like-count {
   color: var(--text-primary);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
-.like-btn i { transition: transform 0.2s; }
-.like-btn:hover i { transform: scale(1.2); }
-
-/* ════════════════════════════════════════════════════════
-   ARTICLE GRID CARDS
-════════════════════════════════════════════════════════ */
-.article-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.8rem;
-}
-
-.blog-card {
-  background: #fff;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1.5px solid var(--g-pale);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-  display: flex;
-  flex-direction: column;
-}
-
-.article-grid .blog-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--g-light);
-}
-
-.article-grid .img-wrapper {
-  overflow: hidden;
-  height: 210px;
-  position: relative;
-}
-
-/* Green shimmer overlay on image */
-.article-grid .img-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(5,46,22,.35));
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.blog-card:hover .article-grid .img-wrapper::after,
-.article-grid .blog-card:hover .img-wrapper::after { opacity: 1; }
-
-.blog-img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  transition: transform 0.5s ease;
-}
-.blog-card:hover .blog-img { transform: scale(1.07); }
-
-/* Body */
-.article-grid .blog-body {
-  padding: 1.5rem 1.6rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.cat-tag {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--g-base);
-  margin-bottom: 10px;
-}
-
-.article-grid .blog-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.45;
-  margin-bottom: 0.8rem;
-  transition: color 0.2s;
-}
-.article-grid .blog-card:hover .blog-title { color: var(--g-base); }
-
-.article-grid .blog-desc {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.65;
-  margin-bottom: 1.2rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.inline-read-more {
-  color: var(--g-base) !important;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-decoration: none !important;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: gap 0.2s;
-}
-.inline-read-more:hover { gap: 8px; color: var(--g-dark) !important; }
-
-/* Card footer */
-.article-grid .blog-footer {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid var(--g-pale);
-}
-
-/* ════════════════════════════════════════════════════════
-   SIDEBAR
-════════════════════════════════════════════════════════ */
-.sidebar {
-  position: sticky;
-  top: 90px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
-}
-
-.widget {
-  background: #fff;
-  border: 1.5px solid var(--g-pale);
-  border-radius: var(--radius-lg);
-  padding: 1.8rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.25s;
-}
-.widget:hover { box-shadow: var(--shadow-md); }
-
-.widget-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--g-darkest);
-  margin-bottom: 1.4rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 2px solid var(--g-base);
-  display: inline-block;
-  position: relative;
-}
-
-/* ── NEWSLETTER WIDGET ──────────────────────────────── */
-.newsletter-box { text-align: left; }
-.newsletter-box p {
-  color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.55;
-  margin-bottom: 1rem;
-}
-.newsletter-box input {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--g-pale);
-  margin-bottom: 12px;
-  font-size: 0.9rem;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--text-primary);
-  background: var(--g-surface);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-.newsletter-box input:focus {
-  border-color: var(--g-light);
-  box-shadow: 0 0 0 4px rgba(21,128,61,.10);
-}
-.newsletter-box .btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--g-base), var(--g-dark));
-  color: #fff;
-  padding: 13px;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-btn);
-  transition: all 0.25s;
-}
-.newsletter-box .btn:hover {
-  background: linear-gradient(135deg, var(--g-dark), var(--g-darkest));
-  transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(21,128,61,.45);
-}
-
-/* ── TRENDING WIDGET ─────────────────────────────────── */
-.popular-list { padding: 0; list-style: none; margin: 0; }
-.popular-list li {
-  margin-bottom: 14px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--g-pale);
-}
-.popular-list li:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-.popular-list a {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-decoration: none;
-}
-.popular-list .pop-title {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  font-weight: 600;
-  line-height: 1.35;
-  transition: color 0.2s;
-}
-.popular-list a:hover .pop-title { color: var(--g-base); }
-.popular-list .cat-tag { margin: 0; }
-
-/* ── QUICK TOOLS WIDGET ──────────────────────────────── */
-.calc-links {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.calc-links a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--g-surface);
-  border: 1px solid var(--g-pale);
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  color: var(--text-primary);
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.calc-links a:hover {
-  background: var(--g-pale);
-  border-color: var(--g-light);
-  color: var(--g-dark);
-  transform: translateX(4px);
-}
-.calc-links a i { font-size: 1rem; flex-shrink: 0; }
+.like-btn i { color: var(--text-muted); transition: transform 0.2s; }
+.like-btn:hover i, .like-btn.liked i { transform: scale(1.2); color: #ef4444; }
 
 /* ── DELETE BUTTON ────────────────────────────────────── */
 .btn-delete {
@@ -669,11 +487,310 @@ body.dark-mode :root {
 }
 .btn-delete:hover { background: #fff0f0; }
 
+/* ════════════════════════════════════════════════════════
+   ARTICLE GRID SECTION
+════════════════════════════════════════════════════════ */
+.articles-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.articles-section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--g-darkest);
+}
+
+.view-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--g-base);
+  text-decoration: none;
+  transition: gap .2s, color .2s;
+}
+.view-all-link:hover { gap: 8px; color: var(--g-dark); }
+
+/* ── GRID ─────────────────────────────────────────────── */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 1.6rem;
+}
+
+.blog-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid var(--g-pale);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.28s cubic-bezier(.25,.8,.25,1);
+  display: flex;
+  flex-direction: column;
+}
+.article-grid .blog-card:hover {
+  transform: translateY(-7px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--g-light);
+}
+
+.article-grid .img-wrapper {
+  overflow: hidden;
+  height: 190px;
+  position: relative;
+}
+.article-grid .img-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(5,46,22,.3));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.article-grid .blog-card:hover .img-wrapper::after { opacity: 1; }
+.article-grid .blog-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.article-grid .blog-card:hover .blog-img { transform: scale(1.07); }
+
+.article-grid .blog-body {
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.article-grid .cat-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--g-base);
+  margin-bottom: 8px;
+}
+
+.article-grid .blog-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  transition: color 0.2s;
+}
+.article-grid .blog-card:hover .blog-title { color: var(--g-base); }
+
+.article-grid .blog-desc {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 1.1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.article-grid .inline-read-more {
+  color: var(--g-base) !important;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 1.1rem;
+  width: fit-content;
+  transition: gap 0.2s, color 0.2s;
+}
+.article-grid .inline-read-more:hover { gap: 8px; color: var(--g-dark) !important; }
+
+/* Card footer always at bottom */
+.article-grid .blog-footer { margin-top: auto; }
+
+/* ════════════════════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════════════════════ */
+.sidebar {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.widget {
+  background: #fff;
+  border: 1.5px solid var(--g-pale);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s;
+}
+.widget:hover { box-shadow: var(--shadow-md); }
+
+.widget-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--g-darkest);
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Gradient line after title */
+.widget-title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--g-base), transparent);
+  border-radius: 2px;
+}
+
+/* ── NEWSLETTER ──────────────────────────────────────── */
+.newsletter-box p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+.newsletter-box input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--g-pale);
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+  background: var(--g-surface);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.newsletter-box input:focus {
+  border-color: var(--g-light);
+  box-shadow: 0 0 0 3px rgba(21,128,61,.10);
+}
+.newsletter-box .btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--g-base), var(--g-dark));
+  color: #fff;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.newsletter-box .btn:hover {
+  background: linear-gradient(135deg, var(--g-dark), var(--g-darkest));
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(21,128,61,.4);
+}
+
+/* ── TRENDING ─────────────────────────────────────────── */
+.popular-list { padding: 0; list-style: none; margin: 0; }
+.popular-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--g-pale);
+}
+.popular-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+/* Numbered rank badge */
+.trend-num {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--g-surface);
+  color: var(--g-base);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border: 1px solid var(--g-pale);
+}
+.popular-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
+  flex: 1;
+}
+.popular-list .pop-cat {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--g-base);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.popular-list .pop-title {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.35;
+  transition: color 0.2s;
+}
+.popular-list li:hover .pop-title { color: var(--g-base); }
+
+/* ── QUICK TOOLS ──────────────────────────────────────── */
+.calc-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.calc-links a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 11px;
+  background: var(--g-surface);
+  border: 1px solid var(--g-pale);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.calc-links a:hover {
+  background: var(--g-pale);
+  border-color: var(--g-light);
+  color: var(--g-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.calc-links a i { font-size: 1rem; flex-shrink: 0; }
+
 /* ── EMPTY STATE ──────────────────────────────────────── */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
   color: var(--text-muted);
+  background: #fff;
+  border: 1.5px dashed var(--g-pale);
+  border-radius: var(--radius-md);
 }
 .empty-state i { font-size: 3.5rem; color: var(--g-light); }
 .empty-state h3 {
@@ -683,88 +800,139 @@ body.dark-mode :root {
 }
 
 /* ════════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE (UPDATED FOR MOBILE FIX)
 ════════════════════════════════════════════════════════ */
-@media (max-width: 1050px) {
+@media (max-width: 1080px) {
   .content-layout { grid-template-columns: 1fr; }
-  .sidebar { position: relative; top: 0; }
-}
-
-@media (max-width: 768px) {
-  .featured-card {
-    flex-direction: column;
-  }
-  .featured-card .img-wrapper {
-    min-height: 220px;
-    max-height: 260px;
-  }
-  .featured-card .blog-body {
-    padding: 1.6rem;
-  }
-  .featured-card .blog-title {
-    font-size: 1.5rem;
-  }
-  .category-nav .pill {
-    padding: 7px 14px;
-    font-size: 0.82rem;
-  }
-  .article-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  .sidebar {
+    position: relative;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.2rem;
   }
 }
 
-@media (max-width: 480px) {
-  .archive-header h1 { font-size: 2rem; }
-  .article-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  /* 1. LAYOUT RESET: Grid ko hata kar flex banayenge taaki 100% width le */
+  .content-layout { display: flex !important; flex-direction: column !important; }
+  .featured-card { display: flex !important; flex-direction: column !important; }
+  
+  /* 2. PAGE MARGINS: Mobile par padding kam karenge taaki space bache */
+  .page { padding: 1rem !important; width: 100% !important; overflow-x: hidden; }
+
+  /* 3. SWITCHERS & HEADER: Wrap hone denge */
+  .content-switcher { flex-wrap: wrap !important; width: 100%; }
+  .switch-pill { white-space: normal !important; flex-grow: 1; text-align: center; justify-content: center; }
+  .archive-header h1 { font-size: 1.8rem !important; word-break: break-word; }
+
+  /* 4. IMAGE FIX: Fix height ki jagah Aspect Ratio, isse image katega nahi */
+  .featured-card .img-wrapper, .article-grid .img-wrapper, .blog-card .img-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
+    aspect-ratio: 16 / 9 !important; /* Perfect mobile image shape */
+  }
+
+  /* 5. TEXT & CARDS FIX: Box-sizing aur truncate */
+  .featured-card .blog-body, .article-grid .blog-body {
+    padding: 1.2rem !important;
+    width: 100% !important;
+  }
+  .blog-desc {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important; /* 2 line ke baad ... aa jayega */
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* 6. FOOTER STACK: Items ek line mein takrayenge nahi */
+  .blog-footer { flex-wrap: wrap !important; gap: 10px !important; height: auto !important; }
+  .blog-footer > div { width: 100% !important; justify-content: space-between !important; flex-wrap: wrap; }
 }
 
-/* ── DARK MODE PATCHES ────────────────────────────────── */
-/* body.dark .page,
-body.dark-mode .page {
-  background: #0a1a0f;
-} */
-/* body.dark .blog-card,
-body.dark .widget,
-body.dark .search-bar,
-body.dark-mode .blog-card,
-body.dark-mode .widget,
-body.dark-mode .search-bar {
-  background: #0f2118;
-  border-color: #14532d;
+@media (max-width: 576px) {
+  /* 1. LOCK SCREEN WIDTH (Prevents horizontal scrolling/breaking) */
+  body, .page {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  /* 2. HEADER & SEARCH BAR FIX */
+  .archive-header { padding: 1.5rem 1rem !important; }
+  .archive-header h1 { font-size: 1.6rem !important; }
+  .search-bar { max-width: 100% !important; padding: 8px 16px !important; }
+
+  /* 3. CARD CONTAINER FIX */
+  .featured-card, .blog-card {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin: 0 auto 1.5rem !important;
+  }
+
+  /* 4. PERFECT IMAGE SHRINKING (Uses aspect ratio instead of random height) */
+  .featured-card .img-wrapper,
+  .article-grid .img-wrapper,
+  .blog-card .img-wrapper {
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
+    aspect-ratio: 16 / 9 !important; /* Forces perfect landscape proportion on mobile */
+    width: 100% !important;
+  }
+
+  /* 5. TEXT CONTENT BREAK & TRUNCATE */
+  .featured-card .blog-body,
+  .article-grid .blog-body {
+    padding: 1.2rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .blog-title {
+    font-size: 1.25rem !important;
+    word-wrap: break-word !important; /* Breaks long words */
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .blog-desc {
+    font-size: 0.9rem !important;
+    margin-bottom: 1rem !important;
+    /* Strict 2-line truncate */
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  /* 6. FOOTER STACKING (Prevents buttons from squishing) */
+  .blog-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .blog-footer > .d-flex {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
 }
-body.dark .newsletter-box input,
-body.dark-mode .newsletter-box input {
-  background: #0a1a0f;
-  border-color: #14532d;
-  color: #e2f5e8;
-}
-body.dark .calc-links a,
-body.dark-mode .calc-links a {
-  background: #0a1a0f;
-  border-color: #14532d;
-  color: #86efac;
-}
-body.dark .calc-links a:hover,
-body.dark-mode .calc-links a:hover {
-  background: #14532d;
-  color: #dcfce7;
-}
-body.dark .like-btn,
-body.dark-mode .like-btn {
-  background: #0f2118;
-  border-color: #14532d;
-} */
 </style>
 
 <main class="page">
 
-  <!-- ═══ HEADER ═══ -->
+  <!-- ── HEADER ──────────────────────────────────────────── -->
   <header class="archive-header">
     <h1>Our Latest Insights</h1>
     <p>Dive into expert financial guides, investment strategies, and market trends.</p>
 
-    {% if user.is_superuser %}
+    {% if user.role == 'admin' or user.role == 'writer' %}
     <div class="admin-btns">
       <a href="{% url 'write_blog' %}" class="btn-write">
         <i class="bi bi-plus-circle-fill"></i> Write Article
@@ -775,36 +943,52 @@ body.dark-mode .like-btn {
     </div>
     {% endif %}
 
-    <div class="search-bar">
-      <i class="bi bi-search"></i>
-      <input type="search" id="searchInput" placeholder="Search by topic, keyword, or tool...">
+    <div class="search-wrap">
+      <div class="search-bar">
+        <i class="bi bi-search"></i>
+        <input type="search" id="searchInput" placeholder="Search by topic, keyword, or tool...">
+      </div>
     </div>
   </header>
 
-  <!-- ═══ CATEGORY PILLS ═══ -->
-  <nav class="category-nav">
-    <a href="?secondary=all"
-       class="pill {% if request.GET.secondary == 'all' or not request.GET.secondary %}active{% endif %}">
-      All
-    </a>
-    {% for cat in secondary_categories %}
-      <a href="?secondary={{ cat.slug }}"
-         class="pill {% if request.GET.secondary == cat.slug %}active{% endif %}">
-        {{ cat.name }}
-      </a>
-    {% endfor %}
-  </nav>
-
-  <!-- ═══ MAIN CONTENT ═══ -->
   <div class="content-layout">
 
+    <!-- ── MAIN COLUMN ────────────────────────────────────── -->
     <div class="main-col" id="blogContainer">
+
+      <!-- Section Switcher -->
+      <div class="switcher-wrap">
+        <div class="content-switcher">
+          <a href="/resources/blogs" class="switch-pill {% if current_section == 'blogs' %}active{% endif %}">
+            <i class="bi bi-journal-richtext"></i> Blogs <span class="cnt">{{ blog_count }}</span>
+          </a>
+          <a href="/resources/case-study" class="switch-pill {% if current_section == 'case-study' %}active{% endif %}">
+            <i class="bi bi-bar-chart-line"></i> Case Studies <span class="cnt">{{ case_study_count }}</span>
+          </a>
+          <a href="/resources/news" class="switch-pill {% if current_section == 'news' %}active{% endif %}">
+            <i class="bi bi-newspaper"></i> News <span class="cnt">{{ news_count }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Category Nav -->
+      <nav class="category-nav">
+        <a href="?secondary=all" class="pill {% if request.GET.secondary == 'all' or not request.GET.secondary %}active{% endif %}">
+          All
+        </a>
+        {% for cat in secondary_categories %}
+          <a href="?secondary={{ cat.slug }}" class="pill {% if request.GET.secondary == cat.slug %}active{% endif %}">
+            {{ cat.name }}
+          </a>
+        {% endfor %}
+      </nav>
 
       {% if blogs %}
 
-        <!-- ─── FEATURED CARD ─── -->
+        <!-- Featured Card -->
         {% with blog=blogs|first %}
         <section class="featured-section">
+          <div class="featured-label">Featured Article</div>
           <div class="blog-card featured-card blog-item"
                data-title="{{ blog.title|lower }}"
                data-category="{{ blog.primary_category.name|lower|default:'uncategorized' }}">
@@ -818,7 +1002,6 @@ body.dark-mode .like-btn {
             {% endif %}
 
             <div class="blog-body">
-
               <div class="cat-tag">
                 {% if blog.is_featured %}
                   🏆 Featured
@@ -842,18 +1025,18 @@ body.dark-mode .like-btn {
                 <div class="d-flex align-items-center gap-2">
                   <div class="author-avatar"><i class="bi bi-person-fill"></i></div>
                   <div>
-                    <div class="author-name"> {{ blog.author_profile.name|default_if_none:"Vittarthi Team"|default:"Vittarthi Team" }} </div>
+                    <div class="author-name">{{ blog.author_profile.name|default_if_none:"Vitharthi Team"|default:"Vitharthi Team" }}</div>
                     <div class="author-date">{{ blog.created_at|date:"M d, Y" }}</div>
                   </div>
                 </div>
-                <div class="action-icons d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                   <span class="like-btn {% if blog.id in request.session.liked_blogs %}liked{% endif %}"
-                        onclick="likeBlog('{{ blog.slug }}', this)">
+                        onclick="likeBlog('{% url 'like_blog' blog.slug %}', this)">
                     <i class="bi bi-heart-fill"
                        style="{% if blog.id not in request.session.liked_blogs %}color:var(--text-muted){% else %}color:#ef4444{% endif %}"></i>
                     <span class="like-count">{{ blog.likes }}</span>
                   </span>
-                  {% if user.is_superuser %}
+                  {% if user.role == 'admin' %}
                   <a href="javascript:void(0)"
                      onclick="deleteBlog(this, '{% url 'delete_blog' blog.slug %}')"
                      class="btn-delete text-danger">
@@ -862,13 +1045,17 @@ body.dark-mode .like-btn {
                   {% endif %}
                 </div>
               </div>
-
             </div>
           </div>
         </section>
         {% endwith %}
 
-        <!-- ─── ARTICLE GRID ─── -->
+        <!-- Article Grid -->
+        <div class="articles-section-header">
+          <h2>More Articles</h2>
+          <a href="?secondary=all" class="view-all-link">View all <i class="bi bi-arrow-right"></i></a>
+        </div>
+
         <section class="article-grid">
           {% for blog in blogs|slice:"1:" %}
           <div class="blog-card blog-item"
@@ -884,7 +1071,6 @@ body.dark-mode .like-btn {
             {% endif %}
 
             <div class="blog-body">
-
               <div class="cat-tag">
                 {{ blog.primary_category.name|default:"General" }}
                 {% if blog.secondary_category %} • {{ blog.secondary_category.name }}{% endif %}
@@ -894,9 +1080,7 @@ body.dark-mode .like-btn {
                 <h2 class="blog-title">{{ blog.title }}</h2>
               </a>
 
-              <p class="blog-desc">
-                {{ blog.summary|striptags|truncatechars:110 }}
-              </p>
+              <p class="blog-desc">{{ blog.summary|striptags|truncatechars:110 }}</p>
 
               <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="inline-read-more">
                 Read more <i class="bi bi-arrow-right"></i>
@@ -904,20 +1088,22 @@ body.dark-mode .like-btn {
 
               <div class="blog-footer">
                 <div class="d-flex align-items-center gap-2">
-                  <div class="author-avatar"><i class="bi bi-person-fill"></i></div>
+                  <div class="author-avatar" style="width:28px;height:28px;font-size:.75rem;">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
                   <div>
-                    <div class="author-name">{{ blog.author_profile.name }}</div>
+                    <div class="author-name">{{ blog.author_profile.name|default:"Vitharthi Team" }}</div>
                     <div class="author-date">{{ blog.created_at|date:"M d, Y" }}</div>
                   </div>
                 </div>
-                <div class="action-icons d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                   <span class="like-btn {% if blog.id in request.session.liked_blogs %}liked{% endif %}"
-                        onclick="likeBlog('{{ blog.slug }}', this)">
+                        onclick="likeBlog('{% url 'like_blog' blog.slug %}', this)">
                     <i class="bi bi-heart-fill"
                        style="{% if blog.id not in request.session.liked_blogs %}color:var(--text-muted){% else %}color:#ef4444{% endif %}"></i>
                     <span class="like-count">{{ blog.likes }}</span>
                   </span>
-                  {% if user.is_superuser %}
+                  {% if user.role == 'admin' %}
                   <a href="javascript:void(0)"
                      onclick="deleteBlog(this, '{% url 'delete_blog' blog.slug %}')"
                      class="btn-delete text-danger">
@@ -926,7 +1112,6 @@ body.dark-mode .like-btn {
                   {% endif %}
                 </div>
               </div>
-
             </div>
           </div>
           {% endfor %}
@@ -940,36 +1125,34 @@ body.dark-mode .like-btn {
         </div>
       {% endif %}
 
-    </div><!-- /.main-col -->
+    </div>
 
-    <!-- ═══ SIDEBAR ═══ -->
+    <!-- ── SIDEBAR ─────────────────────────────────────────── -->
     <aside class="sidebar">
 
       <!-- Newsletter -->
       <div class="widget newsletter-box">
-        <div class="widget-title">Subscribe</div>
+        <div class="widget-title"><i class="bi bi-envelope-fill" style="color:var(--g-base);font-size:1rem;"></i> Subscribe</div>
         <p>Get the latest financial guides and market updates directly in your inbox.</p>
         <form id="subscribeForm">
           {% csrf_token %}
-          <input type="email" id="subEmail" placeholder="Your Email Address" required>
+          <input type="email" id="subEmail" placeholder="Your email address" required>
           <button type="submit" class="btn" id="subBtn">
-            <i class="bi bi-envelope-fill me-1"></i> Subscribe Now
+            <i class="bi bi-send-fill"></i> Subscribe Now
           </button>
         </form>
-        <p id="subMessage" style="margin-top:10px; font-weight:600; display:none;"></p>
+        <p id="subMessage" style="margin-top:10px;font-weight:600;display:none;font-size:.85rem;"></p>
       </div>
 
-      <!-- Trending Topics -->
+      <!-- Trending -->
       <div class="widget">
-        <h3 class="widget-title">Trending Topics</h3>
+        <h3 class="widget-title"><i class="bi bi-fire" style="color:#ef4444;font-size:1rem;"></i> Trending</h3>
         <ul class="popular-list">
           {% for blog in blogs|slice:":4" %}
           <li>
+            <div class="trend-num">{{ forloop.counter }}</div>
             <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}">
-              <span class="cat-tag">
-                {{ blog.primary_category.name|default:"General" }}
-                {% if blog.secondary_category %} • {{ blog.secondary_category.name }}{% endif %}
-              </span>
+              <div class="pop-cat">{{ blog.primary_category.name|default:"General" }}{% if blog.secondary_category %} · {{ blog.secondary_category.name }}{% endif %}</div>
               <div class="pop-title">{{ blog.title }}</div>
             </a>
           </li>
@@ -979,42 +1162,41 @@ body.dark-mode .like-btn {
 
       <!-- Quick Tools -->
       <div class="widget">
-        <h3 class="widget-title">Quick Tools</h3>
+        <h3 class="widget-title"><i class="bi bi-calculator-fill" style="color:var(--g-base);font-size:1rem;"></i> Quick Tools</h3>
         <div class="calc-links">
-          <a href="/calculators/sip"><i class="bi bi-graph-up-arrow text-success"></i> SIP Calculator</a>
-          <a href="/calculators/emi"><i class="bi bi-calculator text-primary"></i> EMI Calculator</a>
-          <a href="/calculators/retirement"><i class="bi bi-clock-history text-warning"></i> Retirement Planner</a>
-          <a href="/calculators/home-loan"><i class="bi bi-house-door" style="color:var(--g-base);"></i> Home Loan</a>
+          <a href="/calculators/sip"><i class="bi bi-graph-up-arrow" style="color:#15803d;"></i> SIP Calc</a>
+          <a href="/calculators/emi"><i class="bi bi-calculator" style="color:#0284c7;"></i> EMI Calc</a>
+          <a href="/calculators/retirement"><i class="bi bi-clock-history" style="color:#d97706;"></i> Retirement</a>
+          <a href="/calculators/home-loan"><i class="bi bi-house-door" style="color:#15803d;"></i> Home Loan</a>
           <a href="/calculators/car-loan"><i class="bi bi-car-front" style="color:#ef4444;"></i> Car Loan</a>
-          <a href="/calculators/personal-loan"><i class="bi bi-person-badge" style="color:#7c3aed;"></i> Personal Loan</a>
-          <a href="/calculators/ppf"><i class="bi bi-safe" style="color:var(--g-gold);"></i> PPF Calc</a>
-          <a href="/calculators/nps"><i class="bi bi-shield-check" style="color:var(--g-base);"></i> NPS Calc</a>
-          <a href="/calculators/salary"><i class="bi bi-cash-stack" style="color:#7c3aed;"></i> Salary Calc</a>
-          <a href="/calculators/pf"><i class="bi bi-wallet2" style="color:var(--g-gold);"></i> EPF Calc</a>
-          <a href="/calculators/loan-eligibility"><i class="bi bi-check2-circle" style="color:var(--g-base);"></i> Loan Eligibility</a>
+          <a href="/calculators/personal-loan"><i class="bi bi-person-badge" style="color:#7c3aed;"></i> Personal</a>
+          <a href="/calculators/ppf"><i class="bi bi-safe" style="color:#d97706;"></i> PPF Calc</a>
+          <a href="/calculators/nps"><i class="bi bi-shield-check" style="color:#15803d;"></i> NPS Calc</a>
+          <a href="/calculators/salary"><i class="bi bi-cash-stack" style="color:#7c3aed;"></i> Salary</a>
+          <a href="/calculators/pf"><i class="bi bi-wallet2" style="color:#d97706;"></i> EPF Calc</a>
+          <a href="/calculators/loan-eligibility"><i class="bi bi-check2-circle" style="color:#15803d;"></i> Eligibility</a>
         </div>
       </div>
 
     </aside>
 
-  </div><!-- /.content-layout -->
+  </div>
 </main>
 
-<!-- ═══════════ SCRIPTS ═══════════ -->
 <script>
 /* Search */
 document.getElementById("searchInput").addEventListener("keyup", function () {
   const val = this.value.toLowerCase();
   document.querySelectorAll(".blog-item").forEach(b => {
-    b.style.display = b.dataset.title.includes(val) ? "flex" : "none";
+    b.style.display = b.dataset.title.includes(val) ? "" : "none";
   });
 });
 
 /* Like */
-function likeBlog(slug, el) {
+function likeBlog(url, el) {
   const heart = el.querySelector('i');
-  fetch(`/blogs/like/${slug}/`)
-    .then(r => r.json())
+  fetch(url)
+    .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
     .then(data => {
       el.querySelector('.like-count').innerText = data.likes;
       if (data.liked) {
@@ -1041,12 +1223,12 @@ function deleteBlog(el, url) {
 /* Subscribe */
 document.getElementById('subscribeForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const email    = document.getElementById('subEmail').value;
-  const csrf     = document.querySelector('[name=csrfmiddlewaretoken]').value;
-  const btn      = document.getElementById('subBtn');
-  const msg      = document.getElementById('subMessage');
+  const email = document.getElementById('subEmail').value;
+  const csrf  = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const btn   = document.getElementById('subBtn');
+  const msg   = document.getElementById('subMessage');
 
-  btn.innerText = 'Subscribing...';
+  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Subscribing...';
   btn.disabled  = true;
 
   const fd = new FormData();
@@ -1055,7 +1237,7 @@ document.getElementById('subscribeForm').addEventListener('submit', function (e)
   fetch('/subscribe/', { method: 'POST', headers: { 'X-CSRFToken': csrf }, body: fd })
     .then(r => r.json())
     .then(data => {
-      btn.innerText = 'Subscribe Now';
+      btn.innerHTML = '<i class="bi bi-send-fill"></i> Subscribe Now';
       btn.disabled  = false;
       if (data.status === 'success') {
         document.getElementById('subscribeForm').style.display = 'none';
@@ -1069,7 +1251,7 @@ document.getElementById('subscribeForm').addEventListener('submit', function (e)
       }
     })
     .catch(() => {
-      btn.innerText = 'Subscribe Now';
+      btn.innerHTML = '<i class="bi bi-send-fill"></i> Subscribe Now';
       btn.disabled  = false;
     });
 });

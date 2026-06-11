@@ -47,33 +47,118 @@
         font-weight: normal;
     }
 
+/* ══════════ PREMIUM BUTTONS ══════════ */
     .btn-group {
         display: flex;
         gap: 12px;
+        align-items: center;
     }
 
     .btn {
-        padding: 3px 10px;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Inter', sans-serif;
     }
 
-    .btn-outline {
-        background: transparent;
-        border: 1px solid #e2e8f0;
-        color: #1e293b;
+    /* Save Draft - Clean Slate */
+    .btn-draft {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #475569;
     }
-    .btn-outline:hover { background: #f8fafc; }
+    .btn-draft:hover { 
+        background: #e2e8f0; 
+        color: #1e293b; 
+    }
 
-    .btn-solid {
+    /* Preview - Glassy Blue */
+    .btn-preview {
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid #3b82f6;
+        color: #2563eb;
+        backdrop-filter: blur(4px);
+    }
+    .btn-preview:hover { 
+        background: #3b82f6; 
+        color: #ffffff; 
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); 
+    }
+
+    /* Publish - Solid Emerald */
+    .btn-publish {
+        background: #10b981;
+        border: 1px solid #059669;
+        color: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+    }
+    .btn-publish:hover { 
+        background: #059669; 
+        box-shadow: 0 6px 14px -2px rgba(16, 185, 129, 0.4); 
+        transform: translateY(-1px); 
+    }
+
+    /* ══════════ PREVIEW MODAL ══════════ */
+    .preview-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-modal-content {
         background: #ffffff;
-        border: 1px solid #e2e8f0;
-        color: #1e293b;
+        width: 90%;
+        max-width: 900px;
+        height: 85vh;
+        border-radius: 12px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: modalFadeIn 0.3s ease-out;
     }
-    .btn-solid:hover { border-color: #64748b; }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .preview-modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8fafc;
+    }
+
+    .preview-modal-body {
+        padding: 40px;
+        overflow-y: auto;
+        flex: 1;
+        /* Matches blog reading experience */
+        font-family: 'Lora', serif;
+        line-height: 1.8;
+        color: #334155;
+        font-size: 1.1rem;
+    }
+
+    .preview-modal-body img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
 
     /* ══════════ GRID SYSTEM ══════════ */
     .editor-grid {
@@ -157,6 +242,44 @@
 
     .title-input::placeholder { font-style: italic; color: #cbd5e1; }
 
+/* ══════════ META SECTION & ACTION BAR ══════════ */
+    .article-meta-section {
+        background: rgba(248, 250, 252, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 24px;
+        margin-top: 24px;
+        box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .meta-settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    .mb-0 { margin-bottom: 0 !important; }
+
+    .action-bar {
+        display: flex;
+        justify-content: flex-end; /* Pushes buttons to the right */
+        align-items: center;
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px dashed #cbd5e1;
+    }
+
+    /* Uniform height for all inputs and selects to prevent squishing */
+    .input-control {
+        height: 42px; 
+    }
+    
+    /* Ensure select dropdowns show arrows properly */
+    select.input-control {
+        appearance: auto; 
+        background-color: #fff;
+    }
     .flex-row {
         display: flex;
         gap: 16px;
@@ -261,15 +384,65 @@
                         </div>
                     </div>
 
-                    <div class="flex-row">
-                        <div>
-                            <label class="form-label">URL slug</label>
-                            <input type="text" name="slug" id="slugInputLeft" class="input-control" placeholder="auto-generated">
+                    <!-- ══════════ ARTICLE META & ACTIONS ══════════ -->
+                    <div class="article-meta-section">
+                        
+                        <!-- Row 1: 4-Column Grid for Inputs & Selects -->
+                        <div class="meta-settings-grid">
+                            <div class="form-group mb-0">
+                                <label class="form-label">URL slug</label>
+                                <input type="text" name="slug" id="slugInputLeft" class="input-control" placeholder="auto-generated">
+                            </div>
+                            
+                            <div class="form-group mb-0">
+                                <label class="form-label">Author Profile</label>
+                                <select name="author_profile" class="input-control">
+                                    <option value="">Select Author</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}">{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">Reviewed By</label>
+                                <select name="reviewed_by" class="input-control">
+                                    <option value="">Select Reviewer</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}">{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">Edited By</label>
+                                <select name="edited_by" class="input-control">
+                                    <option value="">Select Editor</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}">{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                        <div class="btn-group">
-                            <button type="submit" name="status" value="draft" class="btn btn-outline">Save Draft</button>
-                            <button type="submit" name="status" value="published" class="btn btn-solid">Publish</button>
+
+                        <!-- Row 2: Action Buttons Aligned Right -->
+                        <div class="action-bar">
+                            <div class="btn-group">
+                                <button type="submit" name="status" value="draft" class="btn btn-draft">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                    Save Draft
+                                </button>
+                                <button type="button" class="btn btn-preview" onclick="openPreviewMode()">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    Preview
+                                </button>
+                                <button type="submit" name="status" value="published" class="btn btn-publish">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Publish
+                                </button>
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
 
@@ -347,6 +520,16 @@
             <button onclick="closeSecondaryModal()" class="btn btn-outline" type="button">Cancel</button>
             <button onclick="saveSecondary()" class="btn btn-solid" style="background:#3b82f6; color:#ffffff; border-color:#3b82f6;" type="button">Save</button>
         </div>
+    </div>
+</div>
+<div id="previewModal" class="preview-modal-overlay">
+    <div class="preview-modal-content">
+        <div class="preview-modal-header">
+            <h3 style="margin:0; font-family:'Inter', sans-serif; font-size:1.1rem; color:#1e293b;">Live Article Preview</h3>
+            <button type="button" onclick="closePreviewMode()" style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#64748b; line-height: 1;">&times;</button>
+        </div>
+        <div class="preview-modal-body" id="previewModalBody">
+            </div>
     </div>
 </div>
 
@@ -515,6 +698,38 @@
                 select.querySelector(`option[value="${id}"]`).remove();
             }
         });
+    }
+// ══════════ LIVE PREVIEW LOGIC ══════════
+    function openPreviewMode() {
+        // Fetch HTML direct from CKEditor instance
+        let content = '';
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.editor) {
+            content = CKEDITOR.instances.editor.getData();
+        } else {
+            // Fallback for standard textarea if CKEditor fails to load
+            content = document.getElementById("editor").value;
+        }
+
+        // Fetch Title and Cover Image (if selected) for realistic preview
+        let title = document.querySelector(".title-input").value || "Untitled Article";
+        let imageSrc = document.getElementById("imagePreview").src;
+        
+        let previewHTML = `<h1 style="font-family:'DM Serif Display', serif; font-size:2.5rem; margin-bottom: 24px; color:#1e293b; line-height:1.2;">${title}</h1>`;
+        
+        // Show image in preview if user has uploaded one
+        if (imageSrc && document.getElementById("imagePreview").style.display !== "none") {
+            previewHTML += `<img src="${imageSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom: 30px;" alt="Cover">`;
+        }
+
+        previewHTML += content;
+
+        // Inject and Display
+        document.getElementById('previewModalBody').innerHTML = previewHTML;
+        document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    function closePreviewMode() {
+        document.getElementById('previewModal').style.display = 'none';
     }
 </script>
 

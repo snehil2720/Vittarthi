@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage,Author
 from django.contrib.auth.decorators import login_required
@@ -22,49 +21,88 @@ from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.utils.html import strip_tags
 from bs4 import BeautifulSoup
+from financial_advisor.views import dashboard
+from vita.decorators import admin_required, writer_required
+
 def auth_page(request):
     return render(request, "authentication/auth.html")
 
+def forgot_password(request):
+    return render(request, 'authentication/forgot_password.html')
 # SIGNUP
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
+        email    = request.POST.get("email")
         password = request.POST.get("password")
-
-        if CustomUser.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
             return redirect("auth")
-
         user = CustomUser.objects.create_user(
             username=username,
+            email=email,
             password=password,
             role='user'
         )
-
-        login(request, user)
-
+        login(
+            request,
+            user,
+            backend='django.contrib.auth.backends.ModelBackend'
+        )
         messages.success(request, "Account created successfully 🎉")
-        return redirect("auth")
-
+        #return redirect("dashboard")
+        #return redirect("http://app.vittarthi.local:8000/")
+        #return redirect("https://app.vittarthi.com/")
+        return redirect(settings.DASHBOARD_URL)
     return redirect("auth")
 
 
 # SIGNIN
 def signin(request):
+
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
 
-        # check user exists
-        if not CustomUser.objects.filter(username=username).exists():
-            messages.error(request, "User not found! Please signup first.")
-            return redirect("auth")
+        identifier = request.POST.get("identifier")
+        password   = request.POST.get("password")
 
-        user = authenticate(request, username=username, password=password)
+        user_obj = None
+
+        # Login via Email
+        if "@" in identifier:
+
+            try:
+                user_obj = CustomUser.objects.get(email=identifier)
+            except CustomUser.DoesNotExist:
+                messages.error(request, "Email not registered")
+                return redirect("auth")
+
+        # Login via Username
+        else:
+
+            try:
+                user_obj = CustomUser.objects.get(username=identifier)
+            except CustomUser.DoesNotExist:
+                messages.error(request, "Username not found")
+                return redirect("auth")
+
+        # Authenticate using actual username
+        user = authenticate(
+            request,
+            username=user_obj.username,
+            password=password
+        )
 
         if user:
-            login(request, user)
-            return redirect("home")
+            login(
+                request,
+                user,
+                backend='django.contrib.auth.backends.ModelBackend'
+            )
+            #return redirect("dashboard")
+            #return redirect("https://app.vittarthi.com/") #production pe 
+            #return redirect("http://app.vittarthi.local:8000/") #local pe 
+            return redirect(settings.DASHBOARD_URL)
+
         else:
             messages.error(request, "Invalid password")
 
@@ -151,6 +189,19 @@ def blog_list(request, primary_slug):
         blogs = blogs.filter(secondary_category__slug=secondary_slug)
 
     secondary_categories = SecondaryCategory.objects.filter(primary=primary)
+    category_counts = (
+        Blog.objects
+        .filter(status='published')
+        .values('primary_category__slug')
+        .annotate(total=Count('id'))
+    )
+
+    counts = {item['primary_category__slug']: item['total']
+            for item in category_counts}
+
+    blog_count = counts.get('blogs', 0)
+    case_study_count = counts.get('case-study', 0)
+    news_count = counts.get('news', 0)
     breadcrumbs = [
         {'name': 'Home', 'url': '/'},
         {'name': 'Resources', 'url': '/resources'},
@@ -160,7 +211,11 @@ def blog_list(request, primary_slug):
         'blogs': blogs,
         'primary': primary,
         'secondary_categories': secondary_categories,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'blog_count': blog_count,
+        'case_study_count': case_study_count,
+        'news_count': news_count,
+        'current_section': primary.slug,
     })
 def get_secondary(request, primary_id):
     cats = SecondaryCategory.objects.filter(primary_id=primary_id)
@@ -174,6 +229,20 @@ def blog_detail(request, primary_slug,slug):
         status='published',
         primary_category__slug=primary_slug  
     )
+    related_articles = Blog.objects.filter(
+        status='published',
+        primary_category=blog.primary_category
+    ).exclude(
+        id=blog.id
+    ).order_by('-created_at')[:5]
+
+    popular_articles = Blog.objects.filter(
+        status='published',
+        primary_category=blog.primary_category
+    ).exclude(
+        id=blog.id
+    ).order_by('-likes')[:5]
+    categories = type(blog.primary_category).objects.all()
     text = re.sub('<[^<]+?>', '', blog.content)
     words = len(text.split())
     read_time = math.ceil(words / 200)
@@ -192,9 +261,12 @@ def blog_detail(request, primary_slug,slug):
     return render(request, 'blogs/detail.html', {
         'blog': blog,
         'read_time': read_time,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'related_articles': related_articles,
+        'popular_articles': popular_articles,
+        'categories': categories,
     })
-
+@admin_required
 def delete_blog(request, slug):
     blog = Blog.objects.get(slug=slug)
     primary_slug = blog.primary_category.slug
@@ -210,15 +282,13 @@ def generate_unique_slug(title, slug_input=None, instance=None):
         counter += 1
 
     return slug
-@login_required
-@login_required
+
+@writer_required
 def write_blog(request):
-    if not is_writer(request.user):
-        return redirect('blogs')
 
     primary_categories = PrimaryCategory.objects.all()
     secondary_categories = SecondaryCategory.objects.none()
-
+    authors = Author.objects.all()
     if request.method == 'POST':
         title = request.POST.get('title')
         slug_input = request.POST.get("slug")
@@ -246,6 +316,9 @@ def write_blog(request):
             content=content,
             image=request.FILES.get('image'),
             author=request.user,
+            author_profile_id=request.POST.get('author_profile') or None,
+            reviewed_by_id=request.POST.get('reviewed_by') or None,
+            edited_by_id=request.POST.get('edited_by') or None,
             status=request.POST.get('status'),
 
             primary_category_id=primary_id,
@@ -263,25 +336,30 @@ def write_blog(request):
 
     return render(request, 'blogs/write.html', {
         'primary_categories': primary_categories,
-        'secondary_categories': secondary_categories
+        'secondary_categories': secondary_categories,
+        'authors': authors,
     })
 
-@login_required
+@writer_required
 def my_blogs(request):
-    blogs = Blog.objects.filter(author=request.user)
+    #blogs = Blog.objects.filter(author=request.user)
+    blogs = Blog.objects.all().order_by('-id')
     return render(request, 'blogs/my_blogs.html', {'blogs': blogs})
 
-@login_required
+@writer_required
 def edit_blog(request, id):
     blog = get_object_or_404(Blog, id=id)
 
-    if blog.author != request.user:
-        return redirect('blogs')
+    # if blog.author != request.user:
+    #     return redirect('blogs')
 
     primary_categories = PrimaryCategory.objects.all()
     secondary_categories = SecondaryCategory.objects.filter(
         primary=blog.primary_category
     ) if blog.primary_category else SecondaryCategory.objects.none()
+    
+    # ✅ Fetch authors for the dropdowns
+    authors = Author.objects.all()
 
     if request.method == 'POST':
         new_content = request.POST.get("content")
@@ -302,8 +380,13 @@ def edit_blog(request, id):
         blog.meta_description = request.POST.get("meta_description") or blog.summary[:160]
 
         # ✅ CATEGORY FIX
-        blog.primary_category_id = request.POST.get('primary_category')
+        blog.primary_category_id = request.POST.get('primary_category') or None
         blog.secondary_category_id = request.POST.get('secondary_category') or None
+        
+        # ✅ AUTHOR & REVIEWER FIX (New)
+        blog.author_profile_id = request.POST.get('author_profile') or None
+        blog.reviewed_by_id = request.POST.get('reviewed_by') or None
+        blog.edited_by_id = request.POST.get('edited_by') or None
 
         if request.FILES.get('image'):
             blog.image = request.FILES.get('image')
@@ -314,7 +397,8 @@ def edit_blog(request, id):
     return render(request, 'blogs/edit.html', {
         'blog': blog,
         'primary_categories': primary_categories,
-        'secondary_categories': secondary_categories
+        'secondary_categories': secondary_categories,
+        'authors': authors  # ✅ Pass authors to template context
     })
 
 def sip_calculator(request):
@@ -1226,3 +1310,26 @@ def resource_category(request, primary_slug):
     }
 
     return render(request, 'blogs/list.html', context)
+
+@admin_required
+def admin_dashboard(request):
+
+    users = CustomUser.objects.all().order_by('id')
+
+    return render(
+        request,
+        'vita/access.html',
+        {
+            'users': users
+        }
+    )
+
+@admin_required
+def change_role(request, user_id):
+    if request.method == "POST":
+        role = request.POST.get("role")
+        user = CustomUser.objects.get(id=user_id)
+        user.role = role
+        user.save()
+        messages.success(request, "Role updated successfully")
+    return redirect('admin_dashboard')

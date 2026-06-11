@@ -210,6 +210,100 @@
     .g-desc { color: #4d5156; font-size: 14px; line-height: 1.58; }
 
     .django-ckeditor-widget { width: 100% !important; display: block; }
+    /* ══════════ META SECTION & ACTION BAR ══════════ */
+    .article-meta-section {
+        background: rgba(248, 250, 252, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .meta-settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    .mb-0 { margin-bottom: 0 !important; }
+
+    .action-bar {
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px dashed #cbd5e1;
+    }
+
+    select.input-control { appearance: auto; background-color: #fff; height: 42px; }
+
+    /* ══════════ PREMIUM BUTTONS ══════════ */
+    .btn-group { display: flex; gap: 12px; align-items: center; }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-preview {
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid #3b82f6;
+        color: #2563eb;
+        backdrop-filter: blur(4px);
+    }
+    .btn-preview:hover { background: #3b82f6; color: #ffffff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+
+    .btn-publish {
+        background: #10b981;
+        border: 1px solid #059669;
+        color: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+    }
+    .btn-publish:hover { background: #059669; box-shadow: 0 6px 14px -2px rgba(16, 185, 129, 0.4); transform: translateY(-1px); }
+
+    /* ══════════ PREVIEW MODAL ══════════ */
+    .preview-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-modal-content {
+        background: #ffffff;
+        width: 90%;
+        max-width: 900px;
+        height: 85vh;
+        border-radius: 12px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .preview-modal-header { padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+    .preview-modal-body { padding: 40px; overflow-y: auto; flex: 1; font-family: 'Lora', serif; line-height: 1.8; color: #334155; font-size: 1.1rem; }
+    .preview-modal-body img { max-width: 100%; height: auto; border-radius: 8px; }
 </style>
 
 <div class="editor-container">
@@ -227,44 +321,85 @@
                         <input type="text" name="title" value="{{ blog.title }}" class="input-control title-input" placeholder="Enter an engaging title..." required>
                     </div>
 
-                    <div class="flex-row form-group">
-                        <div>
-                            <label class="form-label">Primary Category</label>
-                            <select name="primary_category" id="primarySelect" class="input-control">
-                                {% for p in primary_categories %}
-                                <option value="{{ p.id }}" {% if blog.primary_category.id == p.id %}selected{% endif %}>
-                                    {{ p.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">Secondary Category</label>
-                            <select name="secondary_category" id="secondarySelect" class="input-control">
-                                <option value="">Select (Optional)</option>
-                                {% for s in secondary_categories %}
-                                <option value="{{ s.id }}" {% if blog.secondary_category and blog.secondary_category.id == s.id %}selected{% endif %}>
-                                    {{ s.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                    <!-- ══════════ ARTICLE META & ACTIONS ══════════ -->
+                    <div class="article-meta-section">
+                        <div class="meta-settings-grid">
+                            
+                            <div class="form-group mb-0">
+                                <label class="form-label">Primary Category</label>
+                                <select name="primary_category" id="primarySelect" class="input-control">
+                                    <option value="">Select Primary</option>
+                                    {% for p in primary_categories %}
+                                        <option value="{{ p.id }}" {% if blog.primary_category.id == p.id %}selected{% endif %}>{{ p.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                    <div class="flex-row">
-                        <div>
-                            <label class="form-label">URL Slug</label>
-                            <input type="text" name="slug" id="slugInputLeft" value="{{ blog.slug }}" class="input-control" placeholder="e.g. my-awesome-post">
+                            <div class="form-group mb-0">
+                                <label class="form-label">Secondary Category</label>
+                                <select name="secondary_category" id="secondarySelect" class="input-control">
+                                    <option value="">Select (Optional)</option>
+                                    {% for s in secondary_categories %}
+                                        <option value="{{ s.id }}" {% if blog.secondary_category and blog.secondary_category.id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">URL Slug</label>
+                                <input type="text" name="slug" id="slugInputLeft" value="{{ blog.slug }}" class="input-control" placeholder="e.g. my-awesome-post">
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">Author Profile</label>
+                                <select name="author_profile" class="input-control">
+                                    <option value="">Select Author</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}" {% if blog.author_profile.id == a.id %}selected{% endif %}>{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">Reviewed By</label>
+                                <select name="reviewed_by" class="input-control">
+                                    <option value="">Select Reviewer</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}" {% if blog.reviewed_by.id == a.id %}selected{% endif %}>{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label">Edited By</label>
+                                <select name="edited_by" class="input-control">
+                                    <option value="">Select Editor</option>
+                                    {% for a in authors %}
+                                        <option value="{{ a.id }}" {% if blog.edited_by.id == a.id %}selected{% endif %}>{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
                         </div>
-                        <div>
-                            <label class="form-label">Publish Status</label>
-                            <select name="status" class="input-control">
-                                <option value="draft" {% if blog.status == 'draft' %}selected{% endif %}>📁 Save as Draft</option>
-                                <option value="published" {% if blog.status == 'published' %}selected{% endif %}>🚀 Published</option>
-                            </select>
-                            <hr>
-                            <div>
-                                <button type="submit" class="btn btn-solid">Update Post</button>
+
+                        <div class="action-bar">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <label class="form-label mb-0" style="margin-bottom:0;">Status:</label>
+                                <select name="status" class="input-control" style="width: auto; height: 38px;">
+                                    <option value="draft" {% if blog.status == 'draft' %}selected{% endif %}>📁 Save as Draft</option>
+                                    <option value="published" {% if blog.status == 'published' %}selected{% endif %}>🚀 Published</option>
+                                </select>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-preview" onclick="openPreviewMode()">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    Preview
+                                </button>
+                                <button type="submit" class="btn btn-publish">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Update Post
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -341,11 +476,60 @@
             </div>
         </div>
     </form>
+<!-- Live Article Preview Modal -->
+<div id="previewModal" class="preview-modal-overlay">
+    <div class="preview-modal-content">
+        <div class="preview-modal-header">
+            <h3 style="margin:0; font-family:'Inter', sans-serif; font-size:1.1rem; color:#1e293b;">Live Article Preview</h3>
+            <button type="button" onclick="closePreviewMode()" style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#64748b; line-height: 1;">&times;</button>
+        </div>
+        <div class="preview-modal-body" id="previewModalBody">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </div>
+</div>
 </div>
 
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 
 <script>
+// ══════════ LIVE PREVIEW LOGIC ══════════
+    window.openPreviewMode = function() {
+        let content = '';
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.editor) {
+            content = CKEDITOR.instances.editor.getData();
+        } else {
+            content = document.getElementById("editor").value;
+        }
+
+        let title = document.querySelector(".title-input").value || "Untitled Article";
+        
+        // Use dynamically uploaded image preview OR existing db image
+        let newImageSrc = document.getElementById("imagePreview").src;
+        let hasNewImage = document.getElementById("imagePreview").style.display !== "none";
+        
+        let previewHTML = `<h1 style="font-family:'DM Serif Display', serif; font-size:2.5rem; margin-bottom: 24px; color:#1e293b; line-height:1.2;">${title}</h1>`;
+        
+        if (hasNewImage) {
+            previewHTML += `<img src="${newImageSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom: 30px;" alt="Cover">`;
+        } else {
+            // Check if there is an existing image tag rendered in HTML for current image
+            let existingImage = document.querySelector("img[src*='/media/blogs/']"); 
+            if(existingImage) {
+                previewHTML += `<img src="${existingImage.src}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom: 30px;" alt="Cover">`;
+            }
+        }
+
+        previewHTML += content;
+
+        document.getElementById('previewModalBody').innerHTML = previewHTML;
+        document.getElementById('previewModal').style.display = 'flex';
+    };
+
+    window.closePreviewMode = function() {
+        document.getElementById('previewModal').style.display = 'none';
+    };
+
 document.addEventListener("DOMContentLoaded", function() {
 
     // 1. Initialize CKEditor
