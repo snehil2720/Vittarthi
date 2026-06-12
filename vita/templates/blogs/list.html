@@ -13,7 +13,7 @@ Finance Blogs & Investment Insights {% if blogs.number > 1 %} - Page {{ blogs.nu
 Financial Case Studies & Analysis {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% elif request.path == "/resources/news" %}
-Financial News, Blogs & Case Studies {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
+Financial News, Blogs & Case Studies | Vittarthi
 
 {% else %}
 Financial News & Market Updates | Vittarthi
@@ -24,19 +24,19 @@ Financial News & Market Updates | Vittarthi
 
 {% if request.path == "/resources/blogs" %}
 
-Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
+Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights at Vittarthi.
 
 {% elif request.path == "/resources/case-study" %}
 
-Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
+Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis at Vittarthi.
 
 {% elif request.path == "/resources/news" %}
 
-Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated {% if blogs.number > 1 %}. Browse page {{ blogs.number }} by Vittarthi.
+Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated by Vittarthi.
 
 {% else %}
 
-Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
+Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights at Vittarthi.
 
 {% endif %}
 
