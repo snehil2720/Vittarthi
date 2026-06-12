@@ -7,13 +7,13 @@
 {% endblock %}
 {% block title %}
 {% if request.path == "/resources/blogs" %}
-Finance Blogs & Investment Insights | Vittarthi
+Finance Blogs & Investment Insights {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% elif request.path == "/resources/case-study" %}
-Financial Case Studies & Analysis | Vittarthi
+Financial Case Studies & Analysis {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% elif request.path == "/resources/news" %}
-Financial News, Blogs & Case Studies | Vittarthi
+Financial News, Blogs & Case Studies {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% else %}
 Financial News & Market Updates | Vittarthi
@@ -24,19 +24,19 @@ Financial News & Market Updates | Vittarthi
 
 {% if request.path == "/resources/blogs" %}
 
-Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights at Vittarthi.
+Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
 
 {% elif request.path == "/resources/case-study" %}
 
-Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis at Vittarthi.
+Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
 
 {% elif request.path == "/resources/news" %}
 
-Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated by Vittarthi.
+Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated {% if blogs.number > 1 %}. Browse page {{ blogs.number }} by Vittarthi.
 
 {% else %}
 
-Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights at Vittarthi.
+Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.
 
 {% endif %}
 
@@ -959,6 +959,34 @@ Explore finance blogs, case studies, and market news covering investments, SIP s
     justify-content: space-between !important;
   }
 }
+.pagination-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin:40px 0;
+    flex-wrap:wrap;
+}
+
+.page-btn{
+    padding:10px 16px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    text-decoration:none;
+    color:#333;
+    background:#fff;
+    transition:.2s;
+}
+
+.page-btn:hover{
+    background:#f5f5f5;
+}
+
+.page-btn.active{
+    background:#15803d;
+    color:#fff;
+    border-color:#15803d;
+}
 </style>
 
 <main class="page">
@@ -1215,7 +1243,36 @@ Explore finance blogs, case studies, and market news covering investments, SIP s
       </div>
 
     </aside>
+{% if blogs.has_other_pages %}
+<div class="pagination-wrap">
 
+    {% if blogs.has_previous %}
+        <a class="page-btn"
+           href="?page={{ blogs.previous_page_number }}{% if request.GET.secondary %}&secondary={{ request.GET.secondary }}{% endif %}">
+            ← Prev
+        </a>
+    {% endif %}
+
+    {% for num in blogs.paginator.page_range %}
+        {% if blogs.number == num %}
+            <span class="page-btn active">{{ num }}</span>
+        {% else %}
+            <a class="page-btn"
+               href="?page={{ num }}{% if request.GET.secondary %}&secondary={{ request.GET.secondary }}{% endif %}">
+                {{ num }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    {% if blogs.has_next %}
+        <a class="page-btn"
+           href="?page={{ blogs.next_page_number }}{% if request.GET.secondary %}&secondary={{ request.GET.secondary }}{% endif %}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
+{% endif %}
   </div>
 </main>
 
