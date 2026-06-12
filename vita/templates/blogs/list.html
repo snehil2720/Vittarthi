@@ -24,19 +24,19 @@ Financial News & Market Updates | Vittarthi
 
 {% if request.path == "/resources/blogs" %}
 
-Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights at Vittarthi.
+Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.{% endif %}
 
 {% elif request.path == "/resources/case-study" %}
 
-Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis at Vittarthi.
+Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.{% endif %}
 
 {% elif request.path == "/resources/news" %}
 
-Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated by Vittarthi.
+Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated {% if blogs.number > 1 %}. Browse page {{ blogs.number }} by Vittarthi.{% endif %}
 
 {% else %}
 
-Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights at Vittarthi.
+Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights {% if blogs.number > 1 %}. Browse page {{ blogs.number }} at Vittarthi.{% endif %}
 
 {% endif %}
 
