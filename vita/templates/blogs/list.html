@@ -13,7 +13,7 @@ Finance Blogs & Investment Insights {% if blogs.number > 1 %} - Page {{ blogs.nu
 Financial Case Studies & Analysis {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% elif request.path == "/resources/news" %}
-Financial News, Blogs & Case Studies | Vittarthi
+Financial News, Blogs & Case Studies {% if blogs.number > 1 %} - Page {{ blogs.number }}{% endif %} | Vittarthi
 
 {% else %}
 Financial News & Market Updates | Vittarthi
