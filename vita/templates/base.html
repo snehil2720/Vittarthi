@@ -724,7 +724,7 @@ color: white;
     <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
     <li class="dropdown">
       <a href="/resources" class="{% if 'resources' in request.path %}active{% endif %}">
-        Knowledge Hub ▾
+        Knowledge ▾
       </a> 
       <ul class="dropdown-menu">
         <li><a href="/resources/blogs">Blogs</a></li>
@@ -771,7 +771,7 @@ color: white;
 
     <div class="drawer-item">
     <div class="drawer-link" onclick="toggleResources()">
-      Resources <span id="arrow">▾</span>
+      Knowledge Hub <span id="arrow">▾</span>
     </div>
 
     <div class="drawer-submenu" id="resourcesMenu">
@@ -980,7 +980,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script> 
-<!-- <script>
+<script>
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 document.addEventListener('keydown', function(e) {
@@ -999,6 +999,6 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
     }
 });
-</script> -->
+</script>
 </body>
 </html>
