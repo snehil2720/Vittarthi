@@ -1,10 +1,45 @@
 {% extends 'base.html' %}
+{% block extra_meta %}
+    {% if request.GET.secondary %}
+        <meta name="robots" content="noindex,follow">
+        <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    {% endif %}
+{% endblock %}
 {% block title %}
-Financial Planning Guides & Calculator Insights | Vitharthi
+{% if request.path == "/resources/blogs" %}
+Finance Blogs & Investment Insights | Vittarthi
+
+{% elif request.path == "/resources/case-study" %}
+Financial Case Studies & Analysis | Vittarthi
+
+{% elif request.path == "/resources/news" %}
+Financial News, Blogs & Case Studies | Vittarthi
+
+{% else %}
+Financial News & Market Updates | Vittarthi
+{% endif %}
 {% endblock %}
 
 {% block meta_description %}
-Explore financial planning guides, calculator explainers, SIP strategies, loan tips, tax-saving insights, and investment knowledge on Vitharthi.
+
+{% if request.path == "/resources/blogs" %}
+
+Read expert finance blogs on investments, SIP strategies, mutual funds, tax planning, and wealth building insights at Vittarthi.
+
+{% elif request.path == "/resources/case-study" %}
+
+Explore detailed financial case studies on market behavior, investment strategies, mutual funds performance, and real-world financial analysis at Vittarthi.
+
+{% elif request.path == "/resources/news" %}
+
+Stay updated with the latest financial news, stock market updates, economic trends, and investment insights curated by Vittarthi.
+
+{% else %}
+
+Explore finance blogs, case studies, and market news covering investments, SIP strategies, mutual funds, and financial insights at Vittarthi.
+
+{% endif %}
+
 {% endblock %}
 
 {% block content %}

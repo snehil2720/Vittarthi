@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+{% block extra_meta %}{% endblock %}
 <title>{% block title %}{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}{% endblock %}">
 <meta name="google-site-verification" content="QZOTJkuY-G8PrNopvPVlE-IAaZx5VRK3aES4PJzeqPg" />
@@ -979,7 +980,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script> 
-<script>
+<!-- <script>
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 document.addEventListener('keydown', function(e) {
@@ -998,6 +999,6 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
     }
 });
-</script>
+</script> -->
 </body>
 </html>
