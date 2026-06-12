@@ -188,6 +188,10 @@ def blog_list(request, primary_slug):
     if secondary_slug and secondary_slug != "all":
         blogs = blogs.filter(secondary_category__slug=secondary_slug)
 
+    paginator = Paginator(blogs, 7)  # 7 blogs per page
+    page_number = request.GET.get('page')
+    blogs = paginator.get_page(page_number)
+
     secondary_categories = SecondaryCategory.objects.filter(primary=primary)
     category_counts = (
         Blog.objects
@@ -344,6 +348,10 @@ def write_blog(request):
 def my_blogs(request):
     #blogs = Blog.objects.filter(author=request.user)
     blogs = Blog.objects.all().order_by('-id')
+    paginator = Paginator(blogs, 10)  # 10 per page
+
+    page_number = request.GET.get('page')
+    blogs = paginator.get_page(page_number)
     return render(request, 'blogs/my_blogs.html', {'blogs': blogs})
 
 @writer_required
