@@ -21,7 +21,7 @@ from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.utils.html import strip_tags
 from bs4 import BeautifulSoup
-from financial_advisor.views import dashboard
+#from financial_advisor.views import dashboard
 from vita.decorators import admin_required, writer_required
 
 def auth_page(request):
