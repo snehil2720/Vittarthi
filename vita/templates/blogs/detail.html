@@ -840,6 +840,27 @@ html, body {
               </div>
           </div>
           {% endif %}
+          {% if blog.edited_by %}
+          <div class="byline-item">
+              <div class="byline-avatar reviewer">
+                  {{ blog.edited_by.name|first }}
+              </div>
+              <div class="byline-text">
+                  <div class="byline-role">
+                      {{ blog.edited_by.role|default:"Reviewed by" }}
+                  </div>
+                  <div class="byline-name">
+                      {% if blog.edited_by.slug %}
+                      <a href="{% url 'author_detail' blog.edited_by.slug %}">
+                          {{ blog.edited_by.name }}
+                      </a>
+                      {% else %}
+                          {{ blog.edited_by.name }}
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+          {% endif %}
         </div>
 
         <div class="article-info">
@@ -970,6 +991,46 @@ html, body {
                       </div>
                       {% if blog.reviewed_by.slug %}
                       <a href="{% url 'author_detail' blog.reviewed_by.slug %}" class="author-profile-link">View all articles →</a>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+          {% endif %}
+          {% if blog.edited_by %}
+          <div class="author-card">
+              <div class="author-card-avatar reviewer">
+                  {% if blog.edited_by.image %}
+                      <img src="{{ blog.edited_by.image.url }}" alt="{{ blog.edited_by.name }}">
+                  {% else %}
+                      {{ blog.edited_by.name|first }}
+                  {% endif %}
+              </div>
+              <div class="author-card-body">
+                  <div class="author-card-role reviewer">{{ blog.edited_by.role|default:"Reviewed by" }}</div>
+                  <div class="author-card-name">
+                      {% if blog.edited_by.slug %}
+                      <a href="{% url 'author_detail' blog.edited_by.slug %}">{{ blog.edited_by.name }}</a>
+                      {% else %}
+                          {{ blog.edited_by.name }}
+                      {% endif %}
+                  </div>
+                  {% if blog.edited_by.designation %}
+                  <div class="author-card-title">{{ blog.edited_by.designation }}</div>
+                  {% endif %}
+                  {% if blog.edited_by.bio %}
+                  <p class="author-card-bio">{{ blog.edited_by.bio }}</p>
+                  {% endif %}
+                  <div class="author-card-footer">
+                      <div class="author-card-social">
+                          {% if blog.edited_by.linkedin %}
+                          <a href="{{ blog.edited_by.linkedin }}" target="_blank" class="author-social-btn">LinkedIn</a>
+                          {% endif %}
+                          {% if blog.edited_by.twitter %}
+                          <a href="{{ blog.edited_by.twitter }}" target="_blank" class="author-social-btn">Twitter / X</a>
+                          {% endif %}
+                      </div>
+                      {% if blog.edited_by.slug %}
+                      <a href="{% url 'author_detail' blog.edited_by.slug %}" class="author-profile-link">View all articles →</a>
                       {% endif %}
                   </div>
               </div>
