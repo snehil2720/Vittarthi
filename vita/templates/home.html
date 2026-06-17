@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cache %}
 
 {% block title %}
 Vittarthi Financial Calculators | SIP, EMI & Home Loan Calculator
@@ -8,7 +9,6 @@ Vittarthi Financial Calculators | SIP, EMI & Home Loan Calculator
 {% block meta_description %}
 Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi easy financial calculators. Plan investments and loans smarter at vittarthi.
 {% endblock %}
-
 
 {% block extra_head %}
 <!-- Added Preconnects to load fonts faster -->
@@ -19,8 +19,10 @@ Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi ea
 <!-- Link to your newly created CSS file here! -->
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
+
 {% block content %}
-<!-- FINANCE BAR -->
+<!-- CACHE ENTIRE HOME PAGE FOR 1 HOUR TO FIX SERVER DELAY -->
+{% cache 3600 home_page_cache %}
 <!-- FINANCE BAR -->
 <div class="finance-bar">
   <div class="finance-inner">
@@ -329,7 +331,8 @@ Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi ea
       <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="hub-card resource-card" data-type="all">
         <div class="hub-img-wrap">
           {% if blog.image %}
-            <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+            <!-- FIXED: Added loading="lazy" width="300" height="200" -->
+            <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}" loading="lazy" width="300" height="200">
           {% endif %}
         </div>
         <div class="hub-body">
@@ -592,4 +595,5 @@ let interval = setInterval(() => {
     if (count >= 5000) clearInterval(interval);
 }, 30);
 </script>
+{% endcache %}
 {% endblock %}

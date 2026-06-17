@@ -19,13 +19,15 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="manifest" href="{% static 'manifest.json' %}">
 <meta name="theme-color" content="green">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></noscript>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+
+<!-- FIXED: Removed Google Fonts preload to fix 3000ms delay penalty -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <!-- Link to extracted base CSS -->
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -130,7 +132,8 @@
 </div>
 
 <!-- CONTENT -->
-<div class="container mt-4">
+<!-- FIXED: Changed to <main> tag to get 100/100 Accessibility Score -->
+<main class="container mt-4">
   {% if breadcrumbs %}
   <div class="container">
       <nav aria-label="breadcrumb" class="breadcrumb-wrap">
@@ -149,7 +152,7 @@
   
   {% block content %}
   {% endblock %}
-</div>
+</main>
 
 {% include "footer/footer.html" %}
 
@@ -158,7 +161,7 @@ function comingSoon() { alert("🚀 Coming Soon!"); }
 
 function toggleResources() {
     const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow"); // Fixed spelling mistake here
+    const arrow = document.getElementById("arrow"); 
 
     menu.classList.toggle("open");
     if (menu.classList.contains("open")) {
@@ -179,13 +182,10 @@ window.onload = function() {
     }
 }
 
-
-
 let drawerOpen = false;
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
   document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  // Ensure the element exists before trying to update its class
   let hamIcon = document.getElementById('hamIcon');
   if (hamIcon) {
     hamIcon.className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
@@ -197,30 +197,9 @@ function closeOnOverlay(e) {
     toggleDrawer();
   }
 }
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     const content = document.getElementById("blogContent");
-//     const toc = document.getElementById("toc");
-//     if (!content || !toc) return;
-//     const headings = content.querySelectorAll("h2, h3");
-//     headings.forEach((h, i) => {
-//         let id = "heading-" + i;
-//         h.id = id;
-//         let a = document.createElement("a");
-//         a.href = "#" + id;
-//         a.innerText = h.innerText;
-//         if (h.tagName === "H3") {
-//             a.classList.add("sub-link");
-//         }
-//         toc.appendChild(a);
-//     });
-// });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-
-<!-- Only load chart.js on pages that need it, like home.html! We've added it to home.html instead. -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script> -->
 
 <script>
 if ('serviceWorker' in navigator) {
