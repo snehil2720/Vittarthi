@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% block title %}
+Comparison B/W two Financial Calculator | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Drag and drop financial tool to compare them side-by-side. Compare SIP vs FD, Home Loan vs Rent, PPF vs ELSS and more.
+{% endblock %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+{% block content %}
+<style>
+:root {
+  --green: #1a6b4a; --green-lt: #e8f5ef; --green-mid: #cfe8dc;
+  --rose: #d9485f; --rose-lt: #ffe5ea;
+  --gold: #d97706; --gold-lt: #fff4d6;
+  --blue: #2563eb; --blue-lt: #dbeafe;
+  --surface: #fff; --surface2: #f0ede8; --bg: #f7f5f0;
+  --ink: #111827; --ink-muted: #5f6775; --ink-faint: #8b93a1;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 1px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 6px 32px rgba(0,0,0,0.10);
+  --max: 1180px; --pad: clamp(1rem,4vw,2rem); --r: 16px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* HERO */
+.hero { background: var(--surface); padding: clamp(2rem,5vw,3.5rem) var(--pad) 2rem; border-bottom: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position:absolute; inset:0; background-image: radial-gradient(circle, var(--border) 1px, transparent 1px); background-size: 26px 26px; opacity: 0.5; pointer-events: none; }
+.hero-inner { position: relative; z-index: 1; max-width: 700px; margin: auto; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.75rem; }
+.hero h1 em { color: var(--green); font-style: italic; }
+.hero-sub { font-size: 1rem; color: var(--ink-muted); line-height: 1.6; }
+
+/* WORKBENCH AREA */
+.workbench { max-width: var(--max); margin: 0 auto; padding: 3rem var(--pad); }
+.wb-title { text-align: center; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); margin-bottom: 2rem; }
+
+.zones-wrap { display: flex; align-items: center; justify-content: center; gap: 1.5rem; max-width: 800px; margin: 0 auto 3rem; }
+.zone { flex: 1; aspect-ratio: 4/3; background: var(--surface); border: 2px dashed var(--ink-faint); border-radius: var(--r); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; position: relative; }
+.zone.active { border-color: var(--green); background: var(--green-lt); }
+.zone.filled { border-style: solid; border-color: var(--green); background: var(--surface); box-shadow: var(--shadow-lg); }
+
+.zone-placeholder { color: var(--ink-faint); text-align: center; pointer-events: none; }
+.zone-placeholder i { font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5; }
+.zone-placeholder span { font-size: 0.85rem; font-weight: 500; }
+
+.vs-badge { width: 45px; height: 45px; border-radius: 50%; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Playfair Display', serif; font-style: italic; flex-shrink: 0; box-shadow: var(--shadow); z-index: 2; }
+
+/* ACTION ROW */
+.action-row { text-align: center; height: 60px; margin-bottom: 3rem; }
+.btn-compare { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); color: #fff; padding: 12px 32px; border-radius: 99px; font-size: 1rem; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(26,107,74,0.3); opacity: 0; transform: translateY(10px); pointer-events: none; text-decoration: none; }
+.btn-compare.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.btn-compare:hover { background: #135238; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,107,74,0.4); }
+
+/* ASSET BANK */
+.asset-bank { max-width: 900px; margin: 0 auto; background: var(--surface); border-radius: var(--r); padding: 2rem; border: 1px solid var(--border); box-shadow: var(--shadow); }
+.ab-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; font-family: 'Playfair Display', serif; }
+.ab-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+
+/* ASSET ITEM */
+.asset { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; font-size: 0.9rem; font-weight: 600; color: var(--ink); cursor: grab; user-select: none; transition: all 0.2s; }
+.asset:hover { background: var(--surface); border-color: var(--ink-faint); transform: translateY(-2px); box-shadow: var(--shadow); }
+.asset:active { cursor: grabbing; transform: translateY(0); }
+.asset.dragging { opacity: 0.5; }
+.asset.in-zone { background: transparent; border: none; box-shadow: none; font-size: 1.3rem; flex-direction: column; gap: 12px; pointer-events: auto; cursor: default; }
+.asset.in-zone:hover { transform: none; }
+.asset.in-zone .icon { font-size: 2.5rem; }
+
+/* ERROR TOAST */
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: #fff; padding: 1rem 1.5rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500; box-shadow: var(--shadow-lg); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100; max-width: 400px; text-align: center; line-height: 1.5; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast-btn { display: inline-block; background: var(--green); color: #fff; padding: 4px 12px; border-radius: 6px; font-weight: 600; margin-top: 8px; cursor: pointer; text-decoration: none; }
+
+/* REMOVE BUTTON IN ZONE */
+.remove-btn { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); color: var(--ink-muted); display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; border: 1px solid var(--border); }
+.zone.filled .remove-btn { display: flex; }
+.remove-btn:hover { background: var(--rose-lt); color: var(--rose); border-color: var(--rose); }
+
+@media(max-width: 768px){
+  .zones-wrap { flex-direction: column; max-width: 300px; gap: 1rem; }
+  .zone { width: 100%; aspect-ratio: 16/9; }
+  .vs-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px solid var(--bg); }
+  .hero h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Create Your <em>Comparison</em></h1>
+    <p class="hero-sub">Drag and drop two financial instruments to compare returns, taxes, and risks side-by-side.</p>
+  </div>
+</section>
+
+<div class="workbench">
+  <div class="wb-title">Drop items below to compare</div>
+  
+  <div class="zones-wrap">
+    <!-- ZONE 1 -->
+    <div class="zone" id="zone1">
+      <div class="zone-placeholder">
+        <i>📥</i>
+        <span>Drag Item 1 Here<br><small>(or tap to select)</small></span>
+      </div>
+      <div class="remove-btn" onclick="clearZone('zone1')">✖</div>
+    </div>
+    
+    <div class="vs-badge">VS</div>
+    
+    <!-- ZONE 2 -->
+    <div class="zone" id="zone2">
+      <div class="zone-placeholder">
+        <i>📥</i>
+        <span>Drag Item 2 Here<br><small>(or tap to select)</small></span>
+      </div>
+      <div class="remove-btn" onclick="clearZone('zone2')">✖</div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <a href="#" id="compareBtn" class="btn-compare">Compare Now ➔</a>
+  </div>
+
+  <div class="asset-bank">
+    <div class="ab-title">Available Instruments</div>
+    <div class="ab-grid" id="assetBank">
+      <div class="asset" draggable="true" data-id="sip"><span class="icon">📈</span> SIP (Mutual Fund)</div>
+      <div class="asset" draggable="true" data-id="fd"><span class="icon">🏦</span> Fixed Deposit (FD)</div>
+      <div class="asset" draggable="true" data-id="ppf"><span class="icon">🏛️</span> PPF</div>
+      <div class="asset" draggable="true" data-id="elss"><span class="icon">🏅</span> ELSS (Tax Saving)</div>
+      <div class="asset" draggable="true" data-id="homeloan"><span class="icon">🏠</span> Home Loan</div>
+      <div class="asset" draggable="true" data-id="rent"><span class="icon">🔑</span> Rent</div>
+      <div class="asset" draggable="true" data-id="nps"><span class="icon">👴</span> NPS</div>
+      <div class="asset" draggable="true" data-id="gold"><span class="icon">🪙</span> Physical Gold</div>
+      <div class="asset" draggable="true" data-id="sgb"><span class="icon">📜</span> SGB (Gold Bond)</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div id="toastMsg">Error message here</div>
+  <a href="#" id="toastAction" class="toast-btn">Try SIP vs FD</a>
+</div>
+
+<script>
+// --- Logic & Mappings ---
+const validComparisons = {
+  // We sort IDs alphabetically to make matching easy (fd+sip == sip+fd)
+  "fd_sip": { url: "/compare/sip-vs-fd" },
+  "elss_ppf": { url: "/compare/ppf-vs-elss" },
+  "homeloan_rent": { url: "/compare/home-loan-vs-rent" },
+  "gold_sgb": { url: "/compare/sgb-vs-gold" },
+  "nps_sip": { url: "/compare/nps-vs-mf" }
+};
+
+// --- DOM Elements ---
+const zones = [document.getElementById('zone1'), document.getElementById('zone2')];
+const bank = document.getElementById('assetBank');
+const btn = document.getElementById('compareBtn');
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+const toastAction = document.getElementById('toastAction');
+
+let draggedAsset = null;
+
+// --- Initialize Draggables ---
+function initDraggables() {
+  const assets = document.querySelectorAll('.asset');
+  assets.forEach(asset => {
+    // Drag events for Desktop
+    asset.addEventListener('dragstart', (e) => {
+      draggedAsset = asset;
+      setTimeout(() => asset.classList.add('dragging'), 0);
+    });
+    asset.addEventListener('dragend', () => {
+      draggedAsset.classList.remove('dragging');
+      draggedAsset = null;
+    });
+
+    // Tap events for Mobile/Click
+    asset.addEventListener('click', (e) => {
+      if(asset.parentElement.id === 'assetBank') {
+        // Find empty zone
+        const emptyZone = zones.find(z => !z.classList.contains('filled'));
+        if(emptyZone) placeAssetInZone(asset, emptyZone);
+      }
+    });
+  });
+}
+initDraggables();
+
+// --- Setup Zones ---
+zones.forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    if(!zone.classList.contains('filled')) zone.classList.add('active');
+  });
+  
+  zone.addEventListener('dragleave', () => {
+    zone.classList.remove('active');
+  });
+  
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('active');
+    if(!zone.classList.contains('filled') && draggedAsset) {
+      placeAssetInZone(draggedAsset, zone);
+    }
+  });
+});
+
+// --- Actions ---
+function placeAssetInZone(asset, zone) {
+  // Move node
+  zone.appendChild(asset);
+  zone.classList.add('filled');
+  asset.classList.add('in-zone');
+  asset.draggable = false;
+  
+  // Hide placeholder
+  zone.querySelector('.zone-placeholder').style.display = 'none';
+  
+  checkCompletion();
+}
+
+function clearZone(zoneId) {
+  const zone = document.getElementById(zoneId);
+  const asset = zone.querySelector('.asset');
+  if(asset) {
+    asset.classList.remove('in-zone');
+    asset.draggable = true;
+    bank.appendChild(asset);
+  }
+  zone.classList.remove('filled');
+  zone.querySelector('.zone-placeholder').style.display = 'block';
+  
+  btn.classList.remove('show');
+}
+
+function checkCompletion() {
+  const isComplete = zones.every(z => z.classList.contains('filled'));
+  if(isComplete) validatePair();
+}
+
+function validatePair() {
+  const id1 = zones[0].querySelector('.asset').getAttribute('data-id');
+  const id2 = zones[1].querySelector('.asset').getAttribute('data-id');
+  
+  const pairKey = [id1, id2].sort().join('_');
+  const match = validComparisons[pairKey];
+  
+  if(match) {
+    // Valid combination!
+    btn.classList.add('show');
+    btn.href = match.url;
+  } else {
+    // Invalid combination
+    btn.classList.remove('show');
+    showError(id1, id2);
+    // Auto-clear after error
+    setTimeout(() => {
+      clearZone('zone1');
+      clearZone('zone2');
+    }, 1500);
+  }
+}
+
+function showError(id1, id2) {
+  // Custom smart messages based on logic
+  if((id1==='homeloan' || id2==='homeloan') && (id1!=='rent' && id2!=='rent')) {
+    toastMsg.innerHTML = "Oops! You can't compare a Liability (Home Loan) directly with an Investment.<br>They serve different purposes.";
+    toastAction.textContent = "Compare Home Loan vs Rent";
+    toastAction.href = "/compare/home-loan-vs-rent";
+    toastAction.style.display = 'inline-block';
+  } else {
+    toastMsg.innerHTML = "These instruments are not directly comparable based on their asset class.";
+    toastAction.textContent = "Try SIP vs FD instead";
+    toastAction.href = "/compare/sip-vs-fd";
+    toastAction.style.display = 'inline-block';
+  }
+  
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPF vs ELSS: Which is Better for Tax Saving in 2025? | Vittarthi</title>
+<meta name="description" content="PPF vs ELSS comparison: returns, tax benefits, lock-in period. Find which 80C investment gives better returns with our free interactive calculator. Updated 2025.">
+<meta name="keywords" content="PPF vs ELSS, PPF vs ELSS which is better, 80C investment comparison, PPF vs ELSS returns, tax saving investment India">
+<link rel="canonical" href="https://vittarthi.com/compare/ppf-vs-elss">
+<meta property="og:title" content="PPF vs ELSS: Best 80C Tax Saving Option? | Vittarthi">
+<meta property="og:description" content="Compare PPF and ELSS returns, lock-in, and tax benefits with our live calculator.">
+<meta property="og:url" content="https://vittarthi.com/compare/ppf-vs-elss">
+<meta property="og:type" content="article">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Which is better PPF or ELSS for tax saving?","acceptedAnswer":{"@type":"Answer","text":"Both save tax under 80C up to ₹1.5L/year. ELSS gives higher returns (12–15% historically) but has market risk. PPF gives 7.1% guaranteed. For investors with 15+ year horizon and moderate risk appetite, ELSS typically builds more wealth. For risk-averse investors, PPF is safer."}},
+  {"@type":"Question","name":"Is ELSS risky compared to PPF?","acceptedAnswer":{"@type":"Answer","text":"Yes. ELSS invests in equity markets and can fluctuate. In a bad year, ELSS can give negative returns. PPF gives fixed 7.1% guaranteed by the Government of India. However, over 10–15 year periods, ELSS has historically outperformed PPF significantly."}},
+  {"@type":"Question","name":"Can I invest in both PPF and ELSS?","acceptedAnswer":{"@type":"Answer","text":"Yes, and many financial advisors recommend this. You can split your 80C limit — e.g., ₹50,000 in PPF (safety) and ₹1,00,000 in ELSS (growth). This gives you balance of safety and higher returns."}},
+  {"@type":"Question","name":"What happens to ELSS after 3 years?","acceptedAnswer":{"@type":"Answer","text":"After the 3-year lock-in, you can redeem your ELSS investment anytime. You don't have to — most advisors recommend staying longer for better returns. Gains above ₹1 lakh per year are taxed at 10% LTCG."}},
+  {"@type":"Question","name":"Is PPF return tax-free?","acceptedAnswer":{"@type":"Answer","text":"Yes! PPF follows EEE (Exempt-Exempt-Exempt) tax status: contribution is tax-deductible (80C), interest earned is tax-free, and maturity amount is completely tax-free. This makes PPF extremely tax-efficient for conservative investors."}}
+]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"PPF vs ELSS: Which is Better for Tax Saving in 2025?","author":{"@type":"Organization","name":"Vittarthi"},"publisher":{"@type":"Organization","name":"Vittarthi","url":"https://vittarthi.com"},"dateModified":"2025-06-01"}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Home","item":"https://vittarthi.com"},
+  {"@type":"ListItem","position":2,"name":"Compare","item":"https://vittarthi.com/compare"},
+  {"@type":"ListItem","position":3,"name":"PPF vs ELSS","item":"https://vittarthi.com/compare/ppf-vs-elss"}
+]}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+
+<style>
+:root{
+  --green:#1a6b4a;--green-lt:#e8f5ef;--green-mid:#cfe8dc;
+  --navy:#1b4fa6;--navy-lt:#dbeafe;
+  --gold:#d97706;--gold-lt:#fff4d6;--gold-mid:#fde68a;
+  --surface:#fff;--surface2:#f0ede8;--bg:#f7f5f0;
+  --ink:#111827;--ink-muted:#5f6775;--ink-faint:#8b93a1;
+  --border:rgba(0,0,0,.08);
+  --shadow:0 1px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 6px 32px rgba(0,0,0,.10);
+  --max:1180px;--pad:clamp(1rem,4vw,2rem);--r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.breadcrumb{padding:.65rem var(--pad);background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--ink-faint)}
+.breadcrumb a{color:var(--ink-muted);transition:color .15s}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{margin:0 .35rem;opacity:.4}
+
+.hero{background:var(--surface);padding:clamp(2rem,5vw,3.5rem) var(--pad) clamp(1.5rem,4vw,2.5rem);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;opacity:.5;pointer-events:none}
+.hero::after{content:'';position:absolute;top:-100px;right:-60px;width:380px;height:380px;border-radius:50%;background:var(--gold-lt);opacity:.7;pointer-events:none}
+.hero-inner{max-width:var(--max);margin:auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-lt);color:var(--gold);padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem;border:1px solid rgba(217,119,6,.2)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;margin-bottom:.75rem}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-sub{font-size:1rem;color:var(--ink-muted);line-height:1.7;max-width:560px;margin-bottom:1.25rem}
+.hero-pills{display:flex;gap:.6rem;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:8px;font-size:.78rem;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.pill-navy{background:var(--navy-lt);color:var(--navy)}
+.pill-gold{background:var(--gold-lt);color:var(--gold)}
+.hero-meta{margin-top:.9rem;font-size:.72rem;color:var(--ink-faint)}
+
+.section{max-width:var(--max);margin:0 auto;padding:clamp(2rem,5vw,3rem) var(--pad)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
+.section-sub{font-size:.85rem;color:var(--ink-muted);margin-bottom:1.75rem}
+
+/* 80C INFO BOX */
+.info-box-gold{background:var(--gold-lt);border:1px solid rgba(217,119,6,.25);border-left:4px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:1.1rem 1.25rem;margin-bottom:1.75rem}
+.info-box-gold h3{font-size:.78rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem}
+.info-box-gold p{font-size:.83rem;color:var(--ink-muted);line-height:1.6;margin-bottom:.75rem}
+.tax-bracket-row{display:flex;gap:.6rem;flex-wrap:wrap}
+.tax-bracket{padding:6px 14px;border-radius:8px;font-size:.78rem;font-weight:600;background:var(--surface);border:1px solid var(--border)}
+.tax-bracket span{color:var(--gold);font-weight:700}
+
+/* CALC */
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.calc-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(217,119,6,.05) 0%,transparent 55%);pointer-events:none}
+.calc-inputs{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--surface2)}
+.inputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.input-group{display:flex;flex-direction:column;gap:.4rem}
+.input-group label{font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:5px}
+.locked-note{font-size:.62rem;font-weight:500;color:var(--navy);background:var(--navy-lt);padding:2px 7px;border-radius:4px;letter-spacing:0;text-transform:none}
+.warn-note{font-size:.65rem;color:#b45309;display:none}
+.input-row{display:flex;align-items:center;gap:.6rem}
+.input-row input[type=number]{width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;background:var(--surface);color:var(--ink);font-weight:600;transition:border-color .15s}
+.input-row input[type=number]:focus{outline:none;border-color:var(--gold)}
+.input-row input[type=number].warn{border-color:#f59e0b}
+input[type=range]{flex:1;height:4px;border-radius:99px;accent-color:var(--gold);cursor:pointer}
+.range-minmax{display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-faint);margin-top:2px}
+.locked-input{background:var(--surface2)!important;color:var(--ink-muted)!important;cursor:not-allowed}
+
+/* RESULTS */
+.calc-results{padding:1.75rem;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.result-card{border-radius:var(--r);padding:1.25rem;border:1px solid;transition:transform .2s,box-shadow .2s}
+.result-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.result-card.ppf{border-color:rgba(27,79,166,.25);background:linear-gradient(135deg,rgba(27,79,166,.05),rgba(27,79,166,.01))}
+.result-card.elss{border-color:rgba(217,119,6,.25);background:linear-gradient(135deg,rgba(217,119,6,.06),rgba(217,119,6,.01))}
+.rc-label{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.9rem;display:flex;align-items:center;gap:6px}
+.rc-label.ppf{color:var(--navy)}.rc-label.elss{color:var(--gold)}
+.rc-dot{width:7px;height:7px;border-radius:50%}
+.rc-dot.ppf{background:var(--navy)}.rc-dot.elss{background:var(--gold)}
+.rc-row{display:flex;justify-content:space-between;align-items:baseline;padding:.35rem 0;border-bottom:1px solid var(--border)}
+.rc-row:last-child{border-bottom:none}
+.rc-key{font-size:.75rem;color:var(--ink-muted)}
+.rc-val{font-size:.9rem;font-weight:700}
+.rc-val.ppf{color:var(--navy)}.rc-val.elss{color:var(--gold)}
+.rc-total{font-size:1.15rem!important}
+.rc-note{font-size:.67rem;color:var(--ink-faint);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--border)}
+
+.winner-banner{margin:0 1.75rem 1.75rem;padding:1rem 1.25rem;border-radius:var(--r);display:flex;align-items:center;gap:.75rem;font-size:.9rem;font-weight:600}
+.winner-banner.ppf-wins{background:var(--navy-lt);color:var(--navy);border:1px solid rgba(27,79,166,.2)}
+.winner-banner.elss-wins{background:var(--gold-lt);color:var(--gold);border:1px solid rgba(217,119,6,.2)}
+.winner-icon{font-size:1.4rem}
+
+.chart-wrap{padding:0 1.75rem 1.75rem}
+.chart-box{background:var(--surface2);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border)}
+.chart-legend{display:flex;gap:1rem;margin-bottom:.75rem}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:500;color:var(--ink-muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* TABLE */
+.cmp-table{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.cmp-table thead{background:var(--ink)}
+.cmp-table thead th{color:#fff;padding:.7rem 1rem;font-size:.75rem;font-weight:600;letter-spacing:.5px;text-align:left}
+.cmp-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+.cmp-table tbody tr:hover{background:var(--surface2)}
+.cmp-table tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.cmp-table td{padding:.7rem 1rem;font-size:.82rem;color:var(--ink-muted);vertical-align:middle}
+.cmp-table td:first-child{color:var(--ink);font-weight:500}
+.badge{display:inline-flex;padding:2px 9px;border-radius:5px;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-navy{background:var(--navy-lt);color:var(--navy)}
+.badge-gold{background:var(--gold-lt);color:var(--gold)}
+.badge-gray{background:var(--surface2);color:var(--ink-faint)}
+.badge-green{background:var(--green-lt);color:var(--green)}
+
+/* CHOOSE CARDS */
+.choose-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.choose-card{border-radius:var(--r);padding:1.5rem;border:1px solid}
+.choose-card.ppf{border-color:rgba(27,79,166,.25);background:linear-gradient(135deg,var(--navy-lt),rgba(219,234,254,.3))}
+.choose-card.elss{border-color:rgba(217,119,6,.2);background:linear-gradient(135deg,var(--gold-lt),rgba(253,230,138,.2))}
+.choose-head{font-size:.8rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:7px}
+.choose-head.ppf{color:var(--navy)}.choose-head.elss{color:var(--gold)}
+.choose-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.choose-list li{font-size:.82rem;color:var(--ink-muted);display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.choose-list li::before{content:'✓';font-weight:700;flex-shrink:0;margin-top:1px}
+.choose-list.ppf li::before{color:var(--navy)}.choose-list.elss li::before{color:var(--gold)}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:.6rem}
+.faq-item{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.faq-q{width:100%;background:none;border:none;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--ink);text-align:left;transition:background .15s}
+.faq-q:hover{background:var(--surface2)}
+.faq-icon{width:22px;height:22px;border-radius:50%;background:var(--gold-lt);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;transition:transform .25s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--gold);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem}
+.faq-a p{font-size:.83rem;color:var(--ink-muted);line-height:1.7}
+
+.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:all .2s;box-shadow:var(--shadow)}
+.cta-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cta-icon{font-size:1.6rem}
+.cta-title{font-size:.85rem;font-weight:700;color:var(--ink)}
+.cta-sub{font-size:.72rem;color:var(--ink-muted)}
+.cta-arrow{font-size:.8rem;color:var(--gold);font-weight:700;margin-top:.25rem}
+
+@media(max-width:768px){
+  .inputs-grid,.calc-results,.choose-grid,.cta-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.9rem}
+  .winner-banner{margin:0 1rem 1rem}
+  .calc-results,.calc-inputs,.chart-wrap{padding:1rem}
+}
+@media(max-width:540px){.cta-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/compare">Compare</a><span>›</span>
+  <span style="color:var(--ink)">PPF vs ELSS</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🏅 Tax Saving Guide · 80C</div>
+    <h1>PPF vs <em>ELSS</em></h1>
+    <p class="hero-sub">Both save tax under Section 80C. But which one makes you richer in the long run? Real numbers, no bias.</p>
+    <div class="hero-pills">
+      <span class="pill pill-navy">🏛️ PPF: 7.1% — Government Guaranteed</span>
+      <span class="pill pill-gold">📈 ELSS: 12–15% — Market-Linked</span>
+    </div>
+    <p class="hero-meta">✓ Updated June 2025 &nbsp;·&nbsp; ✓ Both qualify for 80C deduction &nbsp;·&nbsp; ✓ Free tool</p>
+  </div>
+</section>
+
+<div class="section">
+  <div class="info-box-gold">
+    <h3>💡 80C Limit — What You Need to Know</h3>
+    <p>Both PPF and ELSS qualify for Section 80C tax deduction up to <strong>₹1,50,000 per financial year</strong>. Here's how much tax you save based on your income bracket:</p>
+    <div class="tax-bracket-row">
+      <div class="tax-bracket">5% slab → Save <span>₹7,500</span>/yr</div>
+      <div class="tax-bracket">20% slab → Save <span>₹30,000</span>/yr</div>
+      <div class="tax-bracket">30% slab → Save <span>₹46,800</span>/yr</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Live Comparison Calculator</h2>
+  <p class="section-sub">Adjust your yearly investment and tenure to see real-time post-tax wealth comparison</p>
+
+  <div class="calc-wrap">
+    <div class="calc-inputs">
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label for="yearlyAmt">Yearly Investment <span id="amt-warn" class="warn-note">⚠ 80C limit is ₹1,50,000</span></label>
+          <div class="input-row">
+            <input type="range" id="amtSlider" min="500" max="200000" step="500" value="150000">
+            <input type="number" id="yearlyAmt" value="150000" min="500" max="200000">
+          </div>
+          <div class="range-minmax"><span>₹500</span><span>₹2,00,000</span></div>
+        </div>
+        <div class="input-group">
+          <label for="yrs">Investment Duration</label>
+          <div class="input-row">
+            <input type="range" id="yrsSlider" min="3" max="30" step="1" value="15">
+            <input type="number" id="yrs" value="15" min="3" max="30">
+          </div>
+          <div class="range-minmax"><span>3 yrs</span><span>30 yrs</span></div>
+        </div>
+        <div class="input-group">
+          <label>PPF Rate (%) <span class="locked-note">🔒 Govt. Fixed</span></label>
+          <div class="input-row">
+            <input type="range" disabled value="7.1" min="7.1" max="7.1" style="opacity:.4;cursor:not-allowed">
+            <input type="number" id="ppfRate" value="7.1" class="locked-input" readonly>
+          </div>
+          <div style="font-size:.67rem;color:var(--ink-faint);margin-top:3px">Current rate set by Ministry of Finance — Q1 2025</div>
+        </div>
+        <div class="input-group">
+          <label for="elssRate">ELSS Expected Return (%)</label>
+          <div class="input-row">
+            <input type="range" id="elssSlider" min="8" max="20" step="0.5" value="13">
+            <input type="number" id="elssRate" value="13" min="8" max="20" step="0.5">
+          </div>
+          <div class="range-minmax"><span>8%</span><span>20%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-results">
+      <div class="result-card ppf">
+        <div class="rc-label ppf"><span class="rc-dot ppf"></span>PPF — Public Provident Fund</div>
+        <div class="rc-row"><span class="rc-key">Total Invested</span><span class="rc-val ppf" id="ppf-invested">₹22,50,000</span></div>
+        <div class="rc-row"><span class="rc-key">Interest Earned</span><span class="rc-val ppf" id="ppf-interest">₹18,18,000</span></div>
+        <div class="rc-row"><span class="rc-key">Maturity Value</span><span class="rc-val ppf rc-total" id="ppf-total">₹40,68,000</span></div>
+        <div class="rc-row"><span class="rc-key">Tax on Returns</span><span class="rc-val ppf" style="color:var(--green)">₹0 (EEE)</span></div>
+        <div class="rc-row"><span class="rc-key">Tax Saved (30%)</span><span class="rc-val ppf" id="ppf-taxsaved">₹6,75,000</span></div>
+        <div class="rc-note">✓ Completely tax-free. Government of India backed. DICGC insured.</div>
+      </div>
+      <div class="result-card elss">
+        <div class="rc-label elss"><span class="rc-dot elss"></span>ELSS — Equity Linked Savings Scheme</div>
+        <div class="rc-row"><span class="rc-key">Total Invested</span><span class="rc-val elss" id="elss-invested">₹22,50,000</span></div>
+        <div class="rc-row"><span class="rc-key">Estimated Gains</span><span class="rc-val elss" id="elss-gains">₹58,42,000</span></div>
+        <div class="rc-row"><span class="rc-key">Final Value (pre-tax)</span><span class="rc-val elss" id="elss-pretax">₹80,92,000</span></div>
+        <div class="rc-row"><span class="rc-key">LTCG Tax (10%)</span><span class="rc-val elss" id="elss-tax" style="color:#dc2626">-₹5,74,200</span></div>
+        <div class="rc-row"><span class="rc-key">Post-Tax Value</span><span class="rc-val elss rc-total" id="elss-total">₹75,17,800</span></div>
+        <div class="rc-note">⚠ Market-linked returns. LTCG 10% on gains above ₹1L/year applies.</div>
+      </div>
+    </div>
+
+    <div class="winner-banner elss-wins" id="winner-banner">
+      <span class="winner-icon">🏆</span>
+      <div>
+        <strong id="winner-text">ELSS wins by ₹34,49,800 post-tax</strong>
+        <div style="font-size:.77rem;font-weight:400;margin-top:2px;opacity:.85" id="winner-sub">Over 15 years, ELSS builds 85% more wealth than PPF (after accounting for LTCG tax)</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem">
+          <span style="font-size:.75rem;font-weight:600;color:var(--ink-muted);letter-spacing:.5px">Corpus Growth Comparison (Grouped by 5-Year Milestones)</span>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:var(--navy)"></span>PPF</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--gold)"></span>ELSS (post-tax)</span>
+          </div>
+        </div>
+        <canvas id="growthChart" height="auto"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">PPF vs ELSS — Key Differences</h2>
+  <p class="section-sub">Complete comparison across 10 critical factors</p>
+  <table class="cmp-table">
+    <thead><tr><th>Factor</th><th>PPF</th><th>ELSS</th><th>Winner</th></tr></thead>
+    <tbody>
+      <tr><td>Average Returns</td><td>7.1% (guaranteed)</td><td>12–15% (historical)</td><td><span class="badge badge-gold">ELSS</span></td></tr>
+      <tr><td>Risk Level</td><td>Zero risk (Govt. backed)</td><td>Moderate-High (equity)</td><td><span class="badge badge-navy">PPF</span></td></tr>
+      <tr><td>Lock-in Period</td><td>15 years</td><td>3 years</td><td><span class="badge badge-gold">ELSS</span></td></tr>
+      <tr><td>Tax on Returns</td><td>100% Tax-Free (EEE)</td><td>LTCG 10% above ₹1L</td><td><span class="badge badge-navy">PPF</span></td></tr>
+      <tr><td>80C Deduction</td><td>Yes — up to ₹1.5L</td><td>Yes — up to ₹1.5L</td><td><span class="badge badge-gray">Both</span></td></tr>
+      <tr><td>Minimum Investment</td><td>₹500/year</td><td>₹500/month (SIP)</td><td><span class="badge badge-gray">Both</span></td></tr>
+      <tr><td>Maximum Investment</td><td>₹1,50,000/year</td><td>No upper limit</td><td><span class="badge badge-gold">ELSS</span></td></tr>
+      <tr><td>Who Can Invest</td><td>Indian residents only</td><td>All Indians incl. NRI</td><td><span class="badge badge-gold">ELSS</span></td></tr>
+      <tr><td>Flexibility</td><td>Partial withdrawal yr 7+</td><td>Redeem anytime after 3yr</td><td><span class="badge badge-gold">ELSS</span></td></tr>
+      <tr><td>Backed By</td><td>Govt. of India (sovereign)</td><td>SEBI regulated AMCs</td><td><span class="badge badge-navy">PPF</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CHOOSE -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">When Should You Choose?</h2>
+  <p class="section-sub">Based on your risk tolerance, age, and financial goals</p>
+  <div class="choose-grid">
+    <div class="choose-card ppf">
+      <div class="choose-head ppf"><span>🏛️</span>Choose PPF if...</div>
+      <ul class="choose-list ppf">
+        <li>You want 100% guaranteed, risk-free returns</li>
+        <li>You're a conservative investor or near retirement</li>
+        <li>You want completely tax-free maturity (EEE status)</li>
+        <li>You're building a government-backed retirement corpus</li>
+        <li>You have a 15+ year horizon and want stability</li>
+      </ul>
+    </div>
+    <div class="choose-card elss">
+      <div class="choose-head elss"><span>📈</span>Choose ELSS if...</div>
+      <ul class="choose-list elss">
+        <li>You can handle market ups and downs for better returns</li>
+        <li>You're young (22–40) with a long investment horizon</li>
+        <li>You want the shortest lock-in for 80C savings (3 yrs)</li>
+        <li>You want to build significantly more wealth than PPF</li>
+        <li>You want flexibility to invest more than ₹1.5L/year</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <p class="section-sub">Everything you need to know about PPF vs ELSS</p>
+  <div class="faq-list">
+    <div class="faq-item" id="faq-1">
+      <button class="faq-q" onclick="toggleFaq('faq-1')">Which is better PPF or ELSS for tax saving?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Both save identical tax under 80C (up to ₹1.5L/year). ELSS gives higher returns (12–15% historically) but has market risk. PPF gives 7.1% guaranteed. For investors with 15+ year horizon and moderate risk appetite, ELSS typically builds significantly more post-tax wealth. For risk-averse investors, PPF's EEE tax status makes it extremely attractive.</p></div>
+    </div>
+    <div class="faq-item" id="faq-2">
+      <button class="faq-q" onclick="toggleFaq('faq-2')">Is ELSS risky compared to PPF?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Yes. ELSS invests in equity markets and can fluctuate significantly. In a bad year, ELSS can give negative returns — e.g., in 2020 or 2008. PPF gives fixed 7.1% guaranteed by the Government of India — you cannot lose money. However, over 10–15 year periods, ELSS has historically outperformed PPF by 5–8% annually, which compounds to a massive wealth difference.</p></div>
+    </div>
+    <div class="faq-item" id="faq-3">
+      <button class="faq-q" onclick="toggleFaq('faq-3')">Can I invest in both PPF and ELSS?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Yes! Many financial advisors recommend a split approach. You can divide your ₹1.5L 80C limit — e.g., ₹50,000 in PPF (safety anchor) and ₹1,00,000 in ELSS (growth engine). This gives you the benefit of guaranteed returns + market-beating potential in the same portfolio.</p></div>
+    </div>
+    <div class="faq-item" id="faq-4">
+      <button class="faq-q" onclick="toggleFaq('faq-4')">What happens to ELSS after 3 years?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>After the mandatory 3-year lock-in, you can redeem your ELSS investment anytime. You don't have to — staying invested longer (7–10 years) typically gives better compounding. When you redeem, gains above ₹1 lakh are taxed at 10% LTCG. Gains below ₹1L per year are completely tax-free.</p></div>
+    </div>
+    <div class="faq-item" id="faq-5">
+      <button class="faq-q" onclick="toggleFaq('faq-5')">Is PPF return tax-free?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Yes! PPF has EEE (Exempt-Exempt-Exempt) tax status: (1) Your contribution gets 80C deduction — tax-free on the way in, (2) Interest earned every year is completely tax-free, (3) The maturity amount (after 15 years) is 100% tax-free. This makes PPF one of the most tax-efficient investments in India, especially for high earners in the 30% bracket.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section" style="padding-top:0;padding-bottom:3rem">
+  <h2 class="section-title">Explore More Tools</h2>
+  <p class="section-sub">Continue your financial planning journey</p>
+  <div class="cta-grid">
+    <a href="/calculators/ppf" class="cta-card">
+      <span class="cta-icon">🏛️</span>
+      <span class="cta-title">PPF Calculator</span>
+      <span class="cta-sub">Calculate your PPF maturity</span>
+      <span class="cta-arrow">Calculate →</span>
+    </a>
+    <a href="/compare/sip-vs-fd" class="cta-card">
+      <span class="cta-icon">📊</span>
+      <span class="cta-title">SIP vs FD</span>
+      <span class="cta-sub">Which gives better returns?</span>
+      <span class="cta-arrow">Compare →</span>
+    </a>
+    <a href="/compare/home-loan-vs-rent" class="cta-card">
+      <span class="cta-icon">🏠</span>
+      <span class="cta-title">Home Loan vs Rent</span>
+      <span class="cta-sub">Buy or rent — answered</span>
+      <span class="cta-arrow">Compare →</span>
+    </a>
+  </div>
+</div>
+
+<script>
+function fmt(n){
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(2)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+
+// LTCG: 10% on gains above ₹1L
+function elssPostTax(total, invested){
+  const gains=total-invested;
+  const taxableGains=Math.max(0, gains-100000);
+  const tax=taxableGains*0.10;
+  return total-tax;
+}
+
+let chart;
+function buildChart(milestones, ppfVals, elssVals){
+  const ctx=document.getElementById('growthChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:milestones,
+      datasets:[
+        {label:'PPF',data:ppfVals,backgroundColor:'rgba(27,79,166,.7)',borderRadius:6,borderSkipped:false},
+        {label:'ELSS (post-tax)',data:elssVals,backgroundColor:'rgba(217,119,6,.75)',borderRadius:6,borderSkipped:false}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.y)}}},
+      scales:{
+        y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.04)'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+// Function to get Django CSRF Token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+async function calculate() {
+    const yearly = +document.getElementById('yearlyAmt').value || 150000;
+    const years  = +document.getElementById('yrs').value || 15;
+    const elssR  = +document.getElementById('elssRate').value || 13;
+
+    // 80C warning UI update
+    const warn = document.getElementById('amt-warn');
+    const amtInput = document.getElementById('yearlyAmt');
+    if(yearly > 150000){ warn.style.display='inline'; amtInput.classList.add('warn'); }
+    else { warn.style.display='none'; amtInput.classList.remove('warn'); }
+
+    try {
+        const response = await fetch('/api/compare/ppf-vs-elss', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                yearly_amount: yearly,
+                years: years,
+                elss_rate: elssR
+            })
+        });
+
+        const data = await response.json();
+        if(!data.success) throw new Error(data.error);
+
+        const sum = data.summary;
+
+        // Update DOM
+        document.getElementById('ppf-invested').textContent = fmt(sum.invested);
+        document.getElementById('ppf-interest').textContent = fmt(sum.ppf_interest);
+        document.getElementById('ppf-total').textContent    = fmt(sum.ppf_total);
+        document.getElementById('ppf-taxsaved').textContent = fmt(sum.ppf_tax_saved);
+        
+        document.getElementById('elss-invested').textContent = fmt(sum.invested);
+        document.getElementById('elss-gains').textContent    = fmt(sum.elss_gains);
+        document.getElementById('elss-pretax').textContent   = fmt(sum.elss_pretax);
+        document.getElementById('elss-tax').textContent      = '-' + fmt(sum.elss_tax);
+        document.getElementById('elss-total').textContent    = fmt(sum.elss_total);
+
+        // Update Winner
+        const banner = document.getElementById('winner-banner');
+        const diff = Math.abs(sum.elss_total - sum.ppf_total);
+        if(sum.elss_total > sum.ppf_total){
+            banner.className='winner-banner elss-wins';
+            document.getElementById('winner-text').textContent = `🏆 ELSS wins by ${fmt(diff)} (post-tax)`;
+            document.getElementById('winner-sub').textContent = `Over ${years} years, ELSS builds ${Math.round((sum.elss_total/sum.ppf_total-1)*100)}% more wealth than PPF after LTCG tax`;
+        } else {
+            banner.className='winner-banner ppf-wins';
+            document.getElementById('winner-text').textContent = `🏛️ PPF wins by ${fmt(diff)} (fully tax-free)`;
+            document.getElementById('winner-sub').textContent = `At ${elssR}% ELSS return, PPF's tax-free guarantee edges ahead`;
+        }
+
+        // Update Chart
+        buildChart(data.chart.labels, data.chart.ppf_data, data.chart.elss_data);
+
+    } catch(err) {
+        console.error("API Error:", err);
+    }
+}
+
+function syncSlider(sId,iId){
+  const s=document.getElementById(sId),i=document.getElementById(iId);
+  s.addEventListener('input',()=>{i.value=s.value;calculate()});
+  i.addEventListener('input',()=>{s.value=i.value;calculate()});
+}
+syncSlider('amtSlider','yearlyAmt');
+syncSlider('yrsSlider','yrs');
+syncSlider('elssSlider','elssRate');
+
+function toggleFaq(id){
+  const item=document.getElementById(id);
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+window.addEventListener('load',calculate);
+</script>
+</body>
+</html>

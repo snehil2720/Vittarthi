@@ -23,6 +23,8 @@ from django.utils.html import strip_tags
 from bs4 import BeautifulSoup
 #from financial_advisor.views import dashboard
 from vita.decorators import admin_required, writer_required
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 def auth_page(request):
     return render(request, "authentication/auth.html")
@@ -764,22 +766,96 @@ def salary_calc(request):
     CalcUsage.objects.create(name="SALARY")
     return render(request, 'salary/salary.html', locals())
 
+# def pf_calc(request):
+#     result = None
+#     table_data = []
+
+#     if request.method == "POST":
+#         salary = float(request.POST.get("salary"))
+
+#         pf = salary * 0.12
+
+#         for i in range(1,13):
+#             table_data.append({"month": i, "pf": pf*i})
+
+#         result = pf*12
+#     CalcUsage.objects.create(name="PF")
+#     return render(request, 'salary/pf.html', locals())
+
 def pf_calc(request):
-    result = None
-    table_data = []
+    if request.method == "POST" and request.headers.get('Content-Type') == 'application/json':
+        try:
+            data = json.loads(request.body)
+            initial_salary = float(data.get("basic", 0))
+            years = int(data.get("time", 20))
+            emp_pct = float(data.get("emp_pct", 12)) / 100
+            interest_rate = float(data.get("rate", 8.25)) / 100
+            salary_increment = float(data.get("hike", 5.0)) / 100
+            inflation_rate = float(data.get("inflation", 6.0)) / 100
 
-    if request.method == "POST":
-        salary = float(request.POST.get("salary"))
+            corpus = 0.0
+            total_invested = 0.0
+            current_salary = initial_salary
+            monthly_rate = interest_rate / 12
+            pf_rate_total = emp_pct + 0.0367
 
-        pf = salary * 0.12
+            yearly_data = []
+            monthly_data = []
 
-        for i in range(1,13):
-            table_data.append({"month": i, "pf": pf*i})
+            for year in range(1, years + 1):
+                if year > 1:
+                    current_salary *= (1 + salary_increment)
 
-        result = pf*12
-    CalcUsage.objects.create(name="PF")
-    return render(request, 'salary/pf.html', locals())
+                monthly_contribution = current_salary * pf_rate_total
+                year_deposit = 0
+                year_interest = 0
+                opening_bal = corpus
 
+                for month in range(1, 13):
+                    month_opening = corpus
+                    corpus += monthly_contribution
+                    year_deposit += monthly_contribution
+                    interest_this_month = corpus * monthly_rate
+                    year_interest += interest_this_month
+                    corpus += interest_this_month
+
+                    monthly_data.append({
+                        "year": year,
+                        "month": month,
+                        "openingBal": round(month_opening),
+                        "deposited": round(monthly_contribution),
+                        "interest": round(interest_this_month),
+                        "total": round(corpus)
+                    })
+
+                total_invested += year_deposit
+                yearly_data.append({
+                    "year": year,
+                    "openingBal": round(opening_bal),
+                    "deposited": round(year_deposit),
+                    "interest": round(year_interest),
+                    "investedTotal": round(total_invested),
+                    "profitTotal": round(corpus - total_invested),
+                    "total": round(corpus)
+                })
+
+            total_profit = corpus - total_invested
+            real_value = corpus / ((1 + inflation_rate) ** years) if inflation_rate > 0 else corpus
+
+            return JsonResponse({
+                "status": "success",
+                "total": round(corpus),
+                "invested": round(total_invested),
+                "profit": round(total_profit),
+                "real_value": round(real_value),
+                "yearlyData": yearly_data,
+                "monthlyData": monthly_data
+            })
+
+        except (ValueError, TypeError, KeyError) as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return render(request, 'salary/pf.html', {})
 def loan_eligibility(request):
     eligible = None
 
@@ -1341,3 +1417,413 @@ def change_role(request, user_id):
         user.save()
         messages.success(request, "Role updated successfully")
     return redirect('admin_dashboard')
+
+
+
+
+def sip_fv(monthly, rate_annual, years):
+    r = rate_annual / 100 / 12
+    n = years * 12
+    if r == 0:
+        return monthly * n
+    return monthly * (((math.pow(1 + r, n) - 1) / r) * (1 + r))
+
+def fd_fv(monthly, rate_annual, years):
+    rm = rate_annual / 100 / 12
+    nm = years * 12
+    if rm == 0:
+        return monthly * nm
+    return monthly * (((math.pow(1 + rm, nm) - 1) / rm))
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def api_sip_vs_fd(request):
+    try:
+        if request.method == "POST":
+            data = json.loads(request.body)
+        else:
+            data = request.GET
+            
+        monthly = float(data.get('monthly_amount', 5000))
+        years = int(data.get('years', 10))
+        sip_r = float(data.get('sip_rate', 12))
+        fd_r = float(data.get('fd_rate', 6.5))
+        
+        invested = monthly * years * 12
+        sip_val = sip_fv(monthly, sip_r, years)
+        fd_val = fd_fv(monthly, fd_r, years)
+        sip_gain = sip_val - invested
+        fd_gain = fd_val - invested
+        
+        # Chart data
+        labels = []
+        sip_data = []
+        fd_data = []
+        
+        for y in range(1, min(years, 30) + 1):
+            labels.append(f'Yr {y}')
+            sip_data.append(round(sip_fv(monthly, sip_r, y)))
+            fd_data.append(round(fd_fv(monthly, fd_r, y)))
+            
+        return JsonResponse({
+            'success': True,
+            'summary': {
+                'invested': round(invested),
+                'sip_returns': round(sip_gain),
+                'sip_total': round(sip_val),
+                'sip_cagr': round(sip_r, 1),
+                'fd_returns': round(fd_gain),
+                'fd_total': round(fd_val),
+            },
+            'chart': {
+                'labels': labels,
+                'sip_data': sip_data,
+                'fd_data': fd_data
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+def ppf_fv(yearly, rate_annual, years):
+    corpus = 0
+    r = rate_annual / 100
+    for _ in range(years):
+        corpus = (corpus + yearly) * (1 + r)
+    return corpus
+
+def elss_fv(yearly, rate_annual, years):
+    corpus = 0
+    r = rate_annual / 100
+    for _ in range(years):
+        corpus = (corpus + yearly) * (1 + r)
+    return corpus
+
+def elss_post_tax(total, invested):
+    gains = total - invested
+    taxable_gains = max(0, gains - 100000)
+    tax = taxable_gains * 0.10
+    return total - tax
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def api_ppf_vs_elss(request):
+    try:
+        if request.method == "POST":
+            data = json.loads(request.body)
+        else:
+            data = request.GET
+            
+        yearly = float(data.get('yearly_amount', 150000))
+        years = int(data.get('years', 15))
+        ppf_r = 7.1  # Fixed by govt
+        elss_r = float(data.get('elss_rate', 13))
+        
+        limited_yearly = min(yearly, 150000)
+        invested = limited_yearly * years
+        
+        ppf_total = ppf_fv(limited_yearly, ppf_r, years)
+        elss_pre = elss_fv(limited_yearly, elss_r, years)
+        elss_post = elss_post_tax(elss_pre, invested)
+        
+        elss_gains = elss_pre - invested
+        elss_ltcg = elss_pre - elss_post
+        tax_saved = invested * 0.30
+        
+        # Chart milestones (every 5 years)
+        labels = []
+        ppf_data = []
+        elss_data = []
+        
+        for y in range(5, min(years, 30) + 1, 5):
+            labels.append(f'{y} Yrs')
+            ppf_data.append(round(ppf_fv(limited_yearly, ppf_r, y)))
+            ep = elss_fv(limited_yearly, elss_r, y)
+            elss_data.append(round(elss_post_tax(ep, limited_yearly * y)))
+            
+        if years % 5 != 0:
+            labels.append(f'{years} Yrs')
+            ppf_data.append(round(ppf_total))
+            elss_data.append(round(elss_post))
+            
+        return JsonResponse({
+            'success': True,
+            'summary': {
+                'invested': round(invested),
+                'ppf_interest': round(ppf_total - invested),
+                'ppf_total': round(ppf_total),
+                'ppf_tax_saved': round(tax_saved),
+                'elss_gains': round(elss_gains),
+                'elss_pretax': round(elss_pre),
+                'elss_tax': round(elss_ltcg),
+                'elss_total': round(elss_post),
+            },
+            'chart': {
+                'labels': labels,
+                'ppf_data': ppf_data,
+                'elss_data': elss_data
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+def calc_emi(p, r_annual, n):
+    r = r_annual / 100 / 12
+    if r == 0:
+        return p / n
+    return p * r * math.pow(1 + r, n) / (math.pow(1 + r, n) - 1)
+
+def sip_lumpsum_fv(lumpsum, rate_annual, years):
+    return lumpsum * math.pow(1 + rate_annual / 100, years)
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def api_home_loan_vs_rent(request):
+    try:
+        if request.method == "POST":
+            data = json.loads(request.body)
+        else:
+            data = request.GET
+            
+        prop = float(data.get('property_price', 8000000))
+        dp_pct = float(data.get('down_payment_pct', 20))
+        loan_r = float(data.get('loan_rate', 8.5))
+        tenure = int(data.get('tenure_years', 20))
+        app_r = float(data.get('appreciation_rate', 6))
+        month_rent = float(data.get('monthly_rent', 20000))
+        rent_inc = float(data.get('rent_increase', 8))
+        sip_r = float(data.get('sip_rate', 12))
+        
+        dp = prop * dp_pct / 100
+        loan_amt = prop - dp
+        n = tenure * 12
+        emi = calc_emi(loan_amt, loan_r, n)
+        total_paid = emi * n
+        total_int = total_paid - loan_amt
+        prop_future = prop * math.pow(1 + app_r / 100, tenure)
+        
+        sip_corpus = sip_lumpsum_fv(dp, sip_r, tenure)
+        
+        total_rent = 0
+        cur_rent = month_rent
+        for _ in range(tenure):
+            total_rent += cur_rent * 12
+            cur_rent *= (1 + rent_inc / 100)
+            
+        buy_net_worth = prop_future
+        rent_net_worth = max(0, sip_corpus - total_rent)
+        
+        # Break-even year calculation
+        be_year = tenure + 1
+        for y in range(1, tenure + 1):
+            pv = prop * math.pow(1 + app_r / 100, y)
+            buy_nw_y = max(0, pv)
+            
+            sc = sip_lumpsum_fv(dp, sip_r, y)
+            tr = 0
+            cr = month_rent
+            for j in range(y):
+                tr += cr * 12
+                cr *= (1 + rent_inc / 100)
+            rent_nw_y = max(0, sc - tr)
+            
+            if buy_nw_y >= rent_nw_y:
+                be_year = y
+                break
+                
+        # Chart Data
+        labels = []
+        buy_data = []
+        rent_data = []
+        
+        for y in range(1, tenure + 1):
+            labels.append(f'Yr {y}')
+            buy_data.append(round(prop * math.pow(1 + app_r / 100, y)))
+            
+            sc = sip_lumpsum_fv(dp, sip_r, y)
+            tr = 0
+            cr = month_rent
+            for j in range(y):
+                tr += cr * 12
+                cr *= (1 + rent_inc / 100)
+            rent_data.append(round(max(0, sc - tr)))
+            
+        return JsonResponse({
+            'success': True,
+            'summary': {
+                'loan_amt': round(loan_amt),
+                'emi': round(emi),
+                'total_int': round(total_int),
+                'prop_future': round(prop_future),
+                'buy_networth': round(buy_net_worth),
+                'dp_invested': round(dp),
+                'sip_corpus': round(sip_corpus),
+                'total_rent': round(total_rent),
+                'rent_networth': round(rent_net_worth),
+                'breakeven_year': be_year,
+                'tenure': tenure
+            },
+            'chart': {
+                'labels': labels,
+                'buy_data': buy_data,
+                'rent_data': rent_data
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+@csrf_exempt
+@require_http_methods(['POST', 'GET'])
+def api_sgb_vs_gold(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+        else:
+            data = request.GET
+            
+        grams = float(data.get('grams', 10))
+        price_per_gram = float(data.get('price_per_gram', 7500))
+        app_r = float(data.get('appreciation_rate', 8))
+        years = int(data.get('years', 8))
+        
+        import math
+        raw_gold_value = grams * price_per_gram
+        making_charges_pct = 10
+        gst_pct = 3
+        locker_cost_yearly = 1500
+        
+        physical_cost = raw_gold_value * (1 + (making_charges_pct + gst_pct) / 100)
+        
+        sgb_cost = raw_gold_value
+        sgb_interest_rate = 2.5
+        annual_sgb_interest = sgb_cost * (sgb_interest_rate / 100)
+        
+        labels = []
+        phys_data = []
+        sgb_data = []
+        total_sgb_interest = 0
+        total_locker_cost = 0
+        
+        for y in range(1, years + 1):
+            labels.append(f'Yr {y}')
+            current_raw_value = raw_gold_value * math.pow(1 + app_r / 100, y)
+            total_locker_cost += locker_cost_yearly
+            phys_data.append(round(current_raw_value - total_locker_cost))
+            
+            total_sgb_interest += annual_sgb_interest
+            sgb_data.append(round(current_raw_value + total_sgb_interest))
+            
+        phys_final = phys_data[-1]
+        sgb_final = sgb_data[-1]
+        sgb_advantage = sgb_final - phys_final
+        
+        return JsonResponse({
+            'success': True,
+            'summary': {
+                'raw_value': round(raw_gold_value),
+                'physical_cost': round(physical_cost),
+                'sgb_cost': round(sgb_cost),
+                'total_sgb_interest': round(total_sgb_interest),
+                'total_locker_cost': round(total_locker_cost),
+                'phys_final': round(phys_final),
+                'sgb_final': round(sgb_final),
+                'sgb_advantage': round(sgb_advantage)
+            },
+            'chart': {
+                'labels': labels,
+                'phys_data': phys_data,
+                'sgb_data': sgb_data
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+@csrf_exempt
+@require_http_methods(['POST', 'GET'])
+def api_nps_vs_mf(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+        else:
+            data = request.GET
+            
+        monthly = float(data.get('monthly_amount', 10000))
+        current_age = int(data.get('current_age', 30))
+        retire_age = 60
+        years = retire_age - current_age
+        mf_rate = float(data.get('mf_rate', 12))
+        nps_rate = float(data.get('nps_rate', 10))
+        tax_slab = float(data.get('tax_slab', 30))
+        
+        invested = monthly * years * 12
+        
+        mf_corpus = sip_fv(monthly, mf_rate, years)
+        mf_gains = mf_corpus - invested
+        mf_tax = max(0, mf_gains - 100000) * 0.10
+        mf_post_tax = mf_corpus - mf_tax
+        
+        nps_corpus = sip_fv(monthly, nps_rate, years)
+        nps_lumpsum = nps_corpus * 0.60
+        nps_annuity_corpus = nps_corpus * 0.40
+        
+        yearly_nps_contrib = monthly * 12
+        eligible_80ccd = min(50000, yearly_nps_contrib)
+        total_tax_saved = (eligible_80ccd * (tax_slab / 100)) * years
+        
+        labels = []
+        mf_data = []
+        nps_data = []
+        
+        for y in range(5, min(years, 40) + 1, 5):
+            labels.append(f'Age {current_age + y}')
+            c = sip_fv(monthly, mf_rate, y)
+            t = max(0, (c - (monthly*y*12)) - 100000) * 0.10
+            mf_data.append(round(c - t))
+            nps_data.append(round(sip_fv(monthly, nps_rate, y)))
+            
+        if years % 5 != 0:
+            labels.append(f'Age 60')
+            mf_data.append(round(mf_post_tax))
+            nps_data.append(round(nps_corpus))
+            
+        return JsonResponse({
+            'success': True,
+            'summary': {
+                'invested': round(invested),
+                'mf_corpus': round(mf_corpus),
+                'mf_tax': round(mf_tax),
+                'mf_post_tax': round(mf_post_tax),
+                'nps_corpus': round(nps_corpus),
+                'nps_lumpsum': round(nps_lumpsum),
+                'nps_annuity': round(nps_annuity_corpus),
+                'tax_saved_80ccd': round(total_tax_saved)
+            },
+            'chart': {
+                'labels': labels,
+                'mf_data': mf_data,
+                'nps_data': nps_data
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+def compare_hub(request):
+    return render(request, 'compare/compare_hub.html')
+
+def page_sgb_vs_gold(request):
+    return render(request, 'compare/sgb_vs_gold.html')
+
+def page_nps_vs_mf(request):
+    return render(request, 'compare/nps_vs_mf.html')
+
+def page_sip_vs_fd(request):
+    return render(request, 'compare/sip_vs_fd.html')
+
+def page_ppf_vs_elss(request):
+    return render(request, 'compare/ppf_vs_elss.html')
+
+def page_homeloan_vs_rent(request):
+    return render(request, 'compare/homeloan_vs_rent.html')
+

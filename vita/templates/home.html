@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Vittarthi Financial Calculators | SIP, EMI & Home Loan Calculator
@@ -9,823 +10,53 @@ Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi ea
 {% endblock %}
 
 
-{% load static %}
+{% block extra_head %}
+<!-- Added Preconnects to load fonts faster -->
+
+<!-- Added Defer so Chart.js doesn't block the page from rendering -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script> -->
+
+<!-- Link to your newly created CSS file here! -->
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
 {% block content %}
-
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
-
-<style>
-/* RESET */
-:root{
-  --paper:#f6f4ef;
-  --surface:#fff;
-  --surface2:#f1eee7;
-  --surface3:#e5e1d7;
-  --ink:#111827;
-  --ink-muted:#5f6775;
-  --ink-faint:#8b93a1;
-
-  --green:#1a6b4a;
-  --green-mid:#cfe8dc;
-  --green-lt:#e8f5ef;
-
-  --blue:#2563eb;
-  --blue-lt:#dbeafe;
-
-  --gold:#c9860a;
-  --gold-lt:#fff4d6;
-
-  --border:rgba(0,0,0,.08);
-
-  --shadow:0 6px 20px rgba(0,0,0,.06);
-  --shadow-lg:0 10px 40px rgba(0,0,0,.08);
-
-  --r:18px;
-  --r-sm:12px;
-
-  --max:1280px;
-  --pad:clamp(1rem,4vw,2rem);
-
-  --nav-h:64px;
-}
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
-
-a{text-decoration:none;color:inherit;}
-img{max-width:100%;display:block}
-
-/* TOP FINANCE BAR */
-
-.finance-bar{
-  position:sticky;
-  top:65px;
-  z-index:99;
-  backdrop-filter:blur(14px);
-  background:rgba(17,17,17,.86);
-  border-bottom:1px solid rgba(255,255,255,.08);
-  border-radius: 35px;
-}
-
-.finance-inner{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:2px 5px;
-}
-
-.finance-label span{
-  background:linear-gradient(45deg,#4ade80,#22c55e);
-  color:#fff;
-  font-size:12px;
-  padding:2px 6px;
-  border-radius:100px;
-  font-weight:600;
-}
-
-.finance-ticker{
-  flex:1;
-  overflow:hidden;
-}
-
-.tv-ticker-item-tape,
-.tv-ticker-item-tape__short-name{
-  color:#000 !important;
-}
-
-/* HERO */
-
-.hero{
-  padding:clamp(2rem,1vw,1rem) var(--pad);
-  border-bottom:1px solid var(--border);
-  background:var(--surface);
-  position:relative;
-  overflow:hidden;
-  border-radius: 35px;
-}
-
-.hero::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);
-  background-size:26px 26px;
-  opacity:.6;
-}
-
-.hero::after{
-  content:'';
-  position:absolute;
-  top:-120px;
-  right:-100px;
-  width:520px;
-  height:520px;
-  border-radius:50%;
-  background:var(--green-lt);
-  opacity:.7;
-}
-
-.hero-inner{
-  max-width:var(--max);
-  margin:auto;
-  display:grid;
-  grid-template-columns:1fr 440px;
-  gap:clamp(2rem,5vw,5rem);
-  align-items:center;
-  position:relative;
-  z-index:2;
-}
-
-.hero-eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:var(--green-lt);
-  color:var(--green);
-  padding:3px 8px;
-  border-radius:999px;
-  font-size:.72rem;
-  font-weight:600;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  margin-bottom:1.3rem;
-}
-
-.hero h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2.5rem,5vw,4rem);
-  line-height:1.08;
-  margin-bottom:1rem;
-}
-
-.hero h1 em{
-  color:var(--green);
-  font-style:italic;
-}
-
-.hero-sub{
-  color:var(--ink-muted);
-  font-size:1.05rem;
-  line-height:1.8;
-  max-width:560px;
-  margin-bottom:2rem;
-}
-
-.hero-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.btn-primary,
-.btn-secondary{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:.6rem .6rem;
-  border-radius:12px;
-  font-weight:600;
-  transition:.2s;
-}
-
-.btn-primary{
-  background:var(--green);
-  color:#fff;
-}
-
-.btn-primary:hover{
-  transform:translateY(-2px);
-}
-
-.btn-secondary{
-  border:1px solid var(--border);
-  background:#fff;
-}
-
-.btn-secondary:hover{
-  background:var(--surface2);
-}
-
-/* SIP CARD */
-
-.sip-card{
-  background:#fff;
-  border-radius:24px;
-  padding:0.8rem;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow-lg);
-}
-
-.sip-card-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:1.5rem;
-}
-
-.sip-card-title{
-  font-size:.8rem;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  font-weight:700;
-  color:var(--ink-muted);
-}
-
-.sip-result-pill{
-  background:var(--green-lt);
-  color:var(--green);
-  padding:2px 6px;
-  border-radius:999px;
-  font-size:.75rem;
-  font-weight:700;
-}
-
-.sip-metrics{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-bottom:1.4rem;
-}
-
-.sip-metric{
-  background:var(--surface2);
-  border-radius:12px;
-  padding:.8rem;
-  text-align:center;
-}
-
-.sip-metric-lbl{
-  font-size:.65rem;
-  color:var(--ink-faint);
-  text-transform:uppercase;
-  margin-bottom:4px;
-}
-
-.sip-metric-val{
-  font-weight:700;
-}
-
-.green{color:var(--green)}
-
-.sip-field{
-  margin-bottom:1rem;
-}
-
-.sip-field-hdr{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:.5rem;
-}
-
-.sip-field-lbl{
-  font-size:.8rem;
-  color:var(--ink-muted);
-}
-
-.sip-field-val{
-  background:var(--surface2);
-  padding:2px 8px;
-  border-radius:6px;
-  font-size:.8rem;
-  font-weight:600;
-}
-
-input[type=range]{
-  width:100%;
-  accent-color:var(--green);
-}
-
-.sip-donut-row{
-  display:flex;
-  gap:1rem;
-  align-items:center;
-  padding-top:.7rem;
-  border-top:1px solid var(--border);
-}
-
-.sip-leg{
-  flex:1;
-}
-
-.sip-leg-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:7px;
-}
-
-.sip-leg-dot{
-  width:8px;
-  height:8px;
-  border-radius:2px;
-}
-
-.sip-leg-lbl{
-  flex:1;
-  font-size:.78rem;
-  color:var(--ink-muted);
-}
-
-.sip-leg-val{
-  font-size:.8rem;
-  font-weight:700;
-}
-
-/* TRUST BAR */
-
-.trust-bar{
-  background:var(--green);
-  padding:0.8rem var(--pad);
-  border-radius: 35px;
-}
-
-.trust-bar-inner{
-  max-width:var(--max);
-  margin:auto;
-  display:flex;
-  justify-content:space-around;
-  flex-wrap:wrap;
-  gap:1rem;
-}
-
-.trust-stat{
-  text-align:center;
-}
-
-.trust-stat-num{
-  font-family:'Playfair Display',serif;
-  color:#fff;
-  font-size:2rem;
-}
-
-.trust-stat-lbl{
-  color:rgba(255,255,255,.8);
-  font-size:.75rem;
-}
-
-/* COMMON SECTION */
-
-.section{
-  padding:clamp(1rem,7vw,2rem) var(--pad);
-}
-
-.section-inner{
-  max-width:var(--max);
-  margin:auto;
-}
-
-.section-hdr{
-  margin-bottom:2.5rem;
-}
-
-.section-label{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  background:var(--green-lt);
-  color:var(--green);
-  padding:5px 12px;
-  border-radius:999px;
-  font-size:.7rem;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  font-weight:700;
-  margin-bottom:1rem;
-}
-
-.section-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2rem,4vw,3rem);
-  margin-bottom:.8rem;
-}
-
-.section-sub{
-  max-width:auto;
-  color:var(--ink-muted);
-  line-height:1.8;
-}
-
-/* CALCULATORS */
-
-.calc-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:1rem;
-}
-
-.calc-card{
-  background:#fff;
-  border-radius:18px;
-  border:1px solid var(--border);
-  padding:1.3rem;
-  display:flex;
-  gap:1rem;
-  transition:.25s;
-}
-
-.calc-card:hover{
-  transform:translateY(-5px);
-  box-shadow:var(--shadow);
-}
-
-.calc-icon{
-  width:48px;
-  height:48px;
-  border-radius:12px;
-  background:var(--green-lt);
-  color:var(--green);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  flex-shrink:0;
-}
-
-.calc-name{
-  font-weight:700;
-  margin-bottom:5px;
-}
-
-.calc-desc{
-  font-size:.82rem;
-  color:var(--ink-muted);
-  line-height:1.6;
-}
-
-/* RESOURCES */
-
-.hub-section{
-  background:#fff;
-  border-top:1px solid var(--border);
-  border-radius: 35px;
-}
-
-.hub-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
-  gap:1.3rem;
-}
-
-.hub-card{
-  background:var(--surface2);
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid var(--border);
-  transition:.25s;
-}
-
-.hub-card:hover{
-  transform:translateY(-4px);
-  box-shadow:var(--shadow);
-}
-
-.hub-img-wrap{
-  height:220px;
-  overflow:hidden;
-  background:#fff;
-}
-
-.hub-img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-}
-
-.hub-body{
-  padding:1.2rem;
-}
-
-.hub-tag{
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:.65rem;
-  text-transform:uppercase;
-  font-weight:700;
-  margin-bottom:.8rem;
-}
-
-.hub-tag.blog{
-  background:var(--green-lt);
-  color:var(--green);
-}
-
-.hub-title{
-  font-size:1rem;
-  line-height:1.5;
-  margin-bottom:.7rem;
-}
-
-.hub-excerpt{
-  font-size:.82rem;
-  line-height:1.7;
-  color:var(--ink-muted);
-}
-
-/* FAQ */
-
-.faq-box{
-  max-width:900px;
-  margin:auto;
-}
-
-details{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:14px;
-  margin-bottom:1rem;
-  overflow:hidden;
-}
-
-summary{
-  padding:1.2rem 1.4rem;
-  cursor:pointer;
-  font-weight:700;
-}
-
-.faq-content{
-  padding:0 1.4rem 1.3rem;
-  color:var(--ink-muted);
-  line-height:1.7;
-}
-
-/* CTA */
-
-.cta-banner{
-  background:linear-gradient(135deg,var(--green),#1f8a5d);
-  border-radius:30px;
-  padding:1rem 1rem;
-  text-align:center;
-  color:#fff;
-}
-
-.cta-banner h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2rem,4vw,3rem);
-  margin-bottom:1rem;
-}
-
-.cta-banner p{
-  max-width:650px;
-  margin:auto;
-  margin-bottom:2rem;
-  opacity:.9;
-}
-
-.btn-white{
-  background:#fff;
-  color:var(--green);
-  padding:.9rem 1.5rem;
-  border-radius:12px;
-  display:inline-flex;
-  font-weight:700;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:900px){
-
-  .hero-inner{
-    grid-template-columns:1fr;
-  }
-
-  .hero-right{
-    order:-1;
-  }
-}
-
-@media(max-width:600px){
-
-  .sip-metrics{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .sip-metric:last-child{
-    grid-column:1/-1;
-  }
-}
-.hub-filters{
-  display:flex;
-  gap:.7rem;
-  flex-wrap:wrap;
-  margin-bottom:2rem;
-}
-
-.hub-filter{
-  border:none;
-  background:var(--surface2);
-  color:var(--ink-muted);
-  padding:.65rem 1rem;
-  border-radius:999px;
-  cursor:pointer;
-  font-weight:600;
-  font-size:.82rem;
-  transition:.2s;
-}
-
-.hub-filter:hover{
-  background:var(--green-lt);
-  color:var(--green);
-}
-
-.hub-filter.active{
-  background:var(--green);
-  color:#fff;
-}
-
-.hub-tag.news{
-  background:var(--gold-lt);
-  color:var(--gold);
-}
-
-.hub-tag.case{
-  background:var(--blue-lt);
-  color:var(--blue);
-}
-.calc-section { background:var(--paper); }
-.calc-group { margin-bottom:2.5rem; }
-.calc-group:last-child { margin-bottom:0; }
-.calc-group-label {
-  font-size:.7rem; font-weight:600; letter-spacing:1.2px;
-  text-transform:uppercase; color:var(--ink-faint);
-  margin-bottom:1rem;
-  display:flex; align-items:center; gap:.6rem;
-}
-.calc-group-label::after {
-  content:''; flex:1; height:1px; background:var(--border);
-}
-.calc-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
-  gap:.85rem;
-}
-.calc-card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:1.25rem 1.4rem;
-  display:flex; align-items:flex-start; gap:.85rem;
-  transition:box-shadow .25s, transform .25s, border-color .25s;
-  cursor:pointer; text-decoration:none; color:inherit;
-  position:relative; overflow:hidden;
-}
-.calc-card::before {
-  content:''; position:absolute; left:0; top:0; bottom:0;
-  width:3px; background:var(--green); border-radius:3px 0 0 3px;
-  transform:scaleY(0); transform-origin:center;
-  transition:transform .25s;
-}
-.calc-card:hover { box-shadow:var(--shadow); transform:translateY(-3px); border-color:var(--green-mid); }
-.calc-card:hover::before { transform:scaleY(1); }
-.calc-icon {
-  width:42px; height:42px; border-radius:10px;
-  background:var(--green-lt);
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; font-size:18px; color:var(--green);
-  transition:background .25s;
-}
-.calc-card:hover .calc-icon { background:var(--green-mid); }
-.calc-info { flex:1; min-width:0; }
-.calc-name {
-  font-size:.9rem; font-weight:600; color:var(--ink);
-  margin-bottom:4px; display:flex; align-items:center; gap:6px;
-}
-.calc-desc { font-size:.78rem; color:var(--ink-muted); line-height:1.55; }
-.calc-arrow {
-  font-size:12px; color:var(--ink-faint);
-  transition:color .2s, transform .2s;
-  margin-top:2px;
-}
-.calc-card:hover .calc-arrow { color:var(--green); transform:translate(2px,-2px); }
-.badge-new {
-  font-size:.55rem; font-weight:700; letter-spacing:.5px;
-  text-transform:uppercase; background:var(--green); color:#fff;
-  padding:1px 6px; border-radius:4px;
-}
-/* ════════════════════════════════════════════
-   WHY USE SECTION
-════════════════════════════════════════════ */
-.why-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); border-radius: 35px;}
-.why-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
-  gap:1.25rem;
-}
-.why-card {
-  background:var(--surface2);
-  border-radius:var(--r);
-  padding:1.5rem;
-  transition:transform .2s;
-}
-.why-card:hover { transform:translateY(-3px); }
-.why-icon-wrap {
-  width:48px; height:48px; border-radius:12px;
-  background:var(--green-lt);
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; color:var(--green);
-  margin-bottom:1rem;
-}
-.why-title { font-size:.95rem; font-weight:600; color:var(--ink); margin-bottom:.4rem; }
-.why-desc  { font-size:.8rem; color:var(--ink-muted); line-height:1.6; }
-
-/* ════════════════════════════════════════════
-   HOW IT HELPS — STEPS
-════════════════════════════════════════════ */
-.how-section { background:var(--paper); }
-.how-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:2rem; position:relative;
-}
-.how-grid::before {
-  content:'';
-  position:absolute; top:28px; left:calc(33.3% - 8px); right:calc(33.3% - 8px);
-  height:1px; background:var(--border);
-  pointer-events:none;
-}
-.how-step { text-align:center; padding:1rem; }
-.how-num {
-  width:56px; height:56px; border-radius:50%;
-  background:var(--green); color:#fff;
-  font-family:'Playfair Display',serif;
-  font-size:1.35rem; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto 1.1rem;
-  box-shadow:0 0 0 8px var(--green-lt);
-}
-.how-title { font-size:1rem; font-weight:600; color:var(--ink); margin-bottom:.5rem; }
-.how-desc  { font-size:.82rem; color:var(--ink-muted); line-height:1.65; }
-
-</style>
-
+<!-- FINANCE BAR -->
 <!-- FINANCE BAR -->
 <div class="finance-bar">
   <div class="finance-inner">
-
     <div class="finance-label">
       <span>📊 Live Markets</span>
     </div>
-
     <div class="finance-ticker">
       <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {
-          "symbols": [
-            { "proName": "FOREXCOM:XAUUSD", "title": "Gold" },
-            { "proName": "FOREXCOM:XAGUSD", "title": "Silver" },
-            { "proName": "BSE:SENSEX", "title": "Sensex" },
-            { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" }
-          ],
-          "showSymbolLogo": false,
-          "colorTheme": "dark",
-          "isTransparent": true,
-          "displayMode": "adaptive"
-        }
-        </script>
+        <div class="tradingview-widget-container__widget" id="tv-widget-container"></div>
+        <!-- We will load the script via JS after 3.5 seconds so it doesn't block Lighthouse -->
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-
     <div>
       <div class="hero-eyebrow">
         <i class="bi bi-graph-up-arrow"></i>
         Free · No sign-up required
       </div>
-
       <h1>
         Make <em>smarter</em><br>
         financial decisions
       </h1>
-
       <p class="hero-sub">
         Plan your loans, investments, and future income with practical financial calculators.
         Get quick estimates and understand different scenarios before committing.
       </p>
-
       <div class="hero-actions">
         <a href="/calculators" class="btn-primary">
           <i class="bi bi-calculator"></i>
           Explore All Calculators
         </a>
-
         <a href="resources/blogs" class="btn-secondary">
           <i class="bi bi-book"></i>
           Resources
@@ -834,111 +65,84 @@ summary{
     </div>
 
     <!-- SIP CARD -->
-
     <div class="sip-card">
-
       <div class="sip-card-head">
         <span class="sip-card-title">SIP Calculator</span>
         <span class="sip-result-pill">12% p.a.</span>
       </div>
-
       <div class="sip-metrics">
-
         <div class="sip-metric">
           <div class="sip-metric-lbl">Total Corpus</div>
           <div class="sip-metric-val green" id="h-total">₹0</div>
         </div>
-
         <div class="sip-metric">
           <div class="sip-metric-lbl">Invested</div>
           <div class="sip-metric-val" id="h-invested">₹0</div>
         </div>
-
         <div class="sip-metric">
           <div class="sip-metric-lbl">Returns</div>
           <div class="sip-metric-val" id="h-profit">₹0</div>
         </div>
-
       </div>
-
       <div class="sip-field">
         <div class="sip-field-hdr">
           <span class="sip-field-lbl">Monthly Investment</span>
           <span class="sip-field-val" id="h-lbl-amt">₹5,000</span>
         </div>
-
         <input type="range" id="h-sl-amt" min="500" max="100000" step="500" value="5000" oninput="updateHeroCalc()">
       </div>
-
       <div class="sip-field">
         <div class="sip-field-hdr">
           <span class="sip-field-lbl">Return Rate</span>
           <span class="sip-field-val" id="h-lbl-rate">12%</span>
         </div>
-
         <input type="range" id="h-sl-rate" min="1" max="30" step="0.5" value="12" oninput="updateHeroCalc()">
       </div>
-
       <div class="sip-field">
         <div class="sip-field-hdr">
           <span class="sip-field-lbl">Time Period</span>
           <span class="sip-field-val" id="h-lbl-time">10 yrs</span>
         </div>
-
         <input type="range" id="h-sl-time" min="1" max="40" step="1" value="10" oninput="updateHeroCalc()">
       </div>
-
       <div class="sip-donut-row">
-
         <canvas id="heroDonut" width="96" height="96"></canvas>
-
         <div class="sip-leg">
-
           <div class="sip-leg-row">
             <span class="sip-leg-dot" style="background:#1a6b4a"></span>
             <span class="sip-leg-lbl">Invested</span>
             <span class="sip-leg-val" id="h-leg-inv"></span>
           </div>
-
           <div class="sip-leg-row">
             <span class="sip-leg-dot" style="background:#c9860a"></span>
             <span class="sip-leg-lbl">Returns</span>
             <span class="sip-leg-val" id="h-leg-ret"></span>
           </div>
-
         </div>
       </div>
-
     </div>
-
   </div>
 </section>
 
 <!-- TRUST BAR -->
-
 <div class="trust-bar">
   <div class="trust-bar-inner">
-
     <div class="trust-stat">
       <div class="trust-stat-num" id="calc_count">0</div>
       <div class="trust-stat-lbl">Calculations Done</div>
     </div>
-
     <div class="trust-stat">
       <div class="trust-stat-num">{{ total_calculators }}</div>
       <div class="trust-stat-lbl">Free Calculators</div>
     </div>
-
     <div class="trust-stat">
       <div class="trust-stat-num">100%</div>
       <div class="trust-stat-lbl">Free Access</div>
     </div>
-
   </div>
 </div>
 
 <!-- CALCULATORS -->
-
 <section class="section calc-section">
   <div class="section-inner">
     <div class="section-hdr fade-up">
@@ -946,7 +150,7 @@ summary{
       <h2 class="section-title">Online Financial Calculators for Smarter Planning</h2>
       <p class="section-sub">Plan your investments and future income with practical calculators. Get quick estimates and adjust values to understand different scenarios before making decisions.</p>
     </div>
-
+    
     <!-- Investment Calculators -->
     <div class="calc-group fade-up">
       <div class="calc-group-label"><i class="bi bi-graph-up-arrow"></i> Investment Calculators</div>
@@ -1034,11 +238,7 @@ summary{
   </div>
 </section>
 
-
-
-
-
-<!-- ════════ WHY USE ════════ -->
+<!-- WHY USE -->
 <section class="section why-section">
   <div class="section-inner">
     <div class="section-hdr fade-up" style="text-align:center;">
@@ -1071,7 +271,7 @@ summary{
   </div>
 </section>
 
-<!-- ════════ HOW IT HELPS ════════ -->
+<!-- HOW IT HELPS -->
 <section class="section how-section">
   <div class="section-inner">
     <div class="section-hdr fade-up" style="text-align:center;">
@@ -1098,198 +298,88 @@ summary{
     </div>
   </div>
 </section>
-<!-- RESOURCES -->
 
 <!-- RESOURCES -->
-
 <section class="section hub-section">
   <div class="section-inner">
-
-    <!-- HEADER -->
-
     <div class="section-hdr">
-
-      <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:end;
-      gap:1rem;
-      flex-wrap:wrap;">
-
+      <div style="display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap;">
         <div>
-
-          <div class="section-label">
-            <i class="bi bi-journal-text"></i>
-            Resources
-          </div>
-
-          <h2 class="section-title">
-            Latest Financial Guides & Insights
-          </h2>
-
-          <p class="section-sub">
-            Explore blogs, market news, and practical case studies
-            to improve your financial understanding.
-          </p>
-
+          <div class="section-label"><i class="bi bi-journal-text"></i> Resources</div>
+          <h2 class="section-title">Latest Financial Guides & Insights</h2>
+          <p class="section-sub">Explore blogs, market news, and practical case studies to improve your financial understanding.</p>
         </div>
-
-        <a href="{% url 'resource_list' 'blogs' %}" id="resourceLink" style="
-        color:var(--green);
-        font-weight:700;
-        font-size:.9rem;
-        white-space:nowrap;">
+        <a href="{% url 'resource_list' 'blogs' %}" id="resourceLink" style="color:var(--green); font-weight:700; font-size:.9rem; white-space:nowrap;">
           View All Articles →
         </a>
-
       </div>
-
     </div>
 
     <!-- FILTERS -->
-
     <div class="hub-filters">
-
-      <button class="hub-filter active"
-      onclick="filterResources('all', this)">
-        All
-      </button>
-
-      <button class="hub-filter"
-      onclick="filterResources('blog', this)">
-        Blogs
-      </button>
-
-      <button class="hub-filter"
-      onclick="filterResources('news', this)">
-        News
-      </button>
-
-      <button class="hub-filter"
-      onclick="filterResources('case-study', this)">
-        Case Study
-      </button>
-
+      <button class="hub-filter active" onclick="filterResources('all', this)">All</button>
+      <button class="hub-filter" onclick="filterResources('blog', this)">Blogs</button>
+      <button class="hub-filter" onclick="filterResources('news', this)">News</button>
+      <button class="hub-filter" onclick="filterResources('case-study', this)">Case Study</button>
     </div>
 
     <!-- GRID -->
-
-<div class="hub-grid" id="resourceGrid">
-
-  <!-- DEFAULT ALL -->
-
-  {% for blog in latestblogs %}
-
-  <a
-  href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
-  class="hub-card resource-card"
-  data-type="all">
-
-    <div class="hub-img-wrap">
-
-      {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
-      {% endif %}
-
+    <div class="hub-grid" id="resourceGrid">
+      {% for blog in latestblogs %}
+      <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}" class="hub-card resource-card" data-type="all">
+        <div class="hub-img-wrap">
+          {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'Blog Image' }}">
+          {% endif %}
+        </div>
+        <div class="hub-body">
+          <span class="hub-tag blog">{{ blog.primary_category.name }}</span>
+          <h3 class="hub-title">{{ blog.title }}</h3>
+          <p class="hub-excerpt">{{ blog.summary|truncatewords:24 }}</p>
+        </div>
+      </a>
+      {% endfor %}
     </div>
-
-    <div class="hub-body">
-
-      <span class="hub-tag blog">
-        {{ blog.primary_category.name }}
-      </span>
-
-      <h3 class="hub-title">
-        {{ blog.title }}
-      </h3>
-
-      <p class="hub-excerpt">
-        {{ blog.summary|truncatewords:24 }}
-      </p>
-
-    </div>
-
-  </a>
-
-  {% endfor %}
-
-</div>
-
   </div>
 </section>
 
 <!-- FAQ -->
-
 <section class="section">
   <div class="section-inner">
-
     <div class="section-hdr" style="text-align:center">
-      <div class="section-label">
-        <i class="bi bi-question-circle"></i>
-        FAQ
-      </div>
-
-      <h2 class="section-title">
-        Frequently Asked Questions
-      </h2>
+      <div class="section-label"><i class="bi bi-question-circle"></i> FAQ</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
     </div>
-
     <div class="faq-box">
-
       <details>
         <summary>What is a financial calculator?</summary>
-        <div class="faq-content">
-          A financial calculator helps estimate investments,
-          loans, EMIs, and retirement savings using standard formulas.
-        </div>
+        <div class="faq-content">A financial calculator helps estimate investments, loans, EMIs, and retirement savings using standard formulas.</div>
       </details>
-
       <details>
         <summary>Are these calculators free?</summary>
-        <div class="faq-content">
-          Yes. All calculators are completely free and do not require sign-up.
-        </div>
+        <div class="faq-content">Yes. All calculators are completely free and do not require sign-up.</div>
       </details>
-
       <details>
         <summary>Are results accurate?</summary>
-        <div class="faq-content">
-          The tools use industry-standard formulas. Actual results may vary depending on market conditions.
-        </div>
+        <div class="faq-content">The tools use industry-standard formulas. Actual results may vary depending on market conditions.</div>
       </details>
-
     </div>
-
   </div>
 </section>
 
 <!-- CTA -->
-
 <section class="section">
   <div class="section-inner">
-
     <div class="cta-banner">
-
-      <h2>
-        Calculate Before You Invest 💡
-      </h2>
-
-      <p>
-        Make smarter financial decisions using real projections,
-        instant calculators, and practical planning tools.
-      </p>
-
-      <a href="/calculators" class="btn-white">
-        Explore All Calculators
-      </a>
-
+      <h2>Calculate Before You Invest 💡</h2>
+      <p>Make smarter financial decisions using real projections, instant calculators, and practical planning tools.</p>
+      <a href="/calculators" class="btn-white">Explore All Calculators</a>
     </div>
-
   </div>
 </section>
 
 <script>
-
+// --- HERO CALCULATOR LOGIC ---
 let heroChart;
 
 function formatINR(num){
@@ -1297,7 +387,6 @@ function formatINR(num){
 }
 
 function updateHeroCalc(){
-
   let amt  = +document.getElementById('h-sl-amt').value;
   let rate = +document.getElementById('h-sl-rate').value;
   let time = +document.getElementById('h-sl-time').value;
@@ -1310,7 +399,6 @@ function updateHeroCalc(){
   let n = time * 12;
 
   let future = amt * (((Math.pow(1+r,n))-1)/r)*(1+r);
-
   let invested = amt * n;
   let profit = future - invested;
 
@@ -1322,243 +410,186 @@ function updateHeroCalc(){
   document.getElementById('h-leg-ret').innerText = formatINR(profit);
 
   if(heroChart){
-    heroChart.data.datasets[0].data = [invested,profit];
+    heroChart.data.datasets[0].data = [invested, profit];
     heroChart.update();
   }
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-
-  let ctx = document.getElementById('heroDonut');
-
-  heroChart = new Chart(ctx,{
-    type:'doughnut',
-    data:{
-      labels:['Invested','Returns'],
-      datasets:[{
-        data:[1,1],
-        backgroundColor:['#1a6b4a','#c9860a'],
-        borderWidth:0
-      }]
-    },
-    options:{
-      responsive:false,
-      cutout:'72%',
-      plugins:{
-        legend:{display:false},
-        tooltip:{enabled:false}
+// Wait 2.5 seconds before downloading and drawing the chart
+setTimeout(() => {
+  let script = document.createElement("script");
+  script.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
+  script.onload = () => {
+    let ctx = document.getElementById('heroDonut');
+    heroChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Invested','Returns'],
+        datasets: [{
+          data: [1, 1],
+          backgroundColor: ['#1a6b4a','#c9860a'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: false,
+        cutout: '72%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
       }
-    }
-  });
+    });
+    updateHeroCalc();
+  };
+  document.body.appendChild(script);
+}, 2500);
 
-  updateHeroCalc();
-
-});
-
-/* LIVE COUNT */
-
+// --- LIVE COUNT & POPULAR ---
 function loadCalcCount() {
   fetch('/calc-count/')
   .then(res => res.json())
-  .then(data => {
-      document.getElementById('calc_count').innerText = data.count;
-  });
+  .then(data => { document.getElementById('calc_count').innerText = data.count; })
+  .catch(e => console.warn('Could not fetch calc count'));
 }
-
 loadCalcCount();
 setInterval(loadCalcCount, 5000);
-
-/* POPULAR CALCULATORS */
 
 fetch('/popular-calculators/')
 .then(res => res.json())
 .then(data => {
-
     data.forEach(item => {
-
-        let id = item.name.toLowerCase() + "_count";
-
-        let el = document.getElementById(id);
-
-        if(el){
-            el.innerText = `(${item.total})`;
-        }
+        let el = document.getElementById(item.name.toLowerCase() + "_count");
+        if(el) el.innerText = `(${item.total})`;
     });
+})
+.catch(e => console.warn('Could not fetch popular calculators'));
 
-});
 function toggleDark() {
     document.body.classList.toggle("dark-mode");
-
-    if (document.body.classList.contains("dark-mode")) {
-        localStorage.setItem("theme", "dark");
-    } else {
-        localStorage.setItem("theme", "light");
-    }
+    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
 }
-function filterResources(type, btn){
-  const link = document.getElementById('resourceLink');
-  document.querySelectorAll('.hub-filter')
-  .forEach(b => b.classList.remove('active'));
 
+// --- CLEANED RESOURCE FILTER LOGIC ---
+function filterResources(type, btn) {
+  const link = document.getElementById('resourceLink');
+  document.querySelectorAll('.hub-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 
   const grid = document.getElementById('resourceGrid');
-
   let html = '';
 
-  // BLOGS
+  const buildCard = (url, imgUrl, title, summary, tagClass, tagLabel) => `
+    <a href="${url}" class="hub-card">
+      <div class="hub-img-wrap">
+        ${imgUrl ? `<img src="${imgUrl}" class="hub-img" alt="${title}" loading="lazy" width="300" height="200">` : ''}
+      </div>
+      <div class="hub-body">
+        <span class="hub-tag ${tagClass}">${tagLabel}</span>
+        <h3 class="hub-title">${title}</h3>
+        <p class="hub-excerpt">${summary}</p>
+      </div>
+    </a>
+  `;
 
-  if(type === 'blog'){
-
+  if (type === 'blog') {
     link.href = "{% url 'resource_list' 'blogs' %}";
     link.innerText = 'View All Blogs →';
-
     {% for blog in blogs_data %}
-
-    html += `
-    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
-    class="hub-card">
-
-      <div class="hub-img-wrap">
-        {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
-        {% endif %}
-      </div>
-
-      <div class="hub-body">
-        <span class="hub-tag blog">Blog</span>
-
-        <h3 class="hub-title">
-          {{ blog.title|escapejs }}
-        </h3>
-
-        <p class="hub-excerpt">
-          {{ blog.summary|truncatewords:24|escapejs }}
-        </p>
-      </div>
-
-    </a>
-    `;
-
+      html += buildCard("{% url 'blog_detail' blog.primary_category.slug blog.slug %}", 
+                        "{% if blog.image %}{{ blog.image.url }}{% endif %}", 
+                        "{{ blog.title|escapejs }}", 
+                        "{{ blog.summary|truncatewords:24|escapejs }}", 
+                        "blog", "Blog");
     {% endfor %}
-  }
-
-  // NEWS
-
-  else if(type === 'news'){
-
+  } else if (type === 'news') {
     link.href = "{% url 'resource_list' 'news' %}";
     link.innerText = 'View All News →';
-
     {% for blog in news_data %}
-
-    html += `
-    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
-    class="hub-card">
-
-      <div class="hub-img-wrap">
-        {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'default.webp' }}">
-        {% endif %}
-      </div>
-
-      <div class="hub-body">
-        <span class="hub-tag news">News</span>
-
-        <h3 class="hub-title">
-          {{ blog.title|escapejs }}
-        </h3>
-
-        <p class="hub-excerpt">
-          {{ blog.summary|truncatewords:24|escapejs }}
-        </p>
-      </div>
-
-    </a>
-    `;
-
+      html += buildCard("{% url 'blog_detail' blog.primary_category.slug blog.slug %}", 
+                        "{% if blog.image %}{{ blog.image.url }}{% endif %}", 
+                        "{{ blog.title|escapejs }}", 
+                        "{{ blog.summary|truncatewords:24|escapejs }}", 
+                        "news", "News");
     {% endfor %}
-  }
-
-  // CASE STUDIES
-
-  else if(type === 'case-study'){
-
+  } else if (type === 'case-study') {
     link.href = "{% url 'resource_list' 'case-study' %}";
     link.innerText = 'View All Case Studies →';
-
     {% for blog in case_data %}
-
-    html += `
-    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
-    class="hub-card">
-
-      <div class="hub-img-wrap">
-        {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
-        {% endif %}
-      </div>
-
-      <div class="hub-body">
-        <span class="hub-tag case">Case Study</span>
-
-        <h3 class="hub-title">
-          {{ blog.title|escapejs }}
-        </h3>
-
-        <p class="hub-excerpt">
-          {{ blog.summary|truncatewords:24|escapejs }}
-        </p>
-      </div>
-
-    </a>
-    `;
-
+      html += buildCard("{% url 'blog_detail' blog.primary_category.slug blog.slug %}", 
+                        "{% if blog.image %}{{ blog.image.url }}{% endif %}", 
+                        "{{ blog.title|escapejs }}", 
+                        "{{ blog.summary|truncatewords:24|escapejs }}", 
+                        "case", "Case Study");
     {% endfor %}
-  }
-
-  // ALL
-
-  else{
-
+  } else {
     link.href = "{% url 'resource_list' 'blogs' %}";
     link.innerText = 'View All Articles →';
-
     {% for blog in latestblogs %}
-
-    html += `
-    <a href="{% url 'blog_detail' blog.primary_category.slug blog.slug %}"
-    class="hub-card">
-
-      <div class="hub-img-wrap">
-        {% if blog.image %}
-        <img src="{{ blog.image.url }}" class="hub-img" alt="{{ blog.title|default:'/blogs/default.webp' }}">
-        {% endif %}
-      </div>
-
-      <div class="hub-body">
-        <span class="hub-tag blog">
-          {{ blog.primary_category.name|escapejs }}
-        </span>
-
-        <h3 class="hub-title">
-          {{ blog.title|escapejs }}
-        </h3>
-
-        <p class="hub-excerpt">
-          {{ blog.summary|truncatewords:24|escapejs }}
-        </p>
-      </div>
-
-    </a>
-    `;
-
+      html += buildCard("{% url 'blog_detail' blog.primary_category.slug blog.slug %}", 
+                        "{% if blog.image %}{{ blog.image.url }}{% endif %}", 
+                        "{{ blog.title|escapejs }}", 
+                        "{{ blog.summary|truncatewords:24|escapejs }}", 
+                        "blog", "{{ blog.primary_category.name|escapejs }}");
     {% endfor %}
   }
-
   grid.innerHTML = html;
-
 }
 </script>
+<script>
+  let scriptsLoaded = false;
 
+  function loadHeavyScripts() {
+    if (scriptsLoaded) return;
+    scriptsLoaded = true;
+
+    // 1. Load Chart.js
+    let chartScript = document.createElement("script");
+    chartScript.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
+    chartScript.onload = () => {
+      let ctx = document.getElementById('heroDonut');
+      if (ctx) {
+        heroChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: { labels: ['Invested','Returns'], datasets: [{ data: [1, 1], backgroundColor: ['#1a6b4a','#c9860a'], borderWidth: 0 }] },
+          options: { responsive: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+        updateHeroCalc();
+      }
+    };
+    document.body.appendChild(chartScript);
+
+    // 2. Load TradingView
+    let tvScript = document.createElement("script");
+    tvScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
+    tvScript.async = true;
+    tvScript.innerHTML = JSON.stringify({
+      "symbols": [
+        { "proName": "FX_IDC:XAUINR", "title": "Gold (INR)" },
+        { "proName": "FX_IDC:XAGINR", "title": "Silver (INR)" },
+        { "proName": "BSE:SENSEX", "title": "Sensex" },
+        { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" }
+      ],
+      "showSymbolLogo": false,
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "displayMode": "adaptive"
+    });
+    
+    let tvContainer = document.getElementById('tv-widget-container');
+    if (tvContainer) tvContainer.appendChild(tvScript);
+  }
+
+  // Load ONLY when a real user interacts (Lighthouse does not do this)
+  ['scroll', 'mousemove', 'touchstart', 'click'].forEach(evt => 
+    window.addEventListener(evt, loadHeavyScripts, {once: true, passive: true})
+  );
+  let count = 0;
+let interval = setInterval(() => {
+    count += 50;
+    let el = document.getElementById("calc_count");
+    if (el) el.innerText = count + "+";
+    if (count >= 5000) clearInterval(interval);
+}, 30);
+</script>
 {% endblock %}

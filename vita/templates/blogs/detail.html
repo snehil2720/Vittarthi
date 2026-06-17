@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 {{ blog.meta_title|default:blog.title }} | Vittarthi
@@ -12,9 +13,8 @@
 {{ blog.focus_keyword }}
 {% endblock %}
 
-{% block content %}
-
-<head>
+{% block extra_meta %}
+<!-- FIXED: Moved OG Tags out of the body content and into the <head> where they belong! -->
 <link rel="canonical" href="{{ request.build_absolute_uri }}">
 <meta property="og:title" content="{{ blog.meta_title|default:blog.title }}">
 <meta property="og:description" content="{{ blog.meta_description|default:blog.summary }}">
@@ -25,18 +25,20 @@
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}">
 {% endif %}
+
+<!-- FIXED: Merged the duplicate Schema Scripts into one clean JSON-LD block! -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "{{ blog.title|escapejs }}",
-  "description": "{{ blog.meta_description|default:blog.title|escapejs }}",
+  "description": "{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
   "image": [
     "{% if blog.image %}{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/media/images/default.webp{% endif %}"
   ],
   "author": {
     "@type": "Person",
-    "name": "{{ blog.author_profile.name|escapejs }}"
+    "name": "{% if blog.author_profile %}{{ blog.author_profile.name|escapejs }}{% else %}{{ blog.author.username|escapejs }}{% endif %}"
   },
   "publisher": {
     "@type": "Organization",
@@ -50,700 +52,18 @@
   "dateModified": "{{ blog.updated_at|date:'c' }}",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://vittarthi.com{{ request.path }}"
+    "@id": "{{ request.build_absolute_uri }}"
   }
 }
 </script>
-</head>
+{% endblock %}
 
-<style>
+{% block extra_head %}
+<!-- Link to extracted CSS -->
+<link rel="stylesheet" href="{% static 'css/blog_detail.css' %}">
+{% endblock %}
 
-*, *::before, *::after{
-  box-sizing:border-box;
-}
-
-:root{
-  --navy:#1a2340;
-  --navy-light:#2d3a5c;
-  --green:#1a6b3c;
-  --green-mid:#2e9e5b;
-  --green-light:#e8f5ee;
-  --gray-50:#f9fafb;
-  --gray-100:#f3f4f6;
-  --gray-200:#e5e7eb;
-  --gray-400:#9ca3af;
-  --gray-600:#6b7280;
-  --gray-800:#374151;
-  --border:#e5e7eb;
-  --white:#ffffff;
-  --radius:14px;
-  --radius-sm:8px;
-  --shadow:0 4px 16px rgba(0,0,0,0.07);
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.05);
-}
-
-html, body {
-  overflow-x: hidden;
-  width: 100%;
-}
-
-/* ═════════════ PROGRESS BAR ═════════════ */
-#progressBar{
-  position:fixed;
-  top:0;
-  left:0;
-  width:0%;
-  height:4px;
-  background:var(--green);
-  z-index:99999;
-}
-
-/* ═════════════ NEW TWO-COLUMN LAYOUT ═════════════ */
-.page-wrapper {
-  max-width: auto;
-  margin: auto;
-  padding: 28px 20px 80px;
-  width: 100%;
-}
-
-.category-nav-bar {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
-  border-bottom: 1px solid var(--border);
-  -webkit-overflow-scrolling: touch; 
-}
-
-.category-nav-bar::-webkit-scrollbar {
-  display: none;
-}
-
-.cat-nav-btn {
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: var(--gray-100);
-  color: var(--gray-600);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  border: 1px solid transparent;
-  transition: 0.25s;
-}
-
-.cat-nav-btn:hover {
-  background: var(--gray-200);
-  color: var(--navy);
-}
-
-.cat-nav-btn.active {
-  background: var(--green);
-  color: #fff;
-  border-color: var(--green);
-}
-
-.content-layout {
-  display: flex;
-  gap: 50px;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.main-content {
-  flex: 1;
-  min-width: 0; 
-  width: 100%;
-}
-
-.article-wrap{
-  width: 100%;
-}
-
-
-/* 🔴🔴 AGGRESSIVE RICH TEXT EDITOR OVERRIDE FOR MOBILE 🔴🔴 */
-.article-title, 
-.article-subtitle {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-}
-
-.article-content {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-}
-
-/* Nuke inline fixed widths injected by admin panel */
-.article-content * {
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Force block elements to wrap properly */
-.article-content div,
-.article-content p,
-.article-content span,
-.article-content section,
-.article-content article {
-  width: auto !important;
-  min-width: 0 !important;
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
-}
-
-/* Fix flexbox elements pasted from elsewhere */
-.article-content [style*="display: flex"] {
-  flex-wrap: wrap !important;
-}
-
-.article-content img,
-.article-content iframe,
-.article-content video {
-  max-width: 100% !important;
-  height: auto !important;
-  border-radius: 8px;
-  object-fit: contain;
-}
-
-/* Allow horizontal scroll ONLY inside tables so they don't break page */
-.article-content pre, 
-.article-content code {
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
-}
-
-
-/* ═════════════ RIGHT SIDEBAR WIDGET ═════════════ */
-.sidebar-right {
-  width: 340px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 30px;
-}
-
-.sidebar-widget {
-  background: var(--gray-50);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-}
-
-.sidebar-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  color: var(--navy);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--green);
-  display: inline-block;
-}
-
-.side-article {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 18px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-}
-
-.side-article:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.side-article-img {
-  width: 85px;
-  height: 85px;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-}
-
-.side-article-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0; 
-}
-
-.side-article-info h4 {
-  font-size: 15px;
-  line-height: 1.4;
-  margin: 0 0 8px 0;
-}
-
-.side-article-info h4 a {
-  color: var(--navy);
-  text-decoration: none;
-  transition: 0.2s;
-  font-weight: 600;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.side-article-info h4 a:hover {
-  color: var(--green);
-}
-
-.side-article-meta {
-  font-size: 12px;
-  color: var(--gray-400);
-}
-
-/* ═════════════ CATEGORY ═════════════ */
-.article-category{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 14px;
-  border-radius:999px;
-  background:var(--green-light);
-  color:var(--green);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  margin-bottom:22px;
-}
-
-/* ═════════════ TITLE ═════════════ */
-.article-title{
-  font-family:'DM Serif Display', serif;
-  font-size:clamp(2.2rem,4vw,3rem);
-  line-height:1.15;
-  color:var(--navy);
-  margin-bottom:18px;
-}
-
-/* ═════════════ BYLINE ═════════════ */
-.byline-bar{
-  display:flex;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  background:var(--gray-50);
-  margin-bottom:28px;
-}
-
-.byline-item{
-  flex:1;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:18px;
-  min-width: 0;
-}
-
-.byline-item + .byline-item{
-  border-left:1px solid var(--border);
-}
-
-.byline-avatar{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  overflow:hidden;
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:18px;
-  font-family:'DM Serif Display', serif;
-}
-
-.byline-avatar.writer, .byline-avatar.reviewer{
-  background:linear-gradient(135deg,var(--green),var(--green-mid));
-}
-
-.byline-avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.byline-text {
-  min-width: 0;
-}
-
-.byline-role{
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  color:var(--gray-400);
-  margin-bottom:4px;
-}
-
-.byline-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.byline-name a{
-  color:var(--navy);
-  text-decoration:none;
-  font-weight:700;
-}
-
-.byline-name a:hover{
-  color:var(--green);
-}
-
-/* ═════════════ META INFO ═════════════ */
-.article-info{
-  display:flex;
-  flex-wrap:wrap;
-  gap:18px;
-  padding-bottom:24px;
-  margin-bottom:34px;
-  border-bottom:1px solid var(--border);
-  font-size:13px;
-  color:var(--gray-400);
-}
-
-/* ═════════════ HERO IMAGE ═════════════ */
-.blog-cover{
-  width:100%;
-  border-radius:var(--radius);
-  margin-bottom:40px;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow-sm);
-  height: auto;
-}
-
-/* ═════════════ SHARE ═════════════ */
-.share-bar{
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:14px;
-  padding:30px 0;
-  margin-top:40px;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-}
-
-.share-btn{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  background:var(--gray-100);
-  color:var(--navy);
-  transition:0.25s;
-}
-
-.share-btn:hover{
-  transform:translateY(-3px);
-  background:var(--green);
-  color:#fff;
-}
-
-/* ═════════════ TAGS ═════════════ */
-.article-tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:38px 0 10px;
-}
-
-.article-tag{
-  font-size:12px;
-  padding:7px 14px;
-  border-radius:999px;
-  background:var(--gray-100);
-  border:1px solid var(--border);
-  color:var(--gray-600);
-  text-decoration:none;
-}
-
-.article-tag:hover{
-  color:var(--green);
-  border-color:var(--green);
-  background:var(--green-light);
-}
-
-/* ═════════════ AUTHOR SECTION ═════════════ */
-.author-cards-section{
-  border-top:2px solid var(--border);
-  padding-top:40px;
-  margin-top:50px;
-}
-
-.author-cards-label{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:22px;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--gray-400);
-}
-
-.author-cards-label::after{
-  content:'';
-  flex:1;
-  height:1px;
-  background:var(--border);
-}
-
-.author-card{
-  display:flex;
-  gap:20px;
-  padding:24px;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background:var(--gray-50);
-  margin-bottom:18px;
-  transition:0.25s;
-}
-
-.author-card:hover{
-  border-color:var(--green);
-  box-shadow:var(--shadow);
-}
-
-.author-card-avatar{
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  overflow:hidden;
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  font-family:'DM Serif Display', serif;
-  background:linear-gradient(135deg,var(--green),var(--green-mid));
-  color:#fff;
-}
-
-.author-card-avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.author-card-body {
-  min-width: 0; 
-}
-
-.author-card-role{
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  color:var(--green);
-  margin-bottom:4px;
-}
-
-.author-card-name{
-  font-family:'DM Serif Display', serif;
-  font-size:24px;
-  color:var(--navy);
-  margin-bottom:4px;
-}
-
-.author-card-name a{
-  color:var(--navy);
-  text-decoration:none;
-}
-
-.author-card-name a:hover{
-  color:var(--green);
-}
-
-.author-card-title{
-  font-size:14px;
-  color:var(--gray-400);
-  margin-bottom:14px;
-}
-
-.author-card-bio{
-  font-size:15px;
-  line-height:1.8;
-  color:var(--gray-600);
-}
-
-.author-card-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:18px;
-}
-
-.author-card-social{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.author-social-btn{
-  padding:7px 14px;
-  border-radius:999px;
-  background:#fff;
-  border:1px solid var(--border);
-  text-decoration:none;
-  color:var(--gray-600);
-  font-size:13px;
-  font-weight:600;
-}
-
-.author-social-btn:hover{
-  border-color:var(--green);
-  color:var(--green);
-}
-
-.author-profile-link{
-  color:var(--green);
-  text-decoration:none;
-  font-size:13px;
-  font-weight:700;
-}
-
-/* ═════════════ CTA ═════════════ */
-.tools-cta{
-  margin-top:40px;
-  background:linear-gradient(135deg,var(--navy),var(--navy-light));
-  border-radius:var(--radius);
-  padding:30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:20px;
-}
-
-.tools-cta h3{
-  font-family:'DM Serif Display', serif;
-  color:#fff;
-  font-size:1.5rem;
-  margin-bottom:8px;
-}
-
-.tools-cta p{
-  color:rgba(255,255,255,0.7);
-  font-size:14px;
-}
-
-.tools-cta-btn{
-  background:var(--green);
-  color:#fff;
-  text-decoration:none;
-  padding:14px 22px;
-  border-radius:10px;
-  font-size:14px;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.tools-cta-btn:hover{
-  background:var(--green-mid);
-}
-
-/* ═════════════ RESPONSIVE ═════════════ */
-@media(max-width:992px) {
-  .content-layout {
-    flex-direction: column;
-    gap: 30px;
-  }
-  .sidebar-right {
-    width: 100%;
-    position: static;
-  }
-}
-
-@media(max-width:768px){
-  .byline-bar{
-    flex-direction:column;
-  }
-  .byline-item + .byline-item{
-    border-left:none;
-    border-top:1px solid var(--border);
-  }
-  .author-card{
-    flex-direction:column;
-  }
-  .author-card-avatar{
-    width:62px;
-    height:62px;
-    font-size:22px;
-  }
-  .tools-cta{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-  .page-wrapper {
-    padding: 20px 15px 60px;
-    width: 100%;
-    overflow-x: hidden; 
-  }
-}
-
-.secondary-category-wrap{
-  margin-bottom:20px;
-}
-
-.secondary-category-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 14px;
-  border-radius:999px;
-  background:#eef7f1;
-  color:var(--green);
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-  transition:.2s;
-}
-
-.secondary-category-pill:hover{
-  background:#dff3e6;
-}
-
-.expertise-box{
-    margin-top:40px;
-    margin-bottom:30px;
-    padding:18px 22px;
-    border:1px solid var(--border);
-    border-radius:16px;
-    background:linear-gradient(135deg,#f8fafc,#f1f5f9);
-}
-
-.expertise-label{
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:1.5px;
-    text-transform:uppercase;
-    color:var(--green);
-    margin-bottom:8px;
-}
-
-.expertise-text{
-    font-size:15px;
-    line-height:1.8;
-    color:var(--gray-800);
-}
-
-</style>
+{% block content %}
 
 <div id="progressBar"></div>
 
@@ -840,6 +160,7 @@ html, body {
               </div>
           </div>
           {% endif %}
+          
           {% if blog.edited_by %}
           <div class="byline-item">
               <div class="byline-avatar reviewer">
@@ -870,14 +191,17 @@ html, body {
         </div>
 
         {% if blog.image %}
+        <!-- Added explicit dimensions to prevent CLS -->
         <img 
           src="{% if blog.image %}{{ blog.image.url }}{% else %}/media/images/default.webp{% endif %}"
           class="blog-cover"
           alt="{{ blog.title }}"
+          width="800"
+          height="450"
         >
         {% endif %}
 
-        <div class="article-content" id="blogContent">
+        <div class="article-content format-{{ blog.primary_category.slug }}" id="blogContent">
           {{ blog.content|safe }}
         </div>
 
@@ -890,19 +214,20 @@ html, body {
         
         <div class="share-bar">
           <strong>Share this guide:</strong>
+          <!-- Added aria-labels to pass Accessibility audits -->
           <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}"
              target="_blank"
-             class="share-btn">
+             class="share-btn" aria-label="Share on WhatsApp">
             <i class="bi bi-whatsapp"></i>
           </a>
           <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ blog.title }}"
              target="_blank"
-             class="share-btn">
+             class="share-btn" aria-label="Share on Twitter">
             <i class="bi bi-twitter-x"></i>
           </a>
           <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}"
              target="_blank"
-             class="share-btn">
+             class="share-btn" aria-label="Share on LinkedIn">
             <i class="bi bi-linkedin"></i>
           </a>
         </div>
@@ -923,7 +248,7 @@ html, body {
           <div class="author-card">
               <div class="author-card-avatar writer">
                   {% if blog.author_profile.image %}
-                      <img src="{{ blog.author_profile.image.url }}" alt="{{ blog.author_profile.name }}">
+                      <img src="{{ blog.author_profile.image.url }}" alt="{{ blog.author_profile.name }}" width="72" height="72" loading="lazy">
                   {% else %}
                       {{ blog.author_profile.name|first }}
                   {% endif %}
@@ -960,7 +285,7 @@ html, body {
           <div class="author-card">
               <div class="author-card-avatar reviewer">
                   {% if blog.reviewed_by.image %}
-                      <img src="{{ blog.reviewed_by.image.url }}" alt="{{ blog.reviewed_by.name }}">
+                      <img src="{{ blog.reviewed_by.image.url }}" alt="{{ blog.reviewed_by.name }}" width="72" height="72" loading="lazy">
                   {% else %}
                       {{ blog.reviewed_by.name|first }}
                   {% endif %}
@@ -996,11 +321,12 @@ html, body {
               </div>
           </div>
           {% endif %}
+          
           {% if blog.edited_by %}
           <div class="author-card">
               <div class="author-card-avatar reviewer">
                   {% if blog.edited_by.image %}
-                      <img src="{{ blog.edited_by.image.url }}" alt="{{ blog.edited_by.name }}">
+                      <img src="{{ blog.edited_by.image.url }}" alt="{{ blog.edited_by.name }}" width="72" height="72" loading="lazy">
                   {% else %}
                       {{ blog.edited_by.name|first }}
                   {% endif %}
@@ -1056,10 +382,14 @@ html, body {
         
         {% for related in related_articles %}
         <div class="side-article">
+          <!-- Added dimensions and lazy loading to sidebar images -->
           <img 
             src="{% if related.image %}{{ related.image.url }}{% else %}/media/images/default.webp{% endif %}" 
             class="side-article-img" 
             alt="{{ related.title }}"
+            width="85"
+            height="85"
+            loading="lazy"
           >
           <div class="side-article-info">
             <h4>
@@ -1077,52 +407,21 @@ html, body {
       </div>
     </aside>
 
-  </div> </div> <script>
+  </div> 
+</div> 
+
+<script>
 document.addEventListener("DOMContentLoaded", function(){
   // PROGRESS BAR
   window.addEventListener('scroll', () => {
     let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    let scrolled = (winScroll / height) * 100;
-    document.getElementById("progressBar").style.width = scrolled + "%";
+    if (height > 0) {
+      let scrolled = (winScroll / height) * 100;
+      document.getElementById("progressBar").style.width = scrolled + "%";
+    }
   });
 });
-</script>
-
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"BlogPosting",
-  "headline":"{{ blog.meta_title|default:blog.title|escapejs }}",
-  "description":"{{ blog.meta_description|default:blog.summary|truncatechars:160|escapejs }}",
-
-  {% if blog.image %}
-  "image":"{{ request.scheme }}://{{ request.get_host }}{{ blog.image.url }}",
-  {% endif %}
-
-  "author":{
-    "@type":"Person",
-    {% if blog.author_profile %}
-    "name":"{{ blog.author_profile.name|escapejs }}",
-    "url":"https://vittarthi.com/authors/{{ blog.author_profile.slug }}"
-    {% else %}
-    "name":"{{ blog.author.username|escapejs }}"
-    {% endif %}
-  },
-
-  "publisher":{
-    "@type":"Organization",
-    "name":"Vittarthi"
-  },
-
-  "datePublished":"{{ blog.created_at|date:'c' }}",
-  "dateModified":"{{ blog.updated_at|date:'c' }}",
-
-  "mainEntityOfPage":{
-    "@type":"WebPage",
-    "@id":"{{ request.build_absolute_uri }}"
-  }
-}
 </script>
 
 {% endblock %}

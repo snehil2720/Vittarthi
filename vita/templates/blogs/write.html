@@ -1,367 +1,28 @@
 {% extends 'base.html' %}
-{% block content %}
-
 {% load static %}
 
-<style>
+{% block extra_head %}
+<!-- Extracted CSS for the Editor Page to boost performance -->
+<link rel="stylesheet" href="{% static 'css/blog_write.css' %}">
+{% endblock %}
 
-    /* ══════════ LAYOUT ══════════ */
-    .editor-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #ffffff;
-        padding: 15px 24px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 24px;
-        position: sticky;
-        top: 20px;
-        z-index: 100;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .brand {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #1e293b;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .brand-badge {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.75rem;
-        padding: 2px 8px;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        color: #64748b;
-        font-weight: normal;
-    }
-
-/* ══════════ PREMIUM BUTTONS ══════════ */
-    .btn-group {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .btn {
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-family: 'Inter', sans-serif;
-    }
-
-    /* Save Draft - Clean Slate */
-    .btn-draft {
-        background: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-    }
-    .btn-draft:hover { 
-        background: #e2e8f0; 
-        color: #1e293b; 
-    }
-
-    /* Preview - Glassy Blue */
-    .btn-preview {
-        background: rgba(59, 130, 246, 0.05);
-        border: 1px solid #3b82f6;
-        color: #2563eb;
-        backdrop-filter: blur(4px);
-    }
-    .btn-preview:hover { 
-        background: #3b82f6; 
-        color: #ffffff; 
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); 
-    }
-
-    /* Publish - Solid Emerald */
-    .btn-publish {
-        background: #10b981;
-        border: 1px solid #059669;
-        color: #ffffff;
-        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
-    }
-    .btn-publish:hover { 
-        background: #059669; 
-        box-shadow: 0 6px 14px -2px rgba(16, 185, 129, 0.4); 
-        transform: translateY(-1px); 
-    }
-
-    /* ══════════ PREVIEW MODAL ══════════ */
-    .preview-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(6px);
-        z-index: 10000;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .preview-modal-content {
-        background: #ffffff;
-        width: 90%;
-        max-width: 900px;
-        height: 85vh;
-        border-radius: 12px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        animation: modalFadeIn 0.3s ease-out;
-    }
-
-    @keyframes modalFadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .preview-modal-header {
-        padding: 16px 24px;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #f8fafc;
-    }
-
-    .preview-modal-body {
-        padding: 40px;
-        overflow-y: auto;
-        flex: 1;
-        /* Matches blog reading experience */
-        font-family: 'Lora', serif;
-        line-height: 1.8;
-        color: #334155;
-        font-size: 1.1rem;
-    }
-
-    .preview-modal-body img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-    }
-
-    /* ══════════ GRID SYSTEM ══════════ */
-    .editor-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    @media (max-width: 900px) {
-        .editor-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* ══════════ CARDS ══════════ */
-    .card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 24px;
-        margin-bottom: 24px;
-    }
-
-    .section-title {
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #1e293b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 20px;
-    }
-
-    .section-title::before {
-        content: '';
-        display: inline-block;
-        width: 4px;
-        height: 16px;
-        background-color: #10b981;
-        border-radius: 2px;
-        margin-right: 10px;
-    }
-
-    /* ══════════ INPUTS ══════════ */
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 8px;
-    }
-
-    .input-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        font-family: inherit;
-        font-size: 0.95rem;
-        color: #1e293b;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-    }
-
-    .input-control:focus {
-        outline: none;
-        border-color: #3b82f6;
-    }
-
-    .title-input {
-        font-family: 'Lora', serif;
-        font-size: 1.5rem;
-        padding: 15px;
-    }
-
-    .title-input::placeholder { font-style: italic; color: #cbd5e1; }
-
-/* ══════════ META SECTION & ACTION BAR ══════════ */
-    .article-meta-section {
-        background: rgba(248, 250, 252, 0.7);
-        backdrop-filter: blur(8px);
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 24px;
-        margin-top: 24px;
-        box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
-    }
-
-    .meta-settings-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 20px;
-    }
-
-    .mb-0 { margin-bottom: 0 !important; }
-
-    .action-bar {
-        display: flex;
-        justify-content: flex-end; /* Pushes buttons to the right */
-        align-items: center;
-        padding-top: 20px;
-        margin-top: 20px;
-        border-top: 1px dashed #cbd5e1;
-    }
-
-    /* Uniform height for all inputs and selects to prevent squishing */
-    .input-control {
-        height: 42px; 
-    }
-    
-    /* Ensure select dropdowns show arrows properly */
-    select.input-control {
-        appearance: auto; 
-        background-color: #fff;
-    }
-    .flex-row {
-        display: flex;
-        gap: 16px;
-    }
-    
-    .flex-row > * { flex: 1; }
-
-    .category-group { display: flex; gap: 8px; }
-
-    /* ══════════ DRAG DROP IMAGE ══════════ */
-    .image-drop-zone {
-        border: 2px dashed #e2e8f0;
-        border-radius: 8px;
-        padding: 40px 20px;
-        text-align: center;
-        background: #fafafa;
-        cursor: pointer;
-        color: #64748b;
-        font-size: 0.9rem;
-        transition: background 0.2s;
-    }
-    .image-drop-zone:hover { background: #f1f5f9; }
-    .image-drop-zone input[type="file"] { display: none; }
-
-    /* ══════════ SEO SECTION ══════════ */
-    .seo-checklist {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        font-size: 0.85rem;
-        color: #64748b;
-    }
-
-    .seo-checklist li {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        gap: 10px;
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #ef4444;
-    }
-    .status-dot.good { background-color: #10b981; }
-
-    .google-preview-card {
-        background: #f8f9fa;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 16px;
-        margin-bottom: 20px;
-    }
-
-    .g-url { color: #202124; font-size: 13px; margin-bottom: 4px; }
-    .g-title { color: #1a0dab; font-size: 20px; cursor: pointer; margin-bottom: 4px; line-height: 1.3;}
-    .g-title:hover { text-decoration: underline; }
-    .g-desc { color: #4d5156; font-size: 14px; line-height: 1.58; }
-
-    .django-ckeditor-widget { width: 100% !important; display: block; }
-</style>
-
+{% block content %}
 <div class="editor-container">
     <form method="POST" enctype="multipart/form-data" id="postForm">
         {% csrf_token %}
 
         <div class="editor-grid">
-            
             <div class="main-column">
-                
                 <div class="card">
                     <div class="section-title">Article Info</div>
                     
                     <div class="form-group">
-                        <input type="text" name="title" class="input-control title-input" placeholder="Start with a great headline..." required>
+                        <input type="text" name="title" id="titleInput" class="input-control title-input" placeholder="Start with a great headline..." aria-label="Article Title" required>
                     </div>
 
                     <div class="flex-row form-group">
                         <div>
-                            <label class="form-label">Primary category</label>
+                            <label for="primarySelect" class="form-label">Primary category</label>
                             <select name="primary_category" id="primarySelect" class="input-control" required>
                                 <option value="">Select</option>
                                 {% for p in primary_categories %}
@@ -370,7 +31,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Secondary category</label>
+                            <label for="secondarySelect" class="form-label">Secondary category</label>
                             <div class="category-group">
                                 <select name="secondary_category" id="secondarySelect" class="input-control">
                                     <option value="">— opt —</option>
@@ -378,25 +39,22 @@
                                         <option value="{{ s.id }}">{{ s.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <button type="button" onclick="openSecondaryModal()" class="btn btn-outline">+ Add</button>
-                                <button type="button" onclick="deleteSecondary()" class="btn btn-outline" style="color:#ef4444; border-color:#ef4444; padding:8px;">🗑</button>
+                                <button type="button" onclick="openSecondaryModal()" class="btn btn-outline" aria-label="Add Secondary Category">+ Add</button>
+                                <button type="button" onclick="deleteSecondary()" class="btn btn-outline" style="color:#ef4444; border-color:#ef4444; padding:8px;" aria-label="Delete Secondary Category">🗑</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ══════════ ARTICLE META & ACTIONS ══════════ -->
                     <div class="article-meta-section">
-                        
-                        <!-- Row 1: 4-Column Grid for Inputs & Selects -->
                         <div class="meta-settings-grid">
                             <div class="form-group mb-0">
-                                <label class="form-label">URL slug</label>
+                                <label for="slugInputLeft" class="form-label">URL slug</label>
                                 <input type="text" name="slug" id="slugInputLeft" class="input-control" placeholder="auto-generated">
                             </div>
                             
                             <div class="form-group mb-0">
-                                <label class="form-label">Author Profile</label>
-                                <select name="author_profile" class="input-control">
+                                <label for="authorProfile" class="form-label">Author Profile</label>
+                                <select name="author_profile" id="authorProfile" class="input-control">
                                     <option value="">Select Author</option>
                                     {% for a in authors %}
                                         <option value="{{ a.id }}">{{ a.name }}</option>
@@ -405,8 +63,8 @@
                             </div>
 
                             <div class="form-group mb-0">
-                                <label class="form-label">Reviewed By</label>
-                                <select name="reviewed_by" class="input-control">
+                                <label for="reviewedBy" class="form-label">Reviewed By</label>
+                                <select name="reviewed_by" id="reviewedBy" class="input-control">
                                     <option value="">Select Reviewer</option>
                                     {% for a in authors %}
                                         <option value="{{ a.id }}">{{ a.name }}</option>
@@ -415,8 +73,8 @@
                             </div>
 
                             <div class="form-group mb-0">
-                                <label class="form-label">Edited By</label>
-                                <select name="edited_by" class="input-control">
+                                <label for="editedBy" class="form-label">Edited By</label>
+                                <select name="edited_by" id="editedBy" class="input-control">
                                     <option value="">Select Editor</option>
                                     {% for a in authors %}
                                         <option value="{{ a.id }}">{{ a.name }}</option>
@@ -425,30 +83,28 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Action Buttons Aligned Right -->
                         <div class="action-bar">
                             <div class="btn-group">
-                                <button type="submit" name="status" value="draft" class="btn btn-draft">
+                                <button type="submit" name="status" value="draft" class="btn btn-draft" aria-label="Save Draft">
                                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
                                     Save Draft
                                 </button>
-                                <button type="button" class="btn btn-preview" onclick="openPreviewMode()">
+                                <button type="button" class="btn btn-preview" onclick="openPreviewMode()" aria-label="Preview Article">
                                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     Preview
                                 </button>
-                                <button type="submit" name="status" value="published" class="btn btn-publish">
+                                <button type="submit" name="status" value="published" class="btn btn-publish" aria-label="Publish Article">
                                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Publish
                                 </button>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="section-title">Content</div>
-                    <textarea name="content" id="editor"></textarea>
+                    <textarea name="content" id="editor" aria-label="Article Content"></textarea>
                 </div>
 
                 <div class="card">
@@ -457,9 +113,10 @@
                         <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
                         Click to upload or drag and drop<br>
                         <small>PNG, JPG up to 5MB · Recommended 1200 x 630px</small>
-                        <input type="file" name="image" id="imageInput" accept="image/*">
+                        <input type="file" name="image" id="imageInput" accept="image/*" aria-label="Upload Cover Image">
                     </label>
-                    <img id="imagePreview" style="display:none; max-width:100%; margin-top:15px; border-radius:8px; border:1px solid #e2e8f0;" />
+                    <!-- Fixed: Added width/height and loading=lazy to image preview -->
+                    <img id="imagePreview" style="display:none; max-width:100%; margin-top:15px; border-radius:8px; border:1px solid #e2e8f0;" alt="Cover Image Preview" width="1200" height="630" loading="lazy" />
                 </div>
 
             </div>
@@ -484,22 +141,22 @@
                     <div class="section-title">Google Preview</div>
                     
                     <div class="google-preview-card">
-                        <div class="g-url">vitarthi.com > blog > <span id="previewUrl">your-slug</span></div>
+                        <div class="g-url">vittarthi.com > resources > <span id="previewUrl">your-slug</span></div>
                         <div class="g-title" id="previewTitle">Your article title</div>
                         <div class="g-desc" id="previewDesc">Meta description will appear here in search results...</div>
                     </div>
 
                     <div class="form-group">
                         <div class="form-label">
-                            <span>SEO title</span>
+                            <label for="metaTitle">SEO title</label>
                             <span id="titleCount">0/60</span>
                         </div>
-                        <input type="text" id="metaTitle" name="meta_title" class="input-control" placeholder="%title% | Vita₹thi">
+                        <input type="text" id="metaTitle" name="meta_title" class="input-control" placeholder="%title% | Vittarthi">
                     </div>
 
                     <div class="form-group">
                         <div class="form-label">
-                            <span>Meta description</span>
+                            <label for="metaDesc">Meta description</label>
                             <span id="descCount">0/160</span>
                         </div>
                         <textarea id="metaDesc" name="meta_description" class="input-control" rows="4" placeholder="A concise summary of your article for search results..."></textarea>
@@ -512,34 +169,38 @@
     </form>
 </div>
 
-<div id="secondaryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+<!-- Secondary Modal (Added ARIA roles for Lighthouse) -->
+<div id="secondaryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div style="background:#ffffff; padding:24px; width:100%; max-width:400px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
-        <h4 style="margin-top:0;">Add Secondary Category</h4>
-        <input type="text" id="secondaryName" class="input-control" placeholder="Enter name">
+        <h4 id="modalTitle" style="margin-top:0;">Add Secondary Category</h4>
+        <input type="text" id="secondaryName" class="input-control" placeholder="Enter name" aria-label="Category Name">
         <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
-            <button onclick="closeSecondaryModal()" class="btn btn-outline" type="button">Cancel</button>
-            <button onclick="saveSecondary()" class="btn btn-solid" style="background:#3b82f6; color:#ffffff; border-color:#3b82f6;" type="button">Save</button>
+            <button onclick="closeSecondaryModal()" class="btn btn-outline" type="button" aria-label="Cancel">Cancel</button>
+            <button onclick="saveSecondary()" class="btn btn-solid" style="background:#3b82f6; color:#ffffff; border-color:#3b82f6;" type="button" aria-label="Save Category">Save</button>
         </div>
-    </div>
-</div>
-<div id="previewModal" class="preview-modal-overlay">
-    <div class="preview-modal-content">
-        <div class="preview-modal-header">
-            <h3 style="margin:0; font-family:'Inter', sans-serif; font-size:1.1rem; color:#1e293b;">Live Article Preview</h3>
-            <button type="button" onclick="closePreviewMode()" style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#64748b; line-height: 1;">&times;</button>
-        </div>
-        <div class="preview-modal-body" id="previewModalBody">
-            </div>
     </div>
 </div>
 
-<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<!-- Preview Modal -->
+<div id="previewModal" class="preview-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="previewModalTitle">
+    <div class="preview-modal-content">
+        <div class="preview-modal-header">
+            <h3 id="previewModalTitle" style="margin:0; font-family:'Inter', sans-serif; font-size:1.1rem; color:#1e293b;">Live Article Preview</h3>
+            <button type="button" onclick="closePreviewMode()" style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#64748b; line-height: 1;" aria-label="Close Preview">&times;</button>
+        </div>
+        <div class="preview-modal-body" id="previewModalBody">
+        </div>
+    </div>
+</div>
+
+<!-- IMPORTANT: Loaded CKEditor with 'defer' for performance -->
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}" defer></script>
+
 <script>
-    // Initialize CKEditor
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof CKEDITOR !== 'undefined') {
             CKEDITOR.replace('editor', {
-                height: 300, 
+                height: 400, 
                 filebrowserUploadUrl: '/ckeditor/upload/',
                 filebrowserUploadMethod: 'form',
                 uiColor: '#ffffff',
@@ -547,30 +208,28 @@
                 resize_enabled: false,
                 allowedContent: true,
                 contentsCss: [
-                    "{% static 'css/article-content.css' %}"
+                    "{% static 'css/blog_detail.css' %}" // IMPORTANT: I changed this to point to your new blog_detail.css so CKEditor accurately mimics the live site!
                 ]
             });
+            CKEDITOR.config.versionCheck = false;
         }
-        if (CKEDITOR) {
-        CKEDITOR.config.versionCheck = false;
-    }
     });
 
-    // Slug Auto-generation
-    const titleInput = document.querySelector("input[name='title']");
+    const titleInput = document.getElementById("titleInput");
     const slugInput = document.getElementById("slugInputLeft");
 
-    titleInput.addEventListener("input", function() {
-        if(slugInput.dataset.manual === "true") return;
-        let slug = this.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        slugInput.value = slug;
-    });
+    if (titleInput && slugInput) {
+        titleInput.addEventListener("input", function() {
+            if(slugInput.dataset.manual === "true") return;
+            let slug = this.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            slugInput.value = slug;
+        });
 
-    slugInput.addEventListener("input", function() {
-        this.dataset.manual = "true";
-    });
+        slugInput.addEventListener("input", function() {
+            this.dataset.manual = "true";
+        });
+    }
 
-    // Image Preview
     document.getElementById("imageInput").addEventListener("change", function(e) {
         const file = e.target.files[0];
         const preview = document.getElementById("imagePreview");
@@ -584,66 +243,51 @@
         }
     });
 
-    // Real-Time SEO & Preview Engine
     function updateSEO() {
+        if (!titleInput) return;
         let rawTitle = titleInput.value;
         let metaTitle = document.getElementById("metaTitle").value;
         let slug = slugInput.value;
         let desc = document.getElementById("metaDesc").value;
 
-        // Preview Updates
         let finalTitle = metaTitle || rawTitle || "Your article title";
         document.getElementById("previewTitle").innerText = finalTitle;
         document.getElementById("previewUrl").innerText = slug || "your-slug";
         document.getElementById("previewDesc").innerText = desc || "Meta description will appear here in search results...";
 
-        // Counters
         document.getElementById("titleCount").innerText = `${finalTitle.length}/60`;
         document.getElementById("descCount").innerText = `${desc.length}/160`;
 
-        // Checklist Logic (Red/Green Dots)
         const toggleDot = (id, condition) => {
             let el = document.getElementById(id);
-            if(condition) el.classList.add("good");
-            else el.classList.remove("good");
+            if(el) {
+                if(condition) el.classList.add("good");
+                else el.classList.remove("good");
+            }
         };
 
-        toggleDot("check-keyword", rawTitle.length > 5); // Dummy check for visual
+        toggleDot("check-keyword", rawTitle.length > 5); 
         toggleDot("check-title-len", finalTitle.length >= 30 && finalTitle.length <= 60);
         toggleDot("check-slug", slug.length > 3);
         toggleDot("check-meta", desc.length > 0);
         toggleDot("check-meta-len", desc.length >= 120 && desc.length <= 160);
     }
 
-    // Run SEO checks constantly when typing
     setInterval(updateSEO, 500);
 
-    // Modal Functions
-    function openSecondaryModal() {
-        document.getElementById("secondaryModal").style.display = "flex";
-    }
+    function openSecondaryModal() { document.getElementById("secondaryModal").style.display = "flex"; }
+    function closeSecondaryModal() { document.getElementById("secondaryModal").style.display = "none"; }
 
-    function closeSecondaryModal() {
-        document.getElementById("secondaryModal").style.display = "none";
-    }
-
-    // Secondary Category AJAX
     function saveSecondary() {
         const name = document.getElementById("secondaryName").value;
         const primaryId = document.getElementById("primarySelect").value;
         const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        if (!name || !primaryId) {
-            alert("Select primary and enter name");
-            return;
-        }
+        if (!name || !primaryId) { alert("Select primary category and enter name."); return; }
 
         fetch("/add-secondary/", {
             method: "POST",
-            headers: {
-                "X-CSRFToken": csrf,
-                "Content-Type": "application/json"
-            },
+            headers: { "X-CSRFToken": csrf, "Content-Type": "application/json" },
             body: JSON.stringify({ name: name, primary_id: primaryId })
         })
         .then(res => res.json())
@@ -651,15 +295,11 @@
             if (data.status === "success") {
                 let select = document.getElementById("secondarySelect");
                 let option = document.createElement("option");
-                option.value = data.id;
-                option.text = data.name;
-                option.selected = true;
+                option.value = data.id; option.text = data.name; option.selected = true;
                 select.appendChild(option);
                 closeSecondaryModal();
                 document.getElementById("secondaryName").value = "";
-            } else {
-                alert(data.message);
-            }
+            } else { alert(data.message); }
         });
     }
 
@@ -674,8 +314,7 @@
         .then(data => {
             data.forEach(item => {
                 let option = document.createElement("option");
-                option.value = item.id;
-                option.text = item.name;
+                option.value = item.id; option.text = item.name;
                 secondary.appendChild(option);
             });
         });
@@ -685,7 +324,7 @@
         const select = document.getElementById("secondarySelect");
         const id = select.value;
         const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        if (!id) { alert("Select category"); return; }
+        if (!id) { alert("Select a category to delete."); return; }
         if (!confirm("Delete this category?")) return;
 
         fetch(`/delete-secondary/${id}/`, {
@@ -694,36 +333,40 @@
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === "success") {
-                select.querySelector(`option[value="${id}"]`).remove();
-            }
+            if (data.status === "success") { select.querySelector(`option[value="${id}"]`).remove(); }
         });
     }
-// ══════════ LIVE PREVIEW LOGIC ══════════
+
+    // ══════════ UPGRADED LIVE PREVIEW LOGIC ══════════
     function openPreviewMode() {
-        // Fetch HTML direct from CKEditor instance
         let content = '';
         if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.editor) {
             content = CKEDITOR.instances.editor.getData();
         } else {
-            // Fallback for standard textarea if CKEditor fails to load
             content = document.getElementById("editor").value;
         }
 
-        // Fetch Title and Cover Image (if selected) for realistic preview
-        let title = document.querySelector(".title-input").value || "Untitled Article";
+        let title = document.getElementById("titleInput").value || "Untitled Article";
         let imageSrc = document.getElementById("imagePreview").src;
+        
+        // Let's determine if this is a Case Study or a Blog based on selection!
+        let primaryCategoryElem = document.getElementById("primarySelect");
+        let categoryText = primaryCategoryElem.options[primaryCategoryElem.selectedIndex] ? primaryCategoryElem.options[primaryCategoryElem.selectedIndex].text.toLowerCase() : "";
+        
+        let formatClass = "format-blogs"; // Defaults to the clean reading design
+        if (categoryText.includes("case") || categoryText.includes("study")) {
+            formatClass = "format-case-study"; // Switches to the Premium Glassmorphism design!
+        }
         
         let previewHTML = `<h1 style="font-family:'DM Serif Display', serif; font-size:2.5rem; margin-bottom: 24px; color:#1e293b; line-height:1.2;">${title}</h1>`;
         
-        // Show image in preview if user has uploaded one
         if (imageSrc && document.getElementById("imagePreview").style.display !== "none") {
-            previewHTML += `<img src="${imageSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom: 30px;" alt="Cover">`;
+            previewHTML += `<img src="${imageSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom: 30px;" alt="Cover Image">`;
         }
 
-        previewHTML += content;
+        // We wrap the preview content in the exact same format class as the live site!
+        previewHTML += `<div class="${formatClass}">${content}</div>`;
 
-        // Inject and Display
         document.getElementById('previewModalBody').innerHTML = previewHTML;
         document.getElementById('previewModal').style.display = 'flex';
     }
@@ -732,5 +375,4 @@
         document.getElementById('previewModal').style.display = 'none';
     }
 </script>
-
 {% endblock %}

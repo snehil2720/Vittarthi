@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% block title %}
+SGB vs Physical Gold Calculator | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Compare returns of Sovereign Gold Bonds (SGB) vs Physical Gold. See exactly how much GST and making charges eat into your returns.
+{% endblock %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% block content %}
+<style>
+:root{
+  --green:#1a6b4a; --green-lt:#e8f5ef;
+  --gold:#d97706; --gold-lt:#fff4d6; --gold-mid:#fde68a;
+  --gray:#4b5563; --gray-lt:#f3f4f6;
+  --surface:#fff; --surface2:#f0ede8; --bg:#f7f5f0;
+  --ink:#111827; --ink-muted:#5f6775; --ink-faint:#8b93a1;
+  --border:rgba(0,0,0,.08); --shadow:0 1px 12px rgba(0,0,0,.06); --shadow-lg:0 6px 32px rgba(0,0,0,.10);
+  --max:1180px; --pad:clamp(1rem,4vw,2rem); --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.breadcrumb{padding:.65rem var(--pad);background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--ink-faint)}
+.breadcrumb a{color:var(--ink-muted);transition:color .15s}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{margin:0 .35rem;opacity:.4}
+
+.hero{background:var(--surface);padding:clamp(2rem,5vw,3.5rem) var(--pad) clamp(1.5rem,4vw,2.5rem);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;opacity:.5;pointer-events:none}
+.hero::after{content:'';position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:50%;background:var(--gold-lt);opacity:.6;pointer-events:none}
+.hero-inner{max-width:var(--max);margin:auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-lt);color:var(--gold);padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem;border:1px solid rgba(217,119,6,.2)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;margin-bottom:.75rem}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-sub{font-size:1rem;color:var(--ink-muted);line-height:1.7;max-width:560px;margin-bottom:1.25rem}
+
+.section{max-width:var(--max);margin:0 auto;padding:clamp(2rem,5vw,3rem) var(--pad)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
+.section-sub{font-size:.85rem;color:var(--ink-muted);margin-bottom:1.75rem}
+
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.calc-cols{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.calc-col{padding:1.5rem}
+.calc-col:first-child{border-right:1px solid var(--border);background:var(--surface2)}
+.input-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.2rem}
+.input-group:last-child{margin-bottom:0}
+.input-group label{font-size:.68rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint)}
+.input-row{display:flex;align-items:center;gap:.6rem}
+.input-row input[type=number]{width:105px;padding:5px 9px;border:1px solid var(--border);border-radius:7px;font-size:.85rem;font-family:inherit;background:var(--surface);color:var(--ink);font-weight:600;transition:border-color .15s}
+.input-row input[type=number]:focus{outline:none;border-color:var(--gold)}
+input[type=range]{flex:1;height:4px;border-radius:99px;cursor:pointer;accent-color:var(--gold)}
+.range-minmax{display:flex;justify-content:space-between;font-size:.63rem;color:var(--ink-faint);margin-top:1px}
+
+.calc-out-cols{display:grid;grid-template-columns:1fr 1fr;padding:1.5rem;gap:1.25rem;border-bottom:1px solid var(--border)}
+.out-card{border-radius:var(--r);padding:1.1rem;border:1px solid}
+.out-card.sgb{border-color:rgba(217,119,6,.3);background:linear-gradient(135deg,rgba(217,119,6,.06),transparent)}
+.out-card.phys{border-color:rgba(75,85,99,.2);background:linear-gradient(135deg,rgba(75,85,99,.04),transparent)}
+.oc-head{font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:6px}
+.oc-head.sgb{color:var(--gold)}.oc-head.phys{color:var(--gray)}
+.oc-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.oc-row:last-child{border-bottom:none}
+.oc-key{color:var(--ink-muted)}.oc-val{font-weight:700}
+.oc-val.sgb{color:var(--gold)}.oc-val.phys{color:var(--gray)}
+.oc-val.loss{color:#dc2626}
+.oc-total{font-size:1rem!important}
+
+.winner-banner{margin:1.5rem;padding:1rem 1.25rem;border-radius:var(--r);display:flex;align-items:center;gap:.75rem;font-size:.9rem;font-weight:600;background:var(--gold-lt);color:var(--gold);border:1px solid rgba(217,119,6,.2)}
+.winner-icon{font-size:1.4rem}
+
+.chart-wrap{padding:0 1.5rem 1.5rem}
+.chart-box{background:var(--surface2);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border)}
+
+@media(max-width:768px){
+  .calc-cols,.calc-out-cols{grid-template-columns:1fr}
+  .calc-col:first-child{border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/compare">Compare</a><span>›</span>
+  <span style="color:var(--ink)">SGB vs Physical Gold</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🪙 Gold Investment Guide</div>
+    <h1>SGB vs <em>Physical Gold</em></h1>
+    <p class="hero-sub">Don't lose your wealth to 13% Making Charges and GST. See exactly how much extra money Sovereign Gold Bonds make you.</p>
+  </div>
+</section>
+
+<div class="section">
+  <h2 class="section-title">Gold Return Calculator</h2>
+  <div class="calc-wrap">
+    <div class="calc-cols">
+      <div class="calc-col">
+        <div class="input-group">
+          <label>Quantity of Gold (Grams)</label>
+          <div class="input-row">
+            <input type="range" id="gramsSlider" min="5" max="500" step="1" value="50">
+            <input type="number" id="grams" value="50">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Current Gold Price (Per Gram)</label>
+          <div class="input-row">
+            <input type="number" id="price" value="7500" style="width:100%">
+          </div>
+        </div>
+      </div>
+      <div class="calc-col" style="background:var(--surface)">
+        <div class="input-group">
+          <label>Expected Annual Appreciation (%)</label>
+          <div class="input-row">
+            <input type="range" id="appSlider" min="3" max="15" step="0.5" value="8">
+            <input type="number" id="appRate" value="8">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Investment Tenure (Years) <small style="color:var(--ink-faint);text-transform:none">(SGB maturity is 8 yrs)</small></label>
+          <div class="input-row">
+            <input type="range" id="yrsSlider" min="1" max="8" step="1" value="8">
+            <input type="number" id="years" value="8" min="1" max="8">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-out-cols">
+      <div class="out-card sgb">
+        <div class="oc-head sgb">Sovereign Gold Bond (SGB)</div>
+        <div class="oc-row"><span class="oc-key">Actual Gold Value</span><span class="oc-val sgb" id="sgb-raw">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Purchase Cost (Zero GST)</span><span class="oc-val sgb" id="sgb-cost">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">2.5% Annual Interest Earned</span><span class="oc-val sgb" id="sgb-int">+₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Capital Gains Tax</span><span class="oc-val sgb" style="color:var(--green)">₹0 (Exempt)</span></div>
+        <div class="oc-row"><span class="oc-key">Final Net Worth</span><span class="oc-val sgb oc-total" id="sgb-final">₹0</span></div>
+      </div>
+      <div class="out-card phys">
+        <div class="oc-head phys">Physical Gold (Coins/Jewelry)</div>
+        <div class="oc-row"><span class="oc-key">Actual Gold Value</span><span class="oc-val phys" id="phys-raw">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Purchase Cost (+13% GST/Making)</span><span class="oc-val loss" id="phys-cost">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Locker/Storage Costs</span><span class="oc-val loss" id="phys-locker">-₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Capital Gains Tax (if sold)</span><span class="oc-val loss">Applicable</span></div>
+        <div class="oc-row"><span class="oc-key">Final Net Worth</span><span class="oc-val phys oc-total" id="phys-final">₹0</span></div>
+      </div>
+    </div>
+
+    <div class="winner-banner">
+      <span class="winner-icon">🏆</span>
+      <div>
+        <strong id="winner-text">SGB generates ₹X more wealth</strong>
+        <div style="font-size:.77rem;font-weight:400;margin-top:2px;opacity:.85" id="winner-sub">SGB saves you from GST leakage and pays you interest while you hold it.</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-box">
+        <div style="display:flex;justify-content:space-between;margin-bottom:1rem;font-size:.75rem;font-weight:600;color:var(--ink-muted)">
+          <span>Net Worth Comparison Over Time</span>
+        </div>
+        <canvas id="growthChart" height="auto"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+function fmt(n){
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(2)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+let chart;
+function buildChart(labels, physData, sgbData){
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'SGB',data:sgbData,borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.1)',fill:true,tension:.4,pointRadius:3,borderWidth:2.5},
+        {label:'Physical Gold', data:physData, borderColor:'#4b5563',backgroundColor:'transparent',fill:false,tension:.4,pointRadius:3,borderWidth:2.5,borderDash:[5,5]}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.y)}}},
+      scales:{
+        y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.04)'}},
+        x:{grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
+  });
+}
+
+async function calculate() {
+    const payload = {
+        grams: +document.getElementById('grams').value || 10,
+        price_per_gram: +document.getElementById('price').value || 7500,
+        appreciation_rate: +document.getElementById('appRate').value || 8,
+        years: +document.getElementById('years').value || 8
+    };
+
+    try {
+        const response = await fetch('/api/compare/sgb-vs-gold', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if(!data.success) throw new Error(data.error);
+
+        const sum = data.summary;
+        
+        // Update DOM
+        document.getElementById('sgb-raw').textContent = fmt(sum.raw_value);
+        document.getElementById('sgb-cost').textContent = fmt(sum.sgb_cost);
+        document.getElementById('sgb-int').textContent = '+' + fmt(sum.total_sgb_interest);
+        document.getElementById('sgb-final').textContent = fmt(sum.sgb_final);
+        
+        document.getElementById('phys-raw').textContent = fmt(sum.raw_value);
+        document.getElementById('phys-cost').textContent = fmt(sum.physical_cost);
+        document.getElementById('phys-locker').textContent = '-' + fmt(sum.total_locker_cost);
+        document.getElementById('phys-final').textContent = fmt(sum.phys_final);
+        
+        document.getElementById('winner-text').textContent = `🏆 SGB generates ${fmt(sum.sgb_advantage)} more wealth`;
+        
+        buildChart(data.chart.labels, data.chart.phys_data, data.chart.sgb_data);
+
+    } catch(err) {
+        console.error("API Error:", err);
+    }
+}
+
+function sync(sId,iId){
+  const s=document.getElementById(sId),i=document.getElementById(iId);
+  if(s && i){
+    s.addEventListener('input',()=>{i.value=s.value;calculate()});
+    i.addEventListener('input',()=>{s.value=i.value;calculate()});
+  }
+}
+sync('gramsSlider','grams');
+sync('appSlider','appRate');
+sync('yrsSlider','years');
+
+document.getElementById('price').addEventListener('input', calculate);
+window.addEventListener('load', calculate);
+</script>
+{% endblock %}

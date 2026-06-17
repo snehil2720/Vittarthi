@@ -111,6 +111,21 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+    path('compare', views.compare_hub, name='compare_hub'),
+    
+    path('compare/sip-vs-fd', views.page_sip_vs_fd, name='page_sip_vs_fd'),
+    path('api/compare/sip-vs-fd', views.api_sip_vs_fd, name='api_sip_vs_fd'),
 
+    path('compare/ppf-vs-elss', views.page_ppf_vs_elss, name='page_ppf_vs_elss'),
+    path('api/compare/ppf-vs-elss', views.api_ppf_vs_elss, name='api_api_ppf_elss'),
+
+    path('compare/home-loan-vs-rent', views.page_homeloan_vs_rent, name='page_homeloan_vs_rent'),
+    path('api/compare/home-loan-vs-rent', views.api_home_loan_vs_rent, name='api_home_loan_rent'),
+
+    path('compare/sgb-vs-gold', views.page_sgb_vs_gold, name='page_sgb_vs_gold'),
+    path('api/compare/sgb-vs-gold', views.api_sgb_vs_gold, name='api_sgb_vs_gold'),
+
+    path('compare/nps-vs-mf', views.page_nps_vs_mf, name='page_nps_vs_mf'),
+    path('api/compare/nps-vs-mf', views.api_nps_vs_mf, name='api_nps_vs_mf'),
 ]
 

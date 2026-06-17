@@ -1,0 +1,653 @@
+{% extends 'base.html' %}
+{% block title %}
+SIP vs FD: Which Gives Better Returns? | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Compare SIP vs Fixed Deposit returns with our free interactive calculator. See which investment wins over 5, 10, 20 years with real numbers.
+{% endblock %}
+
+<meta name="keywords" content="SIP vs FD, SIP vs Fixed Deposit, which is better SIP or FD, SIP calculator, FD calculator India">
+<link rel="canonical" href="https://vittarthi.com/compare/sip-vs-fd">
+<meta property="og:title" content="SIP vs FD: Which Gives Better Returns? | Vittarthi">
+<meta property="og:description" content="Live interactive calculator comparing SIP and Fixed Deposit returns over 5, 10, 20 years.">
+<meta property="og:url" content="https://vittarthi.com/compare/sip-vs-fd">
+<meta property="og:type" content="article">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"Is SIP better than FD for long term?","acceptedAnswer":{"@type":"Answer","text":"Yes, for long-term goals (7+ years), SIP in equity mutual funds typically delivers 12–15% CAGR, far outperforming FD returns of 6–7.5%. However, SIP carries market risk while FD offers guaranteed returns."}},
+    {"@type":"Question","name":"What is the average SIP return vs FD return in India?","acceptedAnswer":{"@type":"Answer","text":"Average SIP return (equity mutual funds) is 12–14% annually over 10-year periods. FD returns currently range from 6.5–7.5% per annum. Over 10 years, ₹5,000/month SIP at 12% grows to ₹11.6L vs FD's ₹8.3L."}},
+    {"@type":"Question","name":"Is SIP safe like FD?","acceptedAnswer":{"@type":"Answer","text":"No. FD is completely safe with DICGC insurance up to ₹5 lakh. SIP in equity funds carries market risk — your returns can vary. However, over 10+ years, the risk reduces significantly and returns tend to be much higher."}},
+    {"@type":"Question","name":"Can I lose money in SIP?","acceptedAnswer":{"@type":"Answer","text":"In the short term (1–3 years), yes — equity SIPs can give negative returns during market downturns. But historically, no 10-year SIP in a diversified equity fund has given negative returns in India."}},
+    {"@type":"Question","name":"Which is better for senior citizens, SIP or FD?","acceptedAnswer":{"@type":"Answer","text":"For senior citizens, FD is generally better due to guaranteed returns, no market risk, and predictable income. Senior citizens get 0.25–0.5% extra interest on FDs. However, a small portion in hybrid mutual funds via SIP can still be considered for inflation-beating returns."}}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Article",
+  "headline":"SIP vs FD: Which Gives Better Returns in 2025?",
+  "description":"Compare SIP vs Fixed Deposit returns with interactive calculator",
+  "author":{"@type":"Organization","name":"Vittarthi"},
+  "publisher":{"@type":"Organization","name":"Vittarthi","url":"https://vittarthi.com"},
+  "dateModified":"2025-06-01"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://vittarthi.com"},
+    {"@type":"ListItem","position":2,"name":"Compare","item":"https://vittarthi.com/compare"},
+    {"@type":"ListItem","position":3,"name":"SIP vs FD","item":"https://vittarthi.com/compare/sip-vs-fd"}
+  ]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% block content %}
+<style>
+:root{
+  --green:#1a6b4a;--green-lt:#e8f5ef;--green-mid:#cfe8dc;
+  --blue:#2563eb;--blue-lt:#dbeafe;
+  --surface:#fff;--surface2:#f0ede8;--bg:#f7f5f0;
+  --ink:#111827;--ink-muted:#5f6775;--ink-faint:#8b93a1;
+  --border:rgba(0,0,0,.08);
+  --shadow:0 1px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 6px 32px rgba(0,0,0,.10);
+  --max:1180px;--pad:clamp(1rem,4vw,2rem);
+  --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* BREADCRUMB */
+.breadcrumb{padding:.65rem var(--pad);background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--ink-faint)}
+.breadcrumb a{color:var(--ink-muted);transition:color .15s}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{margin:0 .35rem;opacity:.4}
+
+/* HERO */
+.hero{background:var(--surface);padding:clamp(2rem,5vw,3.5rem) var(--pad) clamp(1.5rem,4vw,2.5rem);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;opacity:.5;pointer-events:none}
+.hero::after{content:'';position:absolute;top:-120px;right:-80px;width:420px;height:420px;border-radius:50%;background:var(--green-lt);opacity:.6;pointer-events:none}
+.hero-inner{max-width:var(--max);margin:auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-lt);color:var(--green);padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;margin-bottom:.75rem}
+.hero h1 em{color:var(--green);font-style:italic}
+.hero-sub{font-size:1rem;color:var(--ink-muted);line-height:1.7;max-width:560px;margin-bottom:1.25rem}
+.hero-pills{display:flex;gap:.6rem;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:8px;font-size:.78rem;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.pill-green{background:var(--green-lt);color:var(--green)}
+.pill-blue{background:var(--blue-lt);color:var(--blue)}
+.hero-meta{margin-top:.9rem;font-size:.72rem;color:var(--ink-faint)}
+
+/* SECTION WRAP */
+.section{max-width:var(--max);margin:0 auto;padding:clamp(2rem,5vw,3rem) var(--pad)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
+.section-sub{font-size:.85rem;color:var(--ink-muted);margin-bottom:1.75rem}
+
+/* CALCULATOR */
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.calc-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(26,107,74,.06) 0%,transparent 60%);pointer-events:none}
+.calc-inputs{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--surface2)}
+.inputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.input-group{display:flex;flex-direction:column;gap:.4rem}
+.input-group label{font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-faint)}
+.input-row{display:flex;align-items:center;gap:.6rem}
+.input-row input[type=number]{width:110px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;background:var(--surface);color:var(--ink);font-weight:600;transition:border-color .15s}
+.input-row input[type=number]:focus{outline:none;border-color:var(--green)}
+input[type=range]{flex:1;height:4px;border-radius:99px;accent-color:var(--green);cursor:pointer}
+.range-minmax{display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-faint);margin-top:2px}
+
+/* RESULTS */
+.calc-results{padding:1.75rem;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.result-card{border-radius:var(--r);padding:1.25rem;border:1px solid;transition:transform .2s,box-shadow .2s}
+.result-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.result-card.sip{border-color:rgba(26,107,74,.2);background:linear-gradient(135deg,rgba(26,107,74,.04),rgba(26,107,74,.01))}
+.result-card.fd{border-color:rgba(37,99,235,.2);background:linear-gradient(135deg,rgba(37,99,235,.04),rgba(37,99,235,.01))}
+.rc-label{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.9rem;display:flex;align-items:center;gap:6px}
+.rc-label.sip{color:var(--green)}.rc-label.fd{color:var(--blue)}
+.rc-dot{width:7px;height:7px;border-radius:50%}
+.rc-dot.sip{background:var(--green)}.rc-dot.fd{background:var(--blue)}
+.rc-row{display:flex;justify-content:space-between;align-items:baseline;padding:.35rem 0;border-bottom:1px solid var(--border)}
+.rc-row:last-child{border-bottom:none}
+.rc-key{font-size:.75rem;color:var(--ink-muted)}
+.rc-val{font-size:.9rem;font-weight:700}
+.rc-val.sip{color:var(--green)}.rc-val.fd{color:var(--blue)}
+.rc-total{font-size:1.15rem!important}
+
+/* WINNER */
+.winner-banner{margin:0 1.75rem 1.75rem;padding:1rem 1.25rem;border-radius:var(--r);display:flex;align-items:center;gap:.75rem;font-size:.9rem;font-weight:600;animation:fadeUp .4s ease}
+.winner-banner.sip-wins{background:var(--green-lt);color:var(--green);border:1px solid rgba(26,107,74,.2)}
+.winner-banner.fd-wins{background:var(--blue-lt);color:var(--blue);border:1px solid rgba(37,99,235,.2)}
+.winner-icon{font-size:1.4rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHART */
+.chart-wrap{padding:0 1.75rem 1.75rem}
+.chart-box{background:var(--surface2);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border)}
+.chart-title{font-size:.75rem;font-weight:600;color:var(--ink-muted);margin-bottom:1rem;letter-spacing:.5px}
+.chart-legend{display:flex;gap:1rem;margin-bottom:.75rem}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:500;color:var(--ink-muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* TABLE */
+.cmp-table{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.cmp-table thead{background:var(--ink)}
+.cmp-table thead th{color:#fff;padding:.7rem 1rem;font-size:.75rem;font-weight:600;letter-spacing:.5px;text-align:left}
+.cmp-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+.cmp-table tbody tr:hover{background:var(--surface2)}
+.cmp-table tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.cmp-table tbody tr:nth-child(even):hover{background:var(--surface2)}
+.cmp-table td{padding:.7rem 1rem;font-size:.82rem;color:var(--ink-muted);vertical-align:middle}
+.cmp-table td:first-child{color:var(--ink);font-weight:500}
+.badge{display:inline-flex;padding:2px 9px;border-radius:5px;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-green{background:var(--green-lt);color:var(--green)}
+.badge-blue{background:var(--blue-lt);color:var(--blue)}
+.badge-gray{background:var(--surface2);color:var(--ink-faint)}
+
+/* WHEN TO CHOOSE */
+.choose-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.choose-card{border-radius:var(--r);padding:1.5rem;border:1px solid}
+.choose-card.sip{border-color:rgba(26,107,74,.25);background:linear-gradient(135deg,var(--green-lt),rgba(232,245,239,.3))}
+.choose-card.fd{border-color:rgba(37,99,235,.2);background:linear-gradient(135deg,var(--blue-lt),rgba(219,234,254,.3))}
+.choose-head{font-size:.8rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:7px}
+.choose-head.sip{color:var(--green)}.choose-head.fd{color:var(--blue)}
+.choose-head-icon{font-size:1.1rem}
+.choose-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.choose-list li{font-size:.82rem;color:var(--ink-muted);display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.choose-list li::before{content:'✓';font-weight:700;flex-shrink:0;margin-top:1px}
+.choose-list.sip li::before{color:var(--green)}
+.choose-list.fd li::before{color:var(--blue)}
+
+/* TAX */
+.tax-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.tax-card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);box-shadow:var(--shadow)}
+.tax-head{font-size:.75rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:.9rem}
+.tax-head.sip{color:var(--green)}.tax-head.fd{color:var(--blue)}
+.tax-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.tax-row:last-child{border-bottom:none}
+.tax-key{color:var(--ink-muted)}
+.tax-val{font-weight:600;color:var(--ink)}
+
+/* GROWTH TABLE */
+.gt-table{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.gt-table thead{background:linear-gradient(90deg,var(--green),#2d8f64)}
+.gt-table thead th{color:#fff;padding:.65rem 1rem;font-size:.74rem;font-weight:600;text-align:right}
+.gt-table thead th:first-child{text-align:left}
+.gt-table tbody tr{border-bottom:1px solid var(--border)}
+.gt-table tbody tr:last-child{border-bottom:none;font-weight:700;background:var(--green-lt)}
+.gt-table tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.gt-table td{padding:.65rem 1rem;font-size:.82rem;text-align:right}
+.gt-table td:first-child{text-align:left;font-weight:600;color:var(--ink)}
+.gt-sip{color:var(--green);font-weight:600}
+.gt-fd{color:var(--blue);font-weight:600}
+.gt-lead{color:var(--green);font-weight:700}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:.6rem}
+.faq-item{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.faq-q{width:100%;background:none;border:none;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--ink);text-align:left;transition:background .15s}
+.faq-q:hover{background:var(--surface2)}
+.faq-icon{width:22px;height:22px;border-radius:50%;background:var(--green-lt);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;transition:transform .25s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--green);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem}
+.faq-a p{font-size:.83rem;color:var(--ink-muted);line-height:1.7}
+
+/* CTA CARDS */
+.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:all .2s;box-shadow:var(--shadow)}
+.cta-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cta-icon{font-size:1.6rem}
+.cta-title{font-size:.85rem;font-weight:700;color:var(--ink)}
+.cta-sub{font-size:.72rem;color:var(--ink-muted)}
+.cta-arrow{font-size:.8rem;color:var(--green);font-weight:700;margin-top:.25rem}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .inputs-grid,.calc-results,.choose-grid,.tax-grid,.cta-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.9rem}
+  .winner-banner{margin:0 1rem 1rem}
+  .calc-results{padding:1rem}
+  .calc-inputs{padding:1rem}
+  .chart-wrap{padding:0 1rem 1rem}
+}
+@media(max-width:540px){
+  .cta-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
+
+
+<!-- BREADCRUMB -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/compare">Compare</a><span>›</span>
+  <span style="color:var(--ink)">SIP vs FD</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-label="Page header">
+  <div class="hero-inner">
+    <div class="hero-badge">📊 Comparison Guide</div>
+    <h1>SIP vs <em>Fixed Deposit</em></h1>
+    <p class="hero-sub">Which builds more wealth over time? Real numbers, no bias — with our live interactive calculator.</p>
+    <div class="hero-pills">
+      <span class="pill pill-green">📈 SIP avg returns: 12% p.a.</span>
+      <span class="pill pill-blue">🏦 FD avg returns: 6.5% p.a.</span>
+    </div>
+    <p class="hero-meta">✓ Updated June 2025 &nbsp;·&nbsp; ✓ SEBI & RBI data &nbsp;·&nbsp; ✓ Free tool</p>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<div class="section">
+  <h2 class="section-title">Live Comparison Calculator</h2>
+  <p class="section-sub">Adjust sliders to see real-time results for your investment amount and duration</p>
+
+  <div class="calc-wrap">
+    <!-- INPUTS -->
+    <div class="calc-inputs">
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label for="amount">Monthly Investment</label>
+          <div class="input-row">
+            <input type="range" id="amtSlider" min="500" max="100000" step="500" value="5000">
+            <input type="number" id="amount" value="5000" min="500" max="100000">
+          </div>
+          <div class="range-minmax"><span>₹500</span><span>₹1,00,000</span></div>
+        </div>
+        <div class="input-group">
+          <label for="years">Investment Duration</label>
+          <div class="input-row">
+            <input type="range" id="yrsSlider" min="1" max="30" step="1" value="10">
+            <input type="number" id="years" value="10" min="1" max="30">
+          </div>
+          <div class="range-minmax"><span>1 yr</span><span>30 yrs</span></div>
+        </div>
+        <div class="input-group">
+          <label for="sipRate">SIP Expected Return (%)</label>
+          <div class="input-row">
+            <input type="range" id="sipSlider" min="8" max="20" step="0.5" value="12">
+            <input type="number" id="sipRate" value="12" min="8" max="20" step="0.5">
+          </div>
+          <div class="range-minmax"><span>8%</span><span>20%</span></div>
+        </div>
+        <div class="input-group">
+          <label for="fdRate">FD Interest Rate (%)</label>
+          <div class="input-row">
+            <input type="range" id="fdSlider" min="4" max="10" step="0.25" value="6.5">
+            <input type="number" id="fdRate" value="6.5" min="4" max="10" step="0.25">
+          </div>
+          <div class="range-minmax"><span>4%</span><span>10%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="calc-results">
+      <div class="result-card sip">
+        <div class="rc-label sip"><span class="rc-dot sip"></span>SIP — Mutual Fund</div>
+        <div class="rc-row"><span class="rc-key">Total Invested</span><span class="rc-val sip" id="sip-invested">₹6,00,000</span></div>
+        <div class="rc-row"><span class="rc-key">Estimated Returns</span><span class="rc-val sip" id="sip-returns">₹5,60,000</span></div>
+        <div class="rc-row"><span class="rc-key">Final Value</span><span class="rc-val sip rc-total" id="sip-total">₹11,60,000</span></div>
+        <div class="rc-row"><span class="rc-key">Effective CAGR</span><span class="rc-val sip" id="sip-cagr">12.0%</span></div>
+      </div>
+      <div class="result-card fd">
+        <div class="rc-label fd"><span class="rc-dot fd"></span>Fixed Deposit</div>
+        <div class="rc-row"><span class="rc-key">Total Invested</span><span class="rc-val fd" id="fd-invested">₹6,00,000</span></div>
+        <div class="rc-row"><span class="rc-key">Interest Earned</span><span class="rc-val fd" id="fd-returns">₹2,30,000</span></div>
+        <div class="rc-row"><span class="rc-key">Maturity Amount</span><span class="rc-val fd rc-total" id="fd-total">₹8,30,000</span></div>
+        <div class="rc-row"><span class="rc-key">Guaranteed?</span><span class="rc-val fd" style="font-size:.8rem">✓ Yes</span></div>
+      </div>
+    </div>
+
+    <!-- WINNER -->
+    <div class="winner-banner sip-wins" id="winner-banner">
+      <span class="winner-icon">🏆</span>
+      <div>
+        <strong id="winner-text">SIP wins by ₹3,30,000</strong>
+        <div style="font-size:.77rem;font-weight:400;margin-top:2px;opacity:.8" id="winner-sub">Over 10 years, SIP delivers 40% more wealth than FD</div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-wrap">
+      <div class="chart-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem">
+          <span class="chart-title">Year-by-Year Wealth Growth</span>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>SIP</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--blue)"></span>FD</span>
+          </div>
+        </div>
+        <canvas id="growthChart" height="auto"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">SIP vs FD — Key Differences</h2>
+  <p class="section-sub">A complete comparison across 10 important factors</p>
+  <table class="cmp-table" role="table" aria-label="SIP vs FD comparison table">
+    <thead>
+      <tr>
+        <th>Factor</th>
+        <th>SIP (Mutual Fund)</th>
+        <th>Fixed Deposit</th>
+        <th>Winner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Return Type</td><td>Market-linked (variable)</td><td>Fixed / Guaranteed</td><td><span class="badge badge-blue">FD</span></td></tr>
+      <tr><td>Average Returns</td><td>12–15% p.a. (equity)</td><td>6.5–7.5% p.a.</td><td><span class="badge badge-green">SIP</span></td></tr>
+      <tr><td>Risk Level</td><td>Moderate to High</td><td>Very Low (insured)</td><td><span class="badge badge-blue">FD</span></td></tr>
+      <tr><td>Tax on Gains</td><td>LTCG 10% (above ₹1L)</td><td>Added to income (slab)</td><td><span class="badge badge-green">SIP</span></td></tr>
+      <tr><td>Liquidity</td><td>High (T+3 days)</td><td>Low (penalty on early)</td><td><span class="badge badge-green">SIP</span></td></tr>
+      <tr><td>Minimum Investment</td><td>₹100/month</td><td>₹1,000 (most banks)</td><td><span class="badge badge-green">SIP</span></td></tr>
+      <tr><td>Suitable For</td><td>Long-term wealth (7+ yrs)</td><td>Short-term & safety</td><td><span class="badge badge-gray">Depends</span></td></tr>
+      <tr><td>Lock-in Period</td><td>None (ELSS: 3 yrs)</td><td>Varies (7 days to 10 yrs)</td><td><span class="badge badge-green">SIP</span></td></tr>
+      <tr><td>SEBI Regulated</td><td>Yes</td><td>RBI regulated</td><td><span class="badge badge-gray">Both</span></td></tr>
+      <tr><td>Guaranteed Returns</td><td>No</td><td>Yes</td><td><span class="badge badge-blue">FD</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- WHEN TO CHOOSE -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">When Should You Choose?</h2>
+  <p class="section-sub">Based on your financial goals and risk appetite</p>
+  <div class="choose-grid">
+    <div class="choose-card sip">
+      <div class="choose-head sip"><span class="choose-head-icon">📈</span>Choose SIP if...</div>
+      <ul class="choose-list sip">
+        <li>Your goal is 7+ years away (retirement, child education)</li>
+        <li>You can handle short-term market ups and downs</li>
+        <li>You want to beat inflation significantly</li>
+        <li>You want to save tax under ELSS (80C benefit)</li>
+        <li>You're a young earner (22–40) building long-term wealth</li>
+      </ul>
+    </div>
+    <div class="choose-card fd">
+      <div class="choose-head fd"><span class="choose-head-icon">🏦</span>Choose FD if...</div>
+      <ul class="choose-list fd">
+        <li>Your goal is short-term (1–3 years)</li>
+        <li>You cannot afford to lose principal (senior citizen, retiree)</li>
+        <li>You need guaranteed, predictable income</li>
+        <li>You're building an emergency fund</li>
+        <li>You have low risk tolerance and value peace of mind</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- TAX SECTION -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Tax Implications</h2>
+  <p class="section-sub">How your gains are taxed — a critical factor often ignored</p>
+  <div class="tax-grid">
+    <div class="tax-card">
+      <div class="tax-head sip">📈 SIP (Equity Mutual Funds)</div>
+      <div class="tax-row"><span class="tax-key">Held &lt; 1 year (STCG)</span><span class="tax-val">15% flat tax</span></div>
+      <div class="tax-row"><span class="tax-key">Held &gt; 1 year (LTCG)</span><span class="tax-val">10% on gains above ₹1L</span></div>
+      <div class="tax-row"><span class="tax-key">Indexation Benefit</span><span class="tax-val">Not available</span></div>
+      <div class="tax-row"><span class="tax-key">ELSS SIP (80C)</span><span class="tax-val">Save upto ₹46,800/yr</span></div>
+    </div>
+    <div class="tax-card">
+      <div class="tax-head fd">🏦 Fixed Deposit</div>
+      <div class="tax-row"><span class="tax-key">Interest Taxation</span><span class="tax-val">Added to income (slab)</span></div>
+      <div class="tax-row"><span class="tax-key">TDS Deducted</span><span class="tax-val">10% if interest &gt; ₹40,000/yr</span></div>
+      <div class="tax-row"><span class="tax-key">Tax-saving FD (5yr)</span><span class="tax-val">80C deduction ₹1.5L</span></div>
+      <div class="tax-row"><span class="tax-key">Senior Citizen Extra</span><span class="tax-val">+0.25–0.5% rate</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- GROWTH TABLE -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Year-by-Year Growth Snapshot</h2>
+  <p class="section-sub">₹5,000/month invested at 12% (SIP) vs 6.5% (FD)</p>
+  <table class="gt-table" role="table" aria-label="Year by year growth comparison">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>SIP Value</th>
+        <th>FD Value</th>
+        <th>SIP Advantage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1 Year</td><td class="gt-sip">₹63,933</td><td class="gt-fd">₹61,986</td><td class="gt-lead">+₹1,947</td></tr>
+      <tr><td>2 Years</td><td class="gt-sip">₹1,36,173</td><td class="gt-fd">₹1,28,094</td><td class="gt-lead">+₹8,079</td></tr>
+      <tr><td>3 Years</td><td class="gt-sip">₹2,18,382</td><td class="gt-fd">₹1,98,562</td><td class="gt-lead">+₹19,820</td></tr>
+      <tr><td>5 Years</td><td class="gt-sip">₹4,12,431</td><td class="gt-fd">₹3,47,856</td><td class="gt-lead">+₹64,575</td></tr>
+      <tr><td>7 Years</td><td class="gt-sip">₹6,74,522</td><td class="gt-fd">₹5,11,240</td><td class="gt-lead">+₹1,63,282</td></tr>
+      <tr><td>10 Years</td><td class="gt-sip">₹11,61,695</td><td class="gt-fd">₹8,28,014</td><td class="gt-lead">+₹3,33,681</td></tr>
+      <tr><td>15 Years</td><td class="gt-sip">₹25,02,918</td><td class="gt-fd">₹13,85,072</td><td class="gt-lead">+₹11,17,846</td></tr>
+      <tr><td>20 Years</td><td class="gt-sip">₹49,95,745</td><td class="gt-fd">₹22,19,413</td><td class="gt-lead">+₹27,76,332</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <p class="section-sub">Common questions answered clearly</p>
+  <div class="faq-list">
+    <div class="faq-item" id="faq-1">
+      <button class="faq-q" onclick="toggleFaq('faq-1')" aria-expanded="false">
+        Is SIP better than FD for long term?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><p>Yes, for long-term goals (7+ years), SIP in equity mutual funds typically delivers 12–15% CAGR, far outperforming FD returns of 6–7.5%. However, SIP carries market risk while FD offers guaranteed returns. The key is — for goals beyond 7 years, SIP almost always wins by a large margin.</p></div>
+    </div>
+    <div class="faq-item" id="faq-2">
+      <button class="faq-q" onclick="toggleFaq('faq-2')" aria-expanded="false">
+        What is the average SIP return vs FD return in India?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><p>Average SIP return (equity mutual funds, Nifty 50 index) is 12–14% annually over 10-year periods. FD returns currently range from 6.5–7.5% p.a. Over 10 years, ₹5,000/month SIP at 12% grows to ₹11.6L vs FD's ₹8.3L — a 40% difference.</p></div>
+    </div>
+    <div class="faq-item" id="faq-3">
+      <button class="faq-q" onclick="toggleFaq('faq-3')" aria-expanded="false">
+        Is SIP safe like FD?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><p>No. FD is completely safe with DICGC insurance up to ₹5 lakh per bank. SIP in equity funds carries market risk — your returns can vary and can be negative in the short term. However, over 10+ years, the risk reduces significantly and historical data shows no 10-year SIP has ever given negative returns in diversified equity funds.</p></div>
+    </div>
+    <div class="faq-item" id="faq-4">
+      <button class="faq-q" onclick="toggleFaq('faq-4')" aria-expanded="false">
+        Can I lose money in SIP?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><p>In the short term (1–3 years), yes — equity SIPs can give negative returns during market downturns like 2008 or 2020. But historically, no 10-year SIP in a diversified equity fund has given negative returns in India. Time in the market beats timing the market.</p></div>
+    </div>
+    <div class="faq-item" id="faq-5">
+      <button class="faq-q" onclick="toggleFaq('faq-5')" aria-expanded="false">
+        Which is better for senior citizens, SIP or FD?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a"><p>For senior citizens, FD is generally better due to guaranteed returns, no market risk, and predictable income. Senior citizens get 0.25–0.5% extra interest on FDs. However, keeping 20–30% in conservative hybrid mutual funds via SIP can still help beat inflation over time.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED CTA -->
+<div class="section" style="padding-top:0;padding-bottom:3rem">
+  <h2 class="section-title">Explore More Tools</h2>
+  <p class="section-sub">Continue your financial planning journey</p>
+  <div class="cta-grid">
+    <a href="/calculators/sip" class="cta-card" id="cta-sip-calc">
+      <span class="cta-icon">📊</span>
+      <span class="cta-title">SIP Calculator</span>
+      <span class="cta-sub">Calculate your SIP returns</span>
+      <span class="cta-arrow">Try Now →</span>
+    </a>
+    <a href="/compare/ppf-vs-elss" class="cta-card" id="cta-ppf-elss">
+      <span class="cta-icon">🏅</span>
+      <span class="cta-title">PPF vs ELSS</span>
+      <span class="cta-sub">Best 80C tax saving option</span>
+      <span class="cta-arrow">Compare →</span>
+    </a>
+    <a href="/compare/home-loan-vs-rent" class="cta-card" id="cta-home-rent">
+      <span class="cta-icon">🏠</span>
+      <span class="cta-title">Home Loan vs Rent</span>
+      <span class="cta-sub">Buy or rent — what's better?</span>
+      <span class="cta-arrow">Compare →</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ─── Indian Number Format ───
+function fmt(n){
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(2)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+// ─── SIP FV Formula: P × [((1+r)^n - 1)/r] × (1+r) ───
+function sipFV(monthly, rateAnnual, years){
+  const r = rateAnnual / 100 / 12;
+  const n = years * 12;
+  if(r === 0) return monthly * n;
+  return monthly * (((Math.pow(1+r,n)-1)/r) * (1+r));
+}
+
+// ─── FD Recurring Deposit FV Formula ───
+function fdFV(monthly, rateAnnual, years){
+  const r = rateAnnual / 100 / 4; // quarterly compounding
+  const n = years * 4;
+  // Recurring quarterly = sum of each deposit's FV
+  // Simplified: monthly × [((1+r/3)^(3n) - 1)/(r/3)] × (1+r/3)
+  const rm = rateAnnual / 100 / 12;
+  const nm = years * 12;
+  return monthly * (((Math.pow(1+rm,nm)-1)/rm));
+}
+
+// ─── CountUp ───
+function countUp(el, target, prefix='₹'){
+  const start = 0, dur = 600, step = 16;
+  let cur = start;
+  const inc = target / (dur/step);
+  const timer = setInterval(()=>{
+    cur = Math.min(cur + inc, target);
+    el.textContent = fmt(cur);
+    if(cur >= target) clearInterval(timer);
+  }, step);
+}
+
+// ─── Chart ───
+let chart;
+function buildChart(labels, sipData, fdData){
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'SIP',data:sipData,borderColor:'#1a6b4a',backgroundColor:'rgba(26,107,74,.08)',fill:true,tension:.4,pointRadius:3,pointHoverRadius:6,borderWidth:2.5},
+        {label:'FD', data:fdData, borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.06)',fill:true,tension:.4,pointRadius:3,pointHoverRadius:6,borderWidth:2.5}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.y)}}},
+      scales:{
+        y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.04)'}},
+        x:{grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
+  });
+}
+
+// ─── Main Calculate ───
+function calculate(){
+  const monthly = +document.getElementById('amount').value || 5000;
+  const years   = +document.getElementById('years').value  || 10;
+  const sipR    = +document.getElementById('sipRate').value || 12;
+  const fdR     = +document.getElementById('fdRate').value  || 6.5;
+
+  const invested = monthly * years * 12;
+  const sipVal   = sipFV(monthly, sipR, years);
+  const fdVal    = fdFV(monthly, fdR, years);
+  const sipGain  = sipVal - invested;
+  const fdGain   = fdVal  - invested;
+
+  document.getElementById('sip-invested').textContent = fmt(invested);
+  document.getElementById('sip-returns').textContent  = fmt(sipGain);
+  document.getElementById('sip-total').textContent    = fmt(sipVal);
+  document.getElementById('sip-cagr').textContent     = sipR.toFixed(1)+'%';
+
+  document.getElementById('fd-invested').textContent  = fmt(invested);
+  document.getElementById('fd-returns').textContent   = fmt(fdGain);
+  document.getElementById('fd-total').textContent     = fmt(fdVal);
+
+  // Winner
+  const banner = document.getElementById('winner-banner');
+  const diff   = Math.abs(sipVal - fdVal);
+  if(sipVal > fdVal){
+    banner.className='winner-banner sip-wins';
+    document.getElementById('winner-text').textContent = `🏆 SIP wins by ${fmt(diff)}`;
+    document.getElementById('winner-sub').textContent  = `Over ${years} years, SIP delivers ${Math.round((sipVal/fdVal-1)*100)}% more wealth than FD`;
+  } else {
+    banner.className='winner-banner fd-wins';
+    document.getElementById('winner-text').textContent = `🏦 FD wins by ${fmt(diff)}`;
+    document.getElementById('winner-sub').textContent  = `At ${fdR}% guaranteed, FD outperforms SIP at ${sipR}%`;
+  }
+
+  // Chart data
+  const labels=[], sipData=[], fdData=[];
+  for(let y=1; y<=Math.min(years,30); y++){
+    labels.push('Yr '+y);
+    sipData.push(Math.round(sipFV(monthly,sipR,y)));
+    fdData.push(Math.round(fdFV(monthly,fdR,y)));
+  }
+  buildChart(labels, sipData, fdData);
+}
+
+// ─── Sync sliders ───
+function syncSlider(sliderId, inputId){
+  const s=document.getElementById(sliderId), i=document.getElementById(inputId);
+  s.addEventListener('input',()=>{i.value=s.value;calculate()});
+  i.addEventListener('input',()=>{s.value=i.value;calculate()});
+}
+syncSlider('amtSlider','amount');
+syncSlider('yrsSlider','years');
+syncSlider('sipSlider','sipRate');
+syncSlider('fdSlider','fdRate');
+
+// ─── FAQ ───
+function toggleFaq(id){
+  const item=document.getElementById(id);
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));
+  document.querySelectorAll('.faq-q').forEach(el=>el.setAttribute('aria-expanded','false'));
+  if(!isOpen){
+    item.classList.add('open');
+    item.querySelector('.faq-q').setAttribute('aria-expanded','true');
+  }
+}
+
+// ─── Init ───
+window.addEventListener('load', calculate);
+</script>
+
+
+{% endblock %}

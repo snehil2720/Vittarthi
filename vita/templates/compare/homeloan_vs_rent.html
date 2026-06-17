@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home Loan vs Rent: Is It Cheaper to Buy or Rent in India 2025? | Vittarthi</title>
+<meta name="description" content="Home Loan vs Rent calculator India 2025. Find whether buying a home or renting is financially better for you with our interactive break-even calculator. Real numbers.">
+<meta name="keywords" content="home loan vs rent, buy vs rent India, is it better to buy or rent, home loan vs rent calculator, buying home vs renting India 2025">
+<link rel="canonical" href="https://vittarthi.com/compare/home-loan-vs-rent">
+<meta property="og:title" content="Home Loan vs Rent: Buy or Rent in India? | Vittarthi">
+<meta property="og:description" content="India's most debated financial question answered with a live break-even calculator.">
+<meta property="og:url" content="https://vittarthi.com/compare/home-loan-vs-rent">
+<meta property="og:type" content="article">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Is it better to buy or rent a house in India?","acceptedAnswer":{"@type":"Answer","text":"It depends on your city, tenure, and financial goals. In metro cities like Mumbai, renting is often cheaper in the short term (1–7 years). But over 15–20 years, buying a home typically builds more net worth through property appreciation and loan principal repayment. The break-even point varies by city from 7 to 15 years."}},
+  {"@type":"Question","name":"What is the break-even point for home buying vs renting?","acceptedAnswer":{"@type":"Answer","text":"The break-even point is when the net worth from buying (property value minus remaining loan) exceeds the net worth from renting (savings invested). On average in Indian metro cities, this is 8–12 years. In expensive cities like Mumbai, it can be 12–15 years. Our calculator shows your personalized break-even year."}},
+  {"@type":"Question","name":"Should I take a home loan or invest the money instead?","acceptedAnswer":{"@type":"Answer","text":"If home loan rate is 8.5% and you expect equity returns of 12%+, mathematically investing makes sense. But home buying provides emotional security, forced savings, hedge against rent inflation, and potential tax benefits (Section 24b, 80C). Most financial advisors suggest buying if you plan to stay 10+ years."}},
+  {"@type":"Question","name":"What are the tax benefits of home loan vs rent?","acceptedAnswer":{"@type":"Answer","text":"Home Loan: Section 24b (₹2L interest deduction), Section 80C (₹1.5L principal repayment), Section 80EEA for first-time buyers (additional ₹1.5L). Rent: HRA exemption — minimum of (actual HRA, 50%/40% of salary, rent paid minus 10% salary). Both have significant tax benefits; home loan has higher absolute savings."}},
+  {"@type":"Question","name":"Is buying a house in metro cities worth it?","acceptedAnswer":{"@type":"Answer","text":"In Mumbai and Delhi, rent-to-EMI ratio is 1:2.5 or more — meaning EMI is 2.5x the rent for equivalent flat. This makes renting attractive short-term. However, Mumbai property has appreciated 8–10% annually over 20 years. If you can afford the higher EMI and plan to stay 15+ years, buying is generally worth it in metro cities too."}}
+]}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Home Loan vs Rent: Is It Cheaper to Buy or Rent in India 2025?","author":{"@type":"Organization","name":"Vittarthi"},"publisher":{"@type":"Organization","name":"Vittarthi","url":"https://vittarthi.com"},"dateModified":"2025-06-01"}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Home","item":"https://vittarthi.com"},
+  {"@type":"ListItem","position":2,"name":"Compare","item":"https://vittarthi.com/compare"},
+  {"@type":"ListItem","position":3,"name":"Home Loan vs Rent","item":"https://vittarthi.com/compare/home-loan-vs-rent"}
+]}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+
+<style>
+:root{
+  --green:#1a6b4a;--green-lt:#e8f5ef;--green-mid:#cfe8dc;
+  --rose:#d9485f;--rose-lt:#ffe5ea;--rose-mid:#fca5a5;
+  --surface:#fff;--surface2:#f0ede8;--bg:#f7f5f0;
+  --ink:#111827;--ink-muted:#5f6775;--ink-faint:#8b93a1;
+  --border:rgba(0,0,0,.08);
+  --shadow:0 1px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 6px 32px rgba(0,0,0,.10);
+  --max:1180px;--pad:clamp(1rem,4vw,2rem);--r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.breadcrumb{padding:.65rem var(--pad);background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--ink-faint)}
+.breadcrumb a{color:var(--ink-muted);transition:color .15s}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{margin:0 .35rem;opacity:.4}
+
+.hero{background:var(--surface);padding:clamp(2rem,5vw,3.5rem) var(--pad) clamp(1.5rem,4vw,2.5rem);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;opacity:.5;pointer-events:none}
+.hero::after{content:'';position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:50%;background:var(--rose-lt);opacity:.6;pointer-events:none}
+.hero-inner{max-width:var(--max);margin:auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--rose-lt);color:var(--rose);padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem;border:1px solid rgba(217,72,95,.2)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;margin-bottom:.75rem}
+.hero h1 em{color:var(--green);font-style:italic}
+.hero-sub{font-size:1rem;color:var(--ink-muted);line-height:1.7;max-width:560px;margin-bottom:1.25rem}
+.hero-pills{display:flex;gap:.6rem;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:8px;font-size:.78rem;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.pill-green{background:var(--green-lt);color:var(--green)}
+.pill-rose{background:var(--rose-lt);color:var(--rose)}
+.hero-meta{margin-top:.9rem;font-size:.72rem;color:var(--ink-faint)}
+
+.section{max-width:var(--max);margin:0 auto;padding:clamp(2rem,5vw,3rem) var(--pad)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
+.section-sub{font-size:.85rem;color:var(--ink-muted);margin-bottom:1.75rem}
+
+/* CALC */
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.calc-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(26,107,74,.04) 0%,transparent 50%),radial-gradient(ellipse at bottom right,rgba(217,72,95,.04) 0%,transparent 50%);pointer-events:none}
+
+/* Two-column inputs */
+.calc-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border)}
+.calc-col{padding:1.5rem}
+.calc-col:first-child{border-right:1px solid var(--border);background:rgba(26,107,74,.02)}
+.calc-col:last-child{background:rgba(217,72,95,.02)}
+.col-head{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.1rem;display:flex;align-items:center;gap:7px;padding-bottom:.65rem;border-bottom:1px solid var(--border)}
+.col-head.buy{color:var(--green)}.col-head.rent{color:var(--rose)}
+.input-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem}
+.input-group:last-child{margin-bottom:0}
+.input-group label{font-size:.68rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint)}
+.input-row{display:flex;align-items:center;gap:.6rem}
+.input-row input[type=number]{width:105px;padding:5px 9px;border:1px solid var(--border);border-radius:7px;font-size:.85rem;font-family:inherit;background:var(--surface);color:var(--ink);font-weight:600;transition:border-color .15s}
+.input-row input[type=number]:focus{outline:none;border-color:var(--green)}
+input[type=range]{flex:1;height:4px;border-radius:99px;cursor:pointer}
+input[type=range].green{accent-color:var(--green)}
+input[type=range].rose{accent-color:var(--rose)}
+.range-minmax{display:flex;justify-content:space-between;font-size:.63rem;color:var(--ink-faint);margin-top:1px}
+
+/* OUTPUT CARDS */
+.calc-out-cols{display:grid;grid-template-columns:1fr 1fr;padding:1.5rem;gap:1.25rem;border-bottom:1px solid var(--border)}
+.out-card{border-radius:var(--r);padding:1.1rem;border:1px solid}
+.out-card.buy{border-color:rgba(26,107,74,.2);background:linear-gradient(135deg,rgba(26,107,74,.04),transparent)}
+.out-card.rent{border-color:rgba(217,72,95,.2);background:linear-gradient(135deg,rgba(217,72,95,.04),transparent)}
+.oc-head{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:6px}
+.oc-head.buy{color:var(--green)}.oc-head.rent{color:var(--rose)}
+.oc-dot{width:6px;height:6px;border-radius:50%}
+.oc-dot.buy{background:var(--green)}.oc-dot.rent{background:var(--rose)}
+.oc-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.oc-row:last-child{border-bottom:none}
+.oc-key{color:var(--ink-muted)}
+.oc-val{font-weight:700}
+.oc-val.buy{color:var(--green)}.oc-val.rent{color:var(--rose)}
+.oc-total{font-size:1rem!important}
+
+/* VERDICT */
+.verdict-wrap{padding:1.5rem;border-bottom:1px solid var(--border)}
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.verdict-stat{background:var(--surface2);border-radius:var(--r);padding:.9rem 1rem;text-align:center;border:1px solid var(--border)}
+.vs-label{font-size:.62rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem}
+.vs-value{font-size:1.1rem;font-weight:700;color:var(--ink)}
+.vs-value.green{color:var(--green)}.vs-value.rose{color:var(--rose)}
+.vs-sub{font-size:.67rem;color:var(--ink-muted);margin-top:3px}
+
+.verdict-box{margin-top:1rem;padding:1rem 1.25rem;border-radius:var(--r);display:flex;align-items:flex-start;gap:.75rem;font-size:.85rem;font-weight:500;line-height:1.55}
+.verdict-box.buy-verdict{background:var(--green-lt);color:var(--green);border:1px solid rgba(26,107,74,.2)}
+.verdict-box.rent-verdict{background:var(--rose-lt);color:var(--rose);border:1px solid rgba(217,72,95,.2)}
+.verdict-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+
+/* CHART */
+.chart-wrap{padding:1.5rem}
+.chart-box{background:var(--surface2);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border)}
+.chart-legend{display:flex;gap:1rem;margin-bottom:.75rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:500;color:var(--ink-muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* TABLE */
+.cmp-table{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.cmp-table thead{background:var(--ink)}
+.cmp-table thead th{color:#fff;padding:.7rem 1rem;font-size:.75rem;font-weight:600;text-align:left}
+.cmp-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+.cmp-table tbody tr:hover{background:var(--surface2)}
+.cmp-table tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.cmp-table td{padding:.7rem 1rem;font-size:.82rem;color:var(--ink-muted);vertical-align:middle}
+.cmp-table td:first-child{color:var(--ink);font-weight:500}
+.badge{display:inline-flex;padding:2px 9px;border-radius:5px;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-green{background:var(--green-lt);color:var(--green)}
+.badge-rose{background:var(--rose-lt);color:var(--rose)}
+.badge-gray{background:var(--surface2);color:var(--ink-faint)}
+
+/* HIDDEN COSTS */
+.hc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.hc-card{border-radius:var(--r);padding:1.25rem;border:1px solid}
+.hc-card.buy{border-color:rgba(26,107,74,.2);background:var(--green-lt)}
+.hc-card.rent{border-color:rgba(217,72,95,.2);background:var(--rose-lt)}
+.hc-head{font-size:.75rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:1rem}
+.hc-head.buy{color:var(--green)}.hc-head.rent{color:var(--rose)}
+.hc-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:.8rem}
+.hc-row:last-child{border-bottom:none}
+.hc-key{color:var(--ink-muted)}.hc-val{font-weight:600;color:var(--ink)}
+
+/* CITY TABLE */
+.city-table{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.city-table thead{background:linear-gradient(90deg,var(--green),#2d8f64)}
+.city-table thead th{color:#fff;padding:.65rem 1rem;font-size:.74rem;font-weight:600;text-align:left}
+.city-table tbody tr{border-bottom:1px solid var(--border)}
+.city-table tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.city-table tbody tr:hover{background:var(--surface2);transition:background .15s}
+.city-table td{padding:.65rem 1rem;font-size:.82rem;color:var(--ink-muted)}
+.city-table td:first-child{font-weight:600;color:var(--ink)}
+.city-flag{display:inline-flex;align-items:center;gap:5px}
+
+/* TAX */
+.tax-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.tax-card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);box-shadow:var(--shadow)}
+.tax-head{font-size:.75rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:.9rem}
+.tax-head.buy{color:var(--green)}.tax-head.rent{color:var(--rose)}
+.tax-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.tax-row:last-child{border-bottom:none}
+.tax-key{color:var(--ink-muted)}.tax-val{font-weight:600;color:var(--green)}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:.6rem}
+.faq-item{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.faq-q{width:100%;background:none;border:none;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--ink);text-align:left;transition:background .15s}
+.faq-q:hover{background:var(--surface2)}
+.faq-icon{width:22px;height:22px;border-radius:50%;background:var(--green-lt);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;transition:transform .25s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--green);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem}
+.faq-a p{font-size:.83rem;color:var(--ink-muted);line-height:1.7}
+
+.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:all .2s;box-shadow:var(--shadow)}
+.cta-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cta-icon{font-size:1.6rem}.cta-title{font-size:.85rem;font-weight:700;color:var(--ink)}.cta-sub{font-size:.72rem;color:var(--ink-muted)}.cta-arrow{font-size:.8rem;color:var(--green);font-weight:700;margin-top:.25rem}
+
+@media(max-width:768px){
+  .calc-cols,.calc-out-cols,.verdict-grid,.hc-grid,.tax-grid,.cta-grid{grid-template-columns:1fr}
+  .calc-col:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .hero h1{font-size:1.9rem}
+  .verdict-wrap,.calc-out-cols,.chart-wrap,.calc-cols .calc-col{padding:1rem}
+}
+@media(max-width:540px){.cta-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/compare">Compare</a><span>›</span>
+  <span style="color:var(--ink)">Home Loan vs Rent</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🏠 Big Financial Decision</div>
+    <h1>Home Loan vs <em>Renting</em></h1>
+    <p class="hero-sub">India's most debated financial question — answered with real numbers, a break-even calculator, and zero bias.</p>
+    <div class="hero-pills">
+      <span class="pill pill-green">🏠 Avg Home Loan EMI: ₹35,000/mo</span>
+      <span class="pill pill-rose">🔑 Avg Metro Rent: ₹25,000/mo</span>
+    </div>
+    <p class="hero-meta">✓ Updated June 2025 &nbsp;·&nbsp; ✓ Break-even calculator &nbsp;·&nbsp; ✓ City comparison &nbsp;·&nbsp; ✓ Tax benefits</p>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<div class="section">
+  <h2 class="section-title">Buy vs Rent Break-Even Calculator</h2>
+  <p class="section-sub">Enter your details to find out exactly when buying becomes more profitable than renting</p>
+
+  <div class="calc-wrap">
+    <!-- INPUTS — TWO COLUMNS -->
+    <div class="calc-cols">
+      <!-- BUY -->
+      <div class="calc-col">
+        <div class="col-head buy">🏠 Buy (Home Loan)</div>
+        <div class="input-group">
+          <label>Property Price</label>
+          <div class="input-row">
+            <input type="range" id="propSlider" min="2000000" max="20000000" step="100000" value="8000000" class="green">
+            <input type="number" id="propPrice" value="8000000">
+          </div>
+          <div style="font-size:.67rem;color:var(--ink-faint);margin-top:2px">Current: <span id="prop-display">₹80 L</span></div>
+        </div>
+        <div class="input-group">
+          <label>Down Payment (%)</label>
+          <div class="input-row">
+            <input type="range" id="dpSlider" min="10" max="40" step="1" value="20" class="green">
+            <input type="number" id="dpPct" value="20" min="10" max="40">
+          </div>
+          <div class="range-minmax"><span>10%</span><span>40%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Loan Interest Rate (%)</label>
+          <div class="input-row">
+            <input type="range" id="loanRSlider" min="7" max="12" step="0.25" value="8.5" class="green">
+            <input type="number" id="loanRate" value="8.5" min="7" max="12" step="0.25">
+          </div>
+          <div class="range-minmax"><span>7%</span><span>12%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Loan Tenure (Years)</label>
+          <div class="input-row">
+            <input type="range" id="tenureSlider" min="5" max="30" step="1" value="20" class="green">
+            <input type="number" id="tenure" value="20" min="5" max="30">
+          </div>
+          <div class="range-minmax"><span>5 yrs</span><span>30 yrs</span></div>
+        </div>
+        <div class="input-group">
+          <label>Annual Property Appreciation (%)</label>
+          <div class="input-row">
+            <input type="range" id="appSlider" min="2" max="15" step="0.5" value="6" class="green">
+            <input type="number" id="appRate" value="6" min="2" max="15" step="0.5">
+          </div>
+          <div class="range-minmax"><span>2%</span><span>15%</span></div>
+        </div>
+      </div>
+
+      <!-- RENT -->
+      <div class="calc-col">
+        <div class="col-head rent">🔑 Rent Instead</div>
+        <div class="input-group">
+          <label>Monthly Rent</label>
+          <div class="input-row">
+            <input type="range" id="rentSlider" min="5000" max="200000" step="1000" value="20000" class="rose">
+            <input type="number" id="monthRent" value="20000" min="5000" max="200000">
+          </div>
+          <div class="range-minmax"><span>₹5,000</span><span>₹2,00,000</span></div>
+        </div>
+        <div class="input-group">
+          <label>Annual Rent Increase (%)</label>
+          <div class="input-row">
+            <input type="range" id="rentIncSlider" min="2" max="15" step="0.5" value="8" class="rose">
+            <input type="number" id="rentInc" value="8" min="2" max="15" step="0.5">
+          </div>
+          <div class="range-minmax"><span>2%</span><span>15%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Down Payment Invested @ SIP (%)</label>
+          <div class="input-row">
+            <input type="range" id="sipRSlider" min="8" max="18" step="0.5" value="12" class="rose">
+            <input type="number" id="sipRate" value="12" min="8" max="18" step="0.5">
+          </div>
+          <div class="range-minmax"><span>8%</span><span>18%</span></div>
+        </div>
+        <div style="background:var(--rose-lt);border:1px solid rgba(217,72,95,.2);border-radius:10px;padding:.75rem;margin-top:.5rem;font-size:.77rem;color:var(--rose);line-height:1.55">
+          💡 If you rent, you invest the down payment amount in mutual funds — this is your opportunity cost comparison.
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT CARDS -->
+    <div class="calc-out-cols">
+      <div class="out-card buy">
+        <div class="oc-head buy"><span class="oc-dot buy"></span>Home Loan — Buy</div>
+        <div class="oc-row"><span class="oc-key">Loan Amount</span><span class="oc-val buy" id="loan-amt">₹64 L</span></div>
+        <div class="oc-row"><span class="oc-key">Monthly EMI</span><span class="oc-val buy" id="emi-val">₹56,280</span></div>
+        <div class="oc-row"><span class="oc-key">Total Interest Paid</span><span class="oc-val buy" id="total-int">₹71.1 L</span></div>
+        <div class="oc-row"><span class="oc-key">Property Value (end)</span><span class="oc-val buy oc-total" id="prop-future">₹2.57 Cr</span></div>
+        <div class="oc-row"><span class="oc-key">Net Worth (Buy)</span><span class="oc-val buy oc-total" id="buy-networth">₹1.93 Cr</span></div>
+      </div>
+      <div class="out-card rent">
+        <div class="oc-head rent"><span class="oc-dot rent"></span>Renting — Stay Flexible</div>
+        <div class="oc-row"><span class="oc-key">Down Payment Invested</span><span class="oc-val rent" id="dp-invested">₹16 L</span></div>
+        <div class="oc-row"><span class="oc-key">SIP Corpus (down pmt)</span><span class="oc-val rent" id="sip-corpus">₹1.45 Cr</span></div>
+        <div class="oc-row"><span class="oc-key">Total Rent Paid</span><span class="oc-val rent" id="total-rent">₹1.17 Cr</span></div>
+        <div class="oc-row"><span class="oc-key">Net Worth (Rent)</span><span class="oc-val rent oc-total" id="rent-networth">₹28.2 L</span></div>
+        <div class="oc-row"><span class="oc-key">Break-Even Year</span><span class="oc-val buy oc-total" id="breakeven-yr">Year 11</span></div>
+      </div>
+    </div>
+
+    <!-- VERDICT -->
+    <div class="verdict-wrap">
+      <div class="verdict-grid">
+        <div class="verdict-stat">
+          <div class="vs-label">Buy Net Worth</div>
+          <div class="vs-value green" id="v-buy">₹1.93 Cr</div>
+          <div class="vs-sub">After 20 yrs (property − debt)</div>
+        </div>
+        <div class="verdict-stat">
+          <div class="vs-label">Rent Net Worth</div>
+          <div class="vs-value rose" id="v-rent">₹28.2 L</div>
+          <div class="vs-sub">SIP corpus − total rent paid</div>
+        </div>
+        <div class="verdict-stat">
+          <div class="vs-label">Break-Even Year</div>
+          <div class="vs-value green" id="v-be">Year 11</div>
+          <div class="vs-sub">When buying becomes better</div>
+        </div>
+      </div>
+      <div class="verdict-box buy-verdict" id="verdict-box">
+        <span class="verdict-icon">🏆</span>
+        <div id="verdict-text">Based on your inputs, <strong>buying is the better long-term decision</strong>. After the break-even point, your property net worth grows faster than the renter's investment portfolio. You also build forced savings and hedge against rent inflation.</div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-wrap">
+      <div class="chart-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem">
+          <span style="font-size:.75rem;font-weight:600;color:var(--ink-muted);letter-spacing:.5px">Net Worth Over Time — Buy vs Rent</span>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Buy (property equity)</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--rose)"></span>Rent (SIP − rent paid)</span>
+          </div>
+        </div>
+        <canvas id="growthChart" height="auto"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Home Loan vs Rent — Key Differences</h2>
+  <p class="section-sub">Comparing across 10 critical dimensions</p>
+  <table class="cmp-table">
+    <thead><tr><th>Factor</th><th>Buy (Home Loan)</th><th>Rent</th><th>Better For</th></tr></thead>
+    <tbody>
+      <tr><td>Monthly Outflow</td><td>Higher (EMI &gt; Rent)</td><td>Lower initially</td><td><span class="badge badge-rose">Rent</span></td></tr>
+      <tr><td>Wealth Building</td><td>Property equity + appreciation</td><td>SIP corpus only</td><td><span class="badge badge-green">Buy (long-term)</span></td></tr>
+      <tr><td>Flexibility</td><td>Low (locked to location)</td><td>High (move anytime)</td><td><span class="badge badge-rose">Rent</span></td></tr>
+      <tr><td>Tax Benefits</td><td>80C + 24b + 80EEA</td><td>HRA exemption</td><td><span class="badge badge-green">Buy</span></td></tr>
+      <tr><td>Maintenance</td><td>Your responsibility (costly)</td><td>Mostly landlord's</td><td><span class="badge badge-rose">Rent</span></td></tr>
+      <tr><td>Liquidity</td><td>Very low (takes months to sell)</td><td>High (3 months notice)</td><td><span class="badge badge-rose">Rent</span></td></tr>
+      <tr><td>Down Payment Needed</td><td>20–25% of property value</td><td>2–3 months deposit</td><td><span class="badge badge-rose">Rent</span></td></tr>
+      <tr><td>Break-even</td><td>Profitable after 8–15 yrs</td><td>Better for &lt; 5–7 yrs</td><td><span class="badge badge-gray">Depends</span></td></tr>
+      <tr><td>Asset Ownership</td><td>You own the asset</td><td>No ownership</td><td><span class="badge badge-green">Buy</span></td></tr>
+      <tr><td>Inflation Hedge</td><td>Property value rises with inflation</td><td>Rent also rises each year</td><td><span class="badge badge-green">Buy</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- HIDDEN COSTS -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Hidden Costs Nobody Tells You About</h2>
+  <p class="section-sub">Always factor these into your calculation before deciding</p>
+  <div class="hc-grid">
+    <div class="hc-card buy">
+      <div class="hc-head buy">🏠 Hidden Costs of Buying</div>
+      <div class="hc-row"><span class="hc-key">Stamp Duty (6–8%)</span><span class="hc-val">₹4.8–6.4 L on ₹80L</span></div>
+      <div class="hc-row"><span class="hc-key">Registration Charges</span><span class="hc-val">₹80,000–₹1.5 L</span></div>
+      <div class="hc-row"><span class="hc-key">Interior &amp; Furnishing</span><span class="hc-val">₹5–15 L</span></div>
+      <div class="hc-row"><span class="hc-key">Annual Maintenance</span><span class="hc-val">₹1,500–₹5,000/mo</span></div>
+      <div class="hc-row"><span class="hc-key">Property Tax</span><span class="hc-val">₹5,000–₹30,000/yr</span></div>
+      <div class="hc-row"><span class="hc-key">Society/HOA Charges</span><span class="hc-val">₹2,000–₹10,000/mo</span></div>
+      <div class="hc-row"><span class="hc-key">Home Insurance</span><span class="hc-val">₹5,000–₹15,000/yr</span></div>
+    </div>
+    <div class="hc-card rent">
+      <div class="hc-head rent">🔑 Hidden Costs of Renting</div>
+      <div class="hc-row"><span class="hc-key">Security Deposit</span><span class="hc-val">3–6 months rent</span></div>
+      <div class="hc-row"><span class="hc-key">Broker Fee</span><span class="hc-val">1–2 months rent</span></div>
+      <div class="hc-row"><span class="hc-key">Annual Rent Hike</span><span class="hc-val">8–12% typical</span></div>
+      <div class="hc-row"><span class="hc-key">Moving Costs</span><span class="hc-val">₹20,000–₹1 L</span></div>
+      <div class="hc-row"><span class="hc-key">No 80C on Rent</span><span class="hc-val">Missed ₹1.5L deduction</span></div>
+      <div class="hc-row"><span class="hc-key">Landlord Eviction Risk</span><span class="hc-val">Unquantifiable</span></div>
+      <div class="hc-row"><span class="hc-key">No Asset at End</span><span class="hc-val">Zero ownership value</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CITY COMPARISON -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">City-Wise Buy vs Rent Comparison</h2>
+  <p class="section-sub">How metros compare for a typical 2BHK flat (2025 data)</p>
+  <table class="city-table">
+    <thead>
+      <tr><th>City</th><th>Avg Rent (2BHK)</th><th>Avg EMI (same flat)</th><th>EMI/Rent Ratio</th><th>Better Choice</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="city-flag">🏙️ Mumbai</td>
+        <td>₹45,000–₹80,000</td>
+        <td>₹1,20,000+</td>
+        <td>2.5–3×</td>
+        <td><span class="badge badge-rose">Rent (short-term)</span></td>
+      </tr>
+      <tr>
+        <td class="city-flag">🏛️ Delhi NCR</td>
+        <td>₹25,000–₹45,000</td>
+        <td>₹60,000–₹90,000</td>
+        <td>2–2.5×</td>
+        <td><span class="badge badge-rose">Rent (short-term)</span></td>
+      </tr>
+      <tr>
+        <td class="city-flag">💻 Bangalore</td>
+        <td>₹25,000–₹50,000</td>
+        <td>₹55,000–₹85,000</td>
+        <td>1.8–2×</td>
+        <td><span class="badge badge-gray">Depends on Area</span></td>
+      </tr>
+      <tr>
+        <td class="city-flag">🏭 Pune</td>
+        <td>₹18,000–₹35,000</td>
+        <td>₹40,000–₹65,000</td>
+        <td>1.5–2×</td>
+        <td><span class="badge badge-green">Buy (10+ yrs)</span></td>
+      </tr>
+      <tr>
+        <td class="city-flag">💊 Hyderabad</td>
+        <td>₹18,000–₹35,000</td>
+        <td>₹38,000–₹60,000</td>
+        <td>1.5–1.8×</td>
+        <td><span class="badge badge-green">Buy (10+ yrs)</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAX BENEFITS -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Tax Benefits Comparison</h2>
+  <p class="section-sub">Both options have tax benefits — home loan has higher absolute savings</p>
+  <div class="tax-grid">
+    <div class="tax-card">
+      <div class="tax-head buy">🏠 Home Loan Tax Benefits</div>
+      <div class="tax-row"><span class="tax-key">Section 24b (Interest)</span><span class="tax-val">₹2,00,000/yr deduction</span></div>
+      <div class="tax-row"><span class="tax-key">Section 80C (Principal)</span><span class="tax-val">₹1,50,000/yr deduction</span></div>
+      <div class="tax-row"><span class="tax-key">Section 80EEA (First Home)</span><span class="tax-val">Additional ₹1,50,000</span></div>
+      <div class="tax-row"><span class="tax-key">Max Tax Saved (30% slab)</span><span class="tax-val">₹1,56,000/yr</span></div>
+    </div>
+    <div class="tax-card">
+      <div class="tax-head rent">🔑 Rent / HRA Tax Benefits</div>
+      <div class="tax-row"><span class="tax-key">HRA Exemption</span><span class="tax-val">Min of 3 conditions*</span></div>
+      <div class="tax-row"><span class="tax-key">For Metro Salaried</span><span class="tax-val">50% of Basic Salary</span></div>
+      <div class="tax-row"><span class="tax-key">For Non-Metro</span><span class="tax-val">40% of Basic Salary</span></div>
+      <div class="tax-row"><span class="tax-key">New Tax Regime</span><span class="tax-val" style="color:var(--rose)">No HRA benefit</span></div>
+    </div>
+  </div>
+  <p style="font-size:.72rem;color:var(--ink-faint);margin-top:.75rem">*HRA exemption = Minimum of: (a) Actual HRA received (b) 50%/40% of basic salary (c) Rent paid minus 10% of basic salary</p>
+</div>
+
+<!-- FAQ -->
+<div class="section" style="padding-top:0">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <p class="section-sub">India's most common questions about buying vs renting</p>
+  <div class="faq-list">
+    <div class="faq-item" id="faq-1">
+      <button class="faq-q" onclick="toggleFaq('faq-1')">Is it better to buy or rent a house in India?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>It depends on your city, tenure, and goals. In expensive metros like Mumbai, renting is cheaper short-term. But over 15–20 years, buying typically builds more net worth through property appreciation and equity. If you plan to stay in the same city for 10+ years, buying is generally the better long-term financial decision.</p></div>
+    </div>
+    <div class="faq-item" id="faq-2">
+      <button class="faq-q" onclick="toggleFaq('faq-2')">What is the break-even point for home buying vs renting?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>The break-even is when the net worth from buying (property value minus remaining loan) equals the renter's net worth (investments minus rent paid). On average in India, this is 8–12 years. In expensive cities like Mumbai, it can be 12–15 years. Our calculator shows your exact break-even year based on your inputs.</p></div>
+    </div>
+    <div class="faq-item" id="faq-3">
+      <button class="faq-q" onclick="toggleFaq('faq-3')">Should I take a home loan or invest the money instead?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Mathematically, if equity SIP returns (12%+) exceed home loan rate (8.5%), investing wins in pure returns. But home buying offers emotional security, inflation hedge, forced savings discipline, and tax benefits under 24b and 80C. Most advisors recommend buying if you plan to stay 10+ years in the same city.</p></div>
+    </div>
+    <div class="faq-item" id="faq-4">
+      <button class="faq-q" onclick="toggleFaq('faq-4')">What are the tax benefits of home loan vs rent?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Home Loan: Section 24b (₹2L interest deduction) + Section 80C (₹1.5L principal) + Section 80EEA for first-time buyers (additional ₹1.5L) = up to ₹1.56 lakh saved per year at 30% slab. Rent: HRA exemption (minimum of actual HRA, 50%/40% of salary, rent minus 10% salary). Note: New tax regime (default from FY2024-25) does not allow HRA deduction.</p></div>
+    </div>
+    <div class="faq-item" id="faq-5">
+      <button class="faq-q" onclick="toggleFaq('faq-5')">Is buying a house in metro cities worth it?<span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>In Mumbai and Delhi, rent-to-EMI ratio is 1:2.5 or more — meaning EMI is 2.5× the rent for the same flat. This makes renting attractive in the short term. However, Mumbai property has appreciated 8–10% annually over 20 years. If you can afford the higher EMI and plan to stay 15+ years, buying is generally worth it even in expensive cities. The key is affordability — EMI should be less than 40% of your monthly income.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section" style="padding-top:0;padding-bottom:3rem">
+  <h2 class="section-title">Explore More Tools</h2>
+  <p class="section-sub">Continue your financial planning journey</p>
+  <div class="cta-grid">
+    <a href="/calculators/home-loan" class="cta-card">
+      <span class="cta-icon">🏦</span>
+      <span class="cta-title">Home Loan EMI</span>
+      <span class="cta-sub">Calculate your exact EMI</span>
+      <span class="cta-arrow">Calculate →</span>
+    </a>
+    <a href="/compare/sip-vs-fd" class="cta-card">
+      <span class="cta-icon">📊</span>
+      <span class="cta-title">SIP vs FD</span>
+      <span class="cta-sub">Which gives better returns?</span>
+      <span class="cta-arrow">Compare →</span>
+    </a>
+    <a href="/calculators/loan-eligibility" class="cta-card">
+      <span class="cta-icon">✅</span>
+      <span class="cta-title">Loan Eligibility</span>
+      <span class="cta-sub">How much loan can you get?</span>
+      <span class="cta-arrow">Check →</span>
+    </a>
+  </div>
+</div>
+
+<script>
+function fmt(n){
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(2)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+function sipFV(lumpsum, rateAnnual, years){
+  return lumpsum*Math.pow(1+rateAnnual/100, years);
+}
+
+let chart;
+function buildChart(labels, buyData, rentData){
+  const ctx=document.getElementById('growthChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Buy (net worth)',data:buyData,borderColor:'#1a6b4a',backgroundColor:'rgba(26,107,74,.1)',fill:true,tension:.4,pointRadius:2,borderWidth:2.5},
+        {label:'Rent (net worth)',data:rentData,borderColor:'#d9485f',backgroundColor:'rgba(217,72,95,.08)',fill:true,tension:.4,pointRadius:2,borderWidth:2.5}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+      scales:{
+        y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.04)'}},
+        x:{grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
+  });
+}
+// Function to get Django CSRF Token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+async function calculate() {
+    const payload = {
+        property_price: +document.getElementById('propPrice').value || 8000000,
+        down_payment_pct: +document.getElementById('dpPct').value || 20,
+        loan_rate: +document.getElementById('loanRate').value || 8.5,
+        tenure_years: +document.getElementById('tenure').value || 20,
+        appreciation_rate: +document.getElementById('appRate').value || 6,
+        monthly_rent: +document.getElementById('monthRent').value || 20000,
+        rent_increase: +document.getElementById('rentInc').value || 8,
+        sip_rate: +document.getElementById('sipRate').value || 12
+    };
+
+    try {
+        const response = await fetch('/api/compare/home-loan-vs-rent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if(!data.success) throw new Error(data.error);
+
+        const sum = data.summary;
+
+        // Update UI
+        document.getElementById('prop-display').textContent  = fmt(payload.property_price);
+        document.getElementById('loan-amt').textContent     = fmt(sum.loan_amt);
+        document.getElementById('emi-val').textContent      = fmt(sum.emi) + '/mo';
+        document.getElementById('total-int').textContent    = fmt(sum.total_int);
+        document.getElementById('prop-future').textContent  = fmt(sum.prop_future);
+        document.getElementById('buy-networth').textContent = fmt(sum.buy_networth);
+        
+        document.getElementById('dp-invested').textContent   = fmt(sum.dp_invested);
+        document.getElementById('sip-corpus').textContent    = fmt(sum.sip_corpus);
+        document.getElementById('total-rent').textContent    = fmt(sum.total_rent);
+        document.getElementById('rent-networth').textContent = fmt(sum.rent_networth);
+
+        const beText = sum.breakeven_year <= sum.tenure ? `Year ${sum.breakeven_year}` : `After ${sum.tenure} yrs`;
+        document.getElementById('breakeven-yr').textContent = beText;
+        document.getElementById('v-buy').textContent  = fmt(sum.buy_networth);
+        document.getElementById('v-rent').textContent = fmt(sum.rent_networth);
+        document.getElementById('v-be').textContent   = beText;
+
+        // Verdict
+        const vbox = document.getElementById('verdict-box');
+        const vtxt = document.getElementById('verdict-text');
+        if(sum.buy_networth > sum.rent_networth){
+            vbox.className='verdict-box buy-verdict';
+            vtxt.innerHTML=`Based on your inputs, <strong>buying is the better long-term decision</strong>. After Year ${sum.breakeven_year}, your property equity grows faster than the renter's portfolio. You also gain inflation protection and forced savings.`;
+        } else {
+            vbox.className='verdict-box rent-verdict';
+            vtxt.innerHTML=`Based on your inputs, <strong>renting + investing looks better over ${sum.tenure} years</strong>. The high EMI vs rent gap makes investing the down payment more powerful here.`;
+        }
+
+        // Update Chart
+        buildChart(data.chart.labels, data.chart.buy_data, data.chart.rent_data);
+
+    } catch(err) {
+        console.error("API Error:", err);
+    }
+}
+
+function sync(sId,iId,extra){
+  const s=document.getElementById(sId),i=document.getElementById(iId);
+  s.addEventListener('input',()=>{i.value=s.value;calculate()});
+  i.addEventListener('input',()=>{s.value=i.value;calculate()});
+}
+sync('propSlider','propPrice');
+sync('dpSlider','dpPct');
+sync('loanRSlider','loanRate');
+sync('tenureSlider','tenure');
+sync('appSlider','appRate');
+sync('rentSlider','monthRent');
+sync('rentIncSlider','rentInc');
+sync('sipRSlider','sipRate');
+
+function toggleFaq(id){
+  const item=document.getElementById(id);
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+window.addEventListener('load',calculate);
+</script>
+</body>
+</html>

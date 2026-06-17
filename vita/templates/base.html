@@ -7,34 +7,33 @@
 <title>{% block title %}{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}{% endblock %}">
 <meta name="google-site-verification" content="QZOTJkuY-G8PrNopvPVlE-IAaZx5VRK3aES4PJzeqPg" />
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KY1GD86KVS"></script>
-<script>
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY1GD86KVS"></script> -->
+<!-- <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-KY1GD86KVS');
-</script>
-{% load static %}
+</script> -->
 
+{% load static %}
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="manifest" href="{% static 'manifest.json' %}">
 <meta name="theme-color" content="green">
-<!-- <link rel="stylesheet" href="{% static 'css/article-content.css' %}"> -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"></noscript>
+
+<!-- Link to extracted base CSS -->
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+
 <link rel="icon" sizes="48x48" type="image/png" href="{% static 'images/favicon.png' %}">
 <link rel="apple-touch-icon" href="{% static 'images/favicon.png' %}">
 <link rel="icon" href="{% static 'favicon.ico' %}">
 <link rel="canonical" href="{{ request.build_absolute_uri }}">
-<!-- <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
-<link rel="stylesheet" href="{% static 'css/fonts.css' %}"> -->
-<!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
-
-<!-- <script src="{% static 'js/bootstrap.bundle.min.js' %}" defer></script>
-<script src="{% static 'js/chart.min.js' %}" defer></script> -->
 
 <!-- ORGANIZATION SCHEMA -->
 <script type="application/ld+json">
@@ -43,11 +42,10 @@
   "@type": "Organization",
   "name": "Vittarthi",
   "url": "https://vittarthi.com",
-  "logo": "https://vittarthi.com/static/images/vitt2.webp",
-  "description": "Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi easy financial calculators. Plan investments and loans smarter at vittarthi."
+  "logo": "https://vittarthi.com/static/images/vitt2.png",
+  "description": "Calculate SIP returns, EMI payments, home loan costs, and more with Vittarthi easy financial calculators."
 }
 </script>
-
 
 {% block schema %}
 {% endblock %}
@@ -58,670 +56,37 @@
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-
         {% for crumb in breadcrumbs %}
         {
             "@type": "ListItem",
             "position": {{ forloop.counter }},
             "name": "{{ crumb.name }}"
-
-            {% if crumb.url %}
-            ,
-            "item": "https://vittarthi.com{{ crumb.url }}"
-            {% endif %}
+            {% if crumb.url %}, "item": "https://vittarthi.com{{ crumb.url }}"{% endif %}
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
-
     ]
 }
 </script>
 {% endif %}
-<style>
 
-/* DARK MODE */
-.dark-mode {
-    background: #0f172a !important;
-    color: gray !important;
-}
+<!-- THIS IS WHERE HOME CSS AND FONTS WILL GO -->
+{% block extra_head %}
+{% endblock %}
 
-.dark-mode .card {
-    background: #1e293b;
-    color: whitesmoke;
-}
-
-/* NAVBAR */
-/* ═══════════ TOKENS ═══════════ */
-:root {
-  --paper:#f6f4ef;
-  --surface3:#e5e1d7;
-  --ink:#111827;
-  --ink-muted:#5f6775;
-  --ink-faint:#8b93a1;
-  --ink-2:#5f6775;
-  --ink-3:#8b93a1;
-  --green:#1a6b4a;
-  --green-2:#14563c;
-  --green-mid:#cfe8dc;
-  --green-lt:#e8f5ef;
-  --bg:         #f7f5f0;
-  --surface:    #ffffff;
-  --surface2:   #f0ede8;
-  --text:       #1a1a18;
-  --muted:      #7a7870;
-  --accent:     #1a6b4a;
-  --accent-lt:  #d6efe5;
-  --blue:       #2563eb;
-  --blue-lt:    #dbeafe;
-  --blue:      #1b4fa6;
-  --blue-2:    #2260c4;
-  --blue-md:   #c5d6f8;
-  --gold:       #d97706;
-  --gold-lt:#fff4d6;
-  --rose:#d9485f;
-  --rose-lt:#ffe5ea;
-  --border:     rgba(0,0,0,0.08);
-  --shadow:     0 1px 12px rgba(0,0,0,0.06);
-  --shadow-lg:  0 6px 32px rgba(0,0,0,0.10);
-  --r:          16px;
-  --r-sm:       10px;
-  --r-xs:8px;
-  --nav-h:      60px;
-  --max:1280px;
-  --pad:        clamp(1rem, 4vw, 2rem);
-}
-.dark {
-  --bg:         #0e1018;
-  --surface:    #181c27;
-  --surface2:   #222636;
-  --text:       #e6e3dc;
-  --muted:      #7a8090;
-  --accent:     #34d399;
-  --accent-lt:  #064e3b;
-  --blue:       #60a5fa;
-  --blue-lt:    #1e3a5f;
-  --gold:       #fbbf24;
-  --border:     rgba(255,255,255,0.07);
-  --shadow:     0 1px 12px rgba(0,0,0,0.35);
-  --shadow-lg:  0 6px 32px rgba(0,0,0,0.5);
-}
-
-/* ═══════════ RESET & BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
-
-/* ═══════════ NAVBAR ═══════════ */
-.navbar {
-  position:sticky; top:0; z-index:200;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  height:var(--nav-h);
-  display:flex; align-items:center;
-  padding:0 var(--pad);
-  gap:1rem;
-  box-shadow:var(--shadow);
-  transition:background .3s;
-}
-.nav-brand {
-  font-family:'DM Serif Display',serif;
-  font-size:1.3rem; color:var(--accent);
-  text-decoration:none; letter-spacing:-.5px; flex-shrink:0;
-  display:flex; align-items:center; gap:8px;
-}
-.nav-brand img { height: 28px; width: auto; }
-.nav-desktop {
-  display:flex; gap:-.85rem; list-style:none;
-  margin-left:auto; align-items:center;padding-top: 15px;
-  overflow: visible !important;
-}
-.nav-desktop a {
-  text-decoration:none; color:var(--muted);
-  font-size:.85rem; font-weight:500;
-  padding:.35rem .75rem; border-radius:8px;
-  transition:color .2s, background .2s; white-space:nowrap;
-}
-.nav-desktop a:hover  { color:var(--text); background:var(--surface2); }
-.nav-desktop a.active { color:var(--accent); background:var(--accent-lt); }
-.icon-btn {
-  background:none; border:none; cursor:pointer;
-  color:var(--muted); font-size:1.1rem;
-  padding:7px; border-radius:8px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  transition:background .2s, color .2s;
-}
-.icon-btn:hover { background:var(--surface2); color:var(--text); }
-.ham-btn { display:none; }
-
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; z-index:190;
-}
-.drawer.open { display:block; z-index: 9999;}
-.drawer-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45); }
-.drawer-panel {
-  position:absolute; top:0; right:0; width:min(260px, 80vw); height:100%;
-  background:var(--surface); border-left:1px solid var(--border);
-  padding:1.25rem 1rem; box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem; overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500; padding:.55rem .85rem; border-radius:8px;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.2rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page { 
-    max-width: 100%; /* Ye puri screen cover karega */
-    margin: 0 auto; 
-    /* padding: 2rem clamp(1rem, 5vw, 4rem); Sides mein thodi si breathing space dega */
-}
-
-/* .icon-btn {
-  background:none;
-  border:none;
-  cursor:pointer;
-  font-size:1.1rem;
-  padding:7px;
-  border-radius:8px;
-} */
-
-/* CARDS */
-.dashboard-card {
-    padding: 20px;
-    text-align: center;
-    border-radius: 15px;
-    background: white;
-    transition: 0.3s;
-}
-
-.dashboard-card i {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: #4f46e5;
-}
-
-.dashboard-card:hover {
-    transform: translateY(-5px);
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
-}
-
-.dashboard-card:hover i {
-    color: white;
-}
-
-/* BUTTON */
-.btn-custom {
-    background: #4f46e5;
-    color: white;
-    border-radius: 8px;
-}
-.card shadow p-4 mt-5{
-background: rgba(255,255,255,0.1);
-backdrop-filter: blur(10px);
-border-radius: 15px;
-color: white;
-}
-.blog-card {
-    border-radius: 15px;
-    overflow: hidden;
-    transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
-.blog-card:hover {
-    transform: translateY(-5px);
-}
-
-.blog-img {
-    height: 200px;
-    object-fit: cover;
-}
-
-.blog-content {
-    font-size: 17px;
-    line-height: 1.7;
-}
-
-.blog-content img {
-    display: block;
-    margin: 20px auto;
-    max-width: 80%;
-    border-radius: 10px;
-}
-
-.blog-content h1, 
-.blog-content h2, 
-.blog-content h3 {
-    margin-top: 25px;
-}
-
-.blog-content p {
-    margin-bottom: 15px;
-}
-.chip {
-    display: inline-block;
-    padding: 6px 12px;
-    margin-right: 5px;
-    background: #eee;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.chip:hover, .chip.active {
-    background: black;
-    color: white;
-}
-
-/* Cards */
-/* .blog-card {
-    border-radius: 15px;
-    transition: 0.4s;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-}
-
-.blog-card:hover {
-    transform: translateY(-10px);
-}
-
-/* Image zoom */
-.img-container {
-    overflow: hidden;
-}
-
-.blog-img {
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
-    transition: 0.4s;
-}
-
-.blog-card:hover .blog-img {
-    transform: scale(1.1);
-} */
-
-/* Like */
-.like-btn {
-    cursor: pointer;
-    font-size: 18px;
-    transition: 0.3s;
-}
-
-.like-btn.liked {
-    transform: scale(1.3);
-    color: red;
-}
-
-/* Fade */
-.fade-in {
-    animation: fadeInUp 0.6s ease;
-}
-
-@keyframes fadeInUp {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-/* Trending */
-.trending-card {
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-/* Popup */
-.popup {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: black;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-}
-.cke_dialog {
-    width: 700px !important;
-}
-
-.cke_dialog_body {
-    max-height: 500px !important;
-    overflow: auto !important;
-}
-
-/* iframe (upload area) */
-.cke_dialog iframe {
-    height: 300px !important;
-    width: 100% !important;
-}
-
-/* Send button alignment */
-.cke_dialog_footer {
-    text-align: right !important;
-}
-.like-btn {
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.like-btn.liked {
-    color: red;
-    transform: scale(1.3);
-}
-.form-box {
-    pointer-events: none;
-    opacity: 0;
-}
-
-.container .signin {
-    pointer-events: all;
-    opacity: 1;
-}
-
-.container.active .signup {
-    pointer-events: all;
-    opacity: 1;
-}
-
-.container.active .signin {
-    pointer-events: none;
-}
-/* Animations */
-@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-
-/* Responsive Constraints */
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn { display:flex; }
-  .nav-desktop { display:none; }
-  .quick-sip-row { flex-direction:column; }
-  .quick-sip-row > * { width:100%; }
-}
-.page {
-  max-width:auto;
-  margin:auto;
-  /* padding:2rem var(--pad); */
-}
-
-.content-layout {
-    display: grid;
-    grid-template-columns: 250px minmax(0, 1fr) 300px;
-    gap: clamp(2rem, 4vw, 4rem);
-    align-items: start;
-}
-.toc-col {
-  position:sticky;
-  top:80px;
-}
-
-.toc-title {
-  font-size:.8rem;
-  color:var(--muted);
-  margin-bottom:1rem;
-}
-
-.toc-nav {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  border-left:2px solid var(--surface2);
-  padding-left:1rem;
-}
-
-.toc-nav a {
-  text-decoration:none;
-  color:var(--muted);
-  font-size:.9rem;
-}
-
-.toc-nav a:hover {
-  color:var(--accent);
-}
-
-.sub-link {
-  padding-left:10px;
-  font-size:.85rem;
-}
-.article-col {
-    min-width: 0;
-    max-width: 1000px; 
-    margin: 0 auto;    
-    width: 100%;
-}
-
-.article-title {
-  font-size:2.5rem;
-  margin-bottom:1rem;
-}
-
-.article-meta {
-  color:var(--muted);
-  margin-bottom:2rem;
-}
-
-.article-content {
-  font-size:1.1rem;
-  line-height:1.8;
-}
-
-.article-content h2 {
-  margin-top:2rem;
-}
-
-.article-content h3 {
-  margin-top:1.5rem;
-}
-.sidebar-col {
-  position:sticky;
-  top:80px;
-}
-
-.widget {
-  background:var(--surface);
-  padding:1.5rem;
-  border-radius:12px;
-  box-shadow:var(--shadow);
-  margin-bottom:1rem;
-}
-
-.sb-title {
-  font-size:.8rem;
-  color:var(--muted);
-  margin-bottom:1rem;
-}
-
-.quick-facts {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-@media (max-width:1100px) {
-  .content-layout {
-    grid-template-columns:1fr 280px;
-  }
-  .toc-col {
-    display:none;
-  }
-}
-
-@media (max-width:768px) {
-  .content-layout {
-    grid-template-columns:1fr;
-  }
-  .sidebar-col {
-    position:static;
-  }
-}
-@media (min-width: 1200px) {
-    .container, .container-lg, .container-md, .container-sm, .container-xl
- {
-        max-width: 100%;
-    }
-}
-.mt-4 {
-    margin-top: 0.5rem !important;
-}
-.tv-ticker-item-tape__short-name {
-    color: black !important;
-}
-/* DROPDOWN BASE */
-.dropdown {
-    position: relative;
-}
-
-/* HIDE */
-.dropdown-menu {
-    position: absolute;
-    top: 120%; /* thoda niche for better hover */
-    left: 0;
-
-    background: #fff;
-    min-width: 180px;
-
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    padding: 8px 0;
-
-    display: none;  /* 🔥 CHANGE (instead of opacity trick) */
-    z-index: 9999;
-}
-
-/* SHOW */
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-/* ITEMS */
-.dropdown-menu li {
-    list-style: none;
-}
-
-/* LINKS */
-.dropdown-menu li a {
-    display: block;
-    padding: 10px 16px;
-    text-decoration: none;
-    color: var(--text);
-}
-
-/* HOVER */
-.dropdown-menu li a:hover {
-    background: #f3f4f6;
-    color: var(--blue);
-}
-
-.nav-desktop li {
-    position: relative;
-    list-style: none;
-}
-/* drawer submenu hidden */
-.drawer-submenu {
-    display: none;
-    padding-left: 15px;
-    border: 1px solid black;
-    border-radius:8px ;
-}
-
-/* submenu links */
-.drawer-submenu a {
-    display: block;
-    padding: 8px 0;
-    font-size: 0.9rem;
-    color: var(--muted);
-}
-
-/* active open */
-.drawer-submenu.open {
-    display: block;
-}
-.logo{
-    height: clamp(55px, 5vw, 52px) !important;
-    width: auto;
-    margin-left: -20px;
-}
-/* Breadcrumb Container Styling */
-.breadcrumb-wrap {
-    padding: 12px 20px;
-    background-color: #f8f9fa; /* Light clean background */
-    border-radius: 8px; /* Rounded corners */
-    margin-bottom: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); /* Subtle shadow for depth */
-}
-
-/* List Structure */
-.breadcrumb-list {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 15px;
-}
-
-/* Individual List Items */
-.breadcrumb-list li {
-    display: inline-flex;
-    align-items: center;
-    color: #6c757d;
-}
-
-/* The Separator (›) between items */
-.breadcrumb-list li + li::before {
-    content: "\203A"; /* Unicode for Right-Pointing Angle Quotation Mark */
-    padding: 0 12px;
-    color: #adb5bd;
-    font-size: 20px;
-    line-height: 1;
-    margin-top: -2px; /* Slight adjustment for visual center */
-}
-
-/* Links Styling */
-.breadcrumb-list a {
-    text-decoration: none;
-    color: #0d6efd; /* Modern Blue */
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-/* Hover Effect for Links */
-.breadcrumb-list a:hover {
-    color: #0a58ca; /* Darker blue on hover */
-    text-decoration: underline;
-}
-
-/* Active/Current Page Styling */
-.breadcrumb-list .active {
-    color: #212529; /* Dark text for active item */
-    font-weight: 600;
-}
-</style>
 </head>
 
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
-
     <a class="nav-brand" href="/">
-    <img src="{% static 'images/vitt2.webp' %}" alt="Vita₹thi Logo" class="logo">
+    <img src="{% static 'images/vitt2.png' %}" alt="Vittarthi Logo" class="logo" width="150" height="42">
   </a>
 
   <!-- Desktop Menu -->
   <ul class="nav-desktop">
     <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
     <li><a href="/calculators" class="{% if 'calculators' in request.path %}active{% endif %}">Calculators</a></li>
-    <!-- <li><a href="/blogs/" class="{% if 'blogs' in request.path %}active{% endif %}">Blogs</a></li> -->
     <li class="dropdown">
       <a href="/resources" class="{% if 'resources' in request.path %}active{% endif %}">
         Knowledge Hub▾
@@ -734,30 +99,11 @@ color: white;
     </li>
     <li><a href="/contact" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
     <li><a href="/about-us" class="{% if 'about-us' in request.path %}active{% endif %}">About Us</a></li>
-
-    <!-- {% if user.is_authenticated %}
-        <li>
-          <span class="nav-user">
-            <i class="bi bi-person-circle"></i> {{ user.username }}
-          </span>
-        </li>
-        <li><a href="{% url 'logout' %}">Logout</a></li>
-    {% else %}
-        <li><a href="{% url 'signin' %}">Sign In</a></li>
-        <li><a href="{% url 'signup' %}">Sign Up</a></li>
-    {% endif %} -->
-    
   </ul>
 
-  <!-- Right Actions -->
-   <!-- due to some reason of bugs I disable this functionality  -->
-  <!-- <button class="icon-btn" onclick="toggleDark()" title="Toggle theme">
-    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
-  </button> -->
-
-  <!-- Mobile Button -->
-  <button class="icon-btn ham-btn" onclick="toggleDrawer()">
-    <i class="bi bi-list">Menu</i>
+  <!-- Mobile Button with aria-label for accessibility score -->
+  <button class="icon-btn ham-btn" onclick="toggleDrawer()" aria-label="Open Navigation Menu">
+    <i class="bi bi-list"></i>
   </button>
 </nav>
 
@@ -765,38 +111,21 @@ color: white;
 <div class="drawer" id="navDrawer" onclick="closeOnOverlay(event)">
   <div class="drawer-overlay"></div>
   <div class="drawer-panel">
-
     <a href="/">Home</a>
     <a href="/calculators">Calculators</a>
-
     <div class="drawer-item">
     <div class="drawer-link" onclick="toggleResources()">
       Knowledge Hub <span id="arrow">▾</span>
     </div>
-
     <div class="drawer-submenu" id="resourcesMenu">
-      <a href="/resources" class="drawer-link">
-        Resources
-      </a>
+      <a href="/resources" class="drawer-link">Resources</a>
       <a href="/resources/blogs">Blogs</a>
       <a href="/resources/case-study">Case Study</a>
       <a href="/resources/news">News</a>
-
     </div>
-
     </div>
       <a href="/contact">Contact</a>
       <a href="/about-us">About Us</a>
-
-    <!-- {% if user.is_authenticated %}
-        <div style="padding:.5rem .8rem; font-weight:600;">
-          👤 {{ user.username }}
-        </div>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'signin' %}">Sign In</a>
-        <a href="{% url 'signup' %}">Sign Up</a>
-    {% endif %} -->
   </div>
 </div>
 
@@ -807,116 +136,60 @@ color: white;
       <nav aria-label="breadcrumb" class="breadcrumb-wrap">
           <ol class="breadcrumb-list">
               {% for crumb in breadcrumbs %}
-                  
                   {% if not forloop.last %}
-                      <li>
-                          <a href="{{ crumb.url }}">
-                              {{ crumb.name }}
-                          </a>
-                      </li>
+                      <li><a href="{{ crumb.url }}">{{ crumb.name }}</a></li>
                   {% else %}
-                      <li class="active">
-                          {{ crumb.name }}
-                      </li>
+                      <li class="active">{{ crumb.name }}</li>
                   {% endif %}
-
               {% endfor %}
           </ol>
       </nav>
   </div>
   {% endif %}
-    {% block content %}
-
-    {% endblock %}
+  
+  {% block content %}
+  {% endblock %}
 </div>
+
 {% include "footer/footer.html" %}
+
 <script>
-  function comingSoon() {
-    alert("🚀 Coming Soon!");
-}
+function comingSoon() { alert("🚀 Coming Soon!"); }
+
 function toggleResources() {
     const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElsementById("arrow");
+    const arrow = document.getElementById("arrow"); // Fixed spelling mistake here
 
     menu.classList.toggle("open");
-
     if (menu.classList.contains("open")) {
         arrow.style.transform = "rotate(180deg)";
     } else {
         arrow.style.transform = "rotate(0deg)";
     }
 } 
-function toggleDark() {
-    document.body.classList.toggle("dark-mode");
 
-    if (document.body.classList.contains("dark-mode")) {
-        localStorage.setItem("theme", "dark");
-    } else {
-        localStorage.setItem("theme", "light");
-    }
+function toggleDark() {
+    const isDark = document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
 }
 
 window.onload = function() {
-    let theme = localStorage.getItem("theme");
-    if (theme === "dark") {
+    if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark-mode");
     }
 }
-function quickSIP() {
-    let amount = document.getElementById("sip_amount").value;
-    let years = document.getElementById("sip_years").value;
 
-    if (!amount || !years) {
-        document.getElementById("sip_result").innerHTML = "Enter values";
-        return;
-    }
 
-    let r = 0.12 / 12;
-    let n = years * 12;
 
-    let future = amount * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
-
-    document.getElementById("sip_result").innerHTML =
-        "Future Value: ₹ " + Math.round(future);
-}
-
-// counter animation
-let count = 0;
-let interval = setInterval(() => {
-    count += 50;
-    let el = document.getElementById("calc_count");
-    if (el) el.innerText = count + "+";
-    if (count >= 5000) clearInterval(interval);
-}, 30);
-
-// compare section
-function compare(type) {
-    let text = "";
-
-    if (type === "sip") text = "SIP gives higher returns in long term 📈";
-    if (type === "fd") text = "FD is safe but low return 🏦";
-    if (type === "emi") text = "EMI helps manage large payments 💳";
-
-    document.getElementById("compare_result").innerText = text;
-}
-
-// active nav
-document.querySelectorAll('.nav-link').forEach(link => {
-    if (link.href === window.location.href) {
-        link.classList.add('active');
-    }
-});
-// let drawerOpen = false;
-
-// function toggleDrawer() {
-//   drawerOpen = !drawerOpen;
-//   document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-// }
 let drawerOpen = false;
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
   document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+  // Ensure the element exists before trying to update its class
+  let hamIcon = document.getElementById('hamIcon');
+  if (hamIcon) {
+    hamIcon.className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
+  }
 }
 
 function closeOnOverlay(e) {
@@ -925,80 +198,52 @@ function closeOnOverlay(e) {
   }
 }
 
-/* DARK MODE FIX */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-  }
-});
-document.addEventListener("DOMContentLoaded", () => {
-    const content = document.getElementById("blogContent");
-    const toc = document.getElementById("toc");
-
-    if (!content || !toc) return;
-
-    const headings = content.querySelectorAll("h2, h3");
-
-    headings.forEach((h, i) => {
-        let id = "heading-" + i;
-        h.id = id;
-
-        let a = document.createElement("a");
-        a.href = "#" + id;
-        a.innerText = h.innerText;
-
-        if (h.tagName === "H3") {
-            a.classList.add("sub-link");
-        }
-
-        toc.appendChild(a);
-    });
-});
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    menu.classList.toggle("open");
-}
+// document.addEventListener("DOMContentLoaded", () => {
+//     const content = document.getElementById("blogContent");
+//     const toc = document.getElementById("toc");
+//     if (!content || !toc) return;
+//     const headings = content.querySelectorAll("h2, h3");
+//     headings.forEach((h, i) => {
+//         let id = "heading-" + i;
+//         h.id = id;
+//         let a = document.createElement("a");
+//         a.href = "#" + id;
+//         a.innerText = h.innerText;
+//         if (h.tagName === "H3") {
+//             a.classList.add("sub-link");
+//         }
+//         toc.appendChild(a);
+//     });
+// });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+<!-- Only load chart.js on pages that need it, like home.html! We've added it to home.html instead. -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script> -->
+
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/static/sw.js')
-        .then(function(registration) {
-            console.log('SW registered');
-        })
-        .catch(function(error) {
-            console.log('SW failed', error);
-        });
+        .then(function(registration) { console.log('SW registered'); })
+        .catch(function(error) { console.log('SW failed', error); });
     });
 }
 </script> 
-<!-- <script>
-document.addEventListener('contextmenu', e => e.preventDefault());
+<script>
+  // Delay Google Analytics by 4 seconds so it doesn't block the mobile CPU
+  setTimeout(function(){
+    var gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-KY1GD86KVS';
+    document.head.appendChild(gtagScript);
 
-document.addEventListener('keydown', function(e) {
-    if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && e.key === "I") ||
-        (e.ctrlKey && e.shiftKey && e.key === "J") ||
-        (e.ctrlKey && e.key.toLowerCase() === "U")
-    ) {
-        e.preventDefault();
-    }
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "c") {
-        e.preventDefault();
-    }
-    if (e.ctrlKey && e.key.toLowerCase() === "u") {
-        e.preventDefault();
-    }
-});
-</script> -->
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KY1GD86KVS');
+  }, 4000);
+</script>
 </body>
 </html>

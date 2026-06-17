@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% block title %}
+NPS vs Mutual Funds for Retirement | Vittarthi
+{% endblock %}
+
+{% block meta_description %}
+Compare National Pension System (NPS) vs Equity Mutual Funds for retirement planning. Evaluate tax benefits vs liquidity and forced annuity.
+{% endblock %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% block content %}
+<style>
+:root{
+  --green:#1a6b4a; --green-lt:#e8f5ef;
+  --teal:#0f766e; --teal-lt:#ccfbf1;
+  --purple:#6d28d9; --purple-lt:#ede9fe;
+  --surface:#fff; --surface2:#f0ede8; --bg:#f7f5f0;
+  --ink:#111827; --ink-muted:#5f6775; --ink-faint:#8b93a1;
+  --border:rgba(0,0,0,.08); --shadow:0 1px 12px rgba(0,0,0,.06); --shadow-lg:0 6px 32px rgba(0,0,0,.10);
+  --max:1180px; --pad:clamp(1rem,4vw,2rem); --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+
+.breadcrumb{padding:.65rem var(--pad);background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--ink-faint)}
+.breadcrumb a{color:var(--ink-muted);text-decoration:none}.breadcrumb a:hover{color:var(--green)}
+.breadcrumb span{margin:0 .35rem;opacity:.4}
+
+.hero{background:var(--surface);padding:clamp(2rem,5vw,3.5rem) var(--pad) clamp(1.5rem,4vw,2.5rem);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;opacity:.5;pointer-events:none}
+.hero::after{content:'';position:absolute;top:-80px;right:-60px;width:360px;height:360px;border-radius:50%;background:var(--purple-lt);opacity:.6;pointer-events:none}
+.hero-inner{max-width:var(--max);margin:auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-lt);color:var(--purple);padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem;border:1px solid rgba(109,40,217,.2)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;margin-bottom:.75rem}
+.hero h1 em{color:var(--purple);font-style:italic}
+.hero-sub{font-size:1rem;color:var(--ink-muted);line-height:1.7;max-width:560px;margin-bottom:1.25rem}
+
+.section{max-width:var(--max);margin:0 auto;padding:clamp(2rem,5vw,3rem) var(--pad)}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
+.section-sub{font-size:.85rem;color:var(--ink-muted);margin-bottom:1.75rem}
+
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.calc-cols{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.calc-col{padding:1.5rem}
+.calc-col:first-child{border-right:1px solid var(--border);background:var(--surface2)}
+.input-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.2rem}
+.input-group:last-child{margin-bottom:0}
+.input-group label{font-size:.68rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint)}
+.input-row{display:flex;align-items:center;gap:.6rem}
+.input-row input[type=number], .input-row select{width:105px;padding:5px 9px;border:1px solid var(--border);border-radius:7px;font-size:.85rem;font-family:inherit;background:var(--surface);color:var(--ink);font-weight:600}
+input[type=range]{flex:1;height:4px;border-radius:99px;cursor:pointer;accent-color:var(--purple)}
+
+.calc-out-cols{display:grid;grid-template-columns:1fr 1fr;padding:1.5rem;gap:1.25rem;border-bottom:1px solid var(--border)}
+.out-card{border-radius:var(--r);padding:1.1rem;border:1px solid}
+.out-card.nps{border-color:rgba(109,40,217,.3);background:linear-gradient(135deg,rgba(109,40,217,.04),transparent)}
+.out-card.mf{border-color:rgba(15,118,110,.2);background:linear-gradient(135deg,rgba(15,118,110,.04),transparent)}
+.oc-head{font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:6px}
+.oc-head.nps{color:var(--purple)}.oc-head.mf{color:var(--teal)}
+.oc-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.oc-row:last-child{border-bottom:none}
+.oc-key{color:var(--ink-muted)}.oc-val{font-weight:700}
+.oc-val.nps{color:var(--purple)}.oc-val.mf{color:var(--teal)}
+.oc-val.tax{color:#16a34a}
+.oc-total{font-size:1rem!important}
+.oc-note{font-size:.65rem;color:var(--ink-faint);margin-top:.5rem;padding-top:.4rem;border-top:1px dashed var(--border)}
+
+.winner-banner{margin:1.5rem;padding:1rem 1.25rem;border-radius:var(--r);display:flex;align-items:center;gap:.75rem;font-size:.9rem;font-weight:600;background:var(--purple-lt);color:var(--purple);border:1px solid rgba(109,40,217,.2)}
+
+.chart-wrap{padding:0 1.5rem 1.5rem}
+.chart-box{background:var(--surface2);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border)}
+
+@media(max-width:768px){
+  .calc-cols,.calc-out-cols{grid-template-columns:1fr}
+  .calc-col:first-child{border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/compare">Compare</a><span>›</span>
+  <span style="color:var(--ink)">NPS vs Mutual Funds</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">👴 Retirement Guide</div>
+    <h1>NPS vs <em>Mutual Funds</em></h1>
+    <p class="hero-sub">Should you lock your money for an extra ₹50,000 tax deduction? Compare the ultimate retirement corpus and liquidity.</p>
+  </div>
+</section>
+
+<div class="section">
+  <div class="calc-wrap">
+    <div class="calc-cols">
+      <div class="calc-col">
+        <div class="input-group">
+          <label>Monthly Investment</label>
+          <div class="input-row">
+            <input type="range" id="amtSlider" min="1000" max="50000" step="500" value="10000">
+            <input type="number" id="amt" value="10000">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Current Age</label>
+          <div class="input-row">
+            <input type="range" id="ageSlider" min="20" max="55" step="1" value="30">
+            <input type="number" id="age" value="30">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Your Tax Slab</label>
+          <div class="input-row">
+            <select id="taxSlab">
+              <option value="30">30% Slab</option>
+              <option value="20">20% Slab</option>
+              <option value="10">10% Slab</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="calc-col" style="background:var(--surface)">
+        <div class="input-group">
+          <label>Mutual Fund Expected Return (%)</label>
+          <div class="input-row">
+            <input type="range" id="mfRSlider" min="8" max="18" step="0.5" value="12">
+            <input type="number" id="mfRate" value="12">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>NPS Expected Return (%)</label>
+          <div class="input-row">
+            <input type="range" id="npsRSlider" min="8" max="14" step="0.5" value="10">
+            <input type="number" id="npsRate" value="10">
+          </div>
+          <p style="font-size:0.65rem;color:var(--ink-faint);margin-top:2px">NPS is capped at 75% equity, so returns are usually lower than pure equity MFs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-out-cols">
+      <div class="out-card nps">
+        <div class="oc-head nps">National Pension System (NPS)</div>
+        <div class="oc-row"><span class="oc-key">Total Corpus at 60</span><span class="oc-val nps" id="nps-total">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Tax Saved (80CCD 1B)</span><span class="oc-val tax" id="nps-tax-saved">+₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Tax-Free Lumpsum (60%)</span><span class="oc-val nps" id="nps-lumpsum">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Forced Annuity (40%)</span><span class="oc-val nps" style="color:#d97706" id="nps-annuity">₹0</span></div>
+        <div class="oc-note">⚠ At age 60, 40% MUST be used to buy a pension (annuity). Pension is fully taxable.</div>
+      </div>
+      <div class="out-card mf">
+        <div class="oc-head mf">Equity Mutual Funds</div>
+        <div class="oc-row"><span class="oc-key">Total Pre-Tax Corpus</span><span class="oc-val mf" id="mf-pretax">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">LTCG Tax (10%)</span><span class="oc-val" style="color:#dc2626" id="mf-tax">-₹0</span></div>
+        <div class="oc-row"><span class="oc-key">100% Liquid Cash at 60</span><span class="oc-val mf oc-total" id="mf-liquid">₹0</span></div>
+        <div class="oc-row"><span class="oc-key">Forced Annuity</span><span class="oc-val mf">None</span></div>
+        <div class="oc-note">✓ 100% Liquid. Withdraw anytime. No mandatory pension purchase.</div>
+      </div>
+    </div>
+
+    <div class="winner-banner">
+      <span class="winner-icon">🏆</span>
+      <div id="winner-text">Calculated based on your inputs.</div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-box">
+        <canvas id="growthChart" height="auto"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+function fmt(n){
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(2)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+let chart;
+function buildChart(labels, mfData, npsData){
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'NPS Corpus',data:npsData,backgroundColor:'rgba(109,40,217,.75)',borderRadius:4},
+        {label:'MF Liquid (Post Tax)', data:mfData, backgroundColor:'rgba(15,118,110,.75)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:true, position:'top'},tooltip:{callbacks:{label:c=>fmt(c.parsed.y)}}},
+      scales:{
+        y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.04)'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+async function calculate() {
+    const payload = {
+        monthly_amount: +document.getElementById('amt').value || 10000,
+        current_age: +document.getElementById('age').value || 30,
+        tax_slab: +document.getElementById('taxSlab').value || 30,
+        mf_rate: +document.getElementById('mfRate').value || 12,
+        nps_rate: +document.getElementById('npsRate').value || 10
+    };
+
+    try {
+        const response = await fetch('/api/compare/nps-vs-mf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if(!data.success) throw new Error(data.error);
+
+        const sum = data.summary;
+        
+        document.getElementById('nps-total').textContent = fmt(sum.nps_corpus);
+        document.getElementById('nps-tax-saved').textContent = '+' + fmt(sum.tax_saved_80ccd);
+        document.getElementById('nps-lumpsum').textContent = fmt(sum.nps_lumpsum);
+        document.getElementById('nps-annuity').textContent = fmt(sum.nps_annuity);
+        
+        document.getElementById('mf-pretax').textContent = fmt(sum.mf_corpus);
+        document.getElementById('mf-tax').textContent = '-' + fmt(sum.mf_tax);
+        document.getElementById('mf-liquid').textContent = fmt(sum.mf_post_tax);
+        
+        const wText = document.getElementById('winner-text');
+        if(sum.mf_post_tax > sum.nps_corpus) {
+            wText.innerHTML = `Mutual Funds build <strong>${fmt(sum.mf_post_tax - sum.nps_corpus)}</strong> more total wealth, and it is 100% liquid.`;
+        } else {
+            wText.innerHTML = `NPS builds more total corpus, but remember <strong>${fmt(sum.nps_annuity)}</strong> is locked in mandatory annuity.`;
+        }
+        
+        buildChart(data.chart.labels, data.chart.mf_data, data.chart.nps_data);
+
+    } catch(err) {
+        console.error("API Error:", err);
+    }
+}
+
+function sync(sId,iId){
+  const s=document.getElementById(sId),i=document.getElementById(iId);
+  s.addEventListener('input',()=>{i.value=s.value;calculate()});
+  i.addEventListener('input',()=>{s.value=i.value;calculate()});
+}
+sync('amtSlider','amt');
+sync('ageSlider','age');
+sync('mfRSlider','mfRate');
+sync('npsRSlider','npsRate');
+document.getElementById('taxSlab').addEventListener('change', calculate);
+
+window.addEventListener('load', calculate);
+</script>
+{% endblock %}
