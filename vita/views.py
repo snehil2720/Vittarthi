@@ -1850,25 +1850,27 @@ def generate_llms_content(is_full=False):
     # 1. Base Structure aur Calculators
     content = """# Vittarthi
 
-> Vittarthi is a free platform offering practical financial calculators for SIP, EMI, and Retirement planning, alongside a comprehensive Knowledge Hub featuring the latest finance blogs, market news, and case studies.
+> Vittarthi is a free platform offering practical financial calculators for SIP, EMI, and Retirement planning, alongside a Knowledge Hub of finance guides, market news, and investment case studies focused on Indian investors.
 
 ## Calculators
-These tools help users estimate investments, loans, EMIs, and retirement savings.
-- [SIP Calculator](https://vittarthi.com/calculators/sip)
-- [PPF Calculator](https://vittarthi.com/calculators/ppf)
-- [NPS Calculator](https://vittarthi.com/calculators/nps)
-- [EMI Calculator](https://vittarthi.com/calculators/emi)
-- [Loan Eligibility](https://vittarthi.com/calculators/loan-eligibility)
-- [Salary Calculator](https://vittarthi.com/calculators/salary)
-- [PF Calculator](https://vittarthi.com/calculators/pf)
-- [Retirement Calculator](https://vittarthi.com/calculators/retirement)
-- [Car loan Calculator](https://vittarthi.com/calculators/car-loan)
-- [Home Loan Calculator](https://vittarthi.com/calculators/home-loan)
-- [Personal Loan Calculator](https://vittarthi.com/calculators/personal-loan)
+Free tools to estimate investments, loans, EMIs, and retirement savings.
+- [SIP Calculator](https://vittarthi.com/calculators/sip): Project returns on a monthly systematic investment plan.
+- [PPF Calculator](https://vittarthi.com/calculators/ppf): Estimate the maturity value of Public Provident Fund savings.
+- [NPS Calculator](https://vittarthi.com/calculators/nps): Project National Pension System corpus and expected pension.
+- [EMI Calculator](https://vittarthi.com/calculators/emi): Calculate monthly installments for any loan.
+- [Loan Eligibility](https://vittarthi.com/calculators/loan-eligibility): Check the loan amount you qualify for based on income.
+- [Salary Calculator](https://vittarthi.com/calculators/salary): Break down in-hand salary from CTC after deductions.
+- [PF Calculator](https://vittarthi.com/calculators/pf): Estimate your Employee Provident Fund balance over time.
+- [Retirement Calculator](https://vittarthi.com/calculators/retirement): Work out the corpus needed to retire comfortably.
+- [Car Loan Calculator](https://vittarthi.com/calculators/car-loan): Compute EMIs and total interest on a car loan.
+- [Home Loan Calculator](https://vittarthi.com/calculators/home-loan): Compute home loan EMIs, interest, and amortization.
+- [Personal Loan Calculator](https://vittarthi.com/calculators/personal-loan): Calculate personal loan EMIs and repayment schedule.
 
 ## Knowledge Hub
-Explore blogs, market news, and practical case studies to improve financial understanding.
-- [Knowledge Hub Home](https://vittarthi.com/resources)
+Guides, market news, and case studies to improve financial understanding.
+- [Knowledge Hub Home](https://vittarthi.com/resources): Central hub for all blogs, news, and case studies.
+- [Blog Index](https://vittarthi.com/resources/blogs): Full archive of finance and investing guides.
+- [Case Study Index](https://vittarthi.com/resources/case-study): Full archive of fund and wealth-creation case studies.
 
 """
 
@@ -1906,7 +1908,7 @@ Explore blogs, market news, and practical case studies to improve financial unde
     content += """
 ## Other Pages
 - [About Us](https://vittarthi.com/about-us): Learn more about Vittarthi.
-- [Contact](https://vittarthi.com/contact): Get in touch with us.
+- [Contact](https://vittarthi.com/contact): Get in touch with the team.
 """
     return content
 
