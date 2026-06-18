@@ -411,57 +411,75 @@ def edit_blog(request, id):
         'authors': authors  # ✅ Pass authors to template context
     })
 
+
 def sip_calculator(request):
-    result = None
-    chart_labels = []
-    invested_data = []
-    value_data = []
-    table_data = []
-    profit = ''
-    invested_total = ''
-    profit_percent = ''
     if request.method == "POST":
-        amount = float(request.POST.get("amount"))
-        rate = float(request.POST.get("rate")) / 100 / 12
-        years = float(request.POST.get("time"))
-        months = int(years) * 12
+        try:
+            data = json.loads(request.body)
+            amount = float(data.get("amount", 0))
+            rate = float(data.get("rate", 0)) / 100 / 12  # Monthly rate
+            years = float(data.get("time", 0))
+            step_up = float(data.get("step_up", 0)) / 100 # Annual step up
+            inflation = float(data.get("inflation", 0)) / 100 # Annual inflation
 
-        total = 0
-        invested = 0
+            months = int(years * 12)
+            total = 0
+            invested = 0
+            current_amount = amount
 
-        for i in range(1, months + 1):
-            invested += amount
-            total = (total + amount) * (1 + rate)
+            yearly_data = []
+            monthly_data = []
 
-            # yearly data for graph
-            if i % 12 == 0:
-                year = i // 12
-                chart_labels.append(f"Year {year}")
-                invested_data.append(round(invested, 2))
-                value_data.append(round(total, 2))
+            for i in range(1, months + 1):
+                invested += current_amount
+                total = (total + current_amount) * (1 + rate)
 
-            # monthly table data
-            table_data.append({
-                "month": i,
-                "invested": round(invested, 2),
-                "value": round(total, 2)
+                monthly_data.append({
+                    "month": i,
+                    "invested": round(invested),
+                    "profit": round(total - invested),
+                    "total": round(total)
+                })
+
+                if i % 12 == 0:
+                    year = i // 12
+                    yearly_data.append({
+                        "year": year,
+                        "invested": round(invested),
+                        "profit": round(total - invested),
+                        "total": round(total)
+                    })
+                    current_amount = current_amount * (1 + step_up)
+
+            profit = total - invested
+            
+            taxable_profit = max(0, profit - 125000)
+            tax = taxable_profit * 0.125
+            net_in_hand = total - tax
+            real_value = total / ((1 + inflation) ** years) if inflation > 0 else total
+
+            # Record usage (optional, since it will fire on every slider move, you might want to remove this or throttle it)
+            # CalcUsage.objects.create(name="SIP")
+
+            return JsonResponse({
+                "success": True,
+                "total": round(total),
+                "invested": round(invested),
+                "profit": round(profit),
+                "tax": round(tax),
+                "net_in_hand": round(net_in_hand),
+                "real_value": round(real_value),
+                "yearly_data": yearly_data,
+                "monthly_data": monthly_data
             })
+            
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
 
-        result = round(total, 2)
-        profit = round(total - invested, 2)
-        invested_total = round(invested, 2)
-        profit_percent = round((profit / invested_total) * 100, 2) if invested_total > 0 else 0
-    CalcUsage.objects.create(name="SIP")
-    return render(request, 'investment/sip.html', {
-        "result": result,
-        "profit": profit,
-        "labels": chart_labels,
-        "invested_data": invested_data,
-        "value_data": value_data,
-        "table_data": table_data,
-        "invested_total":invested_total,
-        "profit_percent": profit_percent
-    })
+    CalcUsage.objects.create(name="SIP") # You can record a page visit here!
+    
+    return render(request, 'investment/sip.html')
+
 
 def emi_calculator(request):
     emi = None

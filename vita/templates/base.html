@@ -7,6 +7,7 @@
 {% block extra_meta %}{% endblock %}
 <title>{% block title %}{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}{% endblock %}">
+<meta name="csrf-token" content="{{ csrf_token }}">
 <meta name="google-site-verification" content="QZOTJkuY-G8PrNopvPVlE-IAaZx5VRK3aES4PJzeqPg" />
 <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY1GD86KVS"></script> -->
 <!-- <script>

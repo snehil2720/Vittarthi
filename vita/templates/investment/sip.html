@@ -1,937 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
-SIP Calculator | Vittarthi
+SIP Calculator Online - Step-Up, Tax & Inflation Adjusted | Vittarthi
 {% endblock %}
 
 {% block meta_description %}
 Calculate your SIP investment returns with the Vittarthi SIP Calculator. Estimate monthly investment growth, expected returns, maturity value, and long-term wealth creation easily.
 {% endblock %}
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/sip.css' %}">
+{% endblock %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
-/* ═══════════ RESET & BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
 
-/* ═══════════ NAVBAR ═══════════ */
-:root {
-  --ink:        #081a10;
-  --ink-2:      #2e5040;
-  --ink-3:      #6a8a72;
-  --paper:      #f4faf6;
-  --surface:    #ffffff;
-  --s2:         #eaf4ee;
-  --s3:         #d8ede0;
-  --green:      #1a6b4a;
-  --green-2:    #22875e;
-  --green-lt:   #e6f2ec;
-  --green-md:   #b8dfc8;
-  --green-dk:   #0f4a32;
-  --gold:       #b8720a;
-  --gold-lt:    #fdf3e3;
-  --gold-md:    #fde68a;
-  --blue:       #1b4fa6;
-  --blue-lt:    #e8effe;
-  --rose:       #a0363a;
-  --rose-lt:    #fdeaeb;
-  --teal:       #0e7490;
-  --teal-lt:    #e0f4f8;
-  --border:     rgba(8,26,16,0.09);
-  --shadow:     0 4px 20px rgba(8,26,16,0.07);
-  --shadow-lg:  0 12px 48px rgba(8,26,16,0.12);
-  --r:          14px;
-  --r-sm:       8px;
-  --pad:        clamp(1.25rem,5vw,2.5rem);
-  --max:        1200px;
-}
-
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed;
-  top:var(--nav-h); left:0; right:0; bottom:0;
-  z-index:190;
-}
-.drawer.open { display:block; }
-.drawer-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,.45);
-}
-.drawer-panel {
-  position:absolute; top:0; right:0;
-  width:min(260px, 80vw); height:100%;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:1.25rem 1rem;
-  box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem;
-  overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500;
-  padding:.55rem .85rem; border-radius:8px;
-  transition:all .2s;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page {
-  max-width:1340px; margin:0 auto;
-  padding:0 var(--pad) 4rem;
-}
-
-/* ═══════════ HERO ═══════════ */
-.hero {
-  text-align:center;
-  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
-  animation:fadeUp .5s ease both;
-}
-.hero-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-  background:var(--accent-lt);
-  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 5vw, 3.4rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:.95rem; max-width:440px; margin:0 auto; }
-
-/* ═══════════ METRICS ROW ═══════════ */
-.metrics-row {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(.6rem,2vw,1rem);
-  margin-bottom:clamp(1rem,2.5vw,1.5rem);
-  animation:fadeUp .5s .15s ease both;
-}
-.metric {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r-sm);
-  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
-  box-shadow:var(--shadow);
-  position:relative; overflow:hidden;
-  transition:transform .2s, background .3s;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:3px; border-radius:3px 3px 0 0;
-}
-.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
-.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
-.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
-.metric:hover { transform:translateY(-2px); }
-.metric-lbl {
-  font-size:.68rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
-}
-.metric-val {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.2rem,3vw,1.6rem);
-  line-height:1; margin-bottom:3px;
-}
-.metric-sub { font-size:.68rem; color:var(--muted); }
-.metric.total .metric-val  { color:var(--accent); }
-.metric.profit .metric-val { color:var(--gold); }
-
-/* ═══════════ 3-COL GRID ═══════════ */
-.main-grid {
-  display:grid;
-  grid-template-columns:320px 1fr 200px;
-  grid-template-areas:"inputs charts sidebar";
-  gap:clamp(1rem,2vw,1.5rem);
-  align-items:start;
-}
-.inputs-col { grid-area:inputs; }
-.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
-.sidebar-col { grid-area:sidebar; }
-
-/* ═══════════ CARD ═══════════ */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:clamp(1rem,3vw,1.5rem);
-  box-shadow:var(--shadow);
-  transition:background .3s, border-color .3s;
-}
-.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
-.card-title {
-  font-size:.72rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:1.1rem;
-}
-
-/* ═══════════ SLIDERS & INPUTS ═══════════ */
-.field { margin-bottom:1.25rem; }
-.field:last-child { margin-bottom:0; }
-.field-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.5rem;
-}
-.field-lbl  { font-size:.85rem; color:var(--muted); }
-
-input.field-val  {
-  font-size:.92rem; font-weight:600; color:var(--text);
-  background:var(--surface2); padding:4px 10px; border-radius:6px;
-  width:110px; text-align:right; border:1px solid transparent;
-  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
-}
-input.field-val:focus {
-  background: var(--surface);
-  border-color: var(--accent);
-}
-input.field-val::-webkit-outer-spin-button,
-input.field-val::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-input.field-val[type=number] {
-  -moz-appearance: textfield;
-}
-
-.range-wrap { position:relative; }
-.range-fill {
-  position:absolute; top:50%; transform:translateY(-50%);
-  height:5px; border-radius:100px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-  pointer-events:none; transition:width .08s;
-}
-input[type=range] {
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:5px;
-  background:var(--surface2); border-radius:100px;
-  outline:none; cursor:pointer; display:block;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:22px; height:22px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-lt);
-  cursor:pointer; transition:transform .18s;
-}
-input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
-input[type=range]::-moz-range-thumb {
-  width:22px; height:22px; border-radius:50%;
-  border:none; background:var(--accent); cursor:pointer;
-}
-.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
-.range-hint  { font-size:.66rem; color:var(--muted); }
-
-/* ═══════════ DONUT ═══════════ */
-.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
-.donut-canvas-wrap { position:relative; flex-shrink:0; }
-.donut-canvas-wrap canvas { display:block; }
-.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-.leg-row { display:flex; align-items:center; gap:8px; }
-.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
-.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
-.mult-box {
-  margin-top:8px; padding-top:10px;
-  border-top:1px solid var(--border);
-}
-.mult-lbl { font-size:.68rem; color:var(--muted); margin-bottom:2px; }
-.mult-val { font-size:1.15rem; font-weight:600; color:var(--text); }
-
-/* ═══════════ CHART TABS ═══════════ */
-.chart-hdr {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:.85rem;
-  flex-wrap:wrap; gap:.5rem;
-}
-.tab-row { display:flex; gap:5px; }
-.tab-btn {
-  background:var(--surface2); border:none; border-radius:7px;
-  padding:4px 14px; font-size:.78rem; font-weight:500;
-  color:var(--muted); cursor:pointer; font-family:inherit;
-  transition:all .2s;
-}
-.tab-btn.active { background:var(--accent); color:#fff; }
-.chart-box { position:relative; width:100%; }
-.chart-legend {
-  display:flex; gap:14px; margin-bottom:.6rem; flex-wrap:wrap;
-}
-.chart-legend span {
-  display:flex; align-items:center; gap:5px;
-  font-size:.72rem; color:var(--muted);
-}
-.chart-legend .dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-
-/* ═══════════ TABLE ═══════════ */
-.tbl-scroll {
-  max-height:260px; overflow-y:auto;
-  border-radius:8px; border:1px solid var(--border);
-}
-.tbl-scroll::-webkit-scrollbar { width:4px; }
-.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-table { width:100%; border-collapse:collapse; font-size:.78rem; }
-thead th {
-  padding:9px 12px; text-align:right;
-  font-size:.65rem; font-weight:600; letter-spacing:.5px;
-  text-transform:uppercase; color:var(--muted);
-  background:var(--surface2);
-  position:sticky; top:0; z-index:1;
-  border-bottom:1px solid var(--border);
-}
-thead th:first-child { text-align:left; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--surface2); }
-tbody td { padding:8px 12px; text-align:right; color:var(--text); }
-tbody td:first-child { text-align:left; font-weight:500; }
-td.green { color:var(--accent); font-weight:600; }
-td.gold { color:var(--gold); font-weight:600; }
-
-/* ═══════════ TIPS ═══════════ */
-.tips-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
-}
-.tip {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:.9rem 1rem;
-  cursor:pointer; transition:all .2s;
-}
-.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
-.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
-.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
-
-/* ═══════════ SIDEBAR ═══════════ */
-.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
-.sb-links { display:flex; flex-direction:column; gap:3px; }
-.sb-links a {
-  display:flex; align-items:center; gap:7px;
-  text-decoration:none; color:var(--muted);
-  font-size:.8rem; padding:7px 9px; border-radius:8px;
-  border:1px solid transparent; transition:all .18s;
-}
-.sb-links a i { font-size:13px; flex-shrink:0; }
-.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
-.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
-.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
-.qf { padding-top:10px; border-top:1px solid var(--border); }
-.qf:first-child { padding-top:0; border-top:none; }
-.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
-.qf-val { font-weight:600; color:var(--text); }
-.qf-val.accent { color:var(--accent); }
-
-/* ═══════════ SEO CONTENT AREA ═══════════ */
-.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
-.sec-inner{max-width:var(--max);margin:0 auto;}
-.label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--green);background:var(--green-lt);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.sec-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
-  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
-}
-.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
-.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
-.sec-hdr.center{text-align:center;}
-.sec-hdr.center .sec-sub{margin:0 auto;}
-
-/* ═══ ANIMATION ═══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.fu{opacity:0;}
-.fu.on{animation:fadeUp .6s ease both;}
-
-/* ════════════════════════════════════
-   1. HOW SIP WORKS — 3 steps
-════════════════════════════════════ */
-.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
-.steps-grid::before{
-  content:'';position:absolute;top:32px;
-  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
-  height:2px;
-  background:repeating-linear-gradient(90deg,var(--green-md) 0,var(--green-md) 8px,transparent 8px,transparent 16px);
-  pointer-events:none;
-}
-.step{text-align:center;padding:.5rem;}
-.step-num{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--green);color:#fff;
-  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--green-lt);
-  position:relative;z-index:1;
-}
-.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
-.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   2. POWER OF COMPOUNDING — hero visual
-════════════════════════════════════ */
-.compound-sec{background:var(--green-dk);padding:clamp(3rem,7vw,5rem) var(--pad);position:relative;overflow:hidden;border-radius: 20px;}
-.compound-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
-  background-size:22px 22px;pointer-events:none;
-}
-.compound-inner{
-  max-width:var(--max);margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:clamp(2rem,5vw,5rem);align-items:center;
-  position:relative;z-index:1;
-}
-.compound-label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.compound-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
-  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
-}
-.compound-title em{font-style:italic;color:var(--gold-md);}
-.compound-sub{font-size:.9rem;color:rgba(255,255,255,.78);line-height:1.8;margin-bottom:1.5rem;}
-.compound-quote{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r-sm);padding:1rem 1.25rem;
-  font-size:.88rem;color:rgba(255,255,255,.9);line-height:1.6;font-style:italic;
-}
-.compound-quote cite{font-style:normal;font-size:.72rem;color:rgba(255,255,255,.55);display:block;margin-top:.4rem;}
-
-/* Comparison cards */
-.compound-cards{display:flex;flex-direction:column;gap:.85rem;}
-.compound-card{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
-  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-}
-.compound-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
-.compound-card-name{font-size:.82rem;font-weight:600;color:#fff;}
-.compound-card-badge{
-  font-size:.66rem;font-weight:700;padding:2px 8px;
-  border-radius:100px;letter-spacing:.4px;
-}
-.compound-card-badge.early{background:rgba(52,211,153,.25);color:#6ee7b7;}
-.compound-card-badge.late {background:rgba(248,113,113,.2);color:#fca5a5;}
-.compound-row{display:flex;justify-content:space-between;font-size:.76rem;color:rgba(255,255,255,.7);margin-bottom:.3rem;}
-.compound-row .val{font-weight:600;color:#fff;}
-.compound-row .val.gold{color:var(--gold-md);}
-.compound-row .val.rose{color:#fca5a5;}
-.compound-divider{
-  border:none;border-top:1px solid rgba(255,255,255,.1);margin:.55rem 0;
-}
-.compound-result{
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(255,255,255,.08);border-radius:6px;padding:.55rem .75rem;
-  margin-top:.5rem;
-}
-.compound-result-lbl{font-size:.72rem;color:rgba(255,255,255,.65);}
-.compound-result-val{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#fff;}
-.compound-result-val.gold{color:var(--gold-md);}
-.compound-insight{
-  background:rgba(253,230,138,.12);border:1px solid rgba(253,230,138,.2);
-  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:.85rem;
-  font-size:.78rem;color:rgba(255,255,255,.8);line-height:1.6;
-}
-.compound-insight strong{color:var(--gold-md);}
-
-/* ════════════════════════════════════
-   3. WHY SIP — 4 benefit cards
-════════════════════════════════════ */
-.why-sec{background:var(--paper);border-radius: 20px;}
-.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
-.why-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  position:relative;overflow:hidden;
-  transition:transform .22s,box-shadow .22s;
-}
-.why-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  border-radius:var(--r) var(--r) 0 0;
-}
-.why-card:nth-child(1)::before{background:linear-gradient(90deg,var(--green),#34d399);}
-.why-card:nth-child(2)::before{background:linear-gradient(90deg,var(--blue),#60a5fa);}
-.why-card:nth-child(3)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
-.why-card:nth-child(4)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
-.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
-.why-icon{
-  width:44px;height:44px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;margin-bottom:1rem;
-}
-.why-card:nth-child(1) .why-icon{background:var(--green-lt);color:var(--green);}
-.why-card:nth-child(2) .why-icon{background:var(--blue-lt);color:var(--blue);}
-.why-card:nth-child(3) .why-icon{background:var(--gold-lt);color:var(--gold);}
-.why-card:nth-child(4) .why-icon{background:var(--teal-lt);color:var(--teal);}
-.why-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
-.why-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   4. SIP vs LUMPSUM
-════════════════════════════════════ */
-.vs-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.vs-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow); overflow-x: scroll;}
-.vs-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-.vs-table thead th{
-  padding:.75rem 1rem;text-align:left;
-  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
-}
-.vs-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.vs-table tbody tr:last-child{border-bottom:none;}
-.vs-table tbody tr:hover{background:var(--s2);}
-.vs-table td{padding:.8rem 1rem;color:var(--ink-2);vertical-align:middle;}
-.vs-table td:first-child{color:var(--ink);font-weight:500;}
-.pill-good{display:inline-flex;align-items:center;gap:3px;font-size:.72rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 9px;border-radius:100px;}
-.pill-mid {display:inline-flex;align-items:center;gap:3px;font-size:.72rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 9px;border-radius:100px;}
-.pill-bad {display:inline-flex;align-items:center;gap:3px;font-size:.72rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 9px;border-radius:100px;}
-
-/* When to choose what */
-.choose-stack{display:flex;flex-direction:column;gap:.85rem;}
-.choose-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-  transition:border-color .2s,background .2s;
-}
-.choose-card:hover{border-color:var(--green-md);background:var(--green-lt);}
-.choose-card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;}
-.choose-card-icon{
-  width:34px;height:34px;border-radius:8px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-}
-.choose-card-icon.green{background:var(--green-lt);color:var(--green);}
-.choose-card-icon.blue {background:var(--blue-lt);color:var(--blue);}
-.choose-card:hover .choose-card-icon{background:var(--green-md);}
-.choose-card-title{font-size:.85rem;font-weight:600;color:var(--ink);}
-.choose-card-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
-.choose-card-tag{font-size:.67rem;font-weight:600;color:var(--green);margin-top:.45rem;display:inline-block;}
-
-/* ════════════════════════════════════
-   5. STEP-UP SIP — the multiplier
-════════════════════════════════════ */
-.stepup-sec{background:var(--paper);}
-.stepup-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
-.stepup-content .label{margin-bottom:1rem;}
-.stepup-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.stepup-content p:last-child{margin-bottom:0;}
-.stepup-content strong{color:var(--ink);}
-
-/* Step-up comparison visual */
-.stepup-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.stepup-visual-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
-.stepup-rows{display:flex;flex-direction:column;gap:1.1rem;}
-.stepup-row{}
-.stepup-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
-.stepup-row-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.stepup-row-badge{
-  font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:100px;
-}
-.stepup-row-badge.regular{background:var(--blue-lt);color:var(--blue);}
-.stepup-row-badge.stepup {background:var(--green-lt);color:var(--green);}
-.stepup-track{background:var(--s2);border-radius:100px;height:14px;overflow:hidden;margin-bottom:.35rem;}
-.stepup-fill{height:100%;border-radius:100px;}
-.stepup-fill.regular{background:linear-gradient(90deg,var(--blue),#60a5fa);}
-.stepup-fill.stepup {background:linear-gradient(90deg,var(--green),#34d399);}
-.stepup-row-meta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ink-3);}
-.stepup-row-meta .corpus{font-weight:600;color:var(--ink);}
-.stepup-divider{border:none;border-top:1px solid var(--border);margin:.25rem 0;}
-.stepup-saving{
-  background:var(--green-lt);border:1px solid var(--green-md);
-  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:.85rem;
-  display:flex;align-items:center;gap:.75rem;
-}
-.stepup-saving-num{
-  font-family:'Playfair Display',serif;
-  font-size:1.6rem;font-weight:700;color:var(--green);line-height:1;flex-shrink:0;
-}
-.stepup-saving-text{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
-.stepup-saving-text strong{color:var(--green);}
-
-/* ════════════════════════════════════
-   6. GOAL-BASED SIP — 4 goal cards
-════════════════════════════════════ */
-.goals-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.goals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
-.goal-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  transition:transform .22s,box-shadow .22s,border-color .22s;
-  position:relative;overflow:hidden;
-}
-.goal-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--green-md);}
-.goal-emoji{font-size:2rem;margin-bottom:.85rem;display:block;line-height:1;}
-.goal-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.35rem;}
-.goal-target{
-  font-family:'Playfair Display',serif;
-  font-size:1.5rem;font-weight:700;color:var(--green);line-height:1;margin-bottom:.85rem;
-}
-.goal-details{display:flex;flex-direction:column;gap:.4rem;}
-.goal-detail{display:flex;align-items:center;justify-content:space-between;font-size:.76rem;}
-.goal-detail-lbl{color:var(--ink-3);}
-.goal-detail-val{font-weight:600;color:var(--ink);}
-.goal-cta{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:.75rem;font-weight:600;color:var(--green);
-  margin-top:1rem;padding:.35rem .75rem;
-  background:var(--green-lt);border-radius:var(--r-sm);
-  transition:background .2s;
-}
-.goal-card:hover .goal-cta{background:var(--green-md);}
-
-/* ════════════════════════════════════
-   7. MARKET TIMING MYTH
-════════════════════════════════════ */
-.myth-sec{background:var(--paper);}
-.myth-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
-.myth-cards{display:flex;flex-direction:column;gap:.85rem;}
-.myth-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-  display:flex;gap:.85rem;align-items:flex-start;
-  transition:border-color .2s,transform .2s;
-}
-.myth-card:hover{border-color:var(--green-md);transform:translateX(4px);}
-.myth-tag{
-  min-width:60px;border-radius:var(--r-sm);
-  padding:.3rem .5rem;text-align:center;
-  font-size:.65rem;font-weight:700;letter-spacing:.5px;
-  text-transform:uppercase;flex-shrink:0;
-}
-.myth-tag.myth{background:var(--rose-lt);color:var(--rose);}
-.myth-tag.fact{background:var(--green-lt);color:var(--green);}
-.myth-body{}
-.myth-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;}
-.myth-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
-
-/* RCA visual */
-.rca-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.rca-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:.35rem;}
-.rca-sub{font-size:.75rem;color:var(--ink-3);margin-bottom:1.25rem;line-height:1.5;}
-.rca-months{display:flex;flex-direction:column;gap:.65rem;}
-.rca-month{display:flex;align-items:center;gap:.75rem;}
-.rca-month-lbl{font-size:.73rem;color:var(--ink-2);width:80px;flex-shrink:0;}
-.rca-track{flex:1;background:var(--s2);border-radius:100px;height:10px;overflow:hidden;position:relative;}
-.rca-fill{height:100%;border-radius:100px;}
-.rca-fill.bull{background:linear-gradient(90deg,var(--rose),#fca5a5);}
-.rca-fill.bear{background:linear-gradient(90deg,var(--green),#34d399);}
-.rca-units{font-size:.72rem;font-weight:600;width:68px;text-align:right;flex-shrink:0;}
-.rca-units.bull{color:var(--rose);}
-.rca-units.bear{color:var(--green);}
-.rca-note{
-  margin-top:1.1rem;background:var(--green-lt);border-radius:var(--r-sm);
-  padding:.75rem .9rem;font-size:.75rem;color:var(--green);
-  line-height:1.6;border-left:3px solid var(--green);
-}
-.rca-note strong{color:var(--green-dk);}
-
-/* ════════════════════════════════════
-   8. ELSS — TAX SAVING SIP
-════════════════════════════════════ */
-.elss-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.elss-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;overflow-block: auto;}
-
-/* ELSS vs other tax instruments */
-.elss-compare{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
-.elss-compare-title{
-  padding:.85rem 1.1rem;font-size:.72rem;font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);
-  background:var(--s2);border-bottom:1px solid var(--border);
-}
-.elss-table{width:100%;border-collapse:collapse;font-size:.8rem;}
-.elss-table thead th{
-  padding:.7rem 1rem;text-align:left;
-  font-size:.66rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
-}
-.elss-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.elss-table tbody tr:last-child{border-bottom:none;}
-.elss-table tbody tr:hover{background:var(--s2);}
-.elss-table tbody tr.highlight{background:var(--green-lt);}
-.elss-table tbody tr.highlight:hover{background:var(--green-lt);}
-.elss-table td{padding:.75rem 1rem;color:var(--ink-2);}
-.elss-table td:first-child{color:var(--ink);font-weight:600;}
-.elss-table tr.highlight td:first-child{color:var(--green);}
-.good2{color:var(--green);font-weight:600;}
-.mid2 {color:var(--gold);font-weight:600;}
-.bad2 {color:var(--rose);font-weight:600;}
-
-.elss-cards{display:flex;flex-direction:column;gap:.85rem;}
-.elss-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-  display:flex;gap:.85rem;align-items:flex-start;
-  transition:border-color .2s,background .2s;
-}
-.elss-card:hover{border-color:var(--green-md);background:var(--green-lt);}
-.elss-card-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--green-lt);color:var(--green);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;
-}
-.elss-card:hover .elss-card-icon{background:var(--green-md);}
-.elss-card-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.elss-card-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
-
-/* ════════════════════════════════════
-   9. KEY STATS STRIP
-════════════════════════════════════ */
-.stats-sec{
-  background:var(--green);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.stats-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.07) 1px,transparent 1px);
-  background-size:20px 20px;
-}
-.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
-.stat-box{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r);padding:1.25rem;text-align:center;
-}
-.stat-box-num{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
-}
-.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.75);line-height:1.4;}
-
-/* ════════════════════════════════════
-   10. PRO TIPS
-════════════════════════════════════ */
-.tips-sec{background:var(--paper);}
-.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
-.tip-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.4rem;
-  display:flex;flex-direction:column;gap:.6rem;
-  transition:transform .22s,box-shadow .22s;
-  position:relative;overflow:hidden;
-}
-.tip-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-  transform:scaleX(0);transform-origin:left;transition:transform .3s;
-  background:var(--green);
-}
-.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
-.tip-card:hover::after{transform:scaleX(1);}
-.tip-number{
-  font-family:'Playfair Display',serif;
-  font-size:2.5rem;font-weight:700;color:var(--green);
-  opacity:.12;position:absolute;top:.75rem;right:1rem;line-height:1;
-}
-.tip-icon{
-  width:40px;height:40px;border-radius:9px;
-  background:var(--green-lt);color:var(--green);
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;
-}
-.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
-.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   11. FAQ
-════════════════════════════════════ */
-.faq-sec{background:var(--surface);border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.faq-item{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
-}
-.faq-q{
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:1.1rem 1.25rem;cursor:pointer;
-  font-size:.88rem;font-weight:600;color:var(--ink);
-  transition:background .18s;user-select:none;
-}
-.faq-q:hover{background:var(--s3);}
-.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
-.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--green);}
-.faq-item.open .faq-q{color:var(--green);}
-.faq-a{
-  display:none;padding:0 1.25rem 1.1rem;
-  font-size:.8rem;color:var(--ink-2);line-height:1.75;
-  border-top:1px solid var(--border);
-}
-.faq-a p{padding-top:.9rem;}
-.faq-item.open .faq-a{display:block;}
-
-/* ════════════════════════════════════
-   12. RELATED CALCULATORS
-════════════════════════════════════ */
-.related-sec{background:var(--paper);border-top:1px solid var(--border);}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
-.related-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:center;gap:.75rem;
-  transition:all .22s;
-}
-.related-card:hover{background:var(--green-lt);border-color:var(--green-md);transform:translateY(-2px);}
-.related-card-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--green-lt);color:var(--green);
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex-shrink:0;
-}
-.related-card:hover .related-card-icon{background:var(--green-md);}
-.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
-
-/* ════════════════════════════════════
-   13. FINAL CTA
-════════════════════════════════════ */
-.final-note{
-  background:var(--ink);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  text-align:center;position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.final-note::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center top,rgba(26,107,74,.4),transparent 65%);
-  pointer-events:none;
-}
-.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
-.final-note h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
-  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
-}
-.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
-.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
-.btn-w{
-  display:inline-flex;align-items:center;gap:6px;
-  background:#fff;color:var(--green);
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
-}
-.btn-w:hover{opacity:.9;}
-.btn-o{
-  display:inline-flex;align-items:center;gap:6px;
-  background:transparent;color:#fff;
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:500;
-  border:1.5px solid rgba(255,255,255,.35);
-  transition:border-color .2s,background .2s;
-}
-.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
-
-
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.card { animation:fadeUp .45s ease both; }
-
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-════════════════════════════════════════ */
-@media (max-width:1024px) {
-  .main-grid {
-    grid-template-columns:300px 1fr;
-    grid-template-areas:
-      "inputs charts"
-      "sidebar sidebar";
-  }
-  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .sidebar-col .card + .card { margin-top:0; }
-}
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn     { display:flex; }
-  .nav-desktop { display:none; }
-  .main-grid {
-    grid-template-columns:1fr;
-    grid-template-areas: "inputs" "charts" "sidebar";
-  }
-  .sidebar-col { grid-template-columns:1fr 1fr; }
-  .metrics-row { grid-template-columns:repeat(3,1fr); }
-  .tips-grid   { grid-template-columns:repeat(2,1fr); }
-  .donut-wrap  { flex-direction:row; }
-    .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-    .compound-inner,.vs-grid,.stepup-grid,.myth-grid,.elss-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-}
-
-@media (max-width:580px) {
-  .metrics-row { grid-template-columns:1fr 1fr; }
-  .metric.total { grid-column:1 / -1; }
-  .sidebar-col { grid-template-columns:1fr; }
-  .sidebar-col .card + .card { margin-top:1rem; }
-  .tips-grid { grid-template-columns:1fr; }
-  .donut-wrap { flex-direction:column; align-items:flex-start; }
-  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
-  .leg-row { flex:1; min-width:130px; }
-  table { font-size:.72rem; }
-  thead th, tbody td { padding:7px 8px; }
-  .hide-xs { display:none; }
-  .card { padding:1rem; }
-}
-
-@media (max-width:400px) {
-  .metrics-row { grid-template-columns:1fr; }
-  .metric.total { grid-column:auto; }
-  .hero h1 { font-size:1.6rem; }
-}
-
-@media (hover:none) {
-  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
-  .tip:hover, .metric:hover { transform:none; }
-  .why-card:hover,.goal-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
-  .myth-card:hover{transform:none;}
-}
-/* @media(max-width:900px){
-  .compound-inner,.vs-grid,.stepup-grid,.myth-grid,.elss-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-} */
-/* @media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-} */
-/* @media(hover:none){
-  .why-card:hover,.goal-card:hover,.tip-card:hover,.related-card:hover{transform:none;}
-  .myth-card:hover{transform:none;}
-} */
-</style>
-
-<body>
 
 <div class="page">
 
@@ -946,6 +29,7 @@ td.gold { color:var(--gold); font-weight:600; }
       <div class="metric-lbl">Total Value</div>
       <div class="metric-val" id="m-total">₹0</div>
       <div class="metric-sub" id="m-wealth-multiplier">—</div>
+      <div class="metric-sub" id="m-real-value" style="margin-top:6px; color:var(--rose); font-weight:600; display:none;">Purchasing Power: ₹0</div>
     </div>
     <div class="metric invested">
       <div class="metric-lbl">Amount Invested</div>
@@ -1000,6 +84,57 @@ td.gold { color:var(--gold); font-weight:600; }
           </div>
           <div class="range-hints"><span class="range-hint">1 yr</span><span class="range-hint">40 yrs</span></div>
         </div>
+        <!-- ADVANCED OPTIONS TOGGLE -->
+        <div class="adv-toggle" onclick="toggleAdvanced()" style="display:flex; justify-content:center; margin-top:1.5rem; border-top:1px dashed var(--border); padding-top:1rem; cursor:pointer; transition: opacity 0.2s;">
+          <span style="font-size:.85rem; font-weight:600; color:var(--accent);">
+            <i class="bi bi-sliders" style="margin-right:5px;"></i> Advanced Options
+          </span>
+        </div>
+
+        <div id="adv-section" style="display:none; margin-top:1rem; background:var(--surface2); padding:1rem; border-radius:8px; border:1px solid var(--border); animation: fadeUp 0.3s ease;">
+          
+          <div class="field">
+            <div class="field-hdr">
+              <span class="field-lbl" style="font-weight: 600;">Annual Step-Up (%) 
+                <i class="bi bi-info-circle-fill" style="cursor:pointer; color:var(--blue); margin-left:4px;" onclick="toggleInfo('info-stepup')"></i>
+              </span>
+              <input type="number" class="field-val" id="inp-stepup" value="0" step="1" oninput="syncFromInput('stepup')">
+            </div>
+            
+            <!-- CLICKABLE INFO BOX (Hidden by default) -->
+            <div id="info-stepup" style="display:none; font-size:0.75rem; color:var(--ink-2); background:var(--blue-lt); padding:8px 12px; border-radius:6px; margin-bottom:12px; border-left:3px solid var(--blue); line-height:1.5;">
+              <strong>Why use Step-Up?</strong> Your salary increases every year, so your investments should too! Setting a 10% step-up means if you invest ₹5,000/mo this year, it becomes ₹5,500/mo next year. This small change creates a massive wealth multiplier over time.
+            </div>
+
+            <div class="range-wrap">
+              <div class="range-fill" id="fill-stepup"></div>
+              <input type="range" id="sl-stepup" min="0" max="20" step="1" value="0" oninput="syncFromSlider('stepup')">
+            </div>
+            <div class="range-hints"><span class="range-hint">0% (Fixed SIP)</span><span class="range-hint">20%</span></div>
+          </div>
+
+          <div class="field" style="margin-top: 1rem;">
+            <div class="field-hdr">
+              <span class="field-lbl" style="font-weight: 600;">Expected Inflation (%) 
+                <i class="bi bi-info-circle-fill" style="cursor:pointer; color:var(--rose); margin-left:4px;" onclick="toggleInfo('info-inflation')"></i>
+              </span>
+              <input type="number" class="field-val" id="inp-inflation" value="6" step="0.5" oninput="syncFromInput('inflation')">
+            </div>
+
+            <!-- CLICKABLE INFO BOX (Hidden by default) -->
+            <div id="info-inflation" style="display:none; font-size:0.75rem; color:var(--ink-2); background:var(--rose-lt); padding:8px 12px; border-radius:6px; margin-bottom:12px; border-left:3px solid var(--rose); line-height:1.5;">
+              <strong>The Silent Wealth Killer:</strong> Inflation reduces the purchasing power of your money over time. For example, at 6% inflation, a car that costs ₹10 Lakhs today will cost ₹32 Lakhs in 20 years. This setting calculates the "Real Buying Power" of your final corpus in today's money.
+            </div>
+
+            <div class="range-wrap">
+              <div class="range-fill" id="fill-inflation" style="background: linear-gradient(90deg, var(--gold), var(--rose));"></div>
+              <input type="range" id="sl-inflation" min="0" max="15" step="0.5" value="6" oninput="syncFromSlider('inflation')">
+            </div>
+            <div class="range-hints"><span class="range-hint">0%</span><span class="range-hint">15%</span></div>
+          </div>
+
+        </div>
+
       </div>
 
       <div class="card">
@@ -1022,6 +157,17 @@ td.gold { color:var(--gold); font-weight:600; }
             <div class="mult-box">
               <div class="mult-lbl">Total Value</div>
               <div class="mult-val" id="dl-total">—</div>
+            </div>
+            <!-- TAX REALITY BOX -->
+            <div class="tax-box" style="margin-top:15px; padding:12px; background:var(--surface2); border-radius:8px; border:1px dashed var(--border); font-size:.8rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span style="color:var(--muted);">Est. Tax (12.5% LTCG)</span>
+                <span style="font-weight:600; color:var(--rose);" id="dl-tax">—</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border); padding-top:5px; margin-top:3px;">
+                <span style="color:var(--muted); font-weight:600;">Net In-Hand</span>
+                <span style="font-weight:700; color:var(--accent);" id="dl-net">—</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1050,12 +196,21 @@ td.gold { color:var(--gold); font-weight:600; }
       </div>
 
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem;">📅 Year-by-Year Schedule</div>
+        <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.75rem; flex-wrap:wrap; gap:.5rem;">
+          📅 Investment Schedule
+          
+          <!-- NEW: Yearly/Monthly Switcher -->
+          <div class="tab-row">
+            <button id="btn-yearly" class="tab-btn active" onclick="setTableMode('yearly')">Yearly</button>
+            <button id="btn-monthly" class="tab-btn" onclick="setTableMode('monthly')">Monthly</button>
+          </div>
+        </div>
+        
         <div class="tbl-scroll">
           <table>
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Invested Amount</th>
                 <th>Est. Returns</th>
                 <th class="hide-xs">Total Value</th>
@@ -1810,11 +965,25 @@ td.gold { color:var(--gold); font-weight:600; }
 </footer> -->
 
 <script>
+function toggleInfo(id) {
+  const el = document.getElementById(id);
+  // Toggle between block and none smoothly
+  el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+}
+function toggleAdvanced() {
+  const sec = document.getElementById('adv-section');
+  sec.style.display = (sec.style.display === 'none') ? 'block' : 'none';
+}
+
+let tableMode = 'yearly'; 
+let apiDataCache = null;  
+
 function toggleFaq(el) {
   const isOpen = el.classList.contains('open');
   document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
   if (!isOpen) el.classList.add('open');
 }
+
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1827,84 +996,25 @@ const obs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+
 /* helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
   if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
-  
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0
-  }).format(n);
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 }
+
 function fmtS(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
   if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
   if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
   return '₹' + Math.round(n);
 }
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
-
-    menu.classList.toggle("open");
-
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
-    }
-} 
-/* SIP Math Engine (Updated to Effective CAGR) */
-function calcSIP(p, r, y) {
-  // Use Effective Rate for CAGR matching
-  // i = (1 + annual_rate)^(1/12) - 1
-  const i = Math.pow(1 + (r / 100), 1 / 12) - 1; 
-  const n = y * 12; 
-  
-  let totalValue = 0;
-  if (r === 0) {
-      totalValue = p * n;
-  } else {
-      // Future Value of SIP formula (Annuity Due)
-      totalValue = p * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
-  }
-  
-  const totalInvested = p * n;
-  const totalProfit = totalValue - totalInvested;
-  
-  return { 
-      invested: Math.round(totalInvested), 
-      profit: Math.round(totalProfit), 
-      total: Math.round(totalValue), 
-      n 
-  };
-}
-
-/* Growth Table Engine (Updated to match calcSIP) */
-function calcSIPGrowth(p, r, y) {
-  const i = Math.pow(1 + (r / 100), 1 / 12) - 1; // Match effective rate logic
-  let yearlyData = [];
-  
-  for (let year = 1; year <= y; year++) {
-      const n = year * 12;
-      let yearTotal = p * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
-      let yearInvested = p * n;
-      
-      yearlyData.push({
-          year: year,
-          invested: Math.round(yearInvested),
-          profit: Math.round(yearTotal - yearInvested),
-          total: Math.round(yearTotal)
-      });
-  }
-  return yearlyData;
-}
 
 /* Sync Logic: Input <--> Slider */
 function updateFill(id) {
   const sl = document.getElementById('sl-'+id);
+  if(!sl) return;
   const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
   const el = document.getElementById('fill-'+id);
   if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
@@ -1914,20 +1024,18 @@ function syncFromSlider(id) {
   const v = parseFloat(document.getElementById('sl-'+id).value);
   document.getElementById('inp-'+id).value = v; 
   updateFill(id);
-  updateAll();
+  fetchSipData(); // Call API instead of updateAll()
 }
 
 function syncFromInput(id) {
   const v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 
-  
   const sl = document.getElementById('sl-'+id);
   if (v < parseFloat(sl.min)) sl.value = sl.min;
   else if (v > parseFloat(sl.max)) sl.value = sl.max;
   else sl.value = v;
-  
   updateFill(id);
-  updateAll();
+  fetchSipData(); // Call API
 }
 
 /* Chart Colors & Base Configuration */
@@ -1941,51 +1049,20 @@ function getChartOpts(isBar) {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: {
-      mode: 'index',
-      intersect: false,
-    },
+    interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { display: false },
       tooltip: {
-        callbacks: { 
-          label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) 
-        },
-        backgroundColor: 'rgba(0,0,0,.82)',
-        padding: 10,
-        cornerRadius: 8
+        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) },
+        backgroundColor: 'rgba(0,0,0,.82)', padding: 10, cornerRadius: 8
       }
     },
     animation: { duration: 400 },
     scales: {
-      x: {
-        grid: { display: false },
-        ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 },
-        stacked: true // Always stack for SIP
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: 'rgba(128,128,128,.1)' },
-        ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) },
-        stacked: true // Always stack for SIP to show total wealth
-      }
+      x: { grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 }, stacked: isBar },
+      y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }, stacked: isBar }
     }
   };
-}
-
-function chartData() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  const growth = calcSIPGrowth(p, r, y);
-  
-  const labels = ['0y'], invested = [0], profit = [0];
-  growth.forEach(d => {
-    labels.push(d.year + 'y');
-    invested.push(d.invested);
-    profit.push(d.profit);
-  });
-  return { labels, invested, profit };
 }
 
 function getDatasets(d, isBar) {
@@ -1995,163 +1072,198 @@ function getDatasets(d, isBar) {
       { type: 'bar', label: 'Est. Returns',    data: d.profit,   backgroundColor: C.proBg, borderRadius: {topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0} }
     ];
   } else {
-    // For line chart, we show actual wealth accumulation line
-    let totalArr = d.invested.map((val, idx) => val + d.profit[idx]);
     return [
-      { type: 'line', label: 'Total Value', data: totalArr, borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.35, pointRadius: 2 },
+      // FIXED: Label explicitly set for Wealth Trend line chart
+      { type: 'line', label: 'Total Wealth', data: d.total, borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.35, pointRadius: 2 },
       { type: 'line', label: 'Invested Amount', data: d.invested, borderColor: C.inv, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, borderDash: [5, 5] }
     ];
   }
 }
 
-function initCharts() {
-  const d = chartData();
-  mainChart = new Chart(document.getElementById('mainChart'), {
-    type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: getDatasets(d, true)
-    },
-    options: getChartOpts(true)
+function updateCharts(data) {
+  const labels = ['0y'];
+  const invested = [0];
+  const profit = [0];
+  const total = [0];
+
+  data.yearly_data.forEach(d => {
+    labels.push(d.year + 'y');
+    invested.push(d.invested);
+    profit.push(d.profit);
+    total.push(d.total);
   });
 
-  donutChart = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Invested', 'Returns'],
-      datasets: [{ data: [1, 0], backgroundColor: [C.inv, C.pro], borderWidth: 0, hoverOffset: 5 }]
-    },
-    options: {
-      cutout: '72%',
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } }
-      },
-      animation: { duration: 700 }
-    }
-  });
+  const d = { labels, invested, profit, total };
+
+  if (!mainChart) {
+    mainChart = new Chart(document.getElementById('mainChart'), {
+      type: mode,
+      data: { labels: d.labels, datasets: getDatasets(d, mode === 'bar') },
+      options: getChartOpts(mode === 'bar')
+    });
+  } else {
+    mainChart.data.labels = d.labels;
+    mainChart.data.datasets = getDatasets(d, mode === 'bar');
+    mainChart.options = getChartOpts(mode === 'bar'); // Updates stacked logic
+    mainChart.update();
+  }
+
+  if (!donutChart) {
+    donutChart = new Chart(document.getElementById('donutChart'), {
+      type: 'doughnut',
+      data: { labels: ['Invested', 'Returns'], datasets: [{ data: [data.invested, data.profit], backgroundColor: [C.inv, C.pro], borderWidth: 0 }] },
+      options: { cutout: '72%', responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } } }
+    });
+  } else {
+    donutChart.data.datasets[0].data = [data.invested, data.profit];
+    donutChart.update();
+  }
 }
 
 function switchTab(m, btn) {
   mode = m;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // Remove active class from chart tabs only
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-
-  const d = chartData();
-  if (mainChart) mainChart.destroy();
-
-  let opts = getChartOpts(m === 'bar');
-  if(m !== 'bar') {
-      opts.scales.x.stacked = false;
-      opts.scales.y.stacked = false;
+  
+  // FIXED: Update the HTML legend dynamically based on the selected mode
+  const legendEl = document.querySelector('.chart-legend');
+  if (m === 'bar') {
+    legendEl.innerHTML = `
+      <span><span class="dot" style="background:#2563eb;"></span>Invested Amount</span>
+      <span><span class="dot" style="background:#d97706;"></span>Est. Returns</span>
+    `;
+  } else {
+    legendEl.innerHTML = `
+      <span><span class="dot" style="background:#059669;"></span>Total Wealth</span>
+      <span><span class="dot" style="border: 2px dashed #2563eb; background:transparent;"></span>Invested Amount</span>
+    `;
   }
 
-  mainChart = new Chart(document.getElementById('mainChart'), {
-    type: (m === 'bar') ? 'bar' : 'line',
-    data: {
-      labels: d.labels,
-      datasets: getDatasets(d, m === 'bar')
-    },
-    options: opts
-  });
+  if(apiDataCache) updateCharts(apiDataCache);
 }
 
-/* table */
-function buildTable(p, r, y) {
+/* Table Toggle Logic */
+function setTableMode(selectedMode) {
+  tableMode = selectedMode;
+  
+  // Update button styles
+  document.getElementById('btn-yearly').classList.remove('active');
+  document.getElementById('btn-monthly').classList.remove('active');
+  document.getElementById('btn-' + selectedMode).classList.add('active');
+  
+  // Rebuild the table with the selected data
+  if(apiDataCache) buildTable(apiDataCache);
+}
+
+function buildTable(data) {
   const tb = document.getElementById('yearTable');
   tb.innerHTML = '';
-  const growth = calcSIPGrowth(p, r, y);
   
-  growth.forEach(d => {
+  const records = (tableMode === 'yearly') ? data.yearly_data : data.monthly_data;
+  const labelPrefix = (tableMode === 'yearly') ? 'Year ' : 'Month ';
+
+  records.forEach(d => {
+    const period = (tableMode === 'yearly') ? d.year : d.month;
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${d.year}</td><td>${fmt(d.invested)}</td><td class="gold">+${fmt(d.profit)}</td><td class="hide-xs" style="color:var(--accent); font-weight:600;">${fmt(d.total)}</td>`;
+    tr.innerHTML = `
+      <td>${labelPrefix}${period}</td>
+      <td>${fmt(d.invested)}</td>
+      <td class="gold">+${fmt(d.profit)}</td>
+      <td class="hide-xs" style="color:var(--accent); font-weight:600;">${fmt(d.total)}</td>
+    `;
     tb.appendChild(tr);
   });
 }
 
-/* master update */
-function updateAll() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  
-  const { invested, profit, total, n } = calcSIP(p, r, y);
+/* API FETCH ENGINE (Debounced) */
+let fetchTimeout;
+function fetchSipData() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(() => {
+    
+    // Get values (If step_up or inflation inputs don't exist yet, they default to 0)
+    const p = +document.getElementById('inp-amount').value || 0;
+    const r = +document.getElementById('inp-rate').value || 0;
+    const y = +document.getElementById('inp-time').value || 0;
+    
+    const stepUpEl = document.getElementById('inp-stepup');
+    const step_up = stepUpEl ? +stepUpEl.value : 0;
+    
+    const inflEl = document.getElementById('inp-inflation');
+    const inflation = inflEl ? +inflEl.value : 0;
 
-  document.getElementById('m-total').textContent    = fmt(total);
-  document.getElementById('m-invested').textContent = fmt(invested);
-  document.getElementById('m-profit').textContent   = fmt(profit);
-  document.getElementById('m-months').textContent   = 'Over ' + n + ' months';
-  
-  const profitPct = invested > 0 ? ((profit/total)*100).toFixed(1) : 0;
-  document.getElementById('m-profitpct').textContent = profitPct + '% wealth gain';
-  
-  // Wealth Multiplier Logic
-  let multText = "";
-  if (invested > 0) {
-      let times = (total / invested).toFixed(1);
-      multText = `Wealth grew ${times}x`;
-  }
-  document.getElementById('m-wealth-multiplier').textContent = multText;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-  document.getElementById('dl-invested').textContent = fmt(invested);
-  document.getElementById('dl-profit').textContent  = fmt(profit);
-  document.getElementById('dl-total').textContent   = fmt(total);
+    fetch('/calculators/sip', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({ amount: p, rate: r, time: y, step_up: step_up, inflation: inflation })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        apiDataCache = data;
+        
+        // Update DOM numbers
+        document.getElementById('m-total').textContent    = fmt(data.total);
+        document.getElementById('m-invested').textContent = fmt(data.invested);
+        document.getElementById('m-profit').textContent   = fmt(data.profit);
+        
+        let months = y * 12;
+        document.getElementById('m-months').textContent   = 'Over ' + months + ' months';
+        
+        const profitPct = data.invested > 0 ? ((data.profit / data.invested) * 100).toFixed(1) : 0;
+        document.getElementById('m-profitpct').textContent = profitPct + '% wealth gain';
+        
+        let multText = "";
+        if (data.invested > 0) {
+            let times = (data.total / data.invested).toFixed(1);
+            multText = `Wealth grew ${times}x`;
+        }
+        document.getElementById('m-wealth-multiplier').textContent = multText;
 
-  if (donutChart) { 
-    donutChart.data.datasets[0].data = [invested, profit]; 
-    donutChart.update(); 
-  }
+        document.getElementById('dl-invested').textContent = fmt(data.invested);
+        document.getElementById('dl-profit').textContent  = fmt(data.profit);
+        document.getElementById('dl-total').textContent   = fmt(data.total);
+        // Update Advanced Options Data
+        const taxEl = document.getElementById('dl-tax');
+        if(taxEl) taxEl.textContent = "- " + fmt(data.tax);
+        
+        const netEl = document.getElementById('dl-net');
+        if(netEl) netEl.textContent = fmt(data.net_in_hand);
 
-  const d = chartData();
-  if (mainChart) {
-    mainChart.data.labels = d.labels;
-    mainChart.data.datasets = getDatasets(d, mode === 'bar');
-    mainChart.update();
-  }
-  buildTable(p, r, y);
-}
+        const realEl = document.getElementById('m-real-value');
+        if(realEl) {
+           if (inflation > 0) {
+               realEl.style.display = 'block';
+               realEl.textContent = `Today's Buying Power: ${fmt(data.real_value)}`;
+           } else {
+               realEl.style.display = 'none';
+           }
+        }
+        // Update Charts & Table
+        updateCharts(data);
+        buildTable(data);
 
-/* presets */
-function applyTip(p, r, y) {
-  document.getElementById('sl-amount').value = p;
-  document.getElementById('sl-rate').value   = r;
-  document.getElementById('sl-time').value   = y;
-  ['amount','rate','time'].forEach(syncFromSlider);
-}
-
-/* dark mode */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}
-
-/* mobile drawer */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
-}
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
+      }
+    });
+  }, 100); // 100ms debounce prevents lagging the server when sliding
 }
 
 /* init */
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
+    document.getElementById('themeIcon')?.classList.add('bi-sun-fill');
   }
   ['amount','rate','time'].forEach(updateFill);
-  initCharts();
-  updateAll();
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
-  });
+  fetchSipData(); // Initial load fetches from API
+  updateFill('stepup');
+  updateFill('inflation');
 });
 </script>
-</body>
-</html>
 {% endblock %} 
