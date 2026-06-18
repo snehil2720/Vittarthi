@@ -6,7 +6,7 @@
 {% block extra_meta %}{% endblock %}
 <title>{% block title %}{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}{% endblock %}">
-<meta name="google-site-verification" content="QZOTJkuY-G8PrNopvPVlE-IAaZx5VRK3aES4PJzeqPg" />
+<!-- <meta name="google-site-verification" content="QZOTJkuY-G8PrNopvPVlE-IAaZx5VRK3aES4PJzeqPg" /> -->
 <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY1GD86KVS"></script> -->
 <!-- <script>
   window.dataLayer = window.dataLayer || [];
@@ -210,7 +210,8 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script> 
-<script>
+<!-- please uncomment when uploading to server  -->
+<!-- <script>
   // Delay Google Analytics by 4 seconds so it doesn't block the mobile CPU
   setTimeout(function(){
     var gtagScript = document.createElement('script');
@@ -223,6 +224,6 @@ if ('serviceWorker' in navigator) {
     gtag('js', new Date());
     gtag('config', 'G-KY1GD86KVS');
   }, 4000);
-</script>
+</script> -->
 </body>
 </html>
