@@ -127,5 +127,8 @@ urlpatterns = [
 
     path('compare/nps-vs-mf', views.page_nps_vs_mf, name='page_nps_vs_mf'),
     path('api/compare/nps-vs-mf', views.api_nps_vs_mf, name='api_nps_vs_mf'),
+
+    path('llms.txt', views.llms_txt_view, name='llms_txt'),
+    path('llms-full.txt', views.llms_full_txt_view, name='llms_full_txt'),
 ]
 

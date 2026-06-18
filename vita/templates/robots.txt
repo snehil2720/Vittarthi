@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://vittarthi.com/sitemap.xml
+Sitemap: https://vittarthi.com/llms.txt
+Sitemap: https://vittarthi.com/llms-full.txt

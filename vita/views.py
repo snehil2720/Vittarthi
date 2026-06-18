@@ -1827,3 +1827,77 @@ def page_ppf_vs_elss(request):
 def page_homeloan_vs_rent(request):
     return render(request, 'compare/homeloan_vs_rent.html')
 
+
+def generate_llms_content(is_full=False):
+    # 1. Base Structure aur Calculators
+    content = """# Vittarthi
+
+> Vittarthi is a free platform offering practical financial calculators for SIP, EMI, and Retirement planning, alongside a comprehensive Knowledge Hub featuring the latest finance blogs, market news, and case studies.
+
+## Calculators
+These tools help users estimate investments, loans, EMIs, and retirement savings.
+- [SIP Calculator](https://vittarthi.com/calculators/sip)
+- [PPF Calculator](https://vittarthi.com/calculators/ppf)
+- [NPS Calculator](https://vittarthi.com/calculators/nps)
+- [EMI Calculator](https://vittarthi.com/calculators/emi)
+- [Loan Eligibility](https://vittarthi.com/calculators/loan-eligibility)
+- [Salary Calculator](https://vittarthi.com/calculators/salary)
+- [PF Calculator](https://vittarthi.com/calculators/pf)
+- [Retirement Calculator](https://vittarthi.com/calculators/retirement)
+- [Car loan Calculator](https://vittarthi.com/calculators/car-loan)
+- [Home Loan Calculator](https://vittarthi.com/calculators/home-loan)
+- [Personal Loan Calculator](https://vittarthi.com/calculators/personal-loan)
+
+## Knowledge Hub
+Explore blogs, market news, and practical case studies to improve financial understanding.
+- [Knowledge Hub Home](https://vittarthi.com/resources)
+
+"""
+
+    # 2. Database se Articles query karna (Descending order - newest first)
+    base_qs = Blog.objects.select_related('primary_category').filter(status = 'published').order_by('-created_at')
+    blogs_qs = base_qs.filter(primary_category__slug='blogs')
+    news_qs = base_qs.filter(primary_category__slug='news')
+    case_studies_qs = base_qs.filter(primary_category__slug='case-study')
+    # Agar 'llms.txt' (short) hai, toh sirf top 100 fetch karein
+    #print(blogs_qs)
+    if not is_full:
+        blogs_qs = blogs_qs[:100]
+        news_qs = news_qs[:100]
+        case_studies_qs = case_studies_qs[:100]
+
+    # --- BLOGS ---
+    content += "### Blogs\nDetailed articles and guides on financial planning and mutual funds.\n"
+    for item in blogs_qs:
+        url = f"https://vittarthi.com/resources/{item.primary_category.slug}/{item.slug}"
+        content += f"- [{item.title}]({url})\n"
+    
+    # --- NEWS ---
+    content += "\n### News\nLatest market updates and financial news.\n"
+    for item in news_qs:
+        url = f"https://vittarthi.com/resources/{item.primary_category.slug}/{item.slug}"
+        content += f"- [{item.title}]({url})\n"
+        
+    # --- CASE STUDIES ---
+    content += "\n### Case Studies\nReal-world scenarios and insights on financial tools and investments.\n"
+    for item in case_studies_qs:
+        url = f"https://vittarthi.com/resources/{item.primary_category.slug}/{item.slug}"
+        content += f"- [{item.title}]({url})\n"
+
+    # 3. Footer / Other Pages
+    content += """
+## Other Pages
+- [About Us](https://vittarthi.com/about-us): Learn more about Vittarthi.
+- [Contact](https://vittarthi.com/contact): Get in touch with us.
+"""
+    return content
+
+# View for llms.txt (Limited version)
+def llms_txt_view(request):
+    content = generate_llms_content(is_full=False)
+    return HttpResponse(content, content_type="text/plain; charset=utf-8")
+
+# View for llms-full.txt (Unlimited version)
+def llms_full_txt_view(request):
+    content = generate_llms_content(is_full=True)
+    return HttpResponse(content, content_type="text/plain; charset=utf-8")
