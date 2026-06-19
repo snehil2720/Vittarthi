@@ -11,6 +11,47 @@ Calculate your SIP investment returns with the Vittarthi SIP Calculator. Estimat
 {% block extra_head %}
 <meta name="csrf-token" content="{{ csrf_token }}">
 <link rel="stylesheet" href="{% static 'css/sip.css' %}">
+<!-- FAQ SCHEMA FOR GOOGLE SEARCH RANKING -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Step-Up SIP?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Step-Up SIP (or Top-Up SIP) allows you to increase your monthly investment amount by a fixed percentage every year. This helps you align your investments with your annual salary increments, drastically increasing your final wealth through compounding."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is Tax calculated on SIP returns?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For Equity Mutual Funds, Long Term Capital Gains (LTCG) tax is applied. Currently, profits up to ₹1,25,000 per financial year are completely tax-free. Any profit above ₹1,25,000 is taxed at a flat rate of 12.5%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Inflation Adjusted Return (Purchasing Power)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Inflation reduces the buying power of your money over time. For example, at 6% inflation, things that cost ₹1 Lakh today will cost over ₹3 Lakhs in 20 years. An inflation-adjusted return shows you the 'Real Value' of your future wealth in today's money."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which is better: SIP or Lumpsum?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SIP is best for regular salaried earners as it automates discipline and averages out market volatility (Rupee Cost Averaging). Lumpsum is better when you have a sudden windfall of cash and the stock market has recently crashed or corrected significantly."
+      }
+    }
+  ]
+}
+</script>
 {% endblock %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
