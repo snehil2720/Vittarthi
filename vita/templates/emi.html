@@ -1,886 +1,30 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
-EMI Calculator | Vittarthi
+EMI Calculator with Prepayment 2026 | Home, Car & Personal Loan EMI Calculator
 {% endblock %}
 
 {% block meta_description %}
-Use the Vittarthi EMI Calculator to calculate monthly loan EMI, interest payable, and total repayment amount for home, car, personal, and other loans instantly.
+Calculate Home Loan, Car Loan & Personal Loan EMI instantly. Check interest payable, amortization schedule, prepayment savings, loan tenure reduction, and total loan cost with Vittarthi's free EMI Calculator.
 {% endblock %}
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/emi.css' %}">
+<meta property="og:title" content="EMI Calculator with Prepayment | Save Interest & Reduce Loan Tenure">
+<meta property="og:description" content="Calculate EMIs, view amortization schedules, compare loan scenarios, and discover how prepayments can save lakhs in interest.">
+<meta name="twitter:title" content="EMI Calculator with Prepayment | Vittarthi">
+<meta name="twitter:description" content="Calculate Home, Car & Personal Loan EMIs instantly. Analyze prepayment benefits and reduce your loan burden.">
+{% endblock %}
 
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
-/* ═══════════ RESET ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
-:root {
-  --ink:        #071828;
-  --ink-2:      #2a4a62;
-  --ink-3:      #6a8aa2;
-  --paper:      #f4faff;
-  --surface:    #ffffff;
-  --s2:         #e8f4fd;
-  --s3:         #d0e9f8;
-  --sky:        #0284c7;
-  --sky-2:      #0ea5e9;
-  --sky-lt:     #e0f2fe;
-  --sky-md:     #bae6fd;
-  --green:      #1a6b4a;
-  --green-lt:   #e6f2ec;
-  --green-md:   #c8e6d6;
-  --gold:       #b45309;
-  --gold-lt:    #fffbeb;
-  --gold-md:    #fde68a;
-  --rose:       #a0363a;
-  --rose-lt:    #fdeaeb;
-  --violet:     #6d28d9;
-  --violet-lt:  #ede9fe;
-  --border:     rgba(7,24,40,0.09);
-  --shadow:     0 4px 20px rgba(7,24,40,0.07);
-  --shadow-lg:  0 12px 48px rgba(7,24,40,0.11);
-  --r:          14px;
-  --r-sm:       8px;
-  --pad:        clamp(1.25rem,5vw,2.5rem);
-  --max:        1200px;
-}
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed;
-  top:var(--nav-h); left:0; right:0; bottom:0;
-  z-index:190;
-}
-.drawer.open { display:block; z-index: 9999;}
-.drawer-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,.45);
-}
-.drawer-panel {
-  position:absolute; top:0; right:0;
-  width:min(260px, 80vw); height:100%;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:1.25rem 1rem;
-  box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem;
-  overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500;
-  padding:.55rem .85rem; border-radius:8px;
-  transition:all .2s;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page {
-  max-width:1340px; margin:0 auto;
-  padding:0 var(--pad) 4rem;
-}
-
-/* ═══════════ HERO ═══════════ */
-.hero {
-  text-align:center;
-  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
-  animation:fadeUp .5s ease both;
-}
-.hero-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-  background:var(--accent-lt);
-  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 5vw, 3.4rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:.95rem; max-width:440px; margin:0 auto; }
-
-/* ═══════════ METRICS ROW ═══════════ */
-.metrics-row {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(.6rem,2vw,1rem);
-  margin-bottom:clamp(1rem,2.5vw,1.5rem);
-  animation:fadeUp .5s .15s ease both;
-}
-.metric {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r-sm);
-  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
-  box-shadow:var(--shadow);
-  position:relative; overflow:hidden;
-  transition:transform .2s, background .3s;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:3px; border-radius:3px 3px 0 0;
-}
-.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
-.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
-.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
-.metric:hover { transform:translateY(-2px); }
-.metric-lbl {
-  font-size:.68rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
-}
-.metric-val {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.2rem,3vw,1.6rem);
-  line-height:1; margin-bottom:3px;
-}
-.metric-sub { font-size:.68rem; color:var(--muted); }
-.metric.total .metric-val  { color:var(--accent); }
-.metric.profit .metric-val { color:var(--gold); }
-
-/* ═══════════ 3-COL GRID ═══════════ */
-.main-grid {
-  display:grid;
-  grid-template-columns:320px 1fr 200px;
-  grid-template-areas:"inputs charts sidebar";
-  gap:clamp(1rem,2vw,1.5rem);
-  align-items:start;
-}
-.inputs-col { grid-area:inputs; }
-.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
-.sidebar-col { grid-area:sidebar; }
-
-/* ═══════════ CARD ═══════════ */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:clamp(1rem,3vw,1.5rem);
-  box-shadow:var(--shadow);
-  transition:background .3s, border-color .3s;
-}
-.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
-.card-title {
-  font-size:.72rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:1.1rem;
-}
-
-/* ═══════════ SLIDERS & INPUTS ═══════════ */
-.field { margin-bottom:1.25rem; }
-.field:last-child { margin-bottom:0; }
-.field-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.5rem;
-}
-.field-lbl  { font-size:.85rem; color:var(--muted); }
-
-input.field-val  {
-  font-size:.92rem; font-weight:600; color:var(--text);
-  background:var(--surface2); padding:4px 10px; border-radius:6px;
-  width:110px; text-align:right; border:1px solid transparent;
-  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
-}
-input.field-val:focus {
-  background: var(--surface);
-  border-color: var(--accent);
-}
-input.field-val::-webkit-outer-spin-button,
-input.field-val::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-input.field-val[type=number] {
-  -moz-appearance: textfield;
-}
-
-.range-wrap { position:relative; }
-.range-fill {
-  position:absolute; top:50%; transform:translateY(-50%);
-  height:5px; border-radius:100px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-  pointer-events:none; transition:width .08s;
-}
-input[type=range] {
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:5px;
-  background:var(--surface2); border-radius:100px;
-  outline:none; cursor:pointer; display:block;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:22px; height:22px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-lt);
-  cursor:pointer; transition:transform .18s;
-}
-input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
-input[type=range]::-moz-range-thumb {
-  width:22px; height:22px; border-radius:50%;
-  border:none; background:var(--accent); cursor:pointer;
-}
-.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
-.range-hint  { font-size:.66rem; color:var(--muted); }
-
-/* ═══════════ DONUT ═══════════ */
-.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
-.donut-canvas-wrap { position:relative; flex-shrink:0; }
-.donut-canvas-wrap canvas { display:block; }
-.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-.leg-row { display:flex; align-items:center; gap:8px; }
-.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
-.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
-.mult-box {
-  margin-top:8px; padding-top:10px;
-  border-top:1px solid var(--border);
-}
-.mult-lbl { font-size:.68rem; color:var(--muted); margin-bottom:2px; }
-.mult-val { font-size:1.15rem; font-weight:600; color:var(--text); }
-
-/* ═══════════ CHART TABS ═══════════ */
-.chart-hdr {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:.85rem;
-  flex-wrap:wrap; gap:.5rem;
-}
-.tab-row { display:flex; gap:5px; }
-.tab-btn {
-  background:var(--surface2); border:none; border-radius:7px;
-  padding:4px 14px; font-size:.78rem; font-weight:500;
-  color:var(--muted); cursor:pointer; font-family:inherit;
-  transition:all .2s;
-}
-.tab-btn.active { background:var(--accent); color:#fff; }
-.chart-box { position:relative; width:100%; }
-.chart-legend {
-  display:flex; gap:14px; margin-bottom:.6rem; flex-wrap:wrap;
-}
-.chart-legend span {
-  display:flex; align-items:center; gap:5px;
-  font-size:.72rem; color:var(--muted);
-}
-.chart-legend .dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-
-/* ═══════════ TABLE ═══════════ */
-.tbl-scroll {
-  max-height:260px; overflow-y:auto;
-  border-radius:8px; border:1px solid var(--border);
-}
-.tbl-scroll::-webkit-scrollbar { width:4px; }
-.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-table { width:100%; border-collapse:collapse; font-size:.78rem; }
-thead th {
-  padding:9px 12px; text-align:right;
-  font-size:.65rem; font-weight:600; letter-spacing:.5px;
-  text-transform:uppercase; color:var(--muted);
-  background:var(--surface2);
-  position:sticky; top:0; z-index:1;
-  border-bottom:1px solid var(--border);
-}
-thead th:first-child { text-align:left; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--surface2); }
-tbody td { padding:8px 12px; text-align:right; color:var(--text); }
-tbody td:first-child { text-align:left; font-weight:500; }
-td.green { color:var(--accent); font-weight:600; }
-td.gold { color:var(--gold); font-weight:600; }
-
-/* ═══════════ TIPS ═══════════ */
-.tips-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
-}
-.tip {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:.9rem 1rem;
-  cursor:pointer; transition:all .2s;
-}
-.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
-.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
-.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
-
-/* ═══════════ SIDEBAR ═══════════ */
-.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
-.sb-links { display:flex; flex-direction:column; gap:3px; }
-.sb-links a {
-  display:flex; align-items:center; gap:7px;
-  text-decoration:none; color:var(--muted);
-  font-size:.8rem; padding:7px 9px; border-radius:8px;
-  border:1px solid transparent; transition:all .18s;
-}
-.sb-links a i { font-size:13px; flex-shrink:0; }
-.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
-.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
-.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
-.qf { padding-top:10px; border-top:1px solid var(--border); }
-.qf:first-child { padding-top:0; border-top:none; }
-.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
-.qf-val { font-weight:600; color:var(--text); }
-.qf-val.accent { color:var(--accent); }
-
-/* ═══════════ SEO CONTENT AREA ═══════════ */
-.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
-.sec-inner{max-width:var(--max);margin:0 auto;}
-.label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--sky);background:var(--sky-lt);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.sec-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
-  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
-}
-.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
-.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
-.sec-hdr.center{text-align:center;}
-.sec-hdr.center .sec-sub{margin:0 auto;}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.fu{opacity:0;}
-.fu.on{animation:fadeUp .6s ease both;}
-
-/* Pills */
-.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
-.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:100px;}
-.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
-.pill-s{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--sky-lt);color:var(--sky);padding:2px 8px;border-radius:100px;}
-.pill-v{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--violet-lt);color:var(--violet);padding:2px 8px;border-radius:100px;}
-
-/* ════════════════════════════════════
-   1. HOW IT WORKS — 3 steps
-════════════════════════════════════ */
-.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
-.steps-grid::before{
-  content:'';position:absolute;top:32px;
-  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
-  height:2px;
-  background:repeating-linear-gradient(90deg,var(--sky-md) 0,var(--sky-md) 8px,transparent 8px,transparent 16px);
-  pointer-events:none;
-}
-.step{text-align:center;padding:.5rem;}
-.step-num{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--sky);color:#fff;
-  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--sky-lt);
-  position:relative;z-index:1;
-}
-.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
-.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   2. EMI ANATOMY HERO
-════════════════════════════════════ */
-.hero-sec{
-  background:var(--sky);
-  padding:clamp(3rem,7vw,5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.hero-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:22px 22px;pointer-events:none;
-}
-.hero-inner{
-  max-width:var(--max);margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:clamp(2rem,5vw,5rem);align-items:center;
-  position:relative;z-index:1;
-}
-.hero-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
-  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
-}
-.hero-title em{font-style:italic;color:#bae6fd;}
-.hero-sub{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:1.5rem;}
-.hero-callout{
-  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
-  border-radius:var(--r-sm);padding:1rem 1.25rem;
-  display:flex;align-items:center;gap:.85rem;
-}
-.hero-callout-num{
-  font-family:'Playfair Display',serif;
-  font-size:2rem;font-weight:700;color:#bae6fd;line-height:1;flex-shrink:0;
-}
-.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.84);line-height:1.6;}
-
-/* EMI formula card */
-.emi-formula-card{
-  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);
-  border-radius:var(--r);padding:1.5rem;
-}
-.emi-formula-title{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;}
-.emi-formula-eq{
-  font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;
-  color:#fff;line-height:1.6;text-align:center;margin-bottom:1.1rem;
-  background:rgba(255,255,255,.08);border-radius:var(--r-sm);padding:.85rem 1rem;
-}
-.emi-formula-eq span{color:#bae6fd;}
-.emi-parts{display:flex;flex-direction:column;gap:.65rem;}
-.emi-part{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
-  border-radius:var(--r-sm);padding:.85rem 1.1rem;
-  display:flex;align-items:flex-start;gap:.85rem;transition:background .2s;
-}
-.emi-part:hover{background:rgba(255,255,255,.18);}
-.emi-part-var{
-  font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;
-  color:#bae6fd;flex-shrink:0;width:24px;text-align:center;line-height:1;
-}
-.emi-part-title{font-size:.84rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
-.emi-part-sub{font-size:.73rem;color:rgba(255,255,255,.74);line-height:1.5;}
-
-/* ════════════════════════════════════
-   3. AMORTIZATION EXPLAINED
-════════════════════════════════════ */
-.amort-sec{background:var(--paper);}
-.amort-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.amort-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.amort-content strong{color:var(--ink);}
-.amort-insight{background:var(--sky);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;}
-.amort-insight-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
-.amort-rows{display:flex;flex-direction:column;gap:.6rem;}
-.amort-row{
-  background:rgba(255,255,255,.13);border-radius:var(--r-sm);
-  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-}
-.amort-row-lbl{font-size:.78rem;color:rgba(255,255,255,.84);}
-.amort-row-val{font-size:.82rem;font-weight:600;}
-.amort-row-val.good{color:#a7f3d0;}
-.amort-row-val.bad{color:#fca5a5;}
-.amort-row-val.plain{color:#fff;}
-
-/* Amortization visual */
-.amort-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.amort-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
-.amort-timeline{display:flex;flex-direction:column;gap:.5rem;}
-.amort-year-row{display:flex;align-items:center;gap:.75rem;}
-.amort-year-label{font-size:.72rem;color:var(--ink-3);width:48px;flex-shrink:0;font-weight:500;}
-.amort-bar-wrap{flex:1;display:flex;height:18px;border-radius:100px;overflow:hidden;background:var(--s2);}
-.amort-bar-interest{background:linear-gradient(90deg,var(--rose),#fca5a5);height:100%;}
-.amort-bar-principal{background:linear-gradient(90deg,var(--sky),#7dd3fc);height:100%;}
-.amort-year-total{font-size:.7rem;color:var(--ink-3);width:52px;text-align:right;flex-shrink:0;}
-.amort-legend{display:flex;gap:1.25rem;margin-top:.85rem;flex-wrap:wrap;}
-.amort-legend-item{display:flex;align-items:center;gap:.5rem;font-size:.74rem;color:var(--ink-2);}
-.amort-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
-.amort-note{
-  background:var(--sky-lt);border:1px solid var(--sky-md);
-  border-radius:var(--r-sm);padding:.75rem .9rem;margin-top:.85rem;
-  font-size:.74rem;color:var(--sky);line-height:1.6;
-}
-
-/* ════════════════════════════════════
-   4. LOAN TYPE RATE COMPARISON
-════════════════════════════════════ */
-.rates-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.rates-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);    overflow-x: scroll;}
-.rates-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-.rates-table thead th{
-  padding:.75rem 1rem;text-align:left;
-  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
-}
-.rates-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.rates-table tbody tr:last-child{border-bottom:none;}
-.rates-table tbody tr:hover{background:var(--s2);}
-.rates-table td{padding:.85rem 1rem;color:var(--ink-2);vertical-align:middle;}
-.rates-table td:first-child{font-weight:600;color:var(--ink);}
-.rate-bar-cell{min-width:140px;}
-.rate-bar-wrap{display:flex;align-items:center;gap:.65rem;}
-.rate-bar-track{flex:1;height:6px;background:var(--s3);border-radius:100px;overflow:hidden;}
-.rate-bar-fill{height:100%;border-radius:100px;}
-.rate-bar-pct{font-size:.72rem;font-weight:600;color:var(--ink-2);width:60px;flex-shrink:0;}
-
-/* ════════════════════════════════════
-   5. EMI vs TENURE TRADEOFF
-════════════════════════════════════ */
-.tradeoff-sec{background:var(--paper);}
-.tradeoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.tradeoff-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.tradeoff-content strong{color:var(--ink);}
-
-.tradeoff-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.tradeoff-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
-.scenario-rows{display:flex;flex-direction:column;gap:.75rem;}
-.scenario-row{
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  border:1px solid var(--border);background:var(--s2);
-  transition:border-color .2s,background .2s;
-}
-.scenario-row:hover{border-color:var(--sky-md);background:var(--sky-lt);}
-.scenario-row.best{border-color:var(--green-md);background:var(--green-lt);}
-.scenario-row.worst{border-color:rgba(160,54,58,.2);background:var(--rose-lt);}
-.scenario-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem;}
-.scenario-tenure{font-size:.82rem;font-weight:600;color:var(--ink);}
-.scenario-emi{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
-.scenario-row.best .scenario-emi{color:var(--green);}
-.scenario-row.worst .scenario-emi{color:var(--rose);}
-.scenario-emi{color:var(--sky);}
-.scenario-details{display:flex;gap:1rem;flex-wrap:wrap;}
-.scenario-detail{font-size:.73rem;color:var(--ink-2);}
-.scenario-detail span{font-weight:600;color:var(--ink);}
-.tradeoff-rule{
-  background:var(--sky);border-radius:var(--r-sm);padding:1rem 1.25rem;
-  font-size:.78rem;color:rgba(255,255,255,.9);line-height:1.6;margin-top:1rem;
-  display:flex;align-items:flex-start;gap:.65rem;
-}
-.tradeoff-rule i{color:#bae6fd;font-size:15px;flex-shrink:0;margin-top:1px;}
-
-/* ════════════════════════════════════
-   6. PREPAYMENT POWER
-════════════════════════════════════ */
-.prepay-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.prepay-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.prepay-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.prepay-content strong{color:var(--ink);}
-
-.prepay-visual{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.prepay-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
-.prepay-cases{display:flex;flex-direction:column;gap:.75rem;}
-.prepay-case{
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  border:1px solid var(--border);
-}
-.prepay-case.base{background:var(--s2);}
-.prepay-case.good{background:var(--green-lt);border-color:var(--green-md);}
-.prepay-case.better{background:var(--sky-lt);border-color:var(--sky-md);}
-.prepay-case-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
-.prepay-case-label{font-size:.8rem;font-weight:600;}
-.prepay-case.base .prepay-case-label{color:var(--ink);}
-.prepay-case.good .prepay-case-label{color:var(--green);}
-.prepay-case.better .prepay-case-label{color:var(--sky);}
-.prepay-case-tag{
-  font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:100px;
-}
-.prepay-case.base .prepay-case-tag{background:var(--s3);color:var(--ink-3);}
-.prepay-case.good .prepay-case-tag{background:var(--green-md);color:var(--green);}
-.prepay-case.better .prepay-case-tag{background:var(--sky-md);color:var(--sky);}
-.prepay-stats{display:flex;gap:1rem;flex-wrap:wrap;}
-.prepay-stat{font-size:.74rem;color:var(--ink-2);}
-.prepay-stat span{font-weight:600;color:var(--ink);}
-.prepay-case.good .prepay-stat span{color:var(--green);}
-.prepay-case.better .prepay-stat span{color:var(--sky);}
-.prepay-note{
-  background:var(--sky-lt);border:1px solid var(--sky-md);
-  border-radius:var(--r-sm);padding:.75rem .9rem;margin-top:.85rem;
-  font-size:.74rem;color:var(--sky);line-height:1.6;
-}
-
-/* ════════════════════════════════════
-   7. FOIR & SAFE LIMITS
-════════════════════════════════════ */
-.foir-sec{background:var(--paper);}
-.foir-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.foir-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.foir-content strong{color:var(--ink);}
-
-.foir-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.foir-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
-.foir-meter-wrap{margin-bottom:1.25rem;}
-.foir-meter-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ink-3);margin-bottom:.5rem;}
-.foir-meter-track{height:22px;border-radius:100px;overflow:hidden;display:flex;margin-bottom:.55rem;}
-.foir-zone{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;}
-.foir-zone.safe{background:var(--green);flex:2.5;}
-.foir-zone.caution{background:var(--gold);flex:1.5;}
-.foir-zone.danger{background:var(--rose);flex:1;}
-.foir-zone-labels{display:flex;margin-bottom:1rem;}
-.foir-zone-label{font-size:.7rem;display:flex;align-items:center;gap:.35rem;}
-.foir-zone-label span.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.foir-income-rows{display:flex;flex-direction:column;gap:.5rem;}
-.foir-income-row{
-  background:var(--s2);border-radius:var(--r-sm);
-  padding:.65rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  border:1px solid var(--border);
-}
-.foir-income-row-lbl{font-size:.78rem;color:var(--ink-2);}
-.foir-income-row-val{font-size:.82rem;font-weight:600;color:var(--ink);}
-.foir-income-row.highlight{background:var(--sky-lt);border-color:var(--sky-md);}
-.foir-income-row.highlight .foir-income-row-lbl{color:var(--sky);}
-.foir-income-row.highlight .foir-income-row-val{color:var(--sky);}
-
-/* ════════════════════════════════════
-   8. STATS STRIP
-════════════════════════════════════ */
-.stats-sec{
-  background:var(--sky);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.stats-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:20px 20px;
-}
-.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
-.stat-box{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r);padding:1.25rem;text-align:center;
-}
-.stat-box-num{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
-}
-.stat-box-num span{color:#bae6fd;}
-.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
-
-/* ════════════════════════════════════
-   9. PRO TIPS — 4 cards
-════════════════════════════════════ */
-.tips-sec{background:var(--paper);}
-.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
-.tip-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.4rem;
-  display:flex;flex-direction:column;gap:.6rem;
-  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
-}
-.tip-number{
-  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;
-  color:var(--sky);opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
-}
-.tip-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-  transform:scaleX(0);transform-origin:left;transition:transform .3s;
-  background:var(--sky);
-}
-.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
-.tip-card:hover::after{transform:scaleX(1);}
-.tip-icon{
-  width:40px;height:40px;border-radius:9px;
-  background:var(--sky-lt);color:var(--sky);
-  display:flex;align-items:center;justify-content:center;font-size:16px;
-}
-.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
-.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   10. CREDIT SCORE & RATES GUIDE
-════════════════════════════════════ */
-.credit-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.credit-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.credit-list{display:flex;flex-direction:column;gap:.75rem;}
-.credit-item{
-  display:flex;align-items:flex-start;gap:.85rem;
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  transition:border-color .2s,background .2s;
-}
-.credit-item:hover{border-color:var(--sky-md);background:var(--sky-lt);}
-.credit-item-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--sky-lt);color:var(--sky);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;
-}
-.credit-item:hover .credit-item-icon{background:var(--sky-md);}
-.credit-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.credit-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
-
-.credit-score-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
-.credit-score-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
-.score-bands{display:flex;flex-direction:column;gap:.5rem;}
-.score-band{
-  display:flex;align-items:center;gap:.85rem;
-  padding:.75rem .9rem;border-radius:var(--r-sm);border:1px solid transparent;
-}
-.score-band.excellent{background:var(--green-lt);border-color:var(--green-md);}
-.score-band.good{background:var(--sky-lt);border-color:var(--sky-md);}
-.score-band.fair{background:var(--gold-lt);border-color:rgba(180,83,9,.2);}
-.score-band.poor{background:var(--rose-lt);border-color:rgba(160,54,58,.2);}
-.score-band-range{
-  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
-  width:80px;flex-shrink:0;
-}
-.score-band.excellent .score-band-range{color:var(--green);}
-.score-band.good .score-band-range{color:var(--sky);}
-.score-band.fair .score-band-range{color:var(--gold);}
-.score-band.poor .score-band-range{color:var(--rose);}
-.score-band-label{font-size:.78rem;font-weight:600;flex:1;}
-.score-band.excellent .score-band-label{color:var(--green);}
-.score-band.good .score-band-label{color:var(--sky);}
-.score-band.fair .score-band-label{color:var(--gold);}
-.score-band.poor .score-band-label{color:var(--rose);}
-.score-band-rate{font-size:.74rem;color:var(--ink-2);text-align:right;flex-shrink:0;}
-.credit-note{
-  background:var(--sky-lt);border:1px solid var(--sky-md);
-  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
-  font-size:.75rem;color:var(--sky);line-height:1.6;
-}
-.credit-note strong{color:var(--sky);}
-
-/* ════════════════════════════════════
-   11. FAQ
-════════════════════════════════════ */
-.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.faq-q{
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:1.1rem 1.25rem;cursor:pointer;
-  font-size:.88rem;font-weight:600;color:var(--ink);
-  transition:background .18s;user-select:none;
-}
-.faq-q:hover{background:var(--s2);}
-.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
-.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--sky);}
-.faq-item.open .faq-q{color:var(--sky);}
-.faq-a{
-  display:none;padding:0 1.25rem 1.1rem;
-  font-size:.8rem;color:var(--ink-2);line-height:1.75;
-  border-top:1px solid var(--border);
-}
-.faq-a p{padding-top:.9rem;}
-.faq-item.open .faq-a{display:block;}
-
-/* ════════════════════════════════════
-   12. RELATED CALCULATORS
-════════════════════════════════════ */
-.related-sec{background:var(--surface);border-top:1px solid var(--border);}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
-.related-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:center;gap:.75rem;transition:all .22s;
-}
-.related-card:hover{background:var(--sky-lt);border-color:var(--sky-md);transform:translateY(-2px);}
-.related-card-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--sky-lt);color:var(--sky);
-  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
-}
-.related-card:hover .related-card-icon{background:var(--sky-md);}
-.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
-
-/* ════════════════════════════════════
-   13. FINAL CTA
-════════════════════════════════════ */
-.final-note{
-  background:var(--ink);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  text-align:center;position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.final-note::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center top,rgba(2,132,199,.45),transparent 65%);
-  pointer-events:none;
-}
-.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
-.final-note h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
-  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
-}
-.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
-.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
-.btn-w{
-  display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--sky);
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
-}
-.btn-w:hover{opacity:.9;}
-.btn-o{
-  display:inline-flex;align-items:center;gap:6px;background:transparent;color:#fff;
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);font-size:.88rem;font-weight:500;
-  border:1.5px solid rgba(255,255,255,.35);transition:border-color .2s,background .2s;
-}
-.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:900px){
-  .hero-inner,.amort-grid,.tradeoff-grid,.prepay-grid,.foir-grid,.credit-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-  .scenario-details{flex-direction:column;gap:.35rem;}
-}
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-════════════════════════════════════════ */
-@media (max-width:1024px) {
-  .main-grid {
-    grid-template-columns:300px 1fr;
-    grid-template-areas:
-      "inputs charts"
-      "sidebar sidebar";
-  }
-  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .sidebar-col .card + .card { margin-top:0; }
-}
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn     { display:flex; }
-  .nav-desktop { display:none; }
-  .main-grid {
-    grid-template-columns:1fr;
-    grid-template-areas: "inputs" "charts" "sidebar";
-  }
-  .sidebar-col { grid-template-columns:1fr 1fr; }
-  .metrics-row { grid-template-columns:repeat(3,1fr); }
-  .tips-grid   { grid-template-columns:repeat(2,1fr); }
-  .donut-wrap  { flex-direction:row; }
-}
-
-@media (max-width:580px) {
-  .metrics-row { grid-template-columns:1fr 1fr; }
-  .metric.total { grid-column:1 / -1; }
-  .sidebar-col { grid-template-columns:1fr; }
-  .sidebar-col .card + .card { margin-top:1rem; }
-  .tips-grid { grid-template-columns:1fr; }
-  .donut-wrap { flex-direction:column; align-items:flex-start; }
-  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
-  .leg-row { flex:1; min-width:130px; }
-  table { font-size:.72rem; }
-  thead th, tbody td { padding:7px 8px; }
-  .hide-xs { display:none; }
-  .card { padding:1rem; }
-}
-
-@media (max-width:400px) {
-  .metrics-row { grid-template-columns:1fr; }
-  .metric.total { grid-column:auto; }
-  .hero h1 { font-size:1.6rem; }
-}
-
-@media (hover:none) {
-  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
-  .tip:hover, .metric:hover { transform:none; }
-  .tip-card:hover,.related-card:hover,.scenario-row:hover{transform:none;}
-}
-</style>
-<body>
 
 <div class="page">
 
   <div class="hero">
     <div class="hero-badge"><i class="bi bi-credit-card"></i> EMI Calculator</div>
-    <h1>Plan your loans<br>with <em>precision</em></h1>
+    <h1>EMI Calculator with Prepayment<br>& <em>Amortization Schedule</em></h1>
     <p>Calculate your Equated Monthly Installment (EMI) and view a complete amortization schedule.</p>
   </div>
 
@@ -944,7 +88,65 @@ td.gold { color:var(--gold); font-weight:600; }
           <div class="range-hints"><span class="range-hint">1 yr</span><span class="range-hint">30 yrs</span></div>
         </div>
       </div>
+      <!-- NEW Advanced Options Card -->
+      <div class="card" style="margin-top:clamp(.75rem,2vw,1.25rem);">
+        <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:var(--accent);">⚡ Advanced Options</span>
+        </div>
+        
+        <!-- Yearly Prepayment -->
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Extra Yearly Prepayment (₹) <i class="bi bi-info-circle" style="cursor:pointer; color:var(--muted); margin-left:4px;" onclick="toggleInfo('yprepay-info')"></i></span>
+            <input type="number" class="field-val" id="inp-yprepay" value="0" step="5000" oninput="syncFromInput('yprepay')">
+          </div>
+          <div id="yprepay-info" class="field-info" style="display:none; font-size:0.75rem; color:var(--muted); background:var(--surface2); padding:8px; border-radius:6px; margin-bottom:8px; line-height:1.4;">
+            Adding a lump sum every year (like a bonus) drastically cuts down your loan tenure and interest burden.
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-yprepay"></div>
+            <input type="range" id="sl-yprepay" min="0" max="1000000" step="5000" value="0" oninput="syncFromSlider('yprepay')">
+          </div>
+        </div>
 
+        <!-- Monthly Prepayment -->
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Extra Monthly Prepayment (₹) <i class="bi bi-info-circle" style="cursor:pointer; color:var(--muted); margin-left:4px;" onclick="toggleInfo('mprepay-info')"></i></span>
+            <input type="number" class="field-val" id="inp-mprepay" value="0" step="1000" oninput="syncFromInput('mprepay')">
+          </div>
+          <div id="mprepay-info" class="field-info" style="display:none; font-size:0.75rem; color:var(--muted); background:var(--surface2); padding:8px; border-radius:6px; margin-bottom:8px; line-height:1.4;">
+            Adding just a little extra to your EMI every month compounds into massive interest savings over time.
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-mprepay"></div>
+            <input type="range" id="sl-mprepay" min="0" max="100000" step="1000" value="0" oninput="syncFromSlider('mprepay')">
+          </div>
+        </div>
+
+        <!-- Processing Fee -->
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Processing Fee (%) <i class="bi bi-info-circle" style="cursor:pointer; color:var(--muted); margin-left:4px;" onclick="toggleInfo('pf-info')"></i></span>
+            <input type="number" class="field-val" id="inp-pf" value="0" step="0.1" oninput="syncFromInput('pf')">
+          </div>
+          <div id="pf-info" class="field-info" style="display:none; font-size:0.75rem; color:var(--muted); background:var(--surface2); padding:8px; border-radius:6px; margin-bottom:8px; line-height:1.4;">
+            Banks charge an upfront fee to process your loan. This reduces the actual amount you receive in your bank account.
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-pf"></div>
+            <input type="range" id="sl-pf" min="0" max="5" step="0.1" value="0" oninput="syncFromSlider('pf')">
+          </div>
+        </div>
+        
+        <!-- Prepayment Insights Box (Dynamic) -->
+        <div id="prepay-insight-box" style="display:none; margin-top:1rem; padding:1rem; background:rgba(14, 165, 233, 0.1); border:1px solid rgba(14, 165, 233, 0.3); border-radius:var(--r-sm);">
+           <div style="font-size:0.75rem; color:#0284c7; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;"><i class="bi bi-lightning-charge-fill"></i> Prepayment Magic</div>
+           <div style="font-size:0.85rem; color:var(--ink-2); line-height:1.5;">
+             By making extra payments, you will save <strong style="color:#0284c7;" id="m-saved-interest">₹0</strong> in interest and close your loan <strong style="color:#0284c7;" id="m-saved-tenure">0 Months</strong> early!
+           </div>
+        </div>
+      </div>
       <div class="card">
         <div class="card-title">🍩 Breakdown</div>
         <div class="donut-wrap">
@@ -996,12 +198,20 @@ td.gold { color:var(--gold); font-weight:600; }
       </div>
 
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem;">📅 Year-by-Year Schedule</div>
+        <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.75rem; flex-wrap:wrap; gap:.5rem;">
+          📅 Repayment Schedule
+          
+          <div class="tab-row">
+            <button id="btn-yearly" class="tab-btn active" onclick="setTableMode('yearly')">Yearly</button>
+            <button id="btn-monthly" class="tab-btn" onclick="setTableMode('monthly')">Monthly</button>
+          </div>
+        </div>
+        
         <div class="tbl-scroll">
           <table>
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Principal Paid</th>
                 <th>Interest Paid</th>
                 <th>Total Paid</th>
@@ -1864,338 +1074,21 @@ td.gold { color:var(--gold); font-weight:600; }
 </footer> -->
 
 <script>
-/* helpers */
-function fmt(n) {
-  if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
-  if (n >= 1e5) return '₹' + (n/1e5).toFixed(2) + ' L';
-  if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
-  return '₹' + Math.round(n);
-}
-function fmtS(n) {
-  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
-  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
-  if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
-  return '₹' + Math.round(n);
-}
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
 
-    menu.classList.toggle("open");
-
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
-    }
-} 
-/* EMI Math Engine */
-function calcEMI(p, r, y) {
-  const mr = r / 1200 ;
-  const n = y * 12;
-  if (p === 0 || r === 0) return { emi: p/n, totalInt: 0, totalPay: p, n };
-  const emi = p * mr * Math.pow(1 + mr, n) / (Math.pow(1 + mr, n) - 1);
-  const totalPay = emi * n;
-  const totalInt = totalPay - p;
-  return { emi: Math.round(emi), totalInt: Math.round(totalInt), totalPay: Math.round(totalPay), n };
+function toggleInfo(id) {
+  const el = document.getElementById(id);
+  el.style.display = (el.style.display === 'none') ? 'block' : 'none';
 }
 
-/* Amortization Table Engine */
-function calcAmortization(p, r, y) {
-  const { emi } = calcEMI(p, r, y);
-  const mr = r / 1200 ;
-  let balance = p;
-  let yearlyData = [];
+let tableMode = 'yearly'; 
+let apiDataCache = null;  
 
-  for (let year = 1; year <= y; year++) {
-    let yearPrin = 0;
-    let yearInt = 0;
-    
-    for (let month = 1; month <= 12; month++) {
-      let interestPart = balance * mr;
-      let principalPart = emi - interestPart;
-      
-      yearInt += interestPart;
-      yearPrin += principalPart;
-      balance -= principalPart;
-      if (balance < 0) balance = 0;
-    }
-    yearlyData.push({
-      year,
-      principal: Math.round(yearPrin),
-      interest: Math.round(yearInt),
-      balance: Math.round(balance),
-      totalPaid: Math.round(yearPrin + yearInt)
-    });
-  }
-  return yearlyData;
-}
-
-/* Sync Logic: Input <--> Slider */
-function updateFill(id) {
-  const sl = document.getElementById('sl-'+id);
-  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
-  const el = document.getElementById('fill-'+id);
-  if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
-}
-
-function syncFromSlider(id) {
-  const v = parseFloat(document.getElementById('sl-'+id).value);
-  document.getElementById('inp-'+id).value = v; 
-  updateFill(id);
-  updateAll();
-}
-
-function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
-  if (isNaN(v)) return; 
-  
-  const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
-  
-  updateFill(id);
-  updateAll();
-}
-
-/* Chart Colors & Base Configuration */
-let mode = 'bar', mainChart, donutChart;
-const C = { 
-  prin: '#2563eb', prinBg: 'rgba(37, 99, 235, 0.75)',
-  int: '#d97706',  intBg:  'rgba(217, 119, 6, 0.75)',
-  bal: '#ef4444',  balBg:  'rgba(239, 68, 68, 0.15)'
-};
-
-// Generates the Dual Y-Axis Configuration
-function getChartOpts(isBar) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-      mode: 'index',
-      intersect: false,
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: { 
-          label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) 
-        },
-        backgroundColor: 'rgba(0,0,0,.82)',
-        padding: 10,
-        cornerRadius: 8
-      }
-    },
-    animation: { duration: 400 },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 },
-        stacked: isBar
-      },
-      y: {
-        type: 'linear',
-        position: 'left',
-        beginAtZero: true,
-        grid: { color: 'rgba(128,128,128,.1)' },
-        ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) },
-        stacked: isBar
-      },
-      y1: {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        grid: { display: false }, 
-        ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }
-      }
-    }
-  };
-}
-
-// Ensure year 0 is included so the balance graph starts at the full loan amount
-function chartData() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  const amort = calcAmortization(p, r, y);
-  
-  const labels = ['0y'], prin = [0], int = [0], bal = [p];
-  amort.forEach(d => {
-    labels.push(d.year + 'y');
-    prin.push(d.principal);
-    int.push(d.interest);
-    bal.push(d.balance);
-  });
-  return { labels, prin, int, bal };
-}
-
-// Generate the specific datasets for each tab view
-function getDatasets(d, isBar) {
-  if (isBar) {
-    return [
-      { type: 'bar', label: 'Principal Paid', data: d.prin, backgroundColor: C.prinBg, stack: 'a', borderRadius: 4, yAxisID: 'y' },
-      { type: 'bar', label: 'Interest Paid',  data: d.int,  backgroundColor: C.intBg,  stack: 'a', borderRadius: 4, yAxisID: 'y' },
-    //   { type: 'line', label: 'Remaining Balance', data: d.bal, borderColor: C.bal, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, yAxisID: 'y1' }
-    ];
-  } else {
-    return [
-      { type: 'line', label: 'Principal Paid', data: d.prin, borderColor: C.prin, backgroundColor: C.prinBg, fill: false, tension: 0.35, pointRadius: 2, yAxisID: 'y' },
-      { type: 'line', label: 'Interest Paid',  data: d.int,  borderColor: C.int,  backgroundColor: C.intBg,  fill: false, tension: 0.35, pointRadius: 2, yAxisID: 'y' },
-      { type: 'line', label: 'Remaining Balance', data: d.bal, borderColor: C.bal, backgroundColor: C.balBg, fill: true, tension: 0.35, pointRadius: 2, yAxisID: 'y1' }
-    ];
-  }
-}
-
-function initCharts() {
-  const d = chartData();
-  const balanceLegend = document.querySelector('.balance-legend');
-  balanceLegend.style.display = 'none'; // default bar hai to hide
-  mainChart = new Chart(document.getElementById('mainChart'), {
-    type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: getDatasets(d, true)
-    },
-    options: getChartOpts(true)
-  });
-
-  donutChart = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Principal', 'Interest'],
-      datasets: [{ data: [1, 0], backgroundColor: [C.prin, C.int], borderWidth: 0, hoverOffset: 5 }]
-    },
-    options: {
-      cutout: '72%',
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } }
-      },
-      animation: { duration: 700 }
-    }
-  });
-}
-
-function switchTab(m, btn) {
-  mode = m;
-
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  // 👇 Legend control
-  const balanceLegend = document.querySelector('.balance-legend');
-  if (m === 'bar') {
-    balanceLegend.style.display = 'none';
-  } else {
-    balanceLegend.style.display = 'inline-block';
-  }
-
-  const d = chartData();
-  if (mainChart) mainChart.destroy();
-
-  mainChart = new Chart(document.getElementById('mainChart'), {
-    type: (m === 'bar') ? 'bar' : 'line',
-    data: {
-      labels: d.labels,
-      datasets: getDatasets(d, m === 'bar')
-    },
-    options: getChartOpts(m === 'bar')
-  });
-}
-
-/* table */
-function buildTable(p, r, y) {
-  const tb = document.getElementById('yearTable');
-  tb.innerHTML = '';
-  const amort = calcAmortization(p, r, y);
-  
-  amort.forEach(d => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${d.year}</td><td>${fmt(d.principal)}</td><td class="gold">${fmt(d.interest)}</td><td>${fmt(d.totalPaid)}</td><td class="hide-xs" style="color:var(--muted);">${fmt(d.balance)}</td>`;
-    tb.appendChild(tr);
-  });
-}
-
-/* master update */
-function updateAll() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  
-  const { emi, totalInt, totalPay, n } = calcEMI(p, r, y);
-
-  document.getElementById('m-emi').textContent        = fmt(emi);
-  document.getElementById('m-principal').textContent  = fmt(p);
-  document.getElementById('m-interest').textContent   = fmt(totalInt);
-  document.getElementById('m-months').textContent     = n + ' months';
-  
-  const intPct = totalPay > 0 ? ((totalInt/totalPay)*100).toFixed(1) : 0;
-  document.getElementById('m-interestpct').textContent = intPct + '% of total payment';
-  
-  document.getElementById('dl-principal').textContent = fmt(p);
-  document.getElementById('dl-interest').textContent  = fmt(totalInt);
-  document.getElementById('dl-total').textContent     = fmt(totalPay);
-
-  if (donutChart) { 
-    donutChart.data.datasets[0].data = [p, totalInt]; 
-    donutChart.update(); 
-  }
-
-  const d = chartData();
-  if (mainChart) {
-    mainChart.data.labels = d.labels;
-    mainChart.data.datasets = getDatasets(d, mode === 'bar');
-    mainChart.update();
-  }
-  buildTable(p, r, y);
-}
-
-/* presets */
-function applyTip(p, r, y) {
-  document.getElementById('sl-amount').value = p;
-  document.getElementById('sl-rate').value   = r;
-  document.getElementById('sl-time').value   = y;
-  ['amount','rate','time'].forEach(syncFromSlider);
-}
-
-/* dark mode */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}
-
-/* mobile drawer */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
-}
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
-}
-
-/* init */
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
-  }
-  ['amount','rate','time'].forEach(updateFill);
-  initCharts();
-  updateAll();
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
-  });
-});
 function toggleFaq(el) {
   const isOpen = el.classList.contains('open');
   document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
   if (!isOpen) el.classList.add('open');
 }
+
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -2208,7 +1101,289 @@ const obs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+
+function fmt(n) {
+  if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
+  if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+}
+
+function fmtS(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
+  if (n >= 1e3) return '₹' + (n/1e3).toFixed(0) + 'K';
+  return '₹' + Math.round(n);
+}
+
+function applyTip(amt, rate, yrs) {
+  document.getElementById('sl-amount').value = amt;
+  document.getElementById('sl-rate').value = rate;
+  document.getElementById('sl-time').value = yrs;
+  syncFromSlider('amount');
+  syncFromSlider('rate');
+  syncFromSlider('time');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateFill(id) {
+  const sl = document.getElementById('sl-'+id);
+  if(!sl) return;
+  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
+  const el = document.getElementById('fill-'+id);
+  if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
+}
+
+function syncFromSlider(id) {
+  const v = parseFloat(document.getElementById('sl-'+id).value);
+  document.getElementById('inp-'+id).value = v; 
+  updateFill(id);
+  fetchEmiData(); 
+}
+
+function syncFromInput(id) {
+  const v = parseFloat(document.getElementById('inp-'+id).value);
+  if (isNaN(v)) return; 
+  const sl = document.getElementById('sl-'+id);
+  if (v < parseFloat(sl.min)) sl.value = sl.min;
+  else if (v > parseFloat(sl.max)) sl.value = sl.max;
+  else sl.value = v;
+  updateFill(id);
+  fetchEmiData(); 
+}
+
+/* Charts */
+let mode = 'bar', mainChart, donutChart;
+const C = { 
+  prin: '#2563eb', prinBg: 'rgba(37, 99, 235, 0.85)', // Blue
+  int: '#d97706', intBg: 'rgba(217, 119, 6, 0.85)',   // Yellow
+  bal: '#059669' // Green for remaining balance line
+};
+/* Make sure getDatasets uses the new colors! */
+function getDatasets(d, isBar) {
+  if (isBar) {
+    return [
+      { type: 'bar', label: 'Principal Paid', data: d.principal, backgroundColor: C.prinBg, borderRadius: {topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4} },
+      { type: 'bar', label: 'Interest Paid',  data: d.interest,  backgroundColor: C.intBg, borderRadius: {topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0} }
+    ];
+  } else {
+    return [
+      { type: 'line', label: 'Remaining Balance', data: d.balance, borderColor: C.bal, backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.35, pointRadius: 2 },
+      { type: 'line', label: 'Cumulative Interest', data: d.interest, borderColor: C.intBg, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, borderDash: [5, 5] }
+    ];
+  }
+}
+
+
+function getChartOpts(isBar) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) },
+        backgroundColor: 'rgba(0,0,0,.82)', padding: 10, cornerRadius: 8
+      }
+    },
+    animation: { duration: 400 },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 }, stacked: isBar },
+      y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }, stacked: isBar }
+    }
+  };
+}
+
+function getDatasets(d, isBar) {
+  if (isBar) {
+    return [
+      { type: 'bar', label: 'Principal Paid', data: d.principal, backgroundColor: C.prinBg, borderRadius: {topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4} },
+      { type: 'bar', label: 'Interest Paid',  data: d.interest,  backgroundColor: C.intBg, borderRadius: {topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0} }
+    ];
+  } else {
+    return [
+      { type: 'line', label: 'Remaining Balance', data: d.balance, borderColor: C.bal, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, borderDash: [5, 5] },
+      { type: 'line', label: 'Cumulative Interest', data: d.interest, borderColor: C.intBg, backgroundColor: 'rgba(160, 54, 58, 0.1)', fill: true, tension: 0.35, pointRadius: 2 }
+    ];
+  }
+}
+
+function updateCharts(data) {
+  const labels = ['0y'];
+  const principal = [0];
+  const interest = [0];
+  const balance = [data.principal];
+  
+  let cumInterest = 0;
+  data.yearly_data.forEach(d => {
+    labels.push(d.year + 'y');
+    principal.push(d.principal);
+    cumInterest += d.interest;
+    interest.push(cumInterest);
+    balance.push(d.balance);
+  });
+
+  const d = { labels, principal, interest, balance };
+
+  if (!mainChart) {
+    mainChart = new Chart(document.getElementById('mainChart'), {
+      type: mode,
+      data: { labels: d.labels, datasets: getDatasets(d, mode === 'bar') },
+      options: getChartOpts(mode === 'bar')
+    });
+  } else {
+    mainChart.data.labels = d.labels;
+    mainChart.data.datasets = getDatasets(d, mode === 'bar');
+    mainChart.options = getChartOpts(mode === 'bar'); 
+    mainChart.update();
+  }
+
+  if (!donutChart) {
+    donutChart = new Chart(document.getElementById('donutChart'), {
+      type: 'doughnut',
+      data: { labels: ['Principal', 'Interest'], datasets: [{ data: [data.principal, data.total_interest], backgroundColor: [C.prin, C.int], borderWidth: 0 }] },
+      options: { cutout: '72%', responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } } }
+    });
+  } else {
+    donutChart.data.datasets[0].data = [data.principal, data.total_interest];
+    donutChart.update();
+  }
+}
+
+function switchTab(m, btn) {
+  mode = m;
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const legendEl = document.querySelector('.chart-legend');
+  if (m === 'bar') {
+    legendEl.innerHTML = `
+      <span><span class="dot" style="background:#2563eb;"></span>Principal Paid</span>
+      <span><span class="dot" style="background:#d97706;"></span>Interest Paid</span>
+    `;
+  } else {
+    legendEl.innerHTML = `
+      <span><span class="dot" style="background:#059669;"></span>Remaining Balance</span>
+      <span><span class="dot" style="border: 2px dashed #d97706; background:transparent;"></span>Cumulative Interest</span>
+    `;
+  }
+  if(apiDataCache) updateCharts(apiDataCache);
+}
+
+/* Table */
+function setTableMode(selectedMode) {
+  tableMode = selectedMode;
+  document.getElementById('btn-yearly').classList.remove('active');
+  document.getElementById('btn-monthly').classList.remove('active');
+  document.getElementById('btn-' + selectedMode).classList.add('active');
+  if(apiDataCache) buildTable(apiDataCache);
+}
+
+function buildTable(data) {
+  const tb = document.getElementById('yearTable');
+  tb.innerHTML = '';
+  const records = (tableMode === 'yearly') ? data.yearly_data : data.monthly_data;
+  const labelPrefix = (tableMode === 'yearly') ? 'Year ' : 'Month ';
+
+  records.forEach(d => {
+    const period = (tableMode === 'yearly') ? d.year : d.month;
+    const totalPaid = (tableMode === 'yearly') ? d.total_paid : (d.principal + d.interest);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${labelPrefix}${period}</td>
+      <td style="color:var(--sky);">${fmt(d.principal)}</td>
+      <td style="color:var(--rose);">${fmt(d.interest)}</td>
+      <td style="font-weight:600;">${fmt(totalPaid)}</td>
+      <td class="hide-xs" style="color:var(--muted); font-weight:600;">${fmt(d.balance)}</td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+/* API Fetch Engine */
+let fetchTimeout;
+function fetchEmiData() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(() => {
+    const p = +document.getElementById('inp-amount').value || 0;
+    const r = +document.getElementById('inp-rate').value || 0;
+    const y = +document.getElementById('inp-time').value || 0;
+    
+    // We will hook these up in the Advanced Options next!
+    const m_prepay = document.getElementById('inp-mprepay') ? +document.getElementById('inp-mprepay').value : 0;
+    const y_prepay = document.getElementById('inp-yprepay') ? +document.getElementById('inp-yprepay').value : 0;
+    const pf = document.getElementById('inp-pf') ? +document.getElementById('inp-pf').value : 0;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+    fetch('/calculators/emi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ amount: p, rate: r, time: y, monthly_prepay: m_prepay, yearly_prepay: y_prepay, processing_fee_pct: pf })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        apiDataCache = data;
+        
+        // Update DOM elements (Assuming your metric IDs are: m-emi, m-total, m-interest)
+        // Adjust these IDs based on your exact HTML structure!
+        const elEmi = document.getElementById('m-emi'); if(elEmi) elEmi.textContent = fmt(data.emi);
+        const elPrinTop = document.getElementById('m-principal'); if(elPrinTop) elPrinTop.textContent = fmt(data.principal); // <-- THIS FIXES THE TOP METRIC
+        const elInt = document.getElementById('m-interest'); if(elInt) elInt.textContent = fmt(data.total_interest);
+        
+        // Breakdowns
+        const dlPrin = document.getElementById('dl-principal'); if(dlPrin) dlPrin.textContent = fmt(data.principal);
+        const dlInt = document.getElementById('dl-interest'); if(dlInt) dlInt.textContent = fmt(data.total_interest);
+        const dlTot = document.getElementById('dl-total'); if(dlTot) dlTot.textContent = fmt(data.total_payment);
+        // FIX: Update the sub-metrics to remove the dashes!
+        const elMonths = document.getElementById('m-months'); 
+        if(elMonths) elMonths.textContent = data.months_taken + ' Months';
+        
+        const elIntPct = document.getElementById('m-interestpct'); 
+        if(elIntPct && data.principal > 0) {
+            const pct = ((data.total_interest / data.principal) * 100).toFixed(1);
+            elIntPct.textContent = pct + '% of Principal';
+        }
+
+        // MAGIC BOX: Show prepayment savings if any!
+        const prepayBox = document.getElementById('prepay-insight-box');
+        if (prepayBox) {
+            if (data.interest_saved > 0) {
+                prepayBox.style.display = 'block';
+                document.getElementById('m-saved-interest').textContent = fmt(data.interest_saved);
+                
+                const yearsSaved = Math.floor(data.tenure_saved_months / 12);
+                const monthsSaved = data.tenure_saved_months % 12;
+                let timeStr = '';
+                if (yearsSaved > 0) timeStr += yearsSaved + ' yrs ';
+                if (monthsSaved > 0) timeStr += monthsSaved + ' mos';
+                
+                document.getElementById('m-saved-tenure').textContent = timeStr.trim();
+            } else {
+                prepayBox.style.display = 'none';
+            }
+        }
+        // Prepayment stats (We will add the HTML for this next!)
+        const savInt = document.getElementById('m-saved-interest');
+        if(savInt) savInt.textContent = fmt(data.interest_saved);
+        
+        const savTen = document.getElementById('m-saved-tenure');
+        if(savTen) savTen.textContent = data.tenure_saved_months + " Months";
+
+        updateCharts(data);
+        buildTable(data);
+      }
+    });
+  }, 100);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeIcon')?.classList.add('bi-sun-fill');
+  }
+  ['amount','rate','time', 'mprepay', 'yprepay', 'pf'].forEach(updateFill);
+  fetchEmiData(); 
+});
 </script>
-</body>
-</html>
 {% endblock %} 
