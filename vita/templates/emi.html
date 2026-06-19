@@ -59,9 +59,9 @@ Calculate Home Loan, Car Loan & Personal Loan EMI instantly. Check interest paya
           </div>
           <div class="range-wrap">
             <div class="range-fill" id="fill-amount"></div>
-            <input type="range" id="sl-amount" min="10000" max="50000000" step="10000" value="5000000" oninput="syncFromSlider('amount')">
+            <input type="range" id="sl-amount" min="1000" max="50000000" step="10000" value="5000000" oninput="syncFromSlider('amount')">
           </div>
-          <div class="range-hints"><span class="range-hint">₹10K</span><span class="range-hint">₹5 Cr</span></div>
+          <div class="range-hints"><span class="range-hint">₹1K</span><span class="range-hint">₹5 Cr</span></div>
         </div>
 
         <div class="field">
@@ -1140,15 +1140,36 @@ function syncFromSlider(id) {
   fetchEmiData(); 
 }
 
+/* The Bulletproof Sync Function */
 function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
+  let v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 
+  
   const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
+  const minVal = parseFloat(sl.min);
+  const maxVal = parseFloat(sl.max);
+
+  // 1. Strict Validation: Prevent negatives, zeroes, or overflows
+  if (v < minVal) v = minVal;
+  if (v > maxVal) v = maxVal;
+  
+  // 2. Force the validated number back into BOTH the slider AND the text box
+  sl.value = v;
+  document.getElementById('inp-'+id).value = v;
+  
   updateFill(id);
-  fetchEmiData(); 
+  
+  // Check if we are on the Car Loan page to update the hidden loan amount
+  if (typeof calcLoanAmount === 'function' && (id === 'price' || id === 'dp')) {
+      calcLoanAmount();
+  }
+  
+  // Run the API fetch
+  if (typeof fetchEmiData === 'function') {
+      fetchEmiData();
+  } else if (typeof updateAll === 'function') {
+      updateAll(); // For calculators that don't have APIs yet
+  }
 }
 
 /* Charts */

@@ -97,7 +97,7 @@ Calculate your SIP investment returns with the Vittarthi SIP Calculator. Estimat
           </div>
           <div class="range-wrap">
             <div class="range-fill" id="fill-amount"></div>
-            <input type="range" id="sl-amount" min="500" max="100000" step="500" value="5000" oninput="syncFromSlider('amount')">
+            <input type="range" id="sl-amount" min="100" max="100000" step="500" value="5000" oninput="syncFromSlider('amount')">
           </div>
           <div class="range-hints"><span class="range-hint">₹500</span><span class="range-hint">₹1L</span></div>
         </div>
@@ -1068,17 +1068,37 @@ function syncFromSlider(id) {
   fetchSipData(); // Call API instead of updateAll()
 }
 
+/* The Bulletproof Sync Function */
 function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
+  let v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 
+  
   const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
-  updateFill(id);
-  fetchSipData(); // Call API
-}
+  const minVal = parseFloat(sl.min);
+  const maxVal = parseFloat(sl.max);
 
+  // 1. Strict Validation: Prevent negatives, zeroes, or overflows
+  if (v < minVal) v = minVal;
+  if (v > maxVal) v = maxVal;
+  
+  // 2. Force the validated number back into BOTH the slider AND the text box
+  sl.value = v;
+  document.getElementById('inp-'+id).value = v;
+  
+  updateFill(id);
+  
+  // Check if we are on the Car Loan page to update the hidden loan amount
+  if (typeof calcLoanAmount === 'function' && (id === 'price' || id === 'dp')) {
+      calcLoanAmount();
+  }
+  
+  // Run the API fetch
+  if (typeof fetchEmiData === 'function') {
+      fetchSipData();
+  } else if (typeof updateAll === 'function') {
+      updateAll(); // For calculators that don't have APIs yet
+  }
+}
 /* Chart Colors & Base Configuration */
 let mode = 'bar', mainChart, donutChart;
 const C = { 

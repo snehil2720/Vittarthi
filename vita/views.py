@@ -681,44 +681,91 @@ def home_loan(request):
 
 
 def car_loan(request):
-    emi = None
-    total_payment = None
-    total_interest = None
-    labels, balance_data, interest_data, table_data = [], [], [], []
-
     if request.method == "POST":
-        P = float(request.POST.get("amount"))
-        rate = float(request.POST.get("rate", 9.2))
-        years = int(request.POST.get("time"))
-
-        r = rate / 100 / 12
-        n = years * 12
-
-        emi = P * r * ((1+r)**n) / ((1+r)**n - 1)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
+        # Get Inputs
+        P = float(data.get("amount", 0))
+        annual_rate = float(data.get("rate", 0))
+        years = float(data.get("time", 0))
+        m_prepay = float(data.get("monthly_prepay", 0))
+        y_prepay = float(data.get("yearly_prepay", 0))
+        pf_pct = float(data.get("processing_fee_pct", 0))
+        if P <= 0 or annual_rate <= 0 or years <= 0:
+            return JsonResponse({"success": False, "error": "Invalid inputs"})
+        r = annual_rate / 100 / 12
+        n = int(years) * 12
+        # 1. Base EMI Calculation
+        base_emi = P * r * ((1 + r)**n) / ((1 + r)**n - 1)
+        base_emi = round(base_emi, 2)
+        base_total_interest = (base_emi * n) - P
+        # Processing Fee
+        processing_fee_amount = round(P * (pf_pct / 100), 2)
+        # 2. Amortization with Prepayments
         balance = P
         total_interest = 0
-
-        for i in range(1, n+1):
+        months_taken = 0
+        monthly_data = []
+        yearly_data = []
+        
+        year_principal = 0
+        year_interest = 0
+        year_total_paid = 0
+        for i in range(1, n + 1):
+            if balance <= 0:
+                break
+            
             interest = balance * r
-            principal = emi - interest
+            principal = base_emi - interest
+            # Apply Prepayments
+            principal += m_prepay
+            if i % 12 == 0:
+                principal += y_prepay
+            if principal > balance:
+                principal = balance
             balance -= principal
             total_interest += interest
-
-            if i % 12 == 0:
-                labels.append(f"Year {i//12}")
-                balance_data.append(round(balance,2))
-                interest_data.append(round(total_interest,2))
-
-            table_data.append({
+            months_taken += 1
+            year_principal += principal
+            year_interest += interest
+            year_total_paid += (principal + interest)
+            monthly_data.append({
                 "month": i,
-                "emi": round(emi,2),
-                "principal": round(principal,2),
-                "interest": round(interest,2),
-                "balance": round(balance,2)
+                "principal": round(principal, 2),
+                "interest": round(interest, 2),
+                "balance": round(balance, 2)
             })
-
-        total_payment = round(emi*n,2)
-    CalcUsage.objects.create(name="CAR_LOAN")
+            if i % 12 == 0 or balance <= 0:
+                yearly_data.append({
+                    "year": (i + 11) // 12, 
+                    "principal": round(year_principal, 2),
+                    "interest": round(year_interest, 2),
+                    "balance": round(balance, 2),
+                    "total_paid": round(year_total_paid, 2)
+                })
+                year_principal = 0
+                year_interest = 0
+                year_total_paid = 0
+        total_payment = P + total_interest
+        interest_saved = round(base_total_interest - total_interest, 2)
+        if interest_saved < 0: interest_saved = 0
+        tenure_saved_months = n - months_taken
+        CalcUsage.objects.create(name="CAR_LOAN")
+        return JsonResponse({
+            "success": True,
+            "emi": base_emi,
+            "principal": P,
+            "total_interest": round(total_interest, 2),
+            "total_payment": round(total_payment, 2),
+            "months_taken": months_taken,
+            "interest_saved": interest_saved,
+            "tenure_saved_months": tenure_saved_months,
+            "processing_fee": processing_fee_amount,
+            "monthly_data": monthly_data,
+            "yearly_data": yearly_data
+        })
     return render(request, 'loan/car_loan.html', locals())
 
 def personal_loan(request):

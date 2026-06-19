@@ -116,7 +116,7 @@ Calculate your Home Loan EMI instantly. Plan prepayments, analyze your amortizat
         <div class="field">
           <div class="field-hdr">
             <span class="field-lbl">Loan Amount (₹)</span>
-            <input type="number" class="field-val" id="inp-amount" value="5000000" oninput="syncFromInput('amount')">
+            <input type="number" class="field-val" id="inp-amount" value="1000000" oninput="syncFromInput('amount')">
           </div>
           <div class="range-wrap">
             <div class="range-fill" id="fill-amount"></div>
@@ -752,15 +752,36 @@ function syncFromSlider(id) {
   fetchEmiData(); 
 }
 
+/* The Bulletproof Sync Function */
 function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
+  let v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 
+  
   const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
+  const minVal = parseFloat(sl.min);
+  const maxVal = parseFloat(sl.max);
+
+  // 1. Strict Validation: Prevent negatives, zeroes, or overflows
+  if (v < minVal) v = minVal;
+  if (v > maxVal) v = maxVal;
+  
+  // 2. Force the validated number back into BOTH the slider AND the text box
+  sl.value = v;
+  document.getElementById('inp-'+id).value = v;
+  
   updateFill(id);
-  fetchEmiData(); 
+  
+  // Check if we are on the Car Loan page to update the hidden loan amount
+  if (typeof calcLoanAmount === 'function' && (id === 'price' || id === 'dp')) {
+      calcLoanAmount();
+  }
+  
+  // Run the API fetch
+  if (typeof fetchEmiData === 'function') {
+      fetchEmiData();
+  } else if (typeof updateAll === 'function') {
+      updateAll(); // For calculators that don't have APIs yet
+  }
 }
 
 /* Charts */

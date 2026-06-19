@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
 Car Loan Calculator | Vittarthi
 {% endblock %}
@@ -6,749 +7,16 @@ Car Loan Calculator | Vittarthi
 {% block meta_description %}
 Use the Vittarthi Car Loan Calculator to estimate your monthly car loan EMI, total interest cost, and repayment schedule before buying a new or used car.
 {% endblock %}
+
+{% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/car-loan.css' %}">
+{% endblock %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
-/* ═══════════ RESET & BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
-:root {
-  --ink:       #0d1520;
-  --ink-2:     #3d4f60;
-  --ink-3:     #7a8c9d;
-  --paper:     #f5f6f8;
-  --surface:   #ffffff;
-  --s2:        #eef0f4;
-  --s3:        #e2e5ea;
-  --blue:      #1b4fa6;
-  --blue-2:    #2260c4;
-  --blue-lt:   #e8effe;
-  --blue-md:   #c5d6f8;
-  --green:     #1a6b4a;
-  --green-lt:  #e6f2ec;
-  --gold:      #b8720a;
-  --gold-lt:   #fdf3e3;
-  --rose:      #a0363a;
-  --rose-lt:   #fdeaeb;
-  --teal:      #0e7490;
-  --teal-lt:   #e0f4f8;
-  --border:    rgba(13,21,32,0.09);
-  --shadow:    0 4px 20px rgba(13,21,32,0.07);
-  --shadow-lg: 0 12px 48px rgba(13,21,32,0.11);
-  --r:         14px;
-  --r-sm:      8px;
-  --pad:       clamp(1.25rem,5vw,2.5rem);
-  --max:       1200px;
-}
-
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed;
-  top:var(--nav-h); left:0; right:0; bottom:0;
-  z-index:190;
-}
-.drawer.open { display:block; }
-.drawer-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,.45);
-}
-.drawer-panel {
-  position:absolute; top:0; right:0;
-  width:min(260px, 80vw); height:100%;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:1.25rem 1rem;
-  box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem;
-  overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500;
-  padding:.55rem .85rem; border-radius:8px;
-  transition:all .2s;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page {
-  max-width:1340px; margin:0 auto;
-  padding:0 var(--pad) 4rem;
-}
-
-/* ═══════════ HERO ═══════════ */
-.hero {
-  text-align:center;
-  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
-  animation:fadeUp .5s ease both;
-}
-.hero-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-  background:var(--accent-lt);
-  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 5vw, 3.4rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:.95rem; max-width:440px; margin:0 auto; }
-
-/* ═══════════ METRICS ROW ═══════════ */
-.metrics-row {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(.6rem,2vw,1rem);
-  margin-bottom:clamp(1rem,2.5vw,1.5rem);
-  animation:fadeUp .5s .15s ease both;
-}
-.metric {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r-sm);
-  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
-  box-shadow:var(--shadow);
-  position:relative; overflow:hidden;
-  transition:transform .2s, background .3s;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:3px; border-radius:3px 3px 0 0;
-}
-.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
-.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
-.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
-.metric:hover { transform:translateY(-2px); }
-.metric-lbl {
-  font-size:.68rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
-}
-.metric-val {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.2rem,3vw,1.6rem);
-  line-height:1; margin-bottom:3px;
-}
-.metric-sub { font-size:.68rem; color:var(--muted); }
-.metric.total .metric-val  { color:var(--accent); }
-.metric.profit .metric-val { color:var(--gold); }
-
-/* ═══════════ 3-COL GRID ═══════════ */
-.main-grid {
-  display:grid;
-  grid-template-columns:320px 1fr 200px;
-  grid-template-areas:"inputs charts sidebar";
-  gap:clamp(1rem,2vw,1.5rem);
-  align-items:start;
-}
-.inputs-col { grid-area:inputs; }
-.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
-.sidebar-col { grid-area:sidebar; }
-
-/* ═══════════ CARD ═══════════ */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:clamp(1rem,3vw,1.5rem);
-  box-shadow:var(--shadow);
-  transition:background .3s, border-color .3s;
-}
-.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
-.card-title {
-  font-size:.72rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:1.1rem;
-}
-
-/* ═══════════ SLIDERS & INPUTS ═══════════ */
-.field { margin-bottom:1.25rem; }
-.field:last-child { margin-bottom:0; }
-.field-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.5rem;
-}
-.field-lbl  { font-size:.85rem; color:var(--muted); }
-
-input.field-val  {
-  font-size:.92rem; font-weight:600; color:var(--text);
-  background:var(--surface2); padding:4px 10px; border-radius:6px;
-  width:110px; text-align:right; border:1px solid transparent;
-  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
-}
-input.field-val:focus {
-  background: var(--surface);
-  border-color: var(--accent);
-}
-input.field-val::-webkit-outer-spin-button,
-input.field-val::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-input.field-val[type=number] {
-  -moz-appearance: textfield;
-}
-
-.range-wrap { position:relative; }
-.range-fill {
-  position:absolute; top:50%; transform:translateY(-50%);
-  height:5px; border-radius:100px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-  pointer-events:none; transition:width .08s;
-}
-input[type=range] {
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:5px;
-  background:var(--surface2); border-radius:100px;
-  outline:none; cursor:pointer; display:block;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:22px; height:22px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-lt);
-  cursor:pointer; transition:transform .18s;
-}
-input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
-input[type=range]::-moz-range-thumb {
-  width:22px; height:22px; border-radius:50%;
-  border:none; background:var(--accent); cursor:pointer;
-}
-.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
-.range-hint  { font-size:.66rem; color:var(--muted); }
-
-/* ═══════════ DONUT ═══════════ */
-.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
-.donut-canvas-wrap { position:relative; flex-shrink:0; }
-.donut-canvas-wrap canvas { display:block; }
-.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-.leg-row { display:flex; align-items:center; gap:8px; }
-.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
-.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
-.mult-box {
-  margin-top:8px; padding-top:10px;
-  border-top:1px solid var(--border);
-}
-.mult-lbl { font-size:.68rem; color:var(--muted); margin-bottom:2px; }
-.mult-val { font-size:1.15rem; font-weight:600; color:var(--text); }
-
-/* ═══════════ CHART TABS ═══════════ */
-.chart-hdr {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:.85rem;
-  flex-wrap:wrap; gap:.5rem;
-}
-.tab-row { display:flex; gap:5px; }
-.tab-btn {
-  background:var(--surface2); border:none; border-radius:7px;
-  padding:4px 14px; font-size:.78rem; font-weight:500;
-  color:var(--muted); cursor:pointer; font-family:inherit;
-  transition:all .2s;
-}
-.tab-btn.active { background:var(--accent); color:#fff; }
-.chart-box { position:relative; width:100%; }
-.chart-legend {
-  display:flex; gap:14px; margin-bottom:.6rem; flex-wrap:wrap;
-}
-.chart-legend span {
-  display:flex; align-items:center; gap:5px;
-  font-size:.72rem; color:var(--muted);
-}
-.chart-legend .dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-
-/* ═══════════ TABLE ═══════════ */
-.tbl-scroll {
-  max-height:260px; overflow-y:auto;
-  border-radius:8px; border:1px solid var(--border);
-}
-.tbl-scroll::-webkit-scrollbar { width:4px; }
-.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-table { width:100%; border-collapse:collapse; font-size:.78rem; }
-thead th {
-  padding:9px 12px; text-align:right;
-  font-size:.65rem; font-weight:600; letter-spacing:.5px;
-  text-transform:uppercase; color:var(--muted);
-  background:var(--surface2);
-  position:sticky; top:0; z-index:1;
-  border-bottom:1px solid var(--border);
-}
-thead th:first-child { text-align:left; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--surface2); }
-tbody td { padding:8px 12px; text-align:right; color:var(--text); }
-tbody td:first-child { text-align:left; font-weight:500; }
-td.green { color:var(--accent); font-weight:600; }
-td.gold { color:var(--gold); font-weight:600; }
-
-/* ═══════════ TIPS ═══════════ */
-.tips-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
-}
-.tip {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:.9rem 1rem;
-  cursor:pointer; transition:all .2s;
-}
-.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
-.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
-.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
-
-/* ═══════════ SIDEBAR ═══════════ */
-.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
-.sb-links { display:flex; flex-direction:column; gap:3px; }
-.sb-links a {
-  display:flex; align-items:center; gap:7px;
-  text-decoration:none; color:var(--muted);
-  font-size:.8rem; padding:7px 9px; border-radius:8px;
-  border:1px solid transparent; transition:all .18s;
-}
-.sb-links a i { font-size:13px; flex-shrink:0; }
-.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
-.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
-.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
-.qf { padding-top:10px; border-top:1px solid var(--border); }
-.qf:first-child { padding-top:0; border-top:none; }
-.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
-.qf-val { font-weight:600; color:var(--text); }
-.qf-val.accent { color:var(--accent); }
-
-/* ═══════════ SEO CONTENT AREA ═══════════ */
-/* ═══ SHARED SECTION STYLES ═══ */
-.sec{padding:clamp(3rem,7vw,2.5rem) var(--pad);border-radius: 35px;}
-.sec-inner{max-width:var(--max);margin:0 auto;}
-.label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--blue);background:var(--blue-lt);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.sec-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
-  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
-}
-.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
-.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
-.sec-hdr.center{text-align:center;}
-.sec-hdr.center .sec-sub{margin:0 auto;}
-
-/* ═══ FADE ANIMATION ═══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.fu{opacity:0;}
-.fu.on{animation:fadeUp .6s ease both;}
-
-/* ════════════════════════════════════
-   1. HOW IT WORKS — 3 steps
-════════════════════════════════════ */
-.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);border-radius: 35px;}
-.steps-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:2rem;position:relative;
-}
-.steps-grid::before{
-  content:'';position:absolute;top:32px;
-  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
-  height:2px;
-  background:repeating-linear-gradient(90deg,var(--blue-md) 0,var(--blue-md) 8px,transparent 8px,transparent 16px);
-  pointer-events:none;
-}
-.step{text-align:center;padding:.5rem;}
-.step-num{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--blue);color:#fff;
-  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1.1rem;
-  box-shadow:0 0 0 8px var(--blue-lt);
-  position:relative;z-index:1;
-}
-.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
-.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   2. CAR vs HOME LOAN — comparison table
-════════════════════════════════════ */
-.compare-sec{background:var(--paper);}
-.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.compare-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-.compare-table thead th{
-  padding:.7rem 1rem;text-align:left;
-  font-size:.68rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);
-  border-bottom:1px solid var(--border);
-}
-.compare-table thead th:first-child{border-radius:var(--r-sm) 0 0 0;}
-.compare-table thead th:last-child{border-radius:0 var(--r-sm) 0 0;}
-.compare-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.compare-table tbody tr:last-child{border-bottom:none;}
-.compare-table tbody tr:hover{background:var(--s2);}
-.compare-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:top;}
-.compare-table td:first-child{color:var(--ink);font-weight:500;}
-.compare-table td .good{color:var(--green);font-weight:600;}
-.compare-table td .bad {color:var(--rose);font-weight:600;}
-.compare-table td .mid {color:var(--gold);font-weight:600;}
-.compare-wrap{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
-}
-/* Depreciation visual */
-.depr-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);
-}
-.depr-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
-.depr-bar-group{display:flex;flex-direction:column;gap:.7rem;}
-.depr-row{display:flex;align-items:center;gap:.75rem;}
-.depr-year{font-size:.72rem;color:var(--ink-3);width:52px;flex-shrink:0;font-weight:500;}
-.depr-track{flex:1;background:var(--s2);border-radius:100px;height:10px;overflow:hidden;}
-.depr-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .6s ease;}
-.depr-val{font-size:.72rem;font-weight:600;color:var(--ink-2);width:42px;text-align:right;flex-shrink:0;}
-.depr-note{
-  margin-top:1rem;font-size:.72rem;color:var(--ink-3);
-  background:var(--s2);border-radius:var(--r-sm);padding:.55rem .8rem;
-  border-left:2px solid var(--rose);line-height:1.55;
-}
-
-/* ════════════════════════════════════
-   3. WHY USE — 4 benefit cards
-════════════════════════════════════ */
-.why-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
-.why-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  position:relative;overflow:hidden;
-  transition:transform .22s,box-shadow .22s;
-}
-.why-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  border-radius:var(--r) var(--r) 0 0;
-}
-.why-card:nth-child(1)::before{background:linear-gradient(90deg,var(--blue),#60a5fa);}
-.why-card:nth-child(2)::before{background:linear-gradient(90deg,var(--teal),#22d3ee);}
-.why-card:nth-child(3)::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
-.why-card:nth-child(4)::before{background:linear-gradient(90deg,var(--green),#34d399);}
-.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
-.why-icon{
-  width:44px;height:44px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;margin-bottom:1rem;
-}
-.why-card:nth-child(1) .why-icon{background:var(--blue-lt);color:var(--blue);}
-.why-card:nth-child(2) .why-icon{background:var(--teal-lt);color:var(--teal);}
-.why-card:nth-child(3) .why-icon{background:var(--gold-lt);color:var(--gold);}
-.why-card:nth-child(4) .why-icon{background:var(--green-lt);color:var(--green);}
-.why-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
-.why-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   4. EV BENEFITS — hero card
-════════════════════════════════════ */
-.ev-sec{background:var(--paper);}
-.ev-inner{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
-/* Left: editorial */
-.ev-content .label{color:var(--teal);background:var(--teal-lt);}
-.ev-highlight{
-  background:var(--teal);border-radius:var(--r);
-  padding:1.5rem;margin:1.25rem 0;
-  display:flex;align-items:center;gap:1rem;
-}
-.ev-highlight-num{
-  font-family:'Playfair Display',serif;
-  font-size:2.2rem;font-weight:700;color:#fff;line-height:1;flex-shrink:0;
-}
-.ev-highlight-text{font-size:.8rem;color:rgba(255,255,255,.85);line-height:1.6;}
-.ev-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:.9rem;}
-.ev-content p:last-child{margin-bottom:0;}
-/* Right: benefit cards */
-.ev-cards{display:flex;flex-direction:column;gap:.85rem;}
-.ev-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1.1rem 1.2rem;
-  display:flex;gap:.85rem;align-items:flex-start;
-  transition:border-color .2s,background .2s;
-}
-.ev-card:hover{border-color:var(--teal);background:var(--teal-lt);}
-.ev-card-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--teal-lt);color:var(--teal);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;transition:background .2s;
-}
-.ev-card:hover .ev-card-icon{background:rgba(14,116,144,.2);}
-.ev-card-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.ev-card-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
-
-/* ════════════════════════════════════
-   5. KEY INSIGHTS — stats + tips
-════════════════════════════════════ */
-.insight-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.insight-list{display:flex;flex-direction:column;gap:.9rem;}
-.insight-item{
-  display:flex;gap:1rem;padding:1.1rem 1.25rem;
-  background:var(--s2);border-radius:var(--r-sm);
-  border:1px solid var(--border);
-  transition:border-color .2s,background .2s;
-}
-.insight-item:hover{border-color:var(--blue-md);background:var(--blue-lt);}
-.insight-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--blue-lt);color:var(--blue);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;transition:background .2s;
-}
-.insight-item:hover .insight-icon{background:var(--blue-md);}
-.insight-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;}
-.insight-desc{font-size:.77rem;color:var(--ink-2);line-height:1.6;}
-.insight-stats{display:flex;flex-direction:column;gap:1rem;}
-.istat{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.25rem 1.4rem;
-  position:relative;overflow:hidden;
-}
-.istat::after{
-  content:'';position:absolute;right:-20px;top:-20px;
-  width:80px;height:80px;border-radius:50%;opacity:.08;
-}
-.istat.blue::after {background:var(--blue);}
-.istat.gold::after  {background:var(--gold);}
-.istat.rose::after  {background:var(--rose);}
-.istat-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem;}
-.istat-val{
-  font-family:'Playfair Display',serif;
-  font-size:2rem;font-weight:700;line-height:1;margin-bottom:.3rem;
-}
-.istat.blue .istat-val{color:var(--blue);}
-.istat.gold  .istat-val{color:var(--gold);}
-.istat.rose  .istat-val{color:var(--rose);}
-.istat-desc{font-size:.75rem;color:var(--ink-2);line-height:1.5;}
-
-/* ════════════════════════════════════
-   6. DEALER vs BANK — comparison cards
-════════════════════════════════════ */
-.dvb-sec{background:var(--paper);}
-.dvb-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
-.dvb-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  box-shadow:var(--shadow);
-}
-.dvb-card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;}
-.dvb-badge{
-  font-size:.7rem;font-weight:700;letter-spacing:.5px;
-  text-transform:uppercase;padding:.25rem .75rem;
-  border-radius:100px;
-}
-.dvb-badge.dealer{background:var(--gold-lt);color:var(--gold);}
-.dvb-badge.bank{background:var(--blue-lt);color:var(--blue);}
-.dvb-card-title{font-size:.95rem;font-weight:600;color:var(--ink);}
-.dvb-list{display:flex;flex-direction:column;gap:.55rem;}
-.dvb-item{
-  display:flex;align-items:flex-start;gap:.6rem;
-  font-size:.78rem;color:var(--ink-2);line-height:1.55;
-}
-.dvb-item i{font-size:13px;flex-shrink:0;margin-top:1px;}
-.dvb-item i.pro{color:var(--green);}
-.dvb-item i.con{color:var(--rose);}
-/* verdict banner */
-.dvb-verdict{
-  background:var(--blue);border-radius:var(--r);
-  padding:1.1rem 1.4rem;
-  display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;
-}
-.dvb-verdict i{font-size:1.2rem;color:rgba(255,255,255,.7);flex-shrink:0;}
-.dvb-verdict-text{font-size:.82rem;color:rgba(255,255,255,.9);line-height:1.6;flex:1;}
-.dvb-verdict-text strong{color:#fff;}
-
-/* ════════════════════════════════════
-   7. FAQ
-════════════════════════════════════ */
-.faq-sec{background:var(--surface);border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.faq-item{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
-}
-.faq-q{
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:1.1rem 1.25rem;cursor:pointer;
-  font-size:.88rem;font-weight:600;color:var(--ink);
-  transition:background .18s;user-select:none;
-}
-.faq-q:hover{background:var(--s3);}
-.faq-q i{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
-.faq-item.open .faq-q i{transform:rotate(45deg);color:var(--blue);}
-.faq-item.open .faq-q{color:var(--blue);}
-.faq-a{
-  display:none;padding:0 1.25rem 1.1rem;
-  font-size:.8rem;color:var(--ink-2);line-height:1.75;
-  border-top:1px solid var(--border);
-}
-.faq-a p{padding-top:.9rem;}
-.faq-item.open .faq-a{display:block;}
-
-/* ════════════════════════════════════
-   8. RELATED CALCULATORS
-════════════════════════════════════ */
-.related-sec{background:var(--paper);border-top:1px solid var(--border);}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
-.related-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:center;gap:.75rem;
-  transition:all .22s;
-}
-.related-card:hover{background:var(--blue-lt);border-color:var(--blue-md);transform:translateY(-2px);}
-.related-card-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--blue-lt);color:var(--blue);
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex-shrink:0;transition:background .22s;
-}
-.related-card:hover .related-card-icon{background:var(--blue-md);}
-.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
-
-/* ════════════════════════════════════
-   9. FINAL CTA
-════════════════════════════════════ */
-.final-note{
-  background:var(--ink);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  text-align:center;position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.final-note::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center top,rgba(27,79,166,.4),transparent 65%);
-  pointer-events:none;
-}
-.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
-.final-note h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
-  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
-}
-.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
-.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
-.btn-w{
-  display:inline-flex;align-items:center;gap:6px;
-  background:#fff;color:var(--blue);
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
-}
-.btn-w:hover{opacity:.9;}
-.btn-o{
-  display:inline-flex;align-items:center;gap:6px;
-  background:transparent;color:#fff;
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:500;
-  border:1.5px solid rgba(255,255,255,.35);
-  transition:border-color .2s,background .2s;
-}
-.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:900px){
-  .compare-grid,.ev-inner,.insight-grid{grid-template-columns:1fr;}
-  .dvb-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-}
-@media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .insight-stats{flex-direction:row;flex-wrap:wrap;}
-  .istat{flex:1;min-width:140px;}
-  .related-grid{grid-template-columns:1fr 1fr;}
-}
-@media(hover:none){
-  .why-card:hover,.related-card:hover,.ev-card:hover,.insight-item:hover{transform:none;}
-}
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.card { animation:fadeUp .45s ease both; }
-
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-════════════════════════════════════════ */
-@media (max-width:1024px) {
-  .main-grid {
-    grid-template-columns:300px 1fr;
-    grid-template-areas:
-      "inputs charts"
-      "sidebar sidebar";
-  }
-  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .sidebar-col .card + .card { margin-top:0; }
-}
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn     { display:flex; }
-  .nav-desktop { display:none; }
-  .main-grid {
-    grid-template-columns:1fr;
-    grid-template-areas: "inputs" "charts" "sidebar";
-  }
-  .sidebar-col { grid-template-columns:1fr 1fr; }
-  .metrics-row { grid-template-columns:repeat(3,1fr); }
-  .tips-grid   { grid-template-columns:repeat(2,1fr); }
-  .donut-wrap  { flex-direction:row; }
-}
-
-@media (max-width:580px) {
-  .metrics-row { grid-template-columns:1fr 1fr; }
-  .metric.total { grid-column:1 / -1; }
-  .sidebar-col { grid-template-columns:1fr; }
-  .sidebar-col .card + .card { margin-top:1rem; }
-  .tips-grid { grid-template-columns:1fr; }
-  .donut-wrap { flex-direction:column; align-items:flex-start; }
-  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
-  .leg-row { flex:1; min-width:130px; }
-  table { font-size:.72rem; }
-  thead th, tbody td { padding:7px 8px; }
-  .hide-xs { display:none; }
-  .card { padding:1rem; }
-}
-
-@media (max-width:400px) {
-  .metrics-row { grid-template-columns:1fr; }
-  .metric.total { grid-column:auto; }
-  .hero h1 { font-size:1.6rem; }
-}
-
-@media (hover:none) {
-  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
-  .tip:hover, .metric:hover { transform:none; }
-}
-</style>
-<body>
 
 <div class="page">
 
@@ -780,18 +48,35 @@ td.gold { color:var(--gold); font-weight:600; }
 
     <div class="inputs-col">
       <div class="card">
-        <div class="card-title">🚗 Loan Details</div>
+        <div class="card-title">🚗 Car Loan Details</div>
+
+        <!-- NEW: Car Price & Down Payment -->
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Car Price (On-Road ₹)</span>
+            <input type="number" class="field-val" id="inp-price" value="800000" step="50000" oninput="syncFromInput('price')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-price"></div>
+            <input type="range" id="sl-price" min="100000" max="5000000" step="50000" value="800000" oninput="syncFromSlider('price')">
+          </div>
+        </div>
 
         <div class="field">
           <div class="field-hdr">
-            <span class="field-lbl">Loan Amount (₹)</span>
-            <input type="number" class="field-val" id="inp-amount" value="800000" oninput="syncFromInput('amount')">
+            <span class="field-lbl">Down Payment (%)</span>
+            <input type="number" class="field-val" id="inp-dp" value="20" step="1" oninput="syncFromInput('dp')">
           </div>
           <div class="range-wrap">
-            <div class="range-fill" id="fill-amount"></div>
-            <input type="range" id="sl-amount" min="50000" max="10000000" step="50000" value="800000" oninput="syncFromSlider('amount')">
+            <div class="range-fill" id="fill-dp"></div>
+            <input type="range" id="sl-dp" min="0" max="80" step="1" value="20" oninput="syncFromSlider('dp')">
           </div>
-          <div class="range-hints"><span class="range-hint">₹50K</span><span class="range-hint">₹1 Cr</span></div>
+        </div>
+
+        <!-- Hidden Loan Amount Tracker -->
+        <input type="hidden" id="inp-amount" value="640000">
+        <div style="font-size:0.85rem; color:var(--muted); text-align:right; margin-top:-10px; margin-bottom:15px; font-weight:500;">
+           Required Loan Amount: <strong style="color:var(--ink); font-size:0.95rem;" id="disp-amount">₹6,40,000</strong>
         </div>
 
         <div class="field">
@@ -819,7 +104,48 @@ td.gold { color:var(--gold); font-weight:600; }
         </div>
       </div>
 
-      <div class="card">
+      <!-- Advanced Options (With Disclaimer) -->
+      <div class="card" style="margin-top:clamp(.75rem,2vw,1.25rem);">
+        <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:var(--accent);">⚡ Advanced Options</span>
+        </div>
+        
+        <div style="font-size:0.75rem; color:var(--rose); background:rgba(244, 63, 94, 0.1); padding:8px; border-radius:6px; margin-bottom:12px; line-height:1.4; font-weight:500;">
+          <i class="bi bi-exclamation-triangle-fill"></i> Note: Unlike Home Loans, most banks charge a 1% - 5% penalty for prepaying Car Loans. Check your foreclosure terms before making lump-sum payments!
+        </div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Extra Yearly Prepayment (₹)</span>
+            <input type="number" class="field-val" id="inp-yprepay" value="0" step="5000" oninput="syncFromInput('yprepay')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-yprepay"></div>
+            <input type="range" id="sl-yprepay" min="0" max="500000" step="5000" value="0" oninput="syncFromSlider('yprepay')">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-hdr">
+            <span class="field-lbl">Processing Fee (%)</span>
+            <input type="number" class="field-val" id="inp-pf" value="0" step="0.1" oninput="syncFromInput('pf')">
+          </div>
+          <div class="range-wrap">
+            <div class="range-fill" id="fill-pf"></div>
+            <input type="range" id="sl-pf" min="0" max="5" step="0.1" value="0" oninput="syncFromSlider('pf')">
+          </div>
+        </div>
+        
+        <div id="prepay-insight-box" style="display:none; margin-top:1rem; padding:1rem; background:rgba(14, 165, 233, 0.1); border:1px solid rgba(14, 165, 233, 0.3); border-radius:var(--r-sm);">
+           <div style="font-size:0.75rem; color:#0284c7; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;"><i class="bi bi-lightning-charge-fill"></i> Prepayment Magic</div>
+           <div style="font-size:0.85rem; color:var(--ink-2); line-height:1.5;">
+             You will save <strong style="color:#0284c7;" id="m-saved-interest">₹0</strong> in interest and close your loan <strong style="color:#0284c7;" id="m-saved-tenure">0 Months</strong> early!
+           </div>
+        </div>
+      </div>
+
+      <!-- Restoring the Donut Chart! -->
+      <div class="card" style="margin-top:clamp(.75rem,2vw,1.25rem);">
         <div class="card-title">🍩 Payment Breakdown</div>
         <div class="donut-wrap">
           <div class="donut-canvas-wrap">
@@ -845,8 +171,8 @@ td.gold { color:var(--gold); font-weight:600; }
       </div>
     </div>
 
+    <!-- The Charts Column -->
     <div class="charts-col">
-
       <div class="card">
         <div class="chart-hdr">
           <div class="card-title" style="margin-bottom:0;">📈 Amortization Chart</div>
@@ -859,7 +185,7 @@ td.gold { color:var(--gold); font-weight:600; }
         <div class="chart-legend">
         <span><span class="dot" style="background:#2563eb;"></span>Principal Paid</span>
         <span><span class="dot" style="background:#d97706;"></span>Interest Paid</span>
-        <span class="balance-legend">
+        <span class="balance-legend" style="display:none;">
             <span class="dot" style="background:#ef4444;"></span>Remaining Balance
         </span>
         </div>
@@ -869,13 +195,21 @@ td.gold { color:var(--gold); font-weight:600; }
         </div>
       </div>
 
+      <!-- The Table! -->
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem;">📅 Year-by-Year Schedule</div>
+        <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.75rem; flex-wrap:wrap; gap:.5rem;">
+          📅 Repayment Schedule
+          <div class="tab-row">
+            <button id="btn-yearly" class="tab-btn active" onclick="setTableMode('yearly')">Yearly</button>
+            <button id="btn-monthly" class="tab-btn" onclick="setTableMode('monthly')">Monthly</button>
+          </div>
+        </div>
+        
         <div class="tbl-scroll">
           <table>
             <thead>
               <tr>
-                <th>Year</th>
+                <th>Period</th>
                 <th>Principal Paid</th>
                 <th>Interest Paid</th>
                 <th>Total Paid</th>
@@ -902,12 +236,12 @@ td.gold { color:var(--gold); font-weight:600; }
           </div>
           <div class="tip" onclick="applyTip(2000000, 8.2, 5)">
             <div class="tip-icon">⚡</div>
-            <div class="tip-title">Electric Vehicle (EV)</div>
+            <div class="tip-title">Electric Vehicle</div>
             <div class="tip-desc">₹20L · 8.2% · 5 yrs</div>
           </div>
           <div class="tip" onclick="applyTip(180000, 10.5, 3)">
             <div class="tip-icon">🏍️</div>
-            <div class="tip-title">Sports / Cruiser Bike</div>
+            <div class="tip-title">Sports Bike</div>
             <div class="tip-desc">₹1.8L · 10.5% · 3 yrs</div>
           </div>
         </div>
@@ -1391,13 +725,15 @@ td.gold { color:var(--gold); font-weight:600; }
 </footer> -->
 
 <script>
-/* helpers */
+let tableMode = 'yearly'; 
+let apiDataCache = null;  
+
 function fmt(n) {
-  if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
-  if (n >= 1e5) return '₹' + (n/1e5).toFixed(2) + ' L';
-  if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
-  return '₹' + Math.round(n);
+  if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
+  if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 }
+
 function fmtS(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
   if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
@@ -1405,63 +741,21 @@ function fmtS(n) {
   return '₹' + Math.round(n);
 }
 
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
-
-    menu.classList.toggle("open");
-
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
-    }
-} 
-/* EMI Engine */
-function calcEMI(p, r, y) {
-  const mr = r / 100 / 12;
-  const n = y * 12;
-  if (p === 0 || r === 0) return { emi: p/n, totalInt: 0, totalPay: p, n };
-  const emi = p * mr * Math.pow(1 + mr, n) / (Math.pow(1 + mr, n) - 1);
-  const totalPay = emi * n;
-  const totalInt = totalPay - p;
-  return { emi: Math.round(emi), totalInt: Math.round(totalInt), totalPay: Math.round(totalPay), n };
+function calcLoanAmount() {
+  const p = parseFloat(document.getElementById('inp-price')?.value) || 0;
+  const dp = parseFloat(document.getElementById('inp-dp')?.value) || 0;
+  const loanAmount = p - (p * (dp / 100));
+  
+  const amtInput = document.getElementById('inp-amount');
+  if (amtInput) amtInput.value = loanAmount;
+  
+  const dispAmount = document.getElementById('disp-amount');
+  if (dispAmount) dispAmount.textContent = fmt(loanAmount);
 }
 
-/* Amortization Engine */
-function calcAmortization(p, r, y) {
-  const { emi } = calcEMI(p, r, y);
-  const mr = r / 100 / 12;
-  let balance = p;
-  let yearlyData = [];
-
-  for (let year = 1; year <= y; year++) {
-    let yearPrin = 0;
-    let yearInt = 0;
-    
-    for (let month = 1; month <= 12; month++) {
-      let interestPart = balance * mr;
-      let principalPart = emi - interestPart;
-      
-      yearInt += interestPart;
-      yearPrin += principalPart;
-      balance -= principalPart;
-      if (balance < 0) balance = 0;
-    }
-    yearlyData.push({
-      year,
-      principal: Math.round(yearPrin),
-      interest: Math.round(yearInt),
-      balance: Math.round(balance),
-      totalPaid: Math.round(yearPrin + yearInt)
-    });
-  }
-  return yearlyData;
-}
-
-/* Sync Logic: Input <--> Slider */
 function updateFill(id) {
   const sl = document.getElementById('sl-'+id);
+  if(!sl) return;
   const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
   const el = document.getElementById('fill-'+id);
   if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
@@ -1471,187 +765,216 @@ function syncFromSlider(id) {
   const v = parseFloat(document.getElementById('sl-'+id).value);
   document.getElementById('inp-'+id).value = v; 
   updateFill(id);
-  updateAll();
+  if(id === 'price' || id === 'dp') calcLoanAmount();
+  fetchEmiData(); 
 }
 
+/* The Bulletproof Sync Function */
 function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
+  let v = parseFloat(document.getElementById('inp-'+id).value);
   if (isNaN(v)) return; 
   
   const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
+  const minVal = parseFloat(sl.min);
+  const maxVal = parseFloat(sl.max);
+
+  // 1. Strict Validation: Prevent negatives, zeroes, or overflows
+  if (v < minVal) v = minVal;
+  if (v > maxVal) v = maxVal;
+  
+  // 2. Force the validated number back into BOTH the slider AND the text box
+  sl.value = v;
+  document.getElementById('inp-'+id).value = v;
   
   updateFill(id);
-  updateAll();
+  
+  // Check if we are on the Car Loan page to update the hidden loan amount
+  if (typeof calcLoanAmount === 'function' && (id === 'price' || id === 'dp')) {
+      calcLoanAmount();
+  }
+  
+  // Run the API fetch
+  if (typeof fetchEmiData === 'function') {
+      fetchEmiData();
+  } else if (typeof updateAll === 'function') {
+      updateAll(); // For calculators that don't have APIs yet
+  }
 }
 
-/* Chart Initialization */
+/* Charts */
 let mode = 'bar', mainChart, donutChart;
 const C = { 
-  prin: '#2563eb', prinBg: 'rgba(37, 99, 235, 0.75)',
-  int: '#d97706',  intBg:  'rgba(217, 119, 6, 0.75)',
-  bal: '#ef4444',  balBg:  'rgba(239, 68, 68, 0.15)'
+  prin: '#2563eb', prinBg: 'rgba(37, 99, 235, 0.85)',
+  int: '#d97706', intBg: 'rgba(217, 119, 6, 0.85)',
+  bal: '#059669'
 };
 
 function getChartOpts(isBar) {
   return {
-    responsive: true,
-    maintainAspectRatio: false,
+    responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) },
-        backgroundColor: 'rgba(0,0,0,.82)', padding: 10, cornerRadius: 8
-      }
-    },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw || 0) }, backgroundColor: 'rgba(0,0,0,.82)', padding: 10, cornerRadius: 8 } },
     animation: { duration: 400 },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 }, stacked: isBar },
-      y: { type: 'linear', position: 'left', beginAtZero: true, grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }, stacked: isBar },
-      y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) } }
-    }
+    scales: { x: { grid: { display: false }, ticks: { color: '#7a7870', font: { size: 10 }, maxRotation: 45 }, stacked: isBar }, y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#7a7870', font: { size: 10 }, callback: v => fmtS(v) }, stacked: isBar } }
   };
-}
-
-function chartData() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  const amort = calcAmortization(p, r, y);
-  
-  const labels = ['0y'], prin = [0], int = [0], bal = [p];
-  amort.forEach(d => { labels.push(d.year + 'y'); prin.push(d.principal); int.push(d.interest); bal.push(d.balance); });
-  return { labels, prin, int, bal };
 }
 
 function getDatasets(d, isBar) {
   if (isBar) {
     return [
-      { type: 'bar', label: 'Principal Paid', data: d.prin, backgroundColor: C.prinBg, stack: 'a', borderRadius: 4, yAxisID: 'y' },
-      { type: 'bar', label: 'Interest Paid',  data: d.int,  backgroundColor: C.intBg,  stack: 'a', borderRadius: 4, yAxisID: 'y' },
+      { type: 'bar', label: 'Principal Paid', data: d.principal, backgroundColor: C.prinBg, borderRadius: {topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4} },
+      { type: 'bar', label: 'Interest Paid',  data: d.interest,  backgroundColor: C.intBg, borderRadius: {topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0} }
     ];
   } else {
     return [
-      { type: 'line', label: 'Principal Paid', data: d.prin, borderColor: C.prin, backgroundColor: C.prinBg, fill: false, tension: 0.35, pointRadius: 2, yAxisID: 'y' },
-      { type: 'line', label: 'Interest Paid',  data: d.int,  borderColor: C.int,  backgroundColor: C.intBg,  fill: false, tension: 0.35, pointRadius: 2, yAxisID: 'y' },
-      { type: 'line', label: 'Remaining Balance', data: d.bal, borderColor: C.bal, backgroundColor: C.balBg, fill: true, tension: 0.35, pointRadius: 2, yAxisID: 'y1' }
+      { type: 'line', label: 'Remaining Balance', data: d.balance, borderColor: C.bal, backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.35, pointRadius: 2 },
+      { type: 'line', label: 'Cumulative Interest', data: d.interest, borderColor: C.intBg, backgroundColor: 'transparent', fill: false, tension: 0.35, pointRadius: 2, borderDash: [5, 5] }
     ];
   }
 }
 
-function initCharts() {
-  const d = chartData();
-  const balanceLegend = document.querySelector('.balance-legend');
-  balanceLegend.style.display = 'none';
-  mainChart = new Chart(document.getElementById('mainChart'), { type: 'bar', data: { labels: d.labels, datasets: getDatasets(d, true) }, options: getChartOpts(true) });
-  donutChart = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut', data: { labels: ['Principal', 'Interest'], datasets: [{ data: [1, 0], backgroundColor: [C.prin, C.int], borderWidth: 0, hoverOffset: 5 }] },
-    options: { cutout: '72%', responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } }, animation: { duration: 700 } }
-  });
+function updateCharts(data) {
+  const labels = ['0y'], principal = [0], interest = [0], balance = [data.principal];
+  let cumInterest = 0;
+  data.yearly_data.forEach(d => { labels.push(d.year + 'y'); principal.push(d.principal); cumInterest += d.interest; interest.push(cumInterest); balance.push(d.balance); });
+  const d = { labels, principal, interest, balance };
+
+  if (!mainChart) {
+    mainChart = new Chart(document.getElementById('mainChart'), { type: mode, data: { labels: d.labels, datasets: getDatasets(d, mode === 'bar') }, options: getChartOpts(mode === 'bar') });
+  } else {
+    mainChart.data.labels = d.labels; mainChart.data.datasets = getDatasets(d, mode === 'bar'); mainChart.options = getChartOpts(mode === 'bar'); mainChart.update();
+  }
+
+  if (!donutChart) {
+    donutChart = new Chart(document.getElementById('donutChart'), {
+      type: 'doughnut', data: { labels: ['Principal', 'Interest'], datasets: [{ data: [data.principal, data.total_interest], backgroundColor: [C.prin, C.int], borderWidth: 0 }] },
+      options: { cutout: '72%', responsive: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } } }
+    });
+  } else {
+    donutChart.data.datasets[0].data = [data.principal, data.total_interest]; donutChart.update();
+  }
 }
 
 function switchTab(m, btn) {
   mode = m;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const balanceLegend = document.querySelector('.balance-legend');
-  if (m === 'bar') { balanceLegend.style.display = 'none'; } else { balanceLegend.style.display = 'inline-block'; }
-  const d = chartData();
-  if (mainChart) mainChart.destroy();
-  mainChart = new Chart(document.getElementById('mainChart'), { type: (m === 'bar') ? 'bar' : 'line', data: { labels: d.labels, datasets: getDatasets(d, m === 'bar') }, options: getChartOpts(m === 'bar') });
+  const legendEl = document.querySelector('.chart-legend');
+  if(legendEl) {
+      if (m === 'bar') legendEl.innerHTML = `<span><span class="dot" style="background:#2563eb;"></span>Principal Paid</span><span><span class="dot" style="background:#d97706;"></span>Interest Paid</span>`;
+      else legendEl.innerHTML = `<span><span class="dot" style="background:#059669;"></span>Remaining Balance</span><span><span class="dot" style="border: 2px dashed #d97706; background:transparent;"></span>Cumulative Interest</span>`;
+  }
+  if(apiDataCache) updateCharts(apiDataCache);
 }
 
-/* table */
-function buildTable(p, r, y) {
-  const tb = document.getElementById('yearTable');
+/* Table */
+function setTableMode(selectedMode) {
+  tableMode = selectedMode;
+  document.getElementById('btn-yearly').classList.remove('active'); document.getElementById('btn-monthly').classList.remove('active');
+  document.getElementById('btn-' + selectedMode).classList.add('active');
+  if(apiDataCache) buildTable(apiDataCache);
+}
+
+function buildTable(data) {
+  const tb = document.getElementById('yearTable'); if(!tb) return;
   tb.innerHTML = '';
-  const amort = calcAmortization(p, r, y);
-  amort.forEach(d => {
+  const records = (tableMode === 'yearly') ? data.yearly_data : data.monthly_data;
+  const labelPrefix = (tableMode === 'yearly') ? 'Year ' : 'Month ';
+  records.forEach(d => {
+    const period = (tableMode === 'yearly') ? d.year : d.month;
+    const totalPaid = (tableMode === 'yearly') ? d.total_paid : (d.principal + d.interest);
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${d.year}</td><td>${fmt(d.principal)}</td><td class="gold">${fmt(d.interest)}</td><td>${fmt(d.totalPaid)}</td><td class="hide-xs" style="color:var(--muted);">${fmt(d.balance)}</td>`;
+    tr.innerHTML = `<td>${labelPrefix}${period}</td><td style="color:var(--sky);">${fmt(d.principal)}</td><td style="color:var(--rose);">${fmt(d.interest)}</td><td style="font-weight:600;">${fmt(totalPaid)}</td><td class="hide-xs" style="color:var(--muted); font-weight:600;">${fmt(d.balance)}</td>`;
     tb.appendChild(tr);
   });
 }
 
-/* master update */
-function updateAll() {
-  const p = +document.getElementById('inp-amount').value || 0;
-  const r = +document.getElementById('inp-rate').value || 0;
-  const y = +document.getElementById('inp-time').value || 0;
-  const { emi, totalInt, totalPay, n } = calcEMI(p, r, y);
+/* API Fetch Engine */
+let fetchTimeout;
+function fetchEmiData() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(() => {
+    const p = +document.getElementById('inp-amount').value || 0;
+    const r = +document.getElementById('inp-rate').value || 0;
+    const y = +document.getElementById('inp-time').value || 0;
+    const y_prepay = document.getElementById('inp-yprepay') ? +document.getElementById('inp-yprepay').value : 0;
+    const pf = document.getElementById('inp-pf') ? +document.getElementById('inp-pf').value : 0;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-  document.getElementById('m-emi').textContent        = fmt(emi);
-  document.getElementById('m-principal').textContent  = fmt(p);
-  document.getElementById('m-interest').textContent   = fmt(totalInt);
-  document.getElementById('m-months').textContent     = n + ' months';
-  
-  const intPct = totalPay > 0 ? ((totalInt/totalPay)*100).toFixed(1) : 0;
-  document.getElementById('m-interestpct').textContent = intPct + '% of total payment';
-  
-  document.getElementById('dl-principal').textContent = fmt(p);
-  document.getElementById('dl-interest').textContent  = fmt(totalInt);
-  document.getElementById('dl-total').textContent     = fmt(totalPay);
+    // Notice we fetch from /calculators/car-loan
+    fetch('/calculators/car-loan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ amount: p, rate: r, time: y, yearly_prepay: y_prepay, processing_fee_pct: pf })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        apiDataCache = data;
+        const elEmi = document.getElementById('m-emi'); if(elEmi) elEmi.textContent = fmt(data.emi);
+        const elPrinTop = document.getElementById('m-principal'); if(elPrinTop) elPrinTop.textContent = fmt(data.principal); 
+        const elInt = document.getElementById('m-interest'); if(elInt) elInt.textContent = fmt(data.total_interest);
+        const elMonths = document.getElementById('m-months'); if(elMonths) elMonths.textContent = data.months_taken + ' Months';
+/* 2. Fix for the Total Interest % showing a dash */
+        const elIntPct = document.getElementById('m-interestpct'); 
+        if(elIntPct && data.principal > 0) {
+            const pct = ((data.total_interest / data.principal) * 100).toFixed(1);
+            elIntPct.textContent = pct + '% of Loan Amount';
+        }
+        const dlPrin = document.getElementById('dl-principal'); if(dlPrin) dlPrin.textContent = fmt(data.principal);
+        const dlInt = document.getElementById('dl-interest'); if(dlInt) dlInt.textContent = fmt(data.total_interest);
+        const dlTot = document.getElementById('dl-total'); if(dlTot) dlTot.textContent = fmt(data.total_payment);
 
-  if (donutChart) { donutChart.data.datasets[0].data = [p, totalInt]; donutChart.update(); }
-  const d = chartData();
-  if (mainChart) { mainChart.data.labels = d.labels; mainChart.data.datasets = getDatasets(d, mode === 'bar'); mainChart.update(); }
-  buildTable(p, r, y);
+
+        const prepayBox = document.getElementById('prepay-insight-box');
+        if (prepayBox) {
+            if (data.interest_saved > 0) {
+                prepayBox.style.display = 'block';
+                document.getElementById('m-saved-interest').textContent = fmt(data.interest_saved);
+                const yearsSaved = Math.floor(data.tenure_saved_months / 12);
+                const monthsSaved = data.tenure_saved_months % 12;
+                let timeStr = '';
+                if (yearsSaved > 0) timeStr += yearsSaved + ' yrs ';
+                if (monthsSaved > 0) timeStr += monthsSaved + ' mos';
+                document.getElementById('m-saved-tenure').textContent = timeStr.trim() || '0 mos';
+            } else prepayBox.style.display = 'none';
+        }
+        updateCharts(data); buildTable(data);
+      }
+    });
+  }, 100);
 }
 
-/* presets */
-function applyTip(p, r, y) {
-  document.getElementById('sl-amount').value = p;
-  document.getElementById('sl-rate').value   = r;
-  document.getElementById('sl-time').value   = y;
-  ['amount','rate','time'].forEach(syncFromSlider);
-}
+/* Base UI Actions */
+function toggleFaq(el) { el.classList.toggle('open'); }
+const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } }); }, { threshold: 0.1 });
 
-/* dark mode */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}
-
-/* mobile drawer */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
-}
-function closeOnOverlay(e) { if (e.target.classList.contains('drawer-overlay')) toggleDrawer(); }
-
-/* init */
 window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); document.getElementById('themeIcon').className = 'bi bi-sun-fill'; }
-  ['amount','rate','time'].forEach(updateFill);
-  initCharts(); updateAll();
-  window.addEventListener('resize', () => { if (window.innerWidth > 768 && drawerOpen) toggleDrawer(); });
+  if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); const t = document.getElementById('themeIcon'); if(t) t.className = 'bi bi-sun-fill'; }
+  document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+  
+  // Notice we apply fill to price and dp as well
+  ['price','dp','rate','time','yprepay','pf'].forEach(updateFill);
+  calcLoanAmount();
+  fetchEmiData();
 });
-/* FAQ toggle */
-function toggleFaq(el) {
-  const isOpen = el.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
-  if (!isOpen) el.classList.add('open');
-}
 
-/* Scroll reveal */
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const siblings = Array.from(e.target.parentNode?.children || []);
-      const idx = siblings.indexOf(e.target);
-      e.target.style.animationDelay = (idx * 70) + 'ms';
-      e.target.classList.add('on');
-      obs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+/* 1. Fix for the Common Vehicle Loans click error */
+function applyTip(p, r, y) {
+  // We set Car Price to the preset, and Down Payment to 0 to match the exact Loan Amount
+  const priceSlider = document.getElementById('sl-price');
+  if(priceSlider) priceSlider.value = p;
+  
+  const dpSlider = document.getElementById('sl-dp');
+  if(dpSlider) dpSlider.value = 0;
+  
+  const rateSlider = document.getElementById('sl-rate');
+  if(rateSlider) rateSlider.value = r;
+  
+  const timeSlider = document.getElementById('sl-time');
+  if(timeSlider) timeSlider.value = y;
+  
+  ['price','dp','rate','time'].forEach(syncFromSlider);
+}
 </script>
-</body>
 {% endblock %}
