@@ -1,821 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
-Loan Eligibility Calculator | Vittarthi
+Loan Eligibility Calculator | Check Maximum Borrowing Limit | Vittarthi
 {% endblock %}
 
 {% block meta_description %}
-Check your borrowing capacity with the Vittarthi Loan Eligibility Calculator. Estimate eligible loan amount based on salary, income, EMI, and repayment tenure.
+Find out exactly how much home, car, or personal loan you can get based on your salary and existing EMIs. Check your borrowing capacity instantly.
 {% endblock %}
+
+{% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/eligibility.css' %}">
+{% endblock %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
 
-
-/* ═══════════ RESET & BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
-:root {
-  --ink:        #1a1208;
-  --ink-2:      #5a4a30;
-  --ink-3:      #9a8a70;
-  --paper:      #faf7f2;
-  --surface:    #ffffff;
-  --s2:         #f5f0e8;
-  --s3:         #ece4d4;
-  --amber:      #b45309;
-  --amber-2:    #d97706;
-  --amber-lt:   #fef3c7;
-  --amber-md:   #fde68a;
-  --green:      #1a6b4a;
-  --green-lt:   #e6f2ec;
-  --green-md:   #c8e6d6;
-  --rose:       #a0363a;
-  --rose-lt:    #fdeaeb;
-  --blue:       #1b4fa6;
-  --blue-lt:    #e8effe;
-  --teal:       #0e7490;
-  --teal-lt:    #e0f4f8;
-  --border:     rgba(26,18,8,0.09);
-  --shadow:     0 4px 20px rgba(26,18,8,0.07);
-  --shadow-lg:  0 12px 48px rgba(26,18,8,0.11);
-  --r:          14px;
-  --r-sm:       8px;
-  --pad:        clamp(1.25rem,5vw,2.5rem);
-  --max:        1200px;
-}
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed;
-  top:var(--nav-h); left:0; right:0; bottom:0;
-  z-index:190;
-}
-.drawer.open { display:block; }
-.drawer-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,.45);
-}
-.drawer-panel {
-  position:absolute; top:0; right:0;
-  width:min(260px, 80vw); height:100%;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:1.25rem 1rem;
-  box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem;
-  overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500;
-  padding:.55rem .85rem; border-radius:8px;
-  transition:all .2s;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page {
-  max-width:1340px; margin:0 auto;
-  padding:0 var(--pad) 4rem;
-}
-
-/* ═══════════ HERO ═══════════ */
-.hero {
-  text-align:center;
-  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
-  animation:fadeUp .5s ease both;
-}
-.hero-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-  background:var(--accent-lt);
-  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 5vw, 3.4rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:.95rem; max-width:540px; margin:0 auto; }
-
-/* ═══════════ METRICS ROW ═══════════ */
-.metrics-row {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(.6rem,2vw,1rem);
-  margin-bottom:clamp(1rem,2.5vw,1.5rem);
-  animation:fadeUp .5s .15s ease both;
-}
-.metric {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r-sm);
-  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
-  box-shadow:var(--shadow);
-  position:relative; overflow:hidden;
-  transition:transform .2s, background .3s;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:3px; border-radius:3px 3px 0 0;
-}
-.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
-.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
-.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
-.metric:hover { transform:translateY(-2px); }
-.metric-lbl {
-  font-size:.68rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
-}
-.metric-val {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.2rem,3vw,1.6rem);
-  line-height:1; margin-bottom:3px;
-}
-.metric-sub { font-size:.68rem; color:var(--muted); }
-.metric.total .metric-val  { color:var(--accent); }
-.metric.profit .metric-val { color:var(--gold); }
-
-/* ═══════════ 3-COL GRID ═══════════ */
-.main-grid {
-  display:grid;
-  grid-template-columns:320px 1fr 200px;
-  grid-template-areas:"inputs charts sidebar";
-  gap:clamp(1rem,2vw,1.5rem);
-  align-items:start;
-}
-.inputs-col { grid-area:inputs; }
-.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
-.sidebar-col { grid-area:sidebar; }
-
-/* ═══════════ CARD ═══════════ */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:clamp(1rem,3vw,1.5rem);
-  box-shadow:var(--shadow);
-  transition:background .3s, border-color .3s;
-}
-.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
-.card-title {
-  font-size:.72rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:1.1rem;
-}
-
-/* ═══════════ SLIDERS & INPUTS ═══════════ */
-.field { margin-bottom:1.25rem; }
-.field:last-child { margin-bottom:0; }
-.field-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.5rem;
-}
-.field-lbl  { font-size:.85rem; color:var(--muted); }
-
-input.field-val  {
-  font-size:.92rem; font-weight:600; color:var(--text);
-  background:var(--surface2); padding:4px 10px; border-radius:6px;
-  width:110px; text-align:right; border:1px solid transparent;
-  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
-}
-input.field-val:focus {
-  background: var(--surface);
-  border-color: var(--accent);
-}
-input.field-val::-webkit-outer-spin-button,
-input.field-val::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-input.field-val[type=number] {
-  -moz-appearance: textfield;
-}
-
-.range-wrap { position:relative; }
-.range-fill {
-  position:absolute; top:50%; transform:translateY(-50%);
-  height:5px; border-radius:100px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-  pointer-events:none; transition:width .08s;
-}
-input[type=range] {
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:5px;
-  background:var(--surface2); border-radius:100px;
-  outline:none; cursor:pointer; display:block;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:22px; height:22px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-lt);
-  cursor:pointer; transition:transform .18s;
-}
-input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
-input[type=range]::-moz-range-thumb {
-  width:22px; height:22px; border-radius:50%;
-  border:none; background:var(--accent); cursor:pointer;
-}
-.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
-.range-hint  { font-size:.66rem; color:var(--muted); }
-
-/* ═══════════ DONUT ═══════════ */
-.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
-.donut-canvas-wrap { position:relative; flex-shrink:0; }
-.donut-canvas-wrap canvas { display:block; }
-.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-.leg-row { display:flex; align-items:center; gap:8px; }
-.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
-.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
-
-/* ═══════════ CHART TABS ═══════════ */
-.chart-hdr {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:.85rem;
-  flex-wrap:wrap; gap:.5rem;
-}
-.tab-row { display:flex; gap:5px; }
-.tab-btn {
-  background:var(--surface2); border:none; border-radius:7px;
-  padding:4px 14px; font-size:.78rem; font-weight:500;
-  color:var(--muted); cursor:pointer; font-family:inherit;
-  transition:all .2s;
-}
-.tab-btn.active { background:var(--accent); color:#fff; }
-.chart-box { position:relative; width:100%; }
-
-/* ═══════════ TABLE ═══════════ */
-.tbl-scroll {
-  max-height:260px; overflow-y:auto;
-  border-radius:8px; border:1px solid var(--border);
-}
-.tbl-scroll::-webkit-scrollbar { width:4px; }
-.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-table { width:100%; border-collapse:collapse; font-size:.78rem; }
-thead th {
-  padding:9px 12px; text-align:right;
-  font-size:.65rem; font-weight:600; letter-spacing:.5px;
-  text-transform:uppercase; color:var(--muted);
-  background:var(--surface2);
-  position:sticky; top:0; z-index:1;
-  border-bottom:1px solid var(--border);
-}
-thead th:first-child { text-align:left; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--surface2); }
-tbody td { padding:8px 12px; text-align:right; color:var(--text); }
-tbody td:first-child { text-align:left; font-weight:500; }
-td.green { color:var(--accent); font-weight:600; }
-
-/* ═══════════ TIPS ═══════════ */
-.tips-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
-}
-.tip {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:.9rem 1rem;
-  cursor:pointer; transition:all .2s;
-}
-.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
-.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
-.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
-
-/* ═══════════ SIDEBAR ═══════════ */
-.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
-.sb-links { display:flex; flex-direction:column; gap:3px; }
-.sb-links a {
-  display:flex; align-items:center; gap:7px;
-  text-decoration:none; color:var(--muted);
-  font-size:.8rem; padding:7px 9px; border-radius:8px;
-  border:1px solid transparent; transition:all .18s;
-}
-.sb-links a i { font-size:13px; flex-shrink:0; }
-.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
-.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
-.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
-.qf { padding-top:10px; border-top:1px solid var(--border); }
-.qf:first-child { padding-top:0; border-top:none; }
-.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
-.qf-val { font-weight:600; color:var(--text); }
-.qf-val.accent { color:var(--accent); }
-.qf-val.alert { color:var(--gold); }
-
-/* ═══════════ SEO CONTENT AREA ═══════════ */
-.sec{padding:clamp(3rem,7vw,2rem) var(--pad);border-radius: 35px;}
-.sec-inner{max-width:var(--max);margin:0 auto;}
-.label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--amber);background:var(--amber-lt);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.sec-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
-  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
-}
-.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
-.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
-.sec-hdr.center{text-align:center;}
-.sec-hdr.center .sec-sub{margin:0 auto;}
-
-/* ═══ ANIMATION ═══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.fu{opacity:0;}
-.fu.on{animation:fadeUp .6s ease both;}
-
-/* ════════════════════════════════════
-   1. HOW IT WORKS — 3 steps
-════════════════════════════════════ */
-.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
-.steps-grid::before{
-  content:'';position:absolute;top:32px;
-  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
-  height:2px;
-  background:repeating-linear-gradient(90deg,var(--amber-md) 0,var(--amber-md) 8px,transparent 8px,transparent 16px);
-  pointer-events:none;
-}
-.step{text-align:center;padding:.5rem;}
-.step-num{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--amber);color:#fff;
-  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--amber-lt);
-  position:relative;z-index:1;
-}
-.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
-.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   2. FOIR EXPLAINER — visual + editorial
-════════════════════════════════════ */
-.foir-sec{background:var(--paper);}
-.foir-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:center;}
-
-/* FOIR visual donut-style breakdown */
-.foir-visual{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);
-}
-.foir-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;}
-.foir-salary-label{
-  font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:.5rem;
-}
-.foir-salary-val{
-  font-family:'Playfair Display',serif;
-  font-size:1.8rem;font-weight:700;color:var(--amber);line-height:1;margin-bottom:1.25rem;
-}
-.foir-bars{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.25rem;}
-.foir-bar-row{display:flex;align-items:center;gap:.75rem;}
-.foir-bar-lbl{font-size:.73rem;color:var(--ink-2);width:130px;flex-shrink:0;line-height:1.3;}
-.foir-track{flex:1;background:var(--s2);border-radius:100px;height:12px;overflow:hidden;}
-.foir-fill{height:100%;border-radius:100px;}
-.foir-fill.existing{background:linear-gradient(90deg,var(--rose),#f87171);}
-.foir-fill.new-emi{background:linear-gradient(90deg,var(--amber),var(--amber-2));}
-.foir-fill.living{background:linear-gradient(90deg,var(--teal),#22d3ee);}
-.foir-bar-pct{font-size:.72rem;font-weight:600;width:35px;text-align:right;flex-shrink:0;}
-.foir-bracket{
-  background:var(--s2);border-radius:var(--r-sm);padding:.85rem 1rem;
-  display:grid;grid-template-columns:1fr 1fr;gap:.75rem;
-}
-.foir-bracket-item{}
-.foir-bracket-label{font-size:.67rem;color:var(--ink-3);margin-bottom:3px;font-weight:500;}
-.foir-bracket-val{font-size:.85rem;font-weight:600;color:var(--ink);}
-.foir-bracket-val span{font-size:.7rem;font-weight:400;color:var(--ink-3);}
-
-/* Editorial */
-.foir-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.foir-content p:last-child{margin-bottom:0;}
-.foir-content strong{color:var(--ink);}
-.foir-rules{display:flex;flex-direction:column;gap:.75rem;margin:1.25rem 0;}
-.foir-rule{
-  display:flex;align-items:flex-start;gap:.85rem;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:.9rem 1rem;
-  transition:border-color .2s;
-}
-.foir-rule:hover{border-color:var(--amber-md);}
-.foir-rule-icon{
-  width:36px;height:36px;border-radius:9px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:15px;
-  transition:background .2s;
-}
-.foir-rule-icon.amber{background:var(--amber-lt);color:var(--amber);}
-.foir-rule-icon.green{background:var(--green-lt);color:var(--green);}
-.foir-rule:hover .foir-rule-icon{background:var(--amber-md);}
-.foir-rule-title{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.foir-rule-desc{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
-
-/* ════════════════════════════════════
-   3. CIBIL SCORE IMPACT
-════════════════════════════════════ */
-.cibil-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.cibil-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-
-/* Score range cards */
-.score-cards{display:flex;flex-direction:column;gap:.75rem;}
-.score-card{
-  border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-  border:1px solid var(--border);
-  display:flex;align-items:center;gap:1rem;
-  transition:transform .2s,box-shadow .2s;
-}
-.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
-.score-badge{
-  min-width:82px;text-align:center;border-radius:var(--r-sm);
-  padding:.45rem .5rem;flex-shrink:0;
-}
-.score-badge-range{font-size:.72rem;font-weight:700;}
-.score-badge-label{font-size:.6rem;font-weight:500;margin-top:1px;}
-.score-card.excellent{background:var(--green-lt);border-color:rgba(26,107,74,.2);}
-.score-card.excellent .score-badge{background:var(--green);color:#fff;}
-.score-card.good{background:var(--teal-lt);border-color:rgba(14,116,144,.2);}
-.score-card.good .score-badge{background:var(--teal);color:#fff;}
-.score-card.fair{background:var(--amber-lt);border-color:rgba(180,83,9,.2);}
-.score-card.fair .score-badge{background:var(--amber);color:#fff;}
-.score-card.poor{background:var(--rose-lt);border-color:rgba(160,54,58,.2);}
-.score-card.poor .score-badge{background:var(--rose);color:#fff;}
-.score-info{}
-.score-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.score-desc{font-size:.75rem;color:var(--ink-2);line-height:1.55;}
-
-/* Right side: how CIBIL is built */
-.cibil-build{display:flex;flex-direction:column;gap:.85rem;}
-.cibil-build-title{
-  font-size:.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:.25rem;
-}
-.cibil-factor{
-  background:var(--s2);border-radius:var(--r-sm);border:1px solid var(--border);
-  padding:1rem 1.1rem;
-  transition:border-color .2s,background .2s;
-}
-.cibil-factor:hover{border-color:var(--amber-md);background:var(--amber-lt);}
-.cibil-factor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
-.cibil-factor-name{font-size:.84rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;}
-.cibil-factor-name i{color:var(--amber);font-size:14px;}
-.cibil-factor-weight{
-  font-size:.68rem;font-weight:700;
-  background:var(--amber-lt);color:var(--amber);
-  padding:2px 8px;border-radius:100px;
-}
-.cibil-factor-bar{background:var(--s3);border-radius:100px;height:6px;overflow:hidden;margin-bottom:.4rem;}
-.cibil-factor-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--amber),var(--amber-2));}
-.cibil-factor-desc{font-size:.73rem;color:var(--ink-2);line-height:1.5;}
-
-/* ════════════════════════════════════
-   4. STRATEGIES TO BOOST ELIGIBILITY
-════════════════════════════════════ */
-.boost-sec{background:var(--paper);}
-.boost-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;}
-.boost-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  position:relative;overflow:hidden;
-  transition:transform .22s,box-shadow .22s;
-}
-.boost-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-  transform:scaleX(0);transform-origin:left;transition:transform .3s;
-}
-.boost-card:nth-child(1)::after{background:var(--green);}
-.boost-card:nth-child(2)::after{background:var(--blue);}
-.boost-card:nth-child(3)::after{background:var(--amber);}
-.boost-card:nth-child(4)::after{background:var(--teal);}
-.boost-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
-.boost-card:hover::after{transform:scaleX(1);}
-.boost-number{
-  font-family:'Playfair Display',serif;
-  font-size:2.5rem;font-weight:700;line-height:1;
-  margin-bottom:.85rem;opacity:.12;
-  position:absolute;top:1rem;right:1.25rem;
-}
-.boost-icon{
-  width:44px;height:44px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;margin-bottom:1rem;
-}
-.boost-card:nth-child(1) .boost-icon{background:var(--green-lt);color:var(--green);}
-.boost-card:nth-child(2) .boost-icon{background:var(--blue-lt);color:var(--blue);}
-.boost-card:nth-child(3) .boost-icon{background:var(--amber-lt);color:var(--amber);}
-.boost-card:nth-child(4) .boost-icon{background:var(--teal-lt);color:var(--teal);}
-.boost-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
-.boost-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-.boost-impact{
-  font-size:.7rem;font-weight:600;margin-top:.75rem;
-  display:inline-flex;align-items:center;gap:4px;
-  padding:2px 8px;border-radius:100px;
-}
-.boost-card:nth-child(1) .boost-impact{background:var(--green-lt);color:var(--green);}
-.boost-card:nth-child(2) .boost-impact{background:var(--blue-lt);color:var(--blue);}
-.boost-card:nth-child(3) .boost-impact{background:var(--amber-lt);color:var(--amber);}
-.boost-card:nth-child(4) .boost-impact{background:var(--teal-lt);color:var(--teal);}
-
-/* Co-applicant spotlight */
-.coapplicant-banner{
-  background:linear-gradient(135deg,var(--blue) 0%,#2260c4 100%);
-  border-radius:var(--r);padding:1.6rem 2rem;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:1.25rem;
-  position:relative;overflow:hidden;
-}
-.coapplicant-banner::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:16px 16px;
-}
-.coapplicant-left{position:relative;z-index:1;}
-.coapplicant-tag{
-  font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
-  color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);
-  padding:3px 10px;border-radius:100px;margin-bottom:.6rem;display:inline-block;
-}
-.coapplicant-title{font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:.35rem;}
-.coapplicant-desc{font-size:.8rem;color:rgba(255,255,255,.78);line-height:1.6;max-width:420px;}
-.coapplicant-stat{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r-sm);padding:.85rem 1.25rem;text-align:center;
-  position:relative;z-index:1;flex-shrink:0;
-}
-.coapplicant-stat-num{
-  font-family:'Playfair Display',serif;
-  font-size:1.8rem;font-weight:700;color:#fff;line-height:1;
-}
-.coapplicant-stat-lbl{font-size:.7rem;color:rgba(255,255,255,.7);margin-top:3px;}
-
-/* ════════════════════════════════════
-   5. KEY STATS — numbers that matter
-════════════════════════════════════ */
-.stats-sec{
-  background:var(--amber);
-  padding:clamp(2.5rem,5vw,1.5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 35px;
-}
-.stats-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.08) 1px,transparent 1px);
-  background-size:20px 20px;
-}
-.stats-inner{
-  max-width:var(--max);margin:0 auto;
-  position:relative;z-index:1;
-}
-.stats-headline{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.4rem,3vw,2rem);font-weight:700;
-  color:#fff;margin-bottom:2rem;text-align:center;
-}
-.stats-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;
-}
-.stat-box{
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r);padding:1.25rem;text-align:center;
-}
-.stat-box-num{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.35rem;
-}
-.stat-box-label{font-size:.75rem;color:rgba(255,255,255,.75);line-height:1.4;}
-
-/* ════════════════════════════════════
-   6. SALARY BRACKETS — FOIR table
-════════════════════════════════════ */
-.brackets-sec{background:var(--surface);border-top:1px solid var(--border);}
-.brackets-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.bracket-table-wrap{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
-}
-.bracket-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-.bracket-table thead th{
-  padding:.75rem 1rem;text-align:left;
-  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
-}
-.bracket-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.bracket-table tbody tr:last-child{border-bottom:none;}
-.bracket-table tbody tr:hover{background:var(--amber-lt);}
-.bracket-table td{padding:.8rem 1rem;color:var(--ink-2);vertical-align:middle;}
-.bracket-table td:first-child{color:var(--ink);font-weight:500;}
-.bracket-pill{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:.72rem;font-weight:600;padding:2px 10px;border-radius:100px;
-}
-.bracket-pill.high  {background:var(--green-lt);color:var(--green);}
-.bracket-pill.mid   {background:var(--amber-lt);color:var(--amber);}
-.bracket-pill.low   {background:var(--rose-lt);color:var(--rose);}
-.bracket-result{font-weight:600;color:var(--ink);}
-
-/* Right: what reduces eligibility */
-.reduces-list{display:flex;flex-direction:column;gap:.75rem;}
-.reduces-item{
-  background:var(--s2);border:1px solid var(--border);border-left:4px solid;
-  border-radius:0 var(--r-sm) var(--r-sm) 0;padding:1rem 1.1rem;
-  transition:background .2s;
-}
-.reduces-item:hover{background:var(--rose-lt);}
-.reduces-item:nth-child(1){border-left-color:var(--rose);}
-.reduces-item:nth-child(2){border-left-color:var(--amber);}
-.reduces-item:nth-child(3){border-left-color:var(--amber);}
-.reduces-item:nth-child(4){border-left-color:var(--ink-3);}
-.reduces-title{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;display:flex;align-items:center;gap:6px;}
-.reduces-title i{font-size:13px;}
-.reduces-desc{font-size:.76rem;color:var(--ink-2);line-height:1.55;}
-
-/* ════════════════════════════════════
-   7. FAQ
-════════════════════════════════════ */
-.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.faq-item{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
-}
-.faq-q{
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:1.1rem 1.25rem;cursor:pointer;
-  font-size:.88rem;font-weight:600;color:var(--ink);
-  transition:background .18s;user-select:none;
-}
-.faq-q:hover{background:var(--s2);}
-.faq-q i.toggle{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
-.faq-item.open .faq-q i.toggle{transform:rotate(45deg);color:var(--amber);}
-.faq-item.open .faq-q{color:var(--amber);}
-.faq-a{
-  display:none;padding:0 1.25rem 1.1rem;
-  font-size:.8rem;color:var(--ink-2);line-height:1.75;
-  border-top:1px solid var(--border);
-}
-.faq-a p{padding-top:.9rem;}
-.faq-item.open .faq-a{display:block;}
-
-/* ════════════════════════════════════
-   8. RELATED CALCULATORS
-════════════════════════════════════ */
-.related-sec{background:var(--surface);border-top:1px solid var(--border);}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
-.related-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:center;gap:.75rem;
-  transition:all .22s;
-}
-.related-card:hover{background:var(--amber-lt);border-color:var(--amber-md);transform:translateY(-2px);}
-.related-card-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--amber-lt);color:var(--amber);
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex-shrink:0;
-}
-.related-card:hover .related-card-icon{background:var(--amber-md);}
-.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
-
-/* ════════════════════════════════════
-   9. FINAL CTA
-════════════════════════════════════ */
-.final-note{
-  background:var(--ink);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  text-align:center;position:relative;overflow:hidden;
-}
-.final-note::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center top,rgba(180,83,9,.35),transparent 65%);
-  pointer-events:none;
-}
-.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
-.final-note h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
-  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
-}
-.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
-.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
-.btn-w{
-  display:inline-flex;align-items:center;gap:6px;
-  background:#fff;color:var(--amber);
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;
-}
-.btn-w:hover{opacity:.9;}
-.btn-o{
-  display:inline-flex;align-items:center;gap:6px;
-  background:transparent;color:#fff;
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:500;
-  border:1.5px solid rgba(255,255,255,.35);
-  transition:border-color .2s,background .2s;
-}
-.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:900px){
-  .foir-grid,.cibil-grid,.brackets-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-  .boost-grid{grid-template-columns:1fr;}
-}
-@media(hover:none){
-  .boost-card:hover,.score-card:hover,.related-card:hover{transform:none;}
-}
-
-/* ═══════════ FOOTER ═══════════ */
-/* footer {
-  text-align:center; padding:1.75rem var(--pad);
-  color:var(--muted); font-size:.75rem;
-  border-top:1px solid var(--border); margin-top:3rem;
-} */
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.card { animation:fadeUp .45s ease both; }
-
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-════════════════════════════════════════ */
-@media (max-width:1024px) {
-  .main-grid {
-    grid-template-columns:300px 1fr;
-    grid-template-areas:
-      "inputs charts"
-      "sidebar sidebar";
-  }
-  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .sidebar-col .card + .card { margin-top:0; }
-}
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn     { display:flex; }
-  .nav-desktop { display:none; }
-  .main-grid {
-    grid-template-columns:1fr;
-    grid-template-areas: "inputs" "charts" "sidebar";
-  }
-  .sidebar-col { grid-template-columns:1fr 1fr; }
-  .metrics-row { grid-template-columns:repeat(3,1fr); }
-  .tips-grid   { grid-template-columns:repeat(2,1fr); }
-  .donut-wrap  { flex-direction:row; }
-}
-
-@media (max-width:580px) {
-  .metrics-row { grid-template-columns:1fr 1fr; }
-  .metric.total { grid-column:1 / -1; }
-  .sidebar-col { grid-template-columns:1fr; }
-  .sidebar-col .card + .card { margin-top:1rem; }
-  .tips-grid { grid-template-columns:1fr; }
-  .donut-wrap { flex-direction:column; align-items:flex-start; }
-  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
-  .leg-row { flex:1; min-width:130px; }
-  table { font-size:.72rem; }
-  thead th, tbody td { padding:7px 8px; }
-  .hide-xs { display:none; }
-  .card { padding:1rem; }
-}
-
-@media (max-width:400px) {
-  .metrics-row { grid-template-columns:1fr; }
-  .metric.total { grid-column:auto; }
-  .hero h1 { font-size:1.6rem; }
-}
-
-@media (hover:none) {
-  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
-  .tip:hover, .metric:hover { transform:none; }
-}
-</style>
-<body>
 
 <div class="page">
 
@@ -1502,7 +704,7 @@ td.green { color:var(--accent); font-weight:600; }
 </footer> -->
 
 <script>
-/* helpers */
+/* Helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
   if (n >= 1e5) return '₹' + (n/1e5).toFixed(2) + ' L';
@@ -1526,221 +728,138 @@ const obs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fu').forEach(el => obs.observe(el));
-/* Eligibility Math Engine */
-function calcEligibility(salary, existing, score, rate, years) {
-  // 1. Determine FOIR (Max percentage of income allowed for EMIs)
-  let foir = 0.50; 
-  if (salary > 100000) foir = 0.55;
-  if (salary > 200000) foir = 0.60;
-
-  // 2. Calculate Max Total EMI allowed
-  let maxTotalEMI = salary * foir;
-  
-  // 3. Calculate Available EMI for NEW loan
-  let availableEMI = maxTotalEMI - existing;
-  if (availableEMI < 0) availableEMI = 0;
-
-  // 4. Apply Credit Score Penalty
-  let scoreMultiplier = 1;
-  let scoreStatus = "Excellent";
-  let scoreColor = "var(--accent)";
-
-  if (score < 600) { 
-      scoreMultiplier = 0.0; 
-      scoreStatus = "Poor (Rejected)"; 
-      scoreColor = "var(--gold)"; 
-  }
-  else if (score < 650) { 
-      scoreMultiplier = 0.5; 
-      scoreStatus = "Fair (Risky)"; 
-      scoreColor = "var(--gold)"; 
-  }
-  else if (score < 750) { 
-      scoreMultiplier = 0.85; 
-      scoreStatus = "Good"; 
-      scoreColor = "var(--blue)"; 
-  }
-
-  availableEMI = availableEMI * scoreMultiplier;
-
-  // 5. Present Value of Annuity Formula to find Loan Amount
-  const mr = rate / 100 / 12;
-  const n = years * 12;
-  let eligibleLoan = 0;
-  
-  if (mr > 0 && n > 0 && availableEMI > 0) {
-      // P = EMI * ((1+r)^n - 1) / (r * (1+r)^n)
-      eligibleLoan = availableEMI * ((Math.pow(1 + mr, n) - 1) / (mr * Math.pow(1 + mr, n)));
-  }
-
-  let takeHome = salary - existing - availableEMI;
-  if (takeHome < 0) takeHome = 0;
-
-  return {
-      eligibleLoan: Math.round(eligibleLoan),
-      availableEMI: Math.round(availableEMI),
-      takeHome: Math.round(takeHome),
-      foirPct: Math.round(foir * 100),
-      scoreStatus,
-      scoreColor
-  };
-}
-
-/* Calculate Eligibility for multiple tenures for the table */
-function getTenureTableData(salary, existing, score, rate) {
-    let tenures = [5, 10, 15, 20, 25, 30];
-    let data = [];
-    
-    tenures.forEach(t => {
-        let res = calcEligibility(salary, existing, score, rate, t);
-        data.push({
-            tenure: t,
-            rate: rate,
-            emi: res.availableEMI,
-            loan: res.eligibleLoan
-        });
-    });
-    return data;
-}
-
-
-/* Sync Logic: Input <--> Slider */
-function updateFill(id) {
-  const sl = document.getElementById('sl-'+id);
-  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
-  const el = document.getElementById('fill-'+id);
-  if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
-}
-
-function syncFromSlider(id) {
-  const v = parseFloat(document.getElementById('sl-'+id).value);
-  document.getElementById('inp-'+id).value = v; 
-  updateFill(id);
-  updateAll();
-}
-
-function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
-  if (isNaN(v)) return; 
-  
-  const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
-  
-  updateFill(id);
-  updateAll();
-}
 
 /* Donut Chart */
 let donutChart;
-
 function initCharts() {
   donutChart = new Chart(document.getElementById('donutChart'), {
     type: 'doughnut',
-    data: { 
-        labels: ['Existing EMIs', 'New EMI Capacity', 'Take Home Cash'], 
-        datasets: [{ 
-            data: [1, 1, 1], 
-            backgroundColor: ['#ef4444', '#2563eb', '#10b981'], 
-            borderWidth: 0, 
-            hoverOffset: 5 
-        }] 
+    data: {
+      labels: ['Existing EMIs', 'New EMI Capacity', 'Take Home Cash'],
+      datasets: [{ data: [1, 1, 1], backgroundColor: ['#ef4444', '#2563eb', '#10b981'], borderWidth: 0, hoverOffset: 5 }]
     },
-    options: { 
-        cutout: '70%', 
-        responsive: false, 
-        plugins: { 
-            legend: { display: false }, 
-            tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } 
-        }, 
-        animation: { duration: 700 } 
+    options: {
+      cutout: '70%', responsive: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } },
+      animation: { duration: 700 }
     }
   });
 }
 
-/* table */
-function buildTable(salary, existing, score, rate) {
-  const tb = document.getElementById('tenureTable');
+/* Build Tenure Table from API data */
+function buildTable(rows) {
+  const tb = document.getElementById('tenureTable'); if (!tb) return;
   tb.innerHTML = '';
-  const data = getTenureTableData(salary, existing, score, rate);
-  
-  data.forEach(d => {
+  rows.forEach(d => {
     const tr = document.createElement('tr');
     if (d.loan === 0) {
-        tr.innerHTML = `<td>${d.tenure} Years</td><td>${d.rate}%</td><td style="color:var(--muted);">₹0</td><td style="color:var(--gold); font-weight:600;">Rejected</td>`;
+      tr.innerHTML = `<td>${d.tenure} Years</td><td>${d.rate}%</td><td style="color:var(--muted);">₹0</td><td style="color:var(--gold);font-weight:600;">Rejected</td>`;
     } else {
-        tr.innerHTML = `<td>${d.tenure} Years</td><td>${d.rate}%</td><td style="color:var(--muted);">${fmt(d.emi)}</td><td class="green">${fmt(d.loan)}</td>`;
+      tr.innerHTML = `<td>${d.tenure} Years</td><td>${d.rate}%</td><td style="color:var(--muted);">${fmt(d.emi)}</td><td class="green">${fmt(d.loan)}</td>`;
     }
     tb.appendChild(tr);
   });
 }
 
-/* master update */
-function updateAll() {
-  const salary = +document.getElementById('inp-salary').value || 0;
-  const existing = +document.getElementById('inp-existing').value || 0;
-  const score = +document.getElementById('inp-score').value || 0;
-  const rate = +document.getElementById('inp-rate').value || 0;
-  const years = +document.getElementById('inp-time').value || 0;
-  
-  const res = calcEligibility(salary, existing, score, rate, years);
-
-  document.getElementById('m-eligible').textContent = fmt(res.eligibleLoan);
-  document.getElementById('m-tenure-hint').textContent = `For ${years} Years @ ${rate}%`;
-  
-  document.getElementById('m-max-emi').textContent = fmt(res.availableEMI);
-  document.getElementById('m-foir-hint').textContent = `Max FOIR Allowed: ${res.foirPct}%`;
-  
-  document.getElementById('m-score-status').textContent = res.scoreStatus;
-  document.getElementById('m-score-status').style.color = res.scoreColor;
-  
-  // Legend updates
-  document.getElementById('dl-existing').textContent = fmt(existing);
-  document.getElementById('dl-new-emi').textContent  = fmt(res.availableEMI);
-  document.getElementById('dl-takehome').textContent = fmt(res.takeHome);
-
-  if (donutChart) { 
-    donutChart.data.datasets[0].data = [existing, res.availableEMI, res.takeHome]; 
-    donutChart.update(); 
-  }
-
-  buildTable(salary, existing, score, rate);
+/* Bulletproof Input Validation */
+function updateFill(id) {
+  const sl = document.getElementById('sl-'+id); if (!sl) return;
+  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
+  const el = document.getElementById('fill-'+id);
+  if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
+}
+function syncFromSlider(id) {
+  const v = parseFloat(document.getElementById('sl-'+id).value);
+  document.getElementById('inp-'+id).value = v;
+  updateFill(id); fetchData();
+}
+function syncFromInput(id) {
+  let v = parseFloat(document.getElementById('inp-'+id).value);
+  if (isNaN(v)) return;
+  const sl = document.getElementById('sl-'+id);
+  const minVal = parseFloat(sl.min); const maxVal = parseFloat(sl.max);
+  if (v < minVal) v = minVal; if (v > maxVal) v = maxVal;
+  sl.value = v; document.getElementById('inp-'+id).value = v;
+  updateFill(id); fetchData();
 }
 
+/* Python API Fetch — ALL math happens in backend */
+let fetchTimeout;
+function fetchData() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(() => {
+    const salary   = +document.getElementById('inp-salary').value || 0;
+    const existing = +document.getElementById('inp-existing').value || 0;
+    const score    = +document.getElementById('inp-score').value || 750;
+    const rate     = +document.getElementById('inp-rate').value || 8.5;
+    const years    = +document.getElementById('inp-time').value || 20;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-/* dark mode */
+    fetch('/calculators/loan-eligibility', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ salary, existing, score, rate, years })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) return;
+
+      // Top Metrics
+      const elLoan = document.getElementById('m-eligible'); if(elLoan) elLoan.textContent = fmt(data.eligible_loan);
+      const elHint = document.getElementById('m-tenure-hint'); if(elHint) elHint.textContent = `For ${years} Years @ ${rate}%`;
+      const elEmi  = document.getElementById('m-max-emi'); if(elEmi) elEmi.textContent = fmt(data.available_emi);
+      const elFoir = document.getElementById('m-foir-hint'); if(elFoir) elFoir.textContent = `Max FOIR Allowed: ${data.foir_pct}%`;
+
+      // Score Status
+      const elScore = document.getElementById('m-score-status');
+      if (elScore) {
+        elScore.textContent = data.score_status;
+        const colorMap = { rose: 'var(--rose)', gold: 'var(--gold)', blue: 'var(--blue)', green: 'var(--accent)' };
+        elScore.style.color = colorMap[data.score_color] || 'var(--accent)';
+      }
+
+      // Donut Chart
+      const elEx  = document.getElementById('dl-existing'); if(elEx) elEx.textContent = fmt(data.existing_emi);
+      const elNew = document.getElementById('dl-new-emi'); if(elNew) elNew.textContent = fmt(data.available_emi);
+      const elTH  = document.getElementById('dl-takehome'); if(elTH) elTH.textContent = fmt(data.take_home);
+      if (donutChart) {
+        donutChart.data.datasets[0].data = [data.existing_emi, data.available_emi, data.take_home];
+        donutChart.update();
+      }
+
+      // Tenure Table — from backend data
+      buildTable(data.tenure_table);
+    });
+  }, 120);
+}
+
+/* Dark mode */
 function toggleDark() {
   const dark = document.body.classList.toggle('dark');
   localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+  const t = document.getElementById('themeIcon'); if(t) t.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
 }
 
-/* mobile drawer */
+/* Mobile drawer */
 let drawerOpen = false;
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
   document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
   document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
 }
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
-}
+function closeOnOverlay(e) { if (e.target.classList.contains('drawer-overlay')) toggleDrawer(); }
 
-/* init */
+/* Init */
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
+    const t = document.getElementById('themeIcon'); if(t) t.className = 'bi bi-sun-fill';
   }
   ['salary','existing','score','rate','time'].forEach(updateFill);
   initCharts();
-  updateAll();
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
-  });
+  fetchData();
+  window.addEventListener('resize', () => { if (window.innerWidth > 768 && drawerOpen) toggleDrawer(); });
 });
 </script>
-</body>
-</html>
+
 {% endblock %}

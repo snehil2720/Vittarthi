@@ -1,876 +1,24 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
-Salary Calculator | Vittarthi
+In-Hand Salary Calculator India | Take-Home Pay Estimator | Vittarthi
 {% endblock %}
 
 {% block meta_description %}
-Use the Vittarthi Salary Calculator to estimate in-hand salary, deductions, annual income, and take-home pay accurately.
+Calculate your exact in-hand take-home salary after PF, professional tax, and income tax deductions. Plan your monthly budget with precision.
 {% endblock %}
+{% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/salary.css' %}">
+{% endblock %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --ink:        #1c1207;
-  --ink-2:      #4a3a18;
-  --ink-3:      #8a7040;
-  --paper:      #fffdf5;
-  --surface:    #ffffff;
-  --s2:         #fef8e8;
-  --s3:         #fdefc8;
-  --amber:      #b45309;
-  --amber-2:    #d97706;
-  --amber-lt:   #fffbeb;
-  --amber-md:   #fde68a;
-  --green:      #1a6b4a;
-  --green-lt:   #e6f2ec;
-  --green-md:   #c8e6d6;
-  --rose:       #a0363a;
-  --rose-lt:    #fdeaeb;
-  --blue:       #1b4fa6;
-  --blue-lt:    #e8effe;
-  --teal:       #0e7490;
-  --teal-lt:    #e0f4f8;
-  --border:     rgba(28,18,7,0.09);
-  --shadow:     0 4px 20px rgba(28,18,7,0.07);
-  --shadow-lg:  0 12px 48px rgba(28,18,7,0.11);
-  --r:          14px;
-  --r-sm:       8px;
-  --pad:        clamp(1.25rem,5vw,2.5rem);
-  --max:        1200px;
-}
-/* ═══════════ RESET & BASE ═══════════ */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--text);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s, color .3s;
-}
 
-/* Mobile drawer */
-.drawer {
-  display:none; position:fixed;
-  top:var(--nav-h); left:0; right:0; bottom:0;
-  z-index:190;
-}
-.drawer.open { display:block; }
-.drawer-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,.45);
-}
-.drawer-panel {
-  position:absolute; top:0; right:0;
-  width:min(260px, 80vw); height:100%;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:1.25rem 1rem;
-  box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:.25rem;
-  overflow-y:auto;
-}
-.drawer-panel a {
-  display:block; text-decoration:none; color:var(--muted);
-  font-size:.9rem; font-weight:500;
-  padding:.55rem .85rem; border-radius:8px;
-  transition:all .2s;
-}
-.drawer-panel a:hover  { background:var(--surface2); color:var(--text); }
-.drawer-panel a.active { background:var(--accent-lt); color:var(--accent); }
-.drawer-divider { border:none; border-top:1px solid var(--border); margin:.5rem 0; }
-
-/* ═══════════ PAGE SHELL ═══════════ */
-.page {
-  max-width:1340px; margin:0 auto;
-  padding:0 var(--pad) 4rem;
-}
-
-/* ═══════════ HERO ═══════════ */
-.hero {
-  text-align:center;
-  padding:clamp(2rem,5vw,3.5rem) 0 clamp(1.5rem,3vw,2.5rem);
-  animation:fadeUp .5s ease both;
-}
-.hero-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:.72rem; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--accent);
-  background:var(--accent-lt);
-  padding:5px 14px; border-radius:100px; margin-bottom:1rem;
-}
-.hero h1 {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.75rem, 5vw, 3.4rem);
-  line-height:1.1; letter-spacing:-1px; margin-bottom:.65rem;
-}
-.hero h1 em { color:var(--accent); font-style:italic; }
-.hero p { color:var(--muted); font-size:.95rem; max-width:540px; margin:0 auto; }
-
-/* ═══════════ METRICS ROW ═══════════ */
-.metrics-row {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(.6rem,2vw,1rem);
-  margin-bottom:clamp(1rem,2.5vw,1.5rem);
-  animation:fadeUp .5s .15s ease both;
-}
-.metric {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r-sm);
-  padding:clamp(.75rem,2vw,1.1rem) clamp(.85rem,2vw,1.25rem);
-  box-shadow:var(--shadow);
-  position:relative; overflow:hidden;
-  transition:transform .2s, background .3s;
-}
-.metric::before {
-  content:''; position:absolute; top:0; left:0; right:0;
-  height:3px; border-radius:3px 3px 0 0;
-}
-.metric.total::before    { background:linear-gradient(90deg,var(--accent),#059669); }
-.metric.invested::before { background:linear-gradient(90deg,var(--blue),#3b82f6); }
-.metric.profit::before   { background:linear-gradient(90deg,var(--gold),#ef4444); }
-.metric:hover { transform:translateY(-2px); }
-.metric-lbl {
-  font-size:.68rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted); margin-bottom:5px;
-}
-.metric-val {
-  font-family:'DM Serif Display',serif;
-  font-size:clamp(1.2rem,3vw,1.6rem);
-  line-height:1; margin-bottom:3px;
-}
-.metric-sub { font-size:.68rem; color:var(--muted); }
-.metric.total .metric-val  { color:var(--accent); }
-.metric.profit .metric-val { color:var(--gold); }
-
-/* ═══════════ 3-COL GRID ═══════════ */
-.main-grid {
-  display:grid;
-  grid-template-columns:320px 1fr 200px;
-  grid-template-areas:"inputs charts sidebar";
-  gap:clamp(1rem,2vw,1.5rem);
-  align-items:start;
-}
-.inputs-col { grid-area:inputs; }
-.charts-col { grid-area:charts; display:flex; flex-direction:column; gap:1.1rem; }
-.sidebar-col { grid-area:sidebar; }
-
-/* ═══════════ CARD ═══════════ */
-.card {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:clamp(1rem,3vw,1.5rem);
-  box-shadow:var(--shadow);
-  transition:background .3s, border-color .3s;
-}
-.card + .card { margin-top:clamp(.75rem,2vw,1.25rem); }
-.card-title {
-  font-size:.72rem; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:var(--muted);
-  margin-bottom:1.1rem;
-}
-
-/* ═══════════ SLIDERS & INPUTS ═══════════ */
-.field { margin-bottom:1.25rem; }
-.field:last-child { margin-bottom:0; }
-.field-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.5rem;
-}
-.field-lbl  { font-size:.85rem; color:var(--muted); }
-
-input.field-val  {
-  font-size:.92rem; font-weight:600; color:var(--text);
-  background:var(--surface2); padding:4px 10px; border-radius:6px;
-  width:110px; text-align:right; border:1px solid transparent;
-  font-family:inherit; outline:none; transition:border-color .2s, background .2s;
-}
-input.field-val:focus {
-  background: var(--surface);
-  border-color: var(--accent);
-}
-input.field-val::-webkit-outer-spin-button,
-input.field-val::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-input.field-val[type=number] {
-  -moz-appearance: textfield;
-}
-
-.range-wrap { position:relative; }
-.range-fill {
-  position:absolute; top:50%; transform:translateY(-50%);
-  height:5px; border-radius:100px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-  pointer-events:none; transition:width .08s;
-}
-input[type=range] {
-  -webkit-appearance:none; appearance:none;
-  width:100%; height:5px;
-  background:var(--surface2); border-radius:100px;
-  outline:none; cursor:pointer; display:block;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:22px; height:22px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-lt);
-  cursor:pointer; transition:transform .18s;
-}
-input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.15); }
-input[type=range]::-moz-range-thumb {
-  width:22px; height:22px; border-radius:50%;
-  border:none; background:var(--accent); cursor:pointer;
-}
-.range-hints { display:flex; justify-content:space-between; margin-top:4px; }
-.range-hint  { font-size:.66rem; color:var(--muted); }
-
-/* ═══════════ DONUT ═══════════ */
-.donut-wrap { display:flex; align-items:center; gap:1.25rem; }
-.donut-canvas-wrap { position:relative; flex-shrink:0; }
-.donut-canvas-wrap canvas { display:block; }
-.donut-legend { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-.leg-row { display:flex; align-items:center; gap:8px; }
-.leg-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-.leg-lbl  { font-size:.78rem; color:var(--muted); flex:1; }
-.leg-val  { font-size:.82rem; font-weight:600; color:var(--text); }
-.mult-box {
-  margin-top:8px; padding-top:10px;
-  border-top:1px solid var(--border);
-}
-.mult-lbl { font-size:.68rem; color:var(--muted); margin-bottom:2px; }
-.mult-val { font-size:1.15rem; font-weight:600; color:var(--text); }
-
-/* ═══════════ CHART TABS ═══════════ */
-.chart-hdr {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:.85rem;
-  flex-wrap:wrap; gap:.5rem;
-}
-.tab-row { display:flex; gap:5px; }
-.tab-btn {
-  background:var(--surface2); border:none; border-radius:7px;
-  padding:4px 14px; font-size:.78rem; font-weight:500;
-  color:var(--muted); cursor:pointer; font-family:inherit;
-  transition:all .2s;
-}
-.tab-btn.active { background:var(--accent); color:#fff; }
-.chart-box { position:relative; width:100%; }
-
-/* ═══════════ TABLE ═══════════ */
-.tbl-scroll {
-  max-height:300px; overflow-y:auto;
-  border-radius:8px; border:1px solid var(--border);
-}
-.tbl-scroll::-webkit-scrollbar { width:4px; }
-.tbl-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-table { width:100%; border-collapse:collapse; font-size:.78rem; }
-thead th {
-  padding:9px 12px; text-align:right;
-  font-size:.65rem; font-weight:600; letter-spacing:.5px;
-  text-transform:uppercase; color:var(--muted);
-  background:var(--surface2);
-  position:sticky; top:0; z-index:1;
-  border-bottom:1px solid var(--border);
-}
-thead th:first-child { text-align:left; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--surface2); }
-tbody td { padding:8px 12px; text-align:right; color:var(--text); }
-tbody td:first-child { text-align:left; font-weight:500; }
-td.green { color:var(--accent); font-weight:600; }
-td.gold { color:var(--gold); font-weight:600; }
-td.blue { color:var(--blue); font-weight:600; }
-tr.total-row { background:var(--surface2); font-weight:600; }
-
-/* ═══════════ TIPS ═══════════ */
-.tips-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem;
-}
-.tip {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-sm); padding:.9rem 1rem;
-  cursor:pointer; transition:all .2s;
-}
-.tip:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--accent); }
-.tip-icon  { font-size:1.2rem; margin-bottom:4px; }
-.tip-title { font-size:.78rem; font-weight:600; color:var(--text); margin-bottom:2px; }
-.tip-desc  { font-size:.7rem; color:var(--muted); line-height:1.4; }
-
-/* ═══════════ SIDEBAR ═══════════ */
-.sb-title { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:.6rem; }
-.sb-links { display:flex; flex-direction:column; gap:3px; }
-.sb-links a {
-  display:flex; align-items:center; gap:7px;
-  text-decoration:none; color:var(--muted);
-  font-size:.8rem; padding:7px 9px; border-radius:8px;
-  border:1px solid transparent; transition:all .18s;
-}
-.sb-links a i { font-size:13px; flex-shrink:0; }
-.sb-links a:hover  { background:var(--surface2); color:var(--text); border-color:var(--border); }
-.sb-links a.active { background:var(--accent-lt); color:var(--accent); font-weight:600; }
-.quick-facts { display:flex; flex-direction:column; gap:10px; font-size:.78rem; }
-.qf { padding-top:10px; border-top:1px solid var(--border); }
-.qf:first-child { padding-top:0; border-top:none; }
-.qf-lbl { color:var(--muted); margin-bottom:2px; font-size:.7rem; }
-.qf-val { font-weight:600; color:var(--text); }
-.qf-val.accent { color:var(--accent); }
-
-/* ═══════════ SEO CONTENT AREA ═══════════ */
-.sec{padding:clamp(3rem,7vw,5rem) var(--pad);border-radius: 35px;}
-.sec-inner{max-width:var(--max);margin:0 auto;}
-.label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--amber);background:var(--amber-lt);
-  padding:4px 12px;border-radius:100px;margin-bottom:1rem;
-}
-.sec-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;
-  line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:.75rem;
-}
-.sec-sub{font-size:.95rem;color:var(--ink-2);line-height:1.8;max-width:580px;}
-.sec-hdr{margin-bottom:clamp(2rem,4vw,3rem);}
-.sec-hdr.center{text-align:center;}
-.sec-hdr.center .sec-sub{margin:0 auto;}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.fu{opacity:0;}
-.fu.on{animation:fadeUp .6s ease both;}
-
-/* Pills */
-.pill-g{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:100px;}
-.pill-m{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--amber-lt);color:var(--amber);padding:2px 8px;border-radius:100px;}
-.pill-b{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--rose-lt);color:var(--rose);padding:2px 8px;border-radius:100px;}
-.pill-t{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--teal-lt);color:var(--teal);padding:2px 8px;border-radius:100px;}
-.pill-i{display:inline-flex;font-size:.7rem;font-weight:600;background:var(--blue-lt);color:var(--blue);padding:2px 8px;border-radius:100px;}
-
-/* ════════════════════════════════════
-   1. HOW IT WORKS — 3 steps
-════════════════════════════════════ */
-.steps-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative;}
-.steps-grid::before{
-  content:'';position:absolute;top:32px;
-  left:calc(16.66% + 16px);right:calc(16.66% + 16px);
-  height:2px;
-  background:repeating-linear-gradient(90deg,var(--amber-md) 0,var(--amber-md) 8px,transparent 8px,transparent 16px);
-  pointer-events:none;
-}
-.step{text-align:center;padding:.5rem;}
-.step-num{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--amber);color:#fff;
-  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1.1rem;box-shadow:0 0 0 8px var(--amber-lt);
-  position:relative;z-index:1;
-}
-.step-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.45rem;}
-.step-desc{font-size:.8rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   2. CTC vs GROSS vs NET HERO
-════════════════════════════════════ */
-.hero-sec{
-  background:var(--amber);
-  padding:clamp(3rem,7vw,5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.hero-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:22px 22px;pointer-events:none;
-}
-.hero-inner{
-  max-width:var(--max);margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:clamp(2rem,5vw,5rem);align-items:center;
-  position:relative;z-index:1;
-}
-.hero-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
-  color:#fff;line-height:1.1;letter-spacing:-.3px;margin-bottom:.9rem;
-}
-.hero-title em{font-style:italic;color:#fef3c7;}
-.hero-sub{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:1.5rem;}
-.hero-callout{
-  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
-  border-radius:var(--r-sm);padding:1rem 1.25rem;
-  display:flex;align-items:center;gap:.85rem;
-}
-.hero-callout-num{
-  font-family:'Playfair Display',serif;
-  font-size:2rem;font-weight:700;color:#fef3c7;line-height:1;flex-shrink:0;
-}
-.hero-callout-text{font-size:.78rem;color:rgba(255,255,255,.84);line-height:1.6;}
-
-/* Salary funnel cards */
-.salary-funnel{display:flex;flex-direction:column;gap:.6rem;}
-.funnel-step{
-  border-radius:var(--r-sm);padding:1rem 1.25rem;
-  display:flex;align-items:center;gap:1rem;
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
-  transition:background .2s;
-}
-.funnel-step:hover{background:rgba(255,255,255,.2);}
-.funnel-tag{
-  font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;
-  color:#fef3c7;width:36px;flex-shrink:0;line-height:1;text-align:center;
-}
-.funnel-body{}
-.funnel-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
-.funnel-sub{font-size:.74rem;color:rgba(255,255,255,.74);line-height:1.55;}
-.funnel-pill{
-  display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;
-}
-.funnel-pill.minus{background:rgba(239,68,68,.25);color:#fca5a5;}
-.funnel-pill.result{background:rgba(52,211,153,.2);color:#6ee7b7;}
-.funnel-arrow{
-  text-align:center;font-size:.8rem;color:rgba(255,255,255,.4);
-  padding:.15rem 0;letter-spacing:2px;
-}
-
-/* ════════════════════════════════════
-   3. SALARY STRUCTURE BREAKDOWN
-════════════════════════════════════ */
-.structure-sec{background:var(--paper);}
-.structure-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;word-break: break-word;}
-.structure-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.structure-content strong{color:var(--ink);}
-
-.structure-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.structure-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.4rem;}
-.comp-rows{display:flex;flex-direction:column;gap:.5rem;}
-.comp-row{
-  display:flex;align-items:center;gap:.85rem;
-  padding:.7rem .9rem;border-radius:var(--r-sm);
-  transition:background .15s;
-}
-.comp-row:hover{background:var(--s2);}
-.comp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.comp-name{font-size:.82rem;font-weight:500;color:var(--ink);flex:1;}
-.comp-desc{font-size:.74rem;color:var(--ink-3);flex:1.8;line-height:1.4;}
-.comp-badge{
-  font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:100px;
-  white-space:nowrap;flex-shrink:0;
-}
-.comp-badge.taxable{background:var(--rose-lt);color:var(--rose);}
-.comp-badge.exempt{background:var(--green-lt);color:var(--green);}
-.comp-badge.partial{background:var(--amber-lt);color:var(--amber);}
-.comp-section-label{
-  font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
-  color:var(--ink-3);padding:.5rem .9rem .25rem;margin-top:.5rem;
-}
-.comp-section-label:first-child{margin-top:0;}
-
-/* Basic pay panel */
-.basic-panel{
-  background:var(--amber);border-radius:var(--r);padding:1.5rem;margin-top:1.25rem;
-}
-.basic-panel-title{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
-.basic-rows{display:flex;flex-direction:column;gap:.6rem;}
-.basic-row{
-  background:rgba(255,255,255,.13);border-radius:var(--r-sm);
-  padding:.7rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-}
-.basic-row-lbl{font-size:.78rem;color:rgba(255,255,255,.84);}
-.basic-row-val{font-size:.82rem;font-weight:600;color:#fff;}
-.basic-row-val.note{color:#fef3c7;}
-
-/* ════════════════════════════════════
-   4. OLD vs NEW TAX REGIME
-════════════════════════════════════ */
-.regime-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.regime-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
-.regime-card{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);transition:box-shadow .22s;}
-.regime-card:hover{box-shadow:var(--shadow-lg);}
-.regime-head{padding:1.5rem 1.5rem 1.25rem;display:flex;align-items:flex-start;gap:1rem;}
-.regime-card:nth-child(1) .regime-head{background:var(--blue);}
-.regime-card:nth-child(2) .regime-head{background:var(--amber);}
-.regime-icon{
-  width:52px;height:52px;border-radius:12px;
-  background:rgba(255,255,255,.16);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;color:#fff;flex-shrink:0;
-}
-.regime-head-title{font-size:1rem;font-weight:600;color:#fff;margin-bottom:.2rem;}
-.regime-head-sub{font-size:.75rem;color:rgba(255,255,255,.74);line-height:1.5;}
-.regime-body{padding:1.25rem 1.5rem;background:var(--surface);}
-.regime-rows{display:flex;flex-direction:column;gap:.55rem;}
-.regime-row{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;
-  padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.8rem;
-}
-.regime-row:last-child{border-bottom:none;}
-.regime-row-lbl{color:var(--ink-3);flex-shrink:0;width:130px;}
-.regime-row-val{color:var(--ink);font-weight:500;text-align:right;line-height:1.5;}
-.regime-rec{
-  margin-top:1rem;padding:.75rem .9rem;border-radius:var(--r-sm);
-  font-size:.75rem;line-height:1.6;
-}
-.regime-card:nth-child(1) .regime-rec{background:var(--blue-lt);color:var(--blue);border:1px solid rgba(27,79,166,.2);}
-.regime-card:nth-child(2) .regime-rec{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(180,83,9,.2);}
-
-/* Slab table */
-.slab-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-top:2rem;    overflow: auto;}
-.slab-table{width:100%;border-collapse:collapse;font-size:.82rem;}
-.slab-table thead th{
-  padding:.75rem 1rem;text-align:left;
-  font-size:.67rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-3);background:var(--s2);border-bottom:1px solid var(--border);
-}
-.slab-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
-.slab-table tbody tr:last-child{border-bottom:none;}
-.slab-table tbody tr:hover{background:var(--s2);}
-.slab-table td{padding:.75rem 1rem;color:var(--ink-2);vertical-align:middle;}
-.slab-table td:first-child{color:var(--ink);font-weight:500;}
-.slab-table tr.highlight-row{background:var(--amber-lt);}
-.slab-table tr.highlight-row td:first-child{color:var(--amber);font-weight:600;}
-
-/* ════════════════════════════════════
-   5. HRA EXEMPTION EXPLAINER
-════════════════════════════════════ */
-.hra-sec{background:var(--paper);}
-.hra-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.hra-content p{font-size:.88rem;color:var(--ink-2);line-height:1.8;margin-bottom:1rem;}
-.hra-content strong{color:var(--ink);}
-
-.hra-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;box-shadow:var(--shadow);}
-.hra-visual-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1.3rem;}
-.hra-formula{
-  background:var(--amber);border-radius:var(--r-sm);padding:1.1rem 1.25rem;
-  margin-bottom:1.1rem;
-}
-.hra-formula-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.72);margin-bottom:.5rem;}
-.hra-formula-text{font-size:.82rem;color:#fff;line-height:1.65;}
-.hra-formula-text strong{color:#fef3c7;}
-.hra-cases{display:flex;flex-direction:column;gap:.65rem;}
-.hra-case{
-  border-radius:var(--r-sm);padding:.95rem 1.1rem;
-  border:1px solid var(--border);
-}
-.hra-case.metro{background:var(--amber-lt);border-color:rgba(180,83,9,.18);}
-.hra-case.non-metro{background:var(--teal-lt);border-color:rgba(14,116,144,.18);}
-.hra-case.tenant{background:var(--green-lt);border-color:var(--green-md);}
-.hra-case-title{font-size:.82rem;font-weight:600;margin-bottom:.3rem;}
-.hra-case.metro .hra-case-title{color:var(--amber);}
-.hra-case.non-metro .hra-case-title{color:var(--teal);}
-.hra-case.tenant .hra-case-title{color:var(--green);}
-.hra-case-desc{font-size:.75rem;color:var(--ink-2);line-height:1.55;}
-.hra-note{
-  background:var(--s2);border-radius:var(--r-sm);padding:.75rem .9rem;
-  font-size:.74rem;color:var(--ink-2);line-height:1.6;margin-top:.85rem;
-  border-left:3px solid var(--rose);
-}
-
-/* ════════════════════════════════════
-   6. KEY DEDUCTIONS + INSIGHT STATS
-════════════════════════════════════ */
-.deductions-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.deductions-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.ded-list{display:flex;flex-direction:column;gap:.75rem;}
-.ded-item{
-  display:flex;align-items:flex-start;gap:.85rem;
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  transition:border-color .2s,background .2s;
-}
-.ded-item:hover{border-color:rgba(180,83,9,.28);background:var(--amber-lt);}
-.ded-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--amber-lt);color:var(--amber);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;
-}
-.ded-item:hover .ded-icon{background:var(--amber-md);}
-.ded-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.ded-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
-
-.insight-stats{display:flex;flex-direction:column;gap:1rem;}
-.istat{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.25rem 1.4rem;
-  position:relative;overflow:hidden;
-}
-.istat::after{
-  content:'';position:absolute;right:-20px;top:-20px;
-  width:80px;height:80px;border-radius:50%;opacity:.08;
-}
-.istat.amber::after{background:var(--amber);}
-.istat.green::after{background:var(--green);}
-.istat.rose::after{background:var(--rose);}
-.istat-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem;}
-.istat-val{
-  font-family:'Playfair Display',serif;
-  font-size:2rem;font-weight:700;line-height:1;margin-bottom:.3rem;
-}
-.istat.amber .istat-val{color:var(--amber);}
-.istat.green .istat-val{color:var(--green);}
-.istat.rose .istat-val{color:var(--rose);}
-.istat-desc{font-size:.75rem;color:var(--ink-2);line-height:1.5;}
-
-/* ════════════════════════════════════
-   7. STATS STRIP
-════════════════════════════════════ */
-.stats-sec{
-  background:var(--amber);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.stats-sec::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:20px 20px;
-}
-.stats-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
-.stat-box{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--r);padding:1.25rem;text-align:center;
-}
-.stat-box-num{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;color:#fff;line-height:1;margin-bottom:.3rem;
-}
-.stat-box-num span{color:#fef3c7;}
-.stat-box-lbl{font-size:.74rem;color:rgba(255,255,255,.76);line-height:1.4;}
-
-/* ════════════════════════════════════
-   8. PRO TIPS — 4 cards
-════════════════════════════════════ */
-.tips-sec{background:var(--paper);}
-.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
-.tip-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.4rem;
-  display:flex;flex-direction:column;gap:.6rem;
-  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
-}
-.tip-number{
-  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;
-  color:var(--amber);opacity:.1;position:absolute;top:.75rem;right:1rem;line-height:1;
-}
-.tip-card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-  transform:scaleX(0);transform-origin:left;transition:transform .3s;
-  background:var(--amber);
-}
-.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
-.tip-card:hover::after{transform:scaleX(1);}
-.tip-icon{
-  width:40px;height:40px;border-radius:9px;
-  background:var(--amber-lt);color:var(--amber);
-  display:flex;align-items:center;justify-content:center;font-size:16px;
-}
-.tip-title{font-size:.9rem;font-weight:600;color:var(--ink);}
-.tip-desc{font-size:.78rem;color:var(--ink-2);line-height:1.65;}
-
-/* ════════════════════════════════════
-   9. CTC NEGOTIATION GUIDE
-════════════════════════════════════ */
-.negotiate-sec{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.negotiate-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;}
-.neg-list{display:flex;flex-direction:column;gap:.75rem;}
-.neg-item{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:flex-start;gap:.85rem;
-  transition:border-color .2s,background .2s;
-}
-.neg-item:hover{border-color:rgba(180,83,9,.28);background:var(--amber-lt);}
-.neg-item-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:var(--amber-lt);color:var(--amber);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;
-}
-.neg-item:hover .neg-item-icon{background:var(--amber-md);}
-.neg-item-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
-.neg-item-desc{font-size:.76rem;color:var(--ink-2);line-height:1.6;}
-
-.neg-info-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);}
-.neg-info-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:1rem;}
-.neg-section{margin-bottom:1.1rem;}
-.neg-section:last-child{margin-bottom:0;}
-.neg-section-label{
-  font-size:.67rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:.5rem;
-}
-.neg-checklist{display:flex;flex-direction:column;gap:.4rem;}
-.neg-check{display:flex;align-items:flex-start;gap:.6rem;font-size:.78rem;color:var(--ink-2);line-height:1.5;}
-.neg-check i{color:var(--amber);font-size:12px;flex-shrink:0;margin-top:2px;}
-.neg-note{
-  background:var(--amber-lt);border:1px solid rgba(180,83,9,.2);
-  border-radius:var(--r-sm);padding:.85rem 1rem;margin-top:1rem;
-  font-size:.75rem;color:var(--amber);line-height:1.6;
-}
-.neg-note strong{color:var(--amber);}
-
-/* ════════════════════════════════════
-   10. FAQ
-════════════════════════════════════ */
-.faq-sec{background:var(--paper);border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.faq-q{
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:1.1rem 1.25rem;cursor:pointer;
-  font-size:.88rem;font-weight:600;color:var(--ink);
-  transition:background .18s;user-select:none;
-}
-.faq-q:hover{background:var(--s2);}
-.faq-q i.tog{font-size:.75rem;color:var(--ink-3);flex-shrink:0;transition:transform .25s;}
-.faq-item.open .faq-q i.tog{transform:rotate(45deg);color:var(--amber);}
-.faq-item.open .faq-q{color:var(--amber);}
-.faq-a{
-  display:none;padding:0 1.25rem 1.1rem;
-  font-size:.8rem;color:var(--ink-2);line-height:1.75;
-  border-top:1px solid var(--border);
-}
-.faq-a p{padding-top:.9rem;}
-.faq-item.open .faq-a{display:block;}
-
-/* ════════════════════════════════════
-   11. RELATED CALCULATORS
-════════════════════════════════════ */
-.related-sec{background:var(--surface);border-top:1px solid var(--border);}
-.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
-.related-card{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:var(--r-sm);padding:1rem 1.1rem;
-  display:flex;align-items:center;gap:.75rem;transition:all .22s;
-}
-.related-card:hover{background:var(--amber-lt);border-color:rgba(180,83,9,.28);transform:translateY(-2px);}
-.related-card-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:var(--amber-lt);color:var(--amber);
-  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
-}
-.related-card:hover .related-card-icon{background:var(--amber-md);}
-.related-card-name{font-size:.8rem;font-weight:600;color:var(--ink);}
-.related-card-sub{font-size:.68rem;color:var(--ink-3);margin-top:1px;}
-
-/* ════════════════════════════════════
-   12. FINAL CTA
-════════════════════════════════════ */
-.final-note{
-  background:var(--ink);
-  padding:clamp(2rem,5vw,3.5rem) var(--pad);
-  text-align:center;position:relative;overflow:hidden;
-  border-radius: 20px;
-}
-.final-note::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center top,rgba(180,83,9,.45),transparent 65%);
-  pointer-events:none;
-}
-.final-note-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;}
-.final-note h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
-  color:#fff;margin-bottom:.75rem;letter-spacing:-.3px;
-}
-.final-note p{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.75rem;}
-.final-btns{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;}
-.btn-w{
-  display:inline-flex;align-items:center;gap:6px;
-  background:#fff;color:var(--amber);
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:600;border:none;transition:opacity .2s;cursor:pointer;
-}
-.btn-w:hover{opacity:.9;}
-.btn-o{
-  display:inline-flex;align-items:center;gap:6px;
-  background:transparent;color:#fff;
-  padding:.65rem 1.5rem;border-radius:var(--r-sm);
-  font-size:.88rem;font-weight:500;
-  border:1.5px solid rgba(255,255,255,.35);
-  transition:border-color .2s,background .2s;
-}
-.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:900px){
-  .hero-inner,.structure-grid,.hra-grid,.deductions-grid,.negotiate-grid{grid-template-columns:1fr;}
-  .regime-grid{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .steps-grid::before{display:none;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:640px){
-  .steps-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .related-grid{grid-template-columns:1fr 1fr;}
-}
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-════════════════════════════════════════ */
-@media (max-width:1024px) {
-  .main-grid {
-    grid-template-columns:300px 1fr;
-    grid-template-areas:
-      "inputs charts"
-      "sidebar sidebar";
-  }
-  .sidebar-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .sidebar-col .card + .card { margin-top:0; }
-}
-
-@media (max-width:768px) {
-  :root { --nav-h:56px; }
-  .ham-btn     { display:flex; }
-  .nav-desktop { display:none; }
-  .main-grid {
-    grid-template-columns:1fr;
-    grid-template-areas: "inputs" "charts" "sidebar";
-  }
-  .sidebar-col { grid-template-columns:1fr 1fr; }
-  .metrics-row { grid-template-columns:repeat(3,1fr); }
-  .tips-grid   { grid-template-columns:repeat(2,1fr); }
-  .donut-wrap  { flex-direction:row; }
-}
-
-@media (max-width:580px) {
-  .metrics-row { grid-template-columns:1fr 1fr; }
-  .metric.total { grid-column:1 / -1; }
-  .sidebar-col { grid-template-columns:1fr; }
-  .sidebar-col .card + .card { margin-top:1rem; }
-  .tips-grid { grid-template-columns:1fr; }
-  .donut-wrap { flex-direction:column; align-items:flex-start; }
-  .donut-legend { flex-direction:row; flex-wrap:wrap; gap:10px; }
-  .leg-row { flex:1; min-width:130px; }
-  table { font-size:.72rem; }
-  thead th, tbody td { padding:7px 8px; }
-  .hide-xs { display:none; }
-  .card { padding:1rem; }
-}
-
-@media (max-width:400px) {
-  .metrics-row { grid-template-columns:1fr; }
-  .metric.total { grid-column:auto; }
-  .hero h1 { font-size:1.6rem; }
-}
-
-@media (hover:none) {
-  input[type=range]::-webkit-slider-thumb { width:26px; height:26px; }
-  .tip:hover, .metric:hover { transform:none; }
-  .tip-card:hover,.related-card:hover,.neg-item:hover,.ded-item:hover{transform:none;}
-}
 </style>
-
-<body>
 
 <div class="page">
 
@@ -880,121 +28,150 @@ tr.total-row { background:var(--surface2); font-weight:600; }
     <p>Convert your Annual CTC into Monthly In-Hand Salary by separating your Basic, Allowances, and PF Deductions.</p>
   </div>
 
-  <div class="metrics-row">
-    <div class="metric total">
-      <div class="metric-lbl">Monthly In-Hand</div>
-      <div class="metric-val" id="m-inhand">₹0</div>
-      <div class="metric-sub">Take Home Salary</div>
-    </div>
-    <div class="metric invested">
-      <div class="metric-lbl">Gross Monthly</div>
-      <div class="metric-val" id="m-gross">₹0</div>
-      <div class="metric-sub">Before Deductions</div>
-    </div>
-    <div class="metric profit">
-      <div class="metric-lbl">Monthly Deductions</div>
-      <div class="metric-val" id="m-deductions">₹0</div>
-      <div class="metric-sub" style="color:var(--gold);">PF & Prof. Tax</div>
-    </div>
+<div class="metrics-row">
+  <div class="metric total">
+    <div class="metric-lbl">Monthly In-Hand</div>
+    <div class="metric-val" id="m-inhand-monthly">₹0</div>
+    <div class="metric-sub" id="m-regime-badge">Best Regime</div>
   </div>
+  <div class="metric invested">
+    <div class="metric-lbl">Annual In-Hand</div>
+    <div class="metric-val" id="m-inhand-annual">₹0</div>
+    <div class="metric-sub" id="m-gross-sub">—</div>
+  </div>
+  <div class="metric profit">
+    <div class="metric-lbl">Income Tax (Annual)</div>
+    <div class="metric-val" id="m-tax-best">₹0</div>
+    <div class="metric-sub" id="m-tax-sub">Including 4% Cess</div>
+  </div>
+</div>
 
   <div class="main-grid">
 
-    <div class="inputs-col">
-      <div class="card">
-        <div class="card-title">💼 Compensation Details</div>
+<div class="inputs-col">
 
-        <div class="field">
-          <div class="field-hdr">
-            <span class="field-lbl">Annual CTC (₹)</span>
-            <input type="number" class="field-val" id="inp-ctc" value="1200000" oninput="syncFromInput('ctc')">
-          </div>
-          <div class="range-wrap">
-            <div class="range-fill" id="fill-ctc"></div>
-            <input type="range" id="sl-ctc" min="200000" max="10000000" step="50000" value="1200000" oninput="syncFromSlider('ctc')">
-          </div>
-          <div class="range-hints"><span class="range-hint">₹2L</span><span class="range-hint">₹1Cr</span></div>
-        </div>
+  <!-- CTC & Basic -->
+  <div class="card">
+    <div class="card-title">💼 Your CTC Details</div>
 
-        <div class="field">
-          <div class="field-hdr">
-            <span class="field-lbl">Variable / Bonus (%)</span>
-            <input type="number" class="field-val" id="inp-bonus" value="10" step="1" oninput="syncFromInput('bonus')">
-          </div>
-          <div class="range-wrap">
-            <div class="range-fill" id="fill-bonus"></div>
-            <input type="range" id="sl-bonus" min="0" max="30" step="1" value="10" oninput="syncFromSlider('bonus')">
-          </div>
-          <div class="range-hints"><span class="range-hint">0%</span><span class="range-hint">30%</span></div>
-        </div>
-
-        <div class="field" style="margin-bottom:0;">
-          <div class="field-hdr">
-            <span class="field-lbl">Basic Pay (% of Fixed)</span>
-            <input type="number" class="field-val" id="inp-basic" value="50" step="1" oninput="syncFromInput('basic')">
-          </div>
-          <div class="range-wrap">
-            <div class="range-fill" id="fill-basic"></div>
-            <input type="range" id="sl-basic" min="30" max="60" step="1" value="50" oninput="syncFromSlider('basic')">
-          </div>
-          <div class="range-hints"><span class="range-hint">30%</span><span class="range-hint">60%</span></div>
-        </div>
+    <div class="field">
+      <div class="field-hdr">
+        <span class="field-lbl">Annual CTC (₹)</span>
+        <input type="number" class="field-val" id="inp-ctc" value="1200000" oninput="syncFromInput('ctc')">
       </div>
+      <div class="range-wrap">
+        <div class="range-fill" id="fill-ctc"></div>
+        <input type="range" id="sl-ctc" min="300000" max="10000000" step="50000" value="1200000" oninput="syncFromSlider('ctc')">
+      </div>
+      <div class="range-hints"><span class="range-hint">₹3L</span><span class="range-hint">₹1 Cr</span></div>
+    </div>
 
-      <div class="card">
-        <div class="card-title">🍩 CTC Breakdown</div>
-        <div class="donut-wrap">
-          <div class="donut-canvas-wrap">
-            <canvas id="donutChart" width="130" height="130" style="width:130px;height:130px;"></canvas>
-          </div>
-          <div class="donut-legend">
-            <div class="leg-row">
-              <span class="leg-dot" style="background:#1a6b4a;"></span>
-              <span class="leg-lbl">Net Take Home</span>
-              <span class="leg-val" id="dl-inhand">—</span>
-            </div>
-            <div class="leg-row">
-              <span class="leg-dot" style="background:#ef4444;"></span>
-              <span class="leg-lbl">PF Deductions</span>
-              <span class="leg-val" id="dl-pf">—</span>
-            </div>
-            <div class="leg-row">
-              <span class="leg-dot" style="background:#d97706;"></span>
-              <span class="leg-lbl">Variable/Bonus</span>
-              <span class="leg-val" id="dl-bonus">—</span>
-            </div>
-          </div>
-        </div>
+    <div class="field">
+      <div class="field-hdr">
+        <span class="field-lbl">Basic as % of CTC</span>
+        <input type="number" class="field-val" id="inp-basic-pct" value="40" step="1" oninput="syncFromInput('basic-pct')">
+      </div>
+      <div class="range-wrap">
+        <div class="range-fill" id="fill-basic-pct"></div>
+        <input type="range" id="sl-basic-pct" min="30" max="60" step="1" value="40" oninput="syncFromSlider('basic-pct')">
+      </div>
+      <div class="range-hints"><span class="range-hint">30%</span><span class="range-hint">60%</span></div>
+    </div>
+
+    <div class="field" style="margin-bottom:0;">
+      <div class="field-hdr">
+        <span class="field-lbl">Annual Bonus / Variable Pay (₹)</span>
+        <input type="number" class="field-val" id="inp-bonus" value="0" oninput="syncFromInput('bonus')">
+      </div>
+      <div class="range-wrap">
+        <div class="range-fill" id="fill-bonus"></div>
+        <input type="range" id="sl-bonus" min="0" max="2000000" step="10000" value="0" oninput="syncFromSlider('bonus')">
+      </div>
+      <div class="range-hints"><span class="range-hint">₹0</span><span class="range-hint">₹20L</span></div>
+    </div>
+  </div>
+
+  <!-- Tax Settings -->
+  <div class="card">
+    <div class="card-title">🧾 Tax Settings</div>
+
+    <!-- Metro / Non-Metro Toggle -->
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:.82rem; color:var(--muted); margin-bottom:.4rem;">City Type (affects HRA exemption)</div>
+      <div class="tab-row" style="width:100%;">
+        <button id="btn-metro" class="tab-btn active" style="flex:1;" onclick="setMetro(true, this)">🏙️ Metro</button>
+        <button id="btn-nonmetro" class="tab-btn" style="flex:1;" onclick="setMetro(false, this)">🏘️ Non-Metro</button>
       </div>
     </div>
 
+    <div class="field">
+      <div class="field-hdr">
+        <span class="field-lbl">Monthly Rent Paid (₹)</span>
+        <input type="number" class="field-val" id="inp-rent" value="0" oninput="syncFromInput('rent')">
+      </div>
+      <div class="range-wrap">
+        <div class="range-fill" id="fill-rent"></div>
+        <input type="range" id="sl-rent" min="0" max="100000" step="1000" value="0" oninput="syncFromSlider('rent')">
+      </div>
+      <div class="range-hints"><span class="range-hint">₹0</span><span class="range-hint">₹1L/mo</span></div>
+    </div>
+
+    <div class="field" style="margin-bottom:0;">
+      <div class="field-hdr">
+        <span class="field-lbl">Other 80C Investments (₹/year)</span>
+        <input type="number" class="field-val" id="inp-80c" value="0" oninput="syncFromInput('80c')">
+      </div>
+      <div class="range-wrap">
+        <div class="range-fill" id="fill-80c"></div>
+        <input type="range" id="sl-80c" min="0" max="150000" step="5000" value="0" oninput="syncFromSlider('80c')">
+      </div>
+      <div class="range-hints"><span class="range-hint">₹0</span><span class="range-hint">₹1.5L</span></div>
+    </div>
+  </div>
+
+  <!-- Regime Comparison Card -->
+  <div class="card">
+    <div class="card-title">⚖️ Old vs New Tax Regime</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem;">
+      <!-- New Regime -->
+      <div id="regime-new-box" style="border:2px solid var(--border); border-radius:10px; padding:.9rem; text-align:center; transition:all .25s;">
+        <div style="font-size:.65rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:.3rem;">New Regime</div>
+        <div style="font-size:1.15rem; font-weight:700;" id="d-inhand-new-monthly">—</div>
+        <div style="font-size:.68rem; color:var(--muted);">Monthly In-Hand</div>
+        <div style="margin-top:.5rem; font-size:.75rem; color:var(--muted);">Tax: <strong id="d-tax-new">—</strong></div>
+      </div>
+      <!-- Old Regime -->
+      <div id="regime-old-box" style="border:2px solid var(--border); border-radius:10px; padding:.9rem; text-align:center; transition:all .25s;">
+        <div style="font-size:.65rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:.3rem;">Old Regime</div>
+        <div style="font-size:1.15rem; font-weight:700;" id="d-inhand-old-monthly">—</div>
+        <div style="font-size:.68rem; color:var(--muted);">Monthly In-Hand</div>
+        <div style="margin-top:.5rem; font-size:.75rem; color:var(--muted);">Tax: <strong id="d-tax-old">—</strong></div>
+      </div>
+    </div>
+    <!-- Recommendation -->
+    <div id="regime-recommendation" style="margin-top:.75rem; padding:.75rem 1rem; border-radius:8px; font-size:.78rem; display:none; font-weight:500;"></div>
+  </div>
+
+</div>
+
     <div class="charts-col">
 
-      <div class="card">
-        <div class="chart-hdr">
-          <div class="card-title" style="margin-bottom:0;">📋 Detailed Salary Structure</div>
-          <div class="tab-row">
-            <button class="tab-btn active" onclick="switchTab('monthly')">Monthly</button>
-            <button class="tab-btn" onclick="switchTab('yearly')">Yearly</button>
-          </div>
-        </div>
-        
-        <div class="tbl-scroll" style="max-height: 350px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Salary Component</th>
-                <th>Amount (₹)</th>
-              </tr>
-            </thead>
-            <tbody id="salaryTable">
-                </tbody>
-          </table>
-        </div>
-        <div style="font-size: 0.7rem; color: var(--muted); margin-top: 10px;">
-            *Disclaimer: Income Tax (TDS) is not deducted above as it depends on your chosen Tax Regime (Old/New) and personal 80C investments.
-        </div>
-      </div>
+<div class="card">
+  <div class="card-title" style="margin-bottom:.75rem;">📋 CTC Breakdown</div>
+  <div class="tbl-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Annual (₹)</th>
+          <th>Monthly (₹)</th>
+          <th class="hide-xs">% of CTC</th>
+        </tr>
+      </thead>
+      <tbody id="salaryTable"></tbody>
+    </table>
+  </div>
+</div>
 
       <div class="card">
         <div class="card-title" style="margin-bottom:.75rem;">⚡ Salary Presets</div>
@@ -1673,237 +850,160 @@ tr.total-row { background:var(--surface2); font-weight:600; }
 </footer> -->
 
 <script>
-/* helpers */
 function fmt(n) {
   if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
   if (n >= 1e5) return '₹' + (n/1e5).toFixed(2) + ' L';
   if (n >= 1e3) return '₹' + Math.round(n).toLocaleString('en-IN');
   return '₹' + Math.round(n);
 }
-function toggleFaq(el) {
-  const isOpen = el.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(f => f.classList.remove('open'));
-  if (!isOpen) el.classList.add('open');
-}
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const siblings = Array.from(e.target.parentNode?.children || []);
-      const idx = siblings.indexOf(e.target);
-      e.target.style.animationDelay = (idx * 70) + 'ms';
-      e.target.classList.add('on');
-      obs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fu').forEach(el => obs.observe(el));
-/* Salary Math Engine */
-let salaryData = { monthly: {}, yearly: {} };
-let currentTab = 'monthly';
+function fmtN(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
 
-function calcSalary(ctc, bonusPct, basicPct) {
-    let bonus = ctc * (bonusPct / 100);
-    let fixedCTC = ctc - bonus;
+let isMetro = true;
+let apiDataCache = null;
 
-    let basic = fixedCTC * (basicPct / 100);
-    let hra = basic * 0.50; // Standard 50% of basic
-    let employerPF = basic * 0.12;
-
-    let special = fixedCTC - basic - hra - employerPF;
-    if (special < 0) {
-        special = 0; // Fallback if basic is set too high
-    }
-
-    let gross = basic + hra + special;
-    let employeePF = basic * 0.12;
-    let pt = 2400; // 200/mo Professional Tax
-
-    let deductions = employeePF + pt;
-    let inhandYearly = gross - deductions;
-
-    return {
-        yearly: {
-            basic, hra, special, bonus, gross, employeePF, employerPF, pt, deductions, inhand: inhandYearly, ctc
-        },
-        monthly: {
-            basic: basic/12, hra: hra/12, special: special/12, bonus: bonus/12, gross: gross/12, employeePF: employeePF/12, employerPF: employerPF/12, pt: pt/12, deductions: deductions/12, inhand: inhandYearly/12, ctc: ctc/12
-        }
-    };
+/* Metro toggle */
+function setMetro(val, btn) {
+  isMetro = val;
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  fetchData();
 }
 
-/* Sync Logic: Input <--> Slider */
+/* Bulletproof Sliders */
 function updateFill(id) {
-  const sl = document.getElementById('sl-'+id);
+  const sl = document.getElementById('sl-'+id); if (!sl) return;
   const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
   const el = document.getElementById('fill-'+id);
   if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
 }
-
 function syncFromSlider(id) {
   const v = parseFloat(document.getElementById('sl-'+id).value);
-  document.getElementById('inp-'+id).value = v; 
-  updateFill(id);
-  updateAll();
+  document.getElementById('inp-'+id).value = v;
+  updateFill(id); fetchData();
 }
-function toggleResources() {
-    const menu = document.getElementById("resourcesMenu");
-    const arrow = document.getElementById("arrow");
-
-    menu.classList.toggle("open");
-
-    if (menu.classList.contains("open")) {
-        arrow.style.transform = "rotate(180deg)";
-    } else {
-        arrow.style.transform = "rotate(0deg)";
-    }
-} 
 function syncFromInput(id) {
-  const v = parseFloat(document.getElementById('inp-'+id).value);
-  if (isNaN(v)) return; 
-  
+  let v = parseFloat(document.getElementById('inp-'+id).value);
+  if (isNaN(v)) return;
   const sl = document.getElementById('sl-'+id);
-  if (v < parseFloat(sl.min)) sl.value = sl.min;
-  else if (v > parseFloat(sl.max)) sl.value = sl.max;
-  else sl.value = v;
-  
-  updateFill(id);
-  updateAll();
+  const minVal = parseFloat(sl.min); const maxVal = parseFloat(sl.max);
+  if (v < minVal) v = minVal; if (v > maxVal) v = maxVal;
+  sl.value = v; document.getElementById('inp-'+id).value = v;
+  updateFill(id); fetchData();
 }
 
-/* Donut Chart */
-let donutChart;
-
-function initCharts() {
-  donutChart = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: { 
-        labels: ['Take Home', 'Total Deductions', 'Bonus'], 
-        datasets: [{ 
-            data: [1, 1, 1], 
-            backgroundColor: ['#1a6b4a', '#ef4444', '#d97706'], 
-            borderWidth: 0, 
-            hoverOffset: 5 
-        }] 
-    },
-    options: { 
-        cutout: '70%', 
-        responsive: false, 
-        plugins: { 
-            legend: { display: false }, 
-            tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.raw || 0) } } 
-        }, 
-        animation: { duration: 700 } 
-    }
+/* Build CTC breakdown table */
+function buildTable(data) {
+  const tb = document.getElementById('salaryTable'); if (!tb) return;
+  const ctc = data.ctc;
+  const rows = [
+    { name: '🔵 Basic Salary',          val: data.basic_annual,      style: 'color:var(--accent); font-weight:600;' },
+    { name: '🏠 HRA',                   val: data.hra_annual,        style: '' },
+    { name: '⚡ Special Allowance',      val: data.special_allowance, style: '' },
+    { name: '🏦 Employer PF',           val: data.employer_pf,       style: 'color:var(--muted);' },
+    { name: '📋 Gratuity',              val: data.gratuity,          style: 'color:var(--muted);' },
+    { name: '🎁 Bonus / Variable Pay',  val: data.annual_bonus,      style: 'color:var(--green);' },
+    { name: '─ Gross Salary',          val: data.gross_annual,      style: 'font-weight:700; border-top:1px solid var(--border);' },
+    { name: '➖ Employee PF',           val: -data.employee_pf,      style: 'color:var(--rose);' },
+    { name: '➖ Professional Tax',      val: -data.professional_tax, style: 'color:var(--rose);' },
+    { name: '➖ Income Tax (Best)',     val: -Math.min(data.tax_new, data.tax_old), style: 'color:var(--rose);' },
+  ];
+  tb.innerHTML = '';
+  rows.forEach(r => {
+    const isNeg = r.val < 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="${r.style}">${r.name}</td>
+      <td style="${isNeg ? 'color:var(--rose);' : ''}">${isNeg ? '(' + fmtN(Math.abs(r.val)) + ')' : fmtN(r.val)}</td>
+      <td style="${isNeg ? 'color:var(--rose);' : ''}">${isNeg ? '(' + fmtN(Math.abs(r.val)/12) + ')' : fmtN(r.val/12)}</td>
+      <td class="hide-xs" style="color:var(--muted);">${ctc > 0 ? Math.abs((r.val/ctc)*100).toFixed(1) + '%' : '—'}</td>`;
+    tb.appendChild(tr);
   });
+  // Final in-hand row
+  const best = data.better_regime === 'new' ? data.inhand_new_annual : data.inhand_old_annual;
+  const tr = document.createElement('tr');
+  tr.style.cssText = 'background:var(--accent-lt); font-weight:700;';
+  tr.innerHTML = `<td style="color:var(--accent);">✅ Net In-Hand</td><td style="color:var(--accent);">${fmtN(best)}</td><td style="color:var(--accent);">${fmtN(best/12)}</td><td class="hide-xs">100% take-home</td>`;
+  tb.appendChild(tr);
 }
 
-function switchTab(tab) {
-    currentTab = tab;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    renderTable();
-}
+/* API Fetch */
+let fetchTimeout;
+function fetchData() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(() => {
+    const ctc       = +document.getElementById('inp-ctc').value || 0;
+    const basic_pct = +document.getElementById('inp-basic-pct').value || 40;
+    const bonus     = +document.getElementById('inp-bonus').value || 0;
+    const rent      = document.getElementById('inp-rent') ? +document.getElementById('inp-rent').value : 0;
+    const other_80c = document.getElementById('inp-80c') ? +document.getElementById('inp-80c').value : 0;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-function renderTable() {
-    const tb = document.getElementById('salaryTable');
-    tb.innerHTML = '';
-    const d = salaryData[currentTab];
-    if(!d) return;
+    fetch('/calculators/salary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ ctc, basic_pct, bonus, is_metro: isMetro, monthly_rent: rent, other_80c })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) return;
+      apiDataCache = data;
 
-    const rows = [
-        { name: "Basic Pay", val: d.basic, class: "" },
-        { name: "House Rent Allowance (HRA)", val: d.hra, class: "" },
-        { name: "Special Allowance", val: d.special, class: "" },
-        { name: "Gross Salary", val: d.gross, class: "blue" },
-        { name: "Employee PF Deduction", val: -d.employeePF, class: "gold" },
-        { name: "Professional Tax", val: -d.pt, class: "gold" },
-        { name: "Net In-Hand Salary", val: d.inhand, class: "green" },
-        { name: "Employer PF (Part of CTC)", val: d.employerPF, class: "" },
-        { name: "Variable / Bonus", val: d.bonus, class: "" },
-        { name: "Total CTC", val: d.ctc, class: "total-row" },
-    ];
+      const isNew = data.better_regime === 'new';
+      const bestMonthly = isNew ? data.inhand_new_monthly : data.inhand_old_monthly;
+      const bestAnnual  = isNew ? data.inhand_new_annual  : data.inhand_old_annual;
+      const bestTax     = isNew ? data.tax_new : data.tax_old;
 
-    rows.forEach(r => {
-        const tr = document.createElement('tr');
-        if(r.class === 'total-row') tr.className = 'total-row';
-        
-        let valStr = Math.round(r.val).toLocaleString('en-IN');
-        if(r.val < 0) valStr = "- ₹" + Math.abs(Math.round(r.val)).toLocaleString('en-IN');
-        else valStr = "₹" + valStr;
+      // Top Metrics
+      const elM = document.getElementById('m-inhand-monthly'); if(elM) elM.textContent = fmt(bestMonthly);
+      const elA = document.getElementById('m-inhand-annual');  if(elA) elA.textContent = fmt(bestAnnual);
+      const elT = document.getElementById('m-tax-best');       if(elT) elT.textContent = fmt(bestTax);
+      const elB = document.getElementById('m-regime-badge');   if(elB) elB.textContent = (isNew ? '✅ New Regime' : '✅ Old Regime') + ' is better';
+      const elG = document.getElementById('m-gross-sub');      if(elG) elG.textContent = 'Gross: ' + fmt(data.gross_annual) + '/yr';
 
-        tr.innerHTML = `<td>${r.name}</td><td class="${r.class}">${valStr}</td>`;
-        tb.appendChild(tr);
+      // Regime Comparison Boxes
+      const newBox = document.getElementById('regime-new-box');
+      const oldBox = document.getElementById('regime-old-box');
+      if(newBox) {
+        newBox.style.borderColor = isNew ? 'var(--accent)' : 'var(--border)';
+        newBox.style.background  = isNew ? 'var(--accent-lt)' : 'var(--surface)';
+      }
+      if(oldBox) {
+        oldBox.style.borderColor = !isNew ? 'var(--accent)' : 'var(--border)';
+        oldBox.style.background  = !isNew ? 'var(--accent-lt)' : 'var(--surface)';
+      }
+      const dNewM = document.getElementById('d-inhand-new-monthly'); if(dNewM) dNewM.textContent = fmt(data.inhand_new_monthly);
+      const dOldM = document.getElementById('d-inhand-old-monthly'); if(dOldM) dOldM.textContent = fmt(data.inhand_old_monthly);
+      const dTaxN = document.getElementById('d-tax-new'); if(dTaxN) dTaxN.textContent = fmt(data.tax_new);
+      const dTaxO = document.getElementById('d-tax-old'); if(dTaxO) dTaxO.textContent = fmt(data.tax_old);
+
+      // Recommendation
+      const rec = document.getElementById('regime-recommendation');
+      if(rec) {
+        rec.style.display = 'block';
+        if (data.tax_saving > 0) {
+          rec.style.background = isNew ? 'var(--accent-lt)' : 'var(--green-lt)';
+          rec.style.color = isNew ? 'var(--accent)' : 'var(--green)';
+          rec.innerHTML = `💡 <strong>${isNew ? 'New' : 'Old'} Regime saves you ${fmt(data.tax_saving)}/year</strong> in taxes. Switch to it if your employer allows.`;
+        } else {
+          rec.style.background = 'var(--surface2)';
+          rec.style.color = 'var(--muted)';
+          rec.textContent = '⚖️ Both regimes result in the same tax for your income.';
+        }
+      }
+
+      buildTable(data);
     });
+  }, 120);
 }
 
-/* master update */
-function updateAll() {
-  const ctc = +document.getElementById('inp-ctc').value || 0;
-  const bonusPct = +document.getElementById('inp-bonus').value || 0;
-  const basicPct = +document.getElementById('inp-basic').value || 50;
-  
-  salaryData = calcSalary(ctc, bonusPct, basicPct);
-  const dY = salaryData.yearly;
-  const dM = salaryData.monthly;
+function toggleFaq(el) { el.classList.toggle('open'); }
+const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } }); }, { threshold: 0.1 });
 
-  document.getElementById('m-inhand').textContent = fmt(dM.inhand);
-  document.getElementById('m-gross').textContent  = fmt(dM.gross);
-  document.getElementById('m-deductions').textContent = fmt(dM.deductions);
-
-  // Update Legend
-  document.getElementById('dl-inhand').textContent = fmt(dY.inhand);
-  let totalPFDeductions = dY.employeePF + dY.employerPF + dY.pt;
-  document.getElementById('dl-pf').textContent  = fmt(totalPFDeductions);
-  document.getElementById('dl-bonus').textContent   = fmt(dY.bonus);
-
-  if (donutChart) { 
-    donutChart.data.datasets[0].data = [dY.inhand, totalPFDeductions, dY.bonus]; 
-    donutChart.update(); 
-  }
-
-  renderTable();
-}
-
-/* presets */
-function applyTip(ctc, bonus, basic) {
-  document.getElementById('sl-ctc').value = ctc;
-  document.getElementById('sl-bonus').value = bonus;
-  document.getElementById('sl-basic').value = basic;
-  ['ctc','bonus','basic'].forEach(syncFromSlider);
-}
-
-/* dark mode */
-function toggleDark() {
-  const dark = document.body.classList.toggle('dark');
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-}
-
-/* mobile drawer */
-let drawerOpen = false;
-function toggleDrawer() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('navDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('hamIcon').className = drawerOpen ? 'bi bi-x-lg' : 'bi bi-list';
-}
-function closeOnOverlay(e) {
-  if (e.target.classList.contains('drawer-overlay')) toggleDrawer();
-}
-
-/* init */
 window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeIcon').className = 'bi bi-sun-fill';
-  }
-  ['ctc','bonus','basic'].forEach(updateFill);
-  initCharts();
-  updateAll();
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && drawerOpen) toggleDrawer();
-  });
+  if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); const t = document.getElementById('themeIcon'); if(t) t.className = 'bi bi-sun-fill'; }
+  document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+  ['ctc','basic-pct','bonus','rent','80c'].forEach(updateFill);
+  fetchData();
 });
 </script>
-</body>
-</html>
 {% endblock %}

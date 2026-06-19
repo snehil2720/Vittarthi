@@ -879,123 +879,383 @@ def personal_loan(request):
     return render(request, 'loan/personal_loan.html', locals())
 
 def ppf_calc(request):
-    result = None
-    labels, data, table_data = [], [], []
-
     if request.method == "POST":
-        yearly = float(request.POST.get("amount"))
-        rate = float(request.POST.get("rate", 7.1))/100
-        years = int(request.POST.get("time"))
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
 
-        total = 0
+        yearly_amount = float(data.get("amount", 150000))
+        rate = float(data.get("rate", 7.1))
+        years = int(data.get("time", 15))
+        frequency = data.get("frequency", "yearly")  # 'monthly' or 'yearly'
+        tax_slab = float(data.get("tax_slab", 30))   # 0, 5, 10, 20, 30
 
-        for i in range(1, years+1):
-            total = (total + yearly) * (1+rate)
+        # Validate
+        if yearly_amount <= 0 or years < 15 or rate <= 0:
+            return JsonResponse({"success": False, "error": "Invalid inputs"})
 
-            labels.append(f"Year {i}")
-            data.append(round(total,2))
+        # PPF allows only 15 + 5-year blocks
+        valid_years = [15, 20, 25, 30, 35, 40, 45, 50]
+        if years not in valid_years:
+            years = min(valid_years, key=lambda y: abs(y - years))
 
-            table_data.append({
-                "year": i,
-                "value": round(total,2)
+        annual_rate = rate / 100
+        monthly_rate = annual_rate / 12
+
+        # If monthly, deposit per month; else lump sum in April (start of FY)
+        if frequency == "monthly":
+            monthly_deposit = yearly_amount / 12
+        else:
+            monthly_deposit = None  # lump sum yearly
+
+        total_invested = 0
+        total_corpus = 0
+        yearly_data = []
+
+        for year in range(1, years + 1):
+            opening_balance = total_corpus
+            year_invested = 0
+            annual_interest = 0
+
+            if frequency == "monthly":
+                # True month-by-month PPF simulation
+                # Interest is calculated on min balance between 5th and EOM
+                # Assuming deposit is before 5th, so full month counts
+                balance_at_start = total_corpus
+                for month in range(1, 13):
+                    balance_at_start += monthly_deposit
+                    year_invested += monthly_deposit
+                    # Interest credited at end of FY, but calculated monthly
+                    annual_interest += balance_at_start * monthly_rate
+                total_corpus = opening_balance + year_invested + annual_interest
+            else:
+                # Yearly lump sum deposited on April 1st (before 5th - earns full year)
+                year_invested = yearly_amount
+                total_corpus = (opening_balance + year_invested) * (1 + annual_rate)
+                annual_interest = total_corpus - opening_balance - year_invested
+
+            total_invested += year_invested
+
+            yearly_data.append({
+                "year": year,
+                "opening": round(opening_balance, 2),
+                "deposited": round(year_invested, 2),
+                "interest": round(annual_interest, 2),
+                "closing": round(total_corpus, 2),
+                "total_invested": round(total_invested, 2),
             })
 
-        result = round(total,2)
-    CalcUsage.objects.create(name="PPF")
+        wealth_gained = total_corpus - total_invested
+
+        # Section 80C Tax Saving calculation
+        deductible_per_year = min(yearly_amount, 150000)
+        tax_saved_per_year = deductible_per_year * (tax_slab / 100) * 1.04  # 4% cess
+        total_tax_saved = tax_saved_per_year * years
+
+        CalcUsage.objects.create(name="PPF")
+
+        return JsonResponse({
+            "success": True,
+            "total_corpus": round(total_corpus, 2),
+            "total_invested": round(total_invested, 2),
+            "wealth_gained": round(wealth_gained, 2),
+            "tax_saved_per_year": round(tax_saved_per_year, 2),
+            "total_tax_saved": round(total_tax_saved, 2),
+            "yearly_data": yearly_data
+        })
+
     return render(request, 'investment/ppf.html', locals())
 
 def nps_calc(request):
-    result = None
-    labels, data, table_data = [], [], []
-
     if request.method == "POST":
-        monthly = float(request.POST.get("amount"))
-        rate = float(request.POST.get("rate", 9))/100/12
-        years = int(request.POST.get("time"))
-
-        total = 0
-
-        for i in range(1, years*12+1):
-            total = (total + monthly)*(1+rate)
-
-            if i % 12 == 0:
-                labels.append(f"Year {i//12}")
-                data.append(round(total,2))
-
-            table_data.append({"month": i, "value": round(total,2)})
-
-        result = round(total,2)
-    CalcUsage.objects.create(name="NPS")
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
+        # Get Inputs
+        P = float(data.get("amount", 0))
+        age = int(data.get("age", 30))
+        annual_rate = float(data.get("rate", 10.0))
+        annuity_pct = float(data.get("annuity_pct", 40))
+        annuity_rate = float(data.get("annuity_rate", 6.0))
+        if P <= 0 or age >= 60 or annual_rate <= 0:
+            return JsonResponse({"success": False, "error": "Invalid inputs"})
+        years = 60 - age
+        n_months = years * 12
+        r = annual_rate / 100 / 12
+        total_invested = P * n_months
+        
+        # Calculate Corpus using SIP Future Value formula 
+        # (Assuming investment at the start of each month)
+        # FV = P * [ ((1+r)^n - 1) / r ] * (1+r)
+        total_corpus = P * (((1 + r)**n_months - 1) / r) * (1 + r)
+        
+        # Maturity Breakdown at age 60
+        annuity_amount = total_corpus * (annuity_pct / 100)
+        lumpsum_amount = total_corpus - annuity_amount
+        
+        # Monthly Pension (Annuity amount * annual rate / 12)
+        monthly_pension = annuity_amount * (annuity_rate / 100) / 12
+        
+        # Build Yearly Schedule
+        yearly_data = []
+        current_corpus = 0
+        current_invested = 0
+        
+        for year in range(1, years + 1):
+            for month in range(1, 13):
+                current_invested += P
+                current_corpus = (current_corpus + P) * (1 + r)
+                
+            yearly_data.append({
+                "age": age + year,
+                "invested": round(current_invested, 2),
+                "returns": round(current_corpus - current_invested, 2),
+                "corpus": round(current_corpus, 2)
+            })
+        CalcUsage.objects.create(name="NPS")
+        return JsonResponse({
+            "success": True,
+            "total_invested": round(total_invested, 2),
+            "total_corpus": round(total_corpus, 2),
+            "lumpsum_amount": round(lumpsum_amount, 2),
+            "annuity_amount": round(annuity_amount, 2),
+            "monthly_pension": round(monthly_pension, 2),
+            "wealth_gained": round(total_corpus - total_invested, 2),
+            "yearly_data": yearly_data
+        })
     return render(request, 'investment/nps.html', locals())
-
 def retirement_calc(request):
-    result = None
-    total_invested = None
-    profit = None
-
-    labels = []
-    data = []
-    table_data = []
-
     if request.method == "POST":
-        monthly = float(request.POST.get("amount"))
-        rate = float(request.POST.get("rate")) / 100 / 12
-        years = int(request.POST.get("time"))
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
 
-        months = years * 12
-        total = 0
-        invested = 0
+        current_age    = int(float(data.get("current_age", 30)))
+        ret_age        = int(float(data.get("ret_age", 60)))
+        existing       = float(data.get("savings", 0))
+        monthly_sip    = float(data.get("monthly_sip", 10000))
+        annual_return  = float(data.get("rate", 12))
+        step_up_pct    = float(data.get("step_up_pct", 0))       # % annual SIP increase
+        monthly_exp    = float(data.get("monthly_expense", 50000))
+        inflation      = float(data.get("inflation", 6))
 
-        for i in range(1, months + 1):
-            invested += monthly
-            total = (total + monthly) * (1 + rate)
+        # Basic validation
+        if ret_age <= current_age:
+            return JsonResponse({"success": False, "error": "Retirement age must be greater than current age"})
+        if monthly_sip < 0 or existing < 0 or annual_return <= 0:
+            return JsonResponse({"success": False, "error": "Invalid inputs"})
 
-            # yearly graph
-            if i % 12 == 0:
-                labels.append(f"Year {i//12}")
-                data.append(round(total, 2))
+        years       = ret_age - current_age
+        monthly_r   = annual_return / 100 / 12
+        inflation_r = inflation / 100
 
-            # monthly table
-            table_data.append({
-                "month": i,
-                "invested": round(invested, 2),
-                "value": round(total, 2)
+        # ── Stream 1: Existing corpus compounds for full duration ──
+        stream1_corpus = existing * ((1 + monthly_r) ** (years * 12))
+
+        # ── Stream 2: Step-Up SIP compounding year by year ──
+        stream2_corpus = 0
+        current_sip    = monthly_sip
+        yearly_data    = []
+        cumulative_invested = existing
+        total_sip_invested  = 0
+
+        for year in range(1, years + 1):
+            for month in range(1, 13):
+                stream2_corpus = (stream2_corpus + current_sip) * (1 + monthly_r)
+                total_sip_invested += current_sip
+
+            # Step up SIP at end of each year
+            if step_up_pct > 0:
+                current_sip = current_sip * (1 + step_up_pct / 100)
+
+            cumulative_invested = existing + total_sip_invested
+            total_corpus_now = (existing * ((1 + monthly_r) ** (year * 12))) + stream2_corpus
+
+            yearly_data.append({
+                "age": current_age + year,
+                "invested": round(cumulative_invested, 2),
+                "returns": round(total_corpus_now - cumulative_invested, 2),
+                "corpus": round(total_corpus_now, 2),
             })
 
-        result = round(total, 2)
-        total_invested = round(invested, 2)
-        profit = round(result - total_invested, 2)
-    CalcUsage.objects.create(name="RETIREMENT")
-    return render(request, 'investment/retirement.html', {
-        "result": result,
-        "total_invested": total_invested,
-        "profit": profit,
-        "labels": labels,
-        "data": data,
-        "table_data": table_data
-    })
+        total_corpus   = stream1_corpus + stream2_corpus
+        total_invested = existing + total_sip_invested
+        wealth_gained  = total_corpus - total_invested
+
+        # ── Inflation-Adjusted Corpus Goal (4% Rule) ──
+        # What will monthly_exp cost at retirement?
+        inflation_factor         = (1 + inflation_r) ** years
+        expense_at_retirement    = monthly_exp * inflation_factor        # monthly
+        annual_exp_at_retirement = expense_at_retirement * 12
+        required_corpus          = annual_exp_at_retirement * 25         # 4% Rule = 25x annual expenses
+        corpus_gap               = required_corpus - total_corpus        # positive = short, negative = ahead
+
+        # ── Post-Retirement Sustainability ──
+        # How long does corpus last drawing expense_at_retirement/month at 7% post-ret return?
+        post_ret_r      = 7 / 100 / 12
+        balance         = total_corpus
+        months_lasting  = 0
+        monthly_draw    = expense_at_retirement
+        while balance > 0 and months_lasting < 600:   # cap at 50 years
+            balance = balance * (1 + post_ret_r) - monthly_draw
+            months_lasting += 1
+
+        years_lasting  = months_lasting // 12
+        months_lasting_rem = months_lasting % 12
+
+        CalcUsage.objects.create(name="RETIREMENT")
+
+        return JsonResponse({
+            "success": True,
+            "total_corpus": round(total_corpus, 2),
+            "total_invested": round(total_invested, 2),
+            "wealth_gained": round(wealth_gained, 2),
+            "required_corpus": round(required_corpus, 2),
+            "corpus_gap": round(corpus_gap, 2),
+            "expense_at_retirement": round(expense_at_retirement, 2),
+            "years_lasting": years_lasting,
+            "months_lasting_rem": months_lasting_rem,
+            "yearly_data": yearly_data,
+        })
+
+    return render(request, 'investment/retirement.html', locals())
 
 def salary_calc(request):
-    inhand = None
-    table_data = []
-
     if request.method == "POST":
-        ctc = float(request.POST.get("ctc"))
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
 
-        pf = ctc * 0.12
-        tax = ctc * 0.1
-        bonus = ctc * 0.05
+        ctc           = float(data.get("ctc", 1000000))
+        basic_pct     = float(data.get("basic_pct", 40)) / 100
+        annual_bonus  = float(data.get("bonus", 0))
+        is_metro      = bool(data.get("is_metro", True))
+        monthly_rent  = float(data.get("monthly_rent", 0))
+        other_80c     = float(data.get("other_80c", 0))  # PPF, ELSS etc.
 
-        inhand = ctc - pf - tax + bonus
+        if ctc <= 0:
+            return JsonResponse({"success": False, "error": "Invalid CTC"})
 
-        table_data = [
-            {"name": "CTC", "value": ctc},
-            {"name": "PF", "value": pf},
-            {"name": "Tax", "value": tax},
-            {"name": "Bonus", "value": bonus},
-            {"name": "In-hand", "value": inhand},
-        ]
-    CalcUsage.objects.create(name="SALARY")
+        # ── CTC Breakdown ──
+        basic_annual      = ctc * basic_pct
+        employer_pf       = basic_annual * 0.12        # Part of CTC, not in-hand
+        gratuity          = basic_annual * 0.0481      # 4.81% of Basic
+
+        gross_annual      = ctc - employer_pf - gratuity
+        hra_annual        = basic_annual * (0.50 if is_metro else 0.40)
+        special_allowance = max(0, gross_annual - basic_annual - hra_annual)
+
+        # ── Employee Deductions (from in-hand) ──
+        employee_pf       = basic_annual * 0.12
+        professional_tax  = 2400   # ₹200/month standard
+
+        # ════════════════════════════════════
+        #  NEW REGIME  (FY 2024-25)
+        # ════════════════════════════════════
+        std_new      = 75000
+        taxable_new  = max(0, gross_annual + annual_bonus - std_new - employee_pf)
+
+        def slab_new(inc):
+            t = 0
+            slabs = [(300000,0),(700000,0.05),(1000000,0.10),(1200000,0.15),(1500000,0.20)]
+            prev = 0
+            for limit, rate in slabs:
+                if inc <= limit:
+                    t += (inc - prev) * rate; break
+                t += (limit - prev) * rate
+                prev = limit
+            else:
+                t += (inc - 1500000) * 0.30
+            return t
+
+        tax_new_base = 0 if taxable_new <= 700000 else slab_new(taxable_new)
+        tax_new      = round(tax_new_base * 1.04, 2)   # +4% cess
+
+        # ════════════════════════════════════
+        #  OLD REGIME  (FY 2024-25)
+        # ════════════════════════════════════
+        std_old      = 50000
+
+        # HRA Exemption (least of 3 conditions)
+        hra_exempt = 0
+        if monthly_rent > 0:
+            hra_exempt = min(
+                hra_annual,
+                basic_annual * (0.50 if is_metro else 0.40),
+                max(0, monthly_rent * 12 - basic_annual * 0.10)
+            )
+
+        # 80C: EPF already counts, cap total at ₹1.5L
+        epf_80c    = min(employee_pf, 150000)
+        extra_80c  = min(other_80c, max(0, 150000 - epf_80c))
+        total_80c  = epf_80c + extra_80c
+
+        taxable_old = max(0, gross_annual + annual_bonus - std_old - hra_exempt - total_80c)
+
+        def slab_old(inc):
+            t = 0
+            slabs = [(250000,0),(500000,0.05),(1000000,0.20)]
+            prev = 0
+            for limit, rate in slabs:
+                if inc <= limit:
+                    t += (inc - prev) * rate; break
+                t += (limit - prev) * rate
+                prev = limit
+            else:
+                t += (inc - 1000000) * 0.30
+            return t
+
+        tax_old_base = 0 if taxable_old <= 500000 else slab_old(taxable_old)
+        tax_old      = round(tax_old_base * 1.04, 2)   # +4% cess
+
+        # ── Regime Comparison ──
+        better_regime = "new" if tax_new <= tax_old else "old"
+        tax_saving    = abs(tax_old - tax_new)
+
+        # ── Final In-Hand ──
+        def inhand(tax):
+            a = gross_annual + annual_bonus - employee_pf - professional_tax - tax
+            return {"annual": round(a, 2), "monthly": round(a / 12, 2)}
+
+        ih_new = inhand(tax_new)
+        ih_old = inhand(tax_old)
+
+        CalcUsage.objects.create(name="SALARY")
+
+        return JsonResponse({
+            "success": True,
+            # CTC Components (Annual)
+            "ctc":               round(ctc, 2),
+            "basic_annual":      round(basic_annual, 2),
+            "hra_annual":        round(hra_annual, 2),
+            "special_allowance": round(special_allowance, 2),
+            "employer_pf":       round(employer_pf, 2),
+            "gratuity":          round(gratuity, 2),
+            "annual_bonus":      round(annual_bonus, 2),
+            "gross_annual":      round(gross_annual, 2),
+            # Deductions
+            "employee_pf":       round(employee_pf, 2),
+            "professional_tax":  professional_tax,
+            "hra_exempt":        round(hra_exempt, 2),
+            "total_80c":         round(total_80c, 2),
+            # Tax
+            "taxable_new":       round(taxable_new, 2),
+            "tax_new":           tax_new,
+            "taxable_old":       round(taxable_old, 2),
+            "tax_old":           tax_old,
+            "better_regime":     better_regime,
+            "tax_saving":        round(tax_saving, 2),
+            # In-Hand
+            "inhand_new_monthly": ih_new["monthly"],
+            "inhand_new_annual":  ih_new["annual"],
+            "inhand_old_monthly": ih_old["monthly"],
+            "inhand_old_annual":  ih_old["annual"],
+        })
+
     return render(request, 'salary/salary.html', locals())
 
 # def pf_calc(request):
@@ -1089,22 +1349,91 @@ def pf_calc(request):
 
     return render(request, 'salary/pf.html', {})
 def loan_eligibility(request):
-    eligible = None
-
     if request.method == "POST":
-        salary = float(request.POST.get("salary"))
-        score = int(request.POST.get("score"))
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"})
 
-        factor = 40
-        if score > 750:
-            factor = 60
-        elif score < 600:
-            factor = 20
+        salary   = float(data.get("salary", 0))
+        existing = float(data.get("existing", 0))
+        score    = int(data.get("score", 750))
+        rate     = float(data.get("rate", 8.5))
+        years    = int(data.get("years", 20))
 
-        eligible = salary * factor
-    CalcUsage.objects.create(name="LOAN_ELIGIBILITY")
+        if salary <= 0 or rate <= 0 or years <= 0:
+            return JsonResponse({"success": False, "error": "Invalid inputs"})
+
+        # ── FOIR based on salary bracket (standard Indian bank rules) ──
+        if salary > 200000:   foir = 0.65
+        elif salary > 100000: foir = 0.60
+        elif salary > 75000:  foir = 0.55
+        elif salary > 25000:  foir = 0.50
+        else:                 foir = 0.40
+
+        # ── CIBIL Score Multiplier ──
+        if score < 600:
+            score_mult   = 0.0
+            score_status = "Poor — Likely Rejected"
+            score_color  = "rose"
+        elif score < 650:
+            score_mult   = 0.5
+            score_status = "Fair — High Risk"
+            score_color  = "gold"
+        elif score < 700:
+            score_mult   = 0.75
+            score_status = "Average — Limited Options"
+            score_color  = "gold"
+        elif score < 750:
+            score_mult   = 0.85
+            score_status = "Good — Standard Terms"
+            score_color  = "blue"
+        else:
+            score_mult   = 1.0
+            score_status = "Excellent — Best Rates"
+            score_color  = "green"
+
+        max_total_emi = salary * foir
+        available_emi = max(0, (max_total_emi - existing) * score_mult)
+        take_home     = max(0, salary - existing - available_emi)
+
+        # ── Loan Amount via PV Annuity Formula ──
+        def calc_loan(emi, r_annual, y):
+            mr = r_annual / 100 / 12
+            n  = y * 12
+            if mr <= 0 or n <= 0 or emi <= 0:
+                return 0
+            return round(emi * ((1 + mr)**n - 1) / (mr * (1 + mr)**n), 2)
+
+        eligible_loan = calc_loan(available_emi, rate, years)
+
+        # ── Tenure Comparison Table (backend computed) ──
+        tenure_table = []
+        for t in [5, 10, 15, 20, 25, 30]:
+            loan_amt = calc_loan(available_emi, rate, t)
+            tenure_table.append({
+                "tenure": t,
+                "rate":   rate,
+                "emi":    round(available_emi, 2),
+                "loan":   loan_amt
+            })
+
+        CalcUsage.objects.create(name="LOAN_ELIGIBILITY")
+
+        return JsonResponse({
+            "success":       True,
+            "eligible_loan": round(eligible_loan, 2),
+            "available_emi": round(available_emi, 2),
+            "max_total_emi": round(max_total_emi, 2),
+            "take_home":     round(take_home, 2),
+            "existing_emi":  round(existing, 2),
+            "foir_pct":      round(foir * 100),
+            "score_status":  score_status,
+            "score_color":   score_color,
+            "tenure_table":  tenure_table,
+        })
+
     return render(request, 'eligibility/eligibility.html', locals())
-
 # def like_blog(request, id):
 #     blog = Blog.objects.get(id=id)
 #     blog.likes += 1

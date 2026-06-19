@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-PF Calculator | Vittarthi
+EPF or PF Calculator | Employee Provident Fund Balance Calculator | Vittarthi
 {% endblock %}
 
 {% block meta_description %}
-Calculate EPF balance, employee and employer contributions, and estimated retirement savings with the Vittarthi PF Calculator.
+Calculate your Employee Provident Fund (EPF) balance at retirement. See how your monthly contributions compound to build a massive tax-free corpus.
 {% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/pf.css' %}">
@@ -14,10 +14,6 @@ Calculate EPF balance, employee and employer contributions, and estimated retire
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
 {% endblock %}
 {% block content %}
-
-
-
-<body>
 
 <main class="page">
 
@@ -1378,6 +1374,4 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-</body>
-</html>
 {% endblock %}
