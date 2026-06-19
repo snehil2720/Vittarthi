@@ -482,63 +482,106 @@ def sip_calculator(request):
 
 
 def emi_calculator(request):
-    emi = None
-    total_payment = None
-    total_interest = None
-
-    labels = []
-    balance_data = []
-    interest_data = []
-
-    table_data = []
-
     if request.method == "POST":
-        P = float(request.POST.get("amount"))
-        annual_rate = float(request.POST.get("rate"))
-        years = float(request.POST.get("time"))
-
-        r = annual_rate / 100 / 12
-        n = int(years) * 12
-
-        emi = P * r * ((1 + r)**n) / ((1 + r)**n - 1)
-        emi = round(emi, 2)
-
-        balance = P
-        total_interest = 0
-
-        for i in range(1, n + 1):
-            interest = balance * r
-            principal = emi - interest
-            balance -= principal
-
-            total_interest += interest
-
-            # yearly graph
-            if i % 12 == 0:
-                labels.append(f"Year {i//12}")
-                balance_data.append(round(balance, 2))
-                interest_data.append(round(total_interest, 2))
-
-            table_data.append({
-                "month": i,
-                "emi": round(emi, 2),
-                "principal": round(principal, 2),
-                "interest": round(interest, 2),
-                "balance": round(balance, 2)
+        try:
+            data = json.loads(request.body)
+            P = float(data.get("amount", 0))
+            annual_rate = float(data.get("rate", 0))
+            years = float(data.get("time", 0))
+            
+            # Advanced fields (will default to 0 if not sent yet)
+            monthly_prepay = float(data.get("monthly_prepay", 0))
+            yearly_prepay = float(data.get("yearly_prepay", 0))
+            processing_fee_pct = float(data.get("processing_fee_pct", 0))
+            r = annual_rate / 100 / 12
+            n = int(years * 12)
+            # Handle 0% interest edge case
+            if r == 0:
+                emi = P / n if n > 0 else 0
+            else:
+                emi = P * r * ((1 + r)**n) / (((1 + r)**n) - 1)
+            base_emi = round(emi)
+            processing_fee = round(P * (processing_fee_pct / 100))
+            net_disbursed = P - processing_fee
+            balance = P
+            total_interest = 0
+            months_taken = 0
+            yearly_data = []
+            monthly_data = []
+            yearly_principal = 0
+            yearly_interest = 0
+            # Generate the Amortization Schedule
+            for i in range(1, n + 1):
+                if balance <= 0:
+                    break
+                    
+                months_taken += 1
+                interest = balance * r
+                
+                # Apply extra prepayments
+                actual_payment = base_emi + monthly_prepay
+                if i % 12 == 0:
+                    actual_payment += yearly_prepay
+                    
+                # Don't overpay on the final month
+                if actual_payment > balance + interest:
+                    actual_payment = balance + interest
+                    
+                principal = actual_payment - interest
+                balance -= principal
+                total_interest += interest
+                
+                yearly_principal += principal
+                yearly_interest += interest
+                
+                monthly_data.append({
+                    "month": i,
+                    "principal": round(principal),
+                    "interest": round(interest),
+                    "balance": round(max(0, balance))
+                })
+                
+                # Save Yearly Rollup
+                if i % 12 == 0 or balance <= 0:
+                    if yearly_principal > 0 or yearly_interest > 0:
+                        yearly_data.append({
+                            "year": (i - 1) // 12 + 1,
+                            "principal": round(yearly_principal),
+                            "interest": round(yearly_interest),
+                            "balance": round(max(0, balance)),
+                            "total_paid": round(yearly_principal + yearly_interest)
+                        })
+                    yearly_principal = 0
+                    yearly_interest = 0
+            total_payment = P + total_interest
+            # Calculate savings if prepayments were used
+            if monthly_prepay > 0 or yearly_prepay > 0:
+                base_total_interest = (base_emi * n) - P
+                interest_saved = max(0, base_total_interest - total_interest)
+                tenure_saved_months = n - months_taken
+            else:
+                interest_saved = 0
+                tenure_saved_months = 0
+            return JsonResponse({
+                "success": True,
+                "principal": round(P),
+                "emi": base_emi,
+                "total_interest": round(total_interest),
+                "total_payment": round(total_payment),
+                "processing_fee": processing_fee,
+                "net_disbursed": net_disbursed,
+                "months_taken": months_taken,
+                "interest_saved": round(interest_saved),
+                "tenure_saved_months": tenure_saved_months,
+                "yearly_data": yearly_data,
+                "monthly_data": monthly_data
             })
-
-        total_payment = round(emi * n, 2)
-        total_interest = round(total_interest, 2)
+            
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+    # GET Request: Render the page
     CalcUsage.objects.create(name="EMI")
-    return render(request, 'emi.html', {
-        "emi": emi,
-        "total_payment": total_payment,
-        "total_interest": total_interest,
-        "labels": labels,
-        "balance_data": balance_data,
-        "interest_data": interest_data,
-        "table_data": table_data
-    })
+    return render(request, 'emi.html')
 def home_loan(request):
     emi = None
     total_payment = None
