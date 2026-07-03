@@ -139,6 +139,17 @@
       <a href="/resources/news">News</a>
     </div>
     </div>
+    <div class="drawer-item">
+    <div class="drawer-link" onclick="toggleMarkets()">
+      Live Markets <span id="arrow">▾</span>
+    </div>
+    <div class="drawer-submenu" id="LiveMarket">
+      <a href="/markets/india" class="drawer-link">Indian Market</a>
+      <a href="/markets/us">US Market</a>
+      <a href="/markets/commodities-and-currency">Commodities &amp; Currency</a>
+      <a href="/markets/crypto">Crypto</a>
+    </div>
+    </div>
       <a href="/contact">Contact</a>
       <a href="/about-us">About Us</a>
   </div>
@@ -174,6 +185,17 @@ function comingSoon() { alert("🚀 Coming Soon!"); }
 
 function toggleResources() {
     const menu = document.getElementById("resourcesMenu");
+    const arrow = document.getElementById("arrow"); 
+
+    menu.classList.toggle("open");
+    if (menu.classList.contains("open")) {
+        arrow.style.transform = "rotate(180deg)";
+    } else {
+        arrow.style.transform = "rotate(0deg)";
+    }
+} 
+function toggleMarkets() {
+    const menu = document.getElementById("LiveMarket");
     const arrow = document.getElementById("arrow"); 
 
     menu.classList.toggle("open");
