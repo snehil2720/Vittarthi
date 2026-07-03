@@ -1,0 +1,393 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+US Stock Market Today — S&amp;P 500, Dow, Nasdaq, Sectors &amp; Movers
+{% endblock %}
+
+{% block meta_description %}
+Live US stock market today: S&amp;P 500, Dow Jones, Nasdaq levels, top gainers and losers, sector performance, market breadth, Treasury yields and the dollar. Updated daily by Vittarthi.
+{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/usstock.css' %}">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% endblock %}
+{% block content %}
+
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div class="badges">
+      <span class="pill live"><span class="dot live-dot" id="heroDot"></span><span id="heroStatus">Live Markets</span></span>
+      <span class="pill">📈 NYSE &amp; Nasdaq</span>
+      <span class="pill">Free · No sign-up required</span>
+    </div>
+    <h1 class="title">US Stock Market <em>Today</em></h1>
+    <p class="subline">S&amp;P 500, Dow Jones and Nasdaq levels, top gainers and losers, sector moves, market breadth, Treasury yields and the dollar — all on one page, refreshed every trading day.</p>
+    <p class="updated" id="heroDate">—</p>
+  </div>
+</div>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main>
+<!-- ===================== KEY INDICES ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Key Indices</span>
+      <h2>How the headline indices closed</h2>
+      <p>The benchmark and broader-market indices that set the tone on Wall Street.</p>
+    </div>
+    <div class="grid idx-grid" id="indices"></div>
+  </div>
+</section>
+
+<!-- ===================== MARKET SUMMARY ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Market Wrap</span>
+      <h2>What moved the market</h2>
+    </div>
+    <div class="summary" id="summary"></div>
+  </div>
+</section>
+
+<!-- ===================== GAINERS / LOSERS ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Top Movers</span>
+      <h2>Top gainers &amp; losers</h2>
+      <p>Biggest single-day moves among S&amp;P 500 constituents.</p>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">🟢 Top Gainers <span class="tag up">S&amp;P 500</span></div>
+        <div id="gainers"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">🔴 Top Losers <span class="tag down">S&amp;P 500</span></div>
+        <div id="losers"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTORS ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Sectors</span>
+      <h2>Sector performance</h2>
+      <p>How the 11 S&amp;P 500 sectors performed through the session.</p>
+    </div>
+    <div class="heat" id="sectors"></div>
+  </div>
+</section>
+
+<!-- ===================== BREADTH + RATES/DOLLAR ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="info-grid">
+      <div class="card card-pad">
+        <div class="card-title">⚖️ Market breadth</div>
+        <div class="card-note">Advancing vs declining stocks on the NYSE.</div>
+        <div class="breadth-bar"><div class="adv" id="breadthAdv"></div><div class="dec" id="breadthDec"></div></div>
+        <div class="breadth-legend">
+          <span class="a">▲ <span id="advN">—</span> Advances</span>
+          <span class="d"><span id="decN">—</span> Declines ▼</span>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <div class="card-title">🏦 Rates, dollar &amp; commodities</div>
+        <div class="card-note">Macro signals that drive equity sentiment.</div>
+        <div id="macro" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WORLD CUES ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● World Markets</span>
+      <h2>Global markets at a glance</h2>
+      <p>How other major markets are trading — useful context for Wall Street's direction.</p>
+    </div>
+    <div class="glob-grid" id="global"></div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>What are US stock market timings (in IST)?</summary><div class="ans">Regular US trading runs 9:30 AM to 4:00 PM ET, Monday to Friday. In India that is roughly 7:00 PM to 1:30 AM IST during US daylight time, and 8:00 PM to 2:30 AM IST in US winter. Pre-market and after-hours sessions extend trading on either side.</div></details>
+      <details><summary>What is the difference between the Dow, S&amp;P 500 and Nasdaq?</summary><div class="ans">The Dow Jones tracks 30 large companies, the S&P 500 tracks 500 leading US firms across sectors, and the Nasdaq Composite is heavily weighted toward technology. The S&P 500 is the most widely used benchmark for the overall US market.</div></details>
+      <details><summary>How often is this page updated?</summary><div class="ans">The date and market-open status refresh automatically. Price data is pulled from a market-data feed and refreshes through the trading day; figures shown outside US hours reflect the last completed session.</div></details>
+      <details><summary>Can I make investment decisions based on this page?</summary><div class="ans">This page is for information and education only. It is not investment advice. Please consult a SEBI-registered financial advisor before making any investment decision.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCLAIMER ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="disc">
+      <b>Disclaimer:</b> Vittarthi provides market data and educational content for informational purposes only. Figures are indicative, may be delayed, and do not constitute financial advice. Please consult a SEBI-registered financial advisor before making investment decisions.
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+/* ================================================================
+   US MARKET DATA — fetched live from backend API
+   ================================================================ */
+let MARKET_DATA = null;
+
+/* ================================================================
+   FORMATTERS (USD / US locale)
+   ================================================================ */
+const fmt  = n => Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const sign = n => (n>=0?"+":"") + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const cls  = n => n>=0 ? "up" : "down";
+const arrow= n => n>=0 ? "▲" : "▼";
+
+/* ================================================================
+   MARKET STATUS CLOCK (US Eastern, DST-aware)
+   ================================================================ */
+function etNow(){
+  return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
+}
+function marketStatus(){
+  const d = etNow(), day = d.getDay(), mins = d.getHours()*60 + d.getMinutes();
+  if(day===0||day===6)         return {label:"Closed · Weekend",open:false,regular:false,color:"var(--flat)"};
+  if(mins>=240 && mins<570)    return {label:"Pre-market",  open:true, regular:false,color:"#d97706"};
+  if(mins>=570 && mins<960)    return {label:"Markets Open",open:true, regular:true, color:"var(--up)"};
+  if(mins>=960 && mins<1200)   return {label:"After-hours", open:true, regular:false,color:"#d97706"};
+  return {label:"Markets Closed",open:false,regular:false,color:"var(--flat)"};
+}
+function paintStatus(){
+  const s = marketStatus();
+  const navStatus  = document.getElementById("navStatus");
+  const heroStatus = document.getElementById("heroStatus");
+  const navDot     = document.getElementById("navDot");
+  const heroDot    = document.getElementById("heroDot");
+  if(navStatus)  navStatus.textContent  = s.label;
+  if(heroStatus) heroStatus.textContent = s.regular ? "Live Markets" : (s.open ? s.label : "Last Session");
+  if(navDot)  navDot.style.background  = s.color;
+  if(heroDot){ heroDot.style.background = s.color; heroDot.classList.toggle("live-dot", s.regular); }
+}
+
+/* ================================================================
+   DATE HEADER (US Eastern) + last-updated stamp
+   ================================================================ */
+function paintDate(){
+  const heroDate = document.getElementById("heroDate");
+  const yr       = document.getElementById("yr");
+  if(!heroDate) return;
+  const today = etNow().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  if(MARKET_DATA?.asOf){
+    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-US",
+      {timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} ET`;
+  } else {
+    heroDate.innerHTML = `<b>${today}</b>`;
+  }
+  if(yr) yr.textContent = etNow().getFullYear();
+}
+
+/* ================================================================
+   RENDERERS
+   ================================================================ */
+function sparkSVG(arr, up){
+  if(!arr||arr.length<2) return "";
+  const w=140,h=36,min=Math.min(...arr),max=Math.max(...arr),rng=(max-min)||1;
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1))*w},${h-((v-min)/rng)*(h-6)-3}`).join(" ");
+  const col=up?"var(--up)":"var(--down)";
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polyline fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/>
+  </svg>`;
+}
+
+function renderIndices(){
+  const el = document.getElementById("indices"); if(!el) return;
+  el.innerHTML = MARKET_DATA.indices.map(i=>`<div class="card idx">
+    <div class="idx-top">
+      <div><div class="idx-name">${i.name}</div><div class="idx-sub">${i.sub}</div></div>
+      <span class="chip ${cls(i.pct)}">${arrow(i.pct)} ${Math.abs(i.pct).toFixed(2)}%</span>
+    </div>
+    <div class="idx-val num">${fmt(i.value)}</div>
+    <div class="idx-chg ${cls(i.change)} num">${sign(i.change)}</div>
+    ${sparkSVG(i.spark, i.pct>=0)}
+  </div>`).join("");
+}
+
+function moverRows(list, forceDown){
+  return list.map(m=>{
+    const c = forceDown ? "down" : cls(m.pct);
+    const a = forceDown ? "▼"    : arrow(m.pct);
+    return `<div class="row">
+      <div class="co"><div class="t">${m.t}</div><div class="s">${m.s}</div></div>
+      <div class="px num">$${fmt(m.px)}</div>
+      <div class="pc ${c} num">${a} ${Math.abs(m.pct).toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+}
+function renderMovers(){
+  const g = document.getElementById("gainers");
+  const l = document.getElementById("losers");
+  if(g) g.innerHTML = moverRows(MARKET_DATA.gainers, false);
+  if(l) l.innerHTML = moverRows(MARKET_DATA.losers,  true);
+}
+
+function heat(pct){
+  const m=Math.min(Math.abs(pct)/1.5,1);
+  if(pct>=0) return {bg:`rgba(22,163,74,${0.08+m*0.22})`,bd:`rgba(22,163,74,${0.25+m*0.3})`,fg:"var(--up)"};
+  return {bg:`rgba(220,38,38,${0.07+m*0.22})`,bd:`rgba(220,38,38,${0.22+m*0.3})`,fg:"var(--down)"};
+}
+function renderSectors(){
+  const el = document.getElementById("sectors"); if(!el) return;
+  el.innerHTML = MARKET_DATA.sectors.map(s=>{
+    const c=heat(s.pct);
+    return `<div class="tile" style="background:${c.bg};border-color:${c.bd}">
+      <div class="sn">${s.name}</div>
+      <div class="sv num" style="color:${c.fg}">${arrow(s.pct)} ${Math.abs(s.pct).toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+}
+
+function renderBreadth(){
+  const bAdv = document.getElementById("breadthAdv");
+  const bDec = document.getElementById("breadthDec");
+  const advN = document.getElementById("advN");
+  const decN = document.getElementById("decN");
+  if(!bAdv) return;
+  const {advances,declines}=MARKET_DATA.breadth, tot=advances+declines||1;
+  bAdv.style.width=(advances/tot*100)+"%";
+  bDec.style.width=(declines/tot*100)+"%";
+  if(advN) advN.textContent=advances.toLocaleString("en-US");
+  if(decN) decN.textContent=declines.toLocaleString("en-US");
+}
+
+function renderMacro(){
+  const el = document.getElementById("macro"); if(!el) return;
+  el.innerHTML = MARKET_DATA.macro.map(m=>{
+    let big, chg;
+    if(m.kind==="yield"){ big = m.value.toFixed(2)+"%"; chg = (m.chg>=0?"+":"")+m.chg.toFixed(2)+"% chg"; }
+    else if(m.kind==="usd"){ big = "$"+fmt(m.value)+(m.suffix||""); chg = (m.chg>=0?"+":"")+m.chg.toFixed(2)+"%"; }
+    else { big = fmt(m.value); chg = (m.chg>=0?"+":"")+m.chg.toFixed(2)+"%"; }
+    return `<div class="macro-row">
+      <div class="lhs"><div class="mn">${m.name}</div></div>
+      <div class="rhs"><div class="big num">${big}</div>
+        <div class="chg ${cls(m.chg)} num">${arrow(m.chg)} ${chg}</div></div>
+    </div>`;
+  }).join("");
+}
+
+function renderGlobal(){
+  const el = document.getElementById("global"); if(!el) return;
+  el.innerHTML = MARKET_DATA.global.map(g=>`<div class="glob">
+    <div class="gn">${g.name}</div>
+    <div class="gv num">${fmt(g.value)}</div>
+    <div class="gc ${cls(g.pct)} num">${arrow(g.pct)} ${Math.abs(g.pct).toFixed(2)}%</div>
+  </div>`).join("");
+}
+
+function renderTicker(){
+  const el = document.getElementById("tickerTrack"); if(!el) return;
+  const items = MARKET_DATA.indices.map(i=>
+    `<span class="tk"><span class="nm">${i.name}</span> <span class="num">${fmt(i.value)}</span>
+     <span class="ch ${cls(i.pct)} num">${arrow(i.pct)} ${Math.abs(i.pct).toFixed(2)}%</span></span>`
+  ).join("");
+  el.innerHTML = items + items;
+}
+
+function renderSummary(){
+  const el = document.getElementById("summary"); if(!el) return;
+  if(!MARKET_DATA?.indices?.length){
+    el.innerHTML = '<p style="color:var(--muted)">Market summary loading...</p>';
+    return;
+  }
+  const idx = MARKET_DATA.indices;
+  const sp  = idx.find(i=>i.name==="S&P 500")||idx[0];
+  const dow = idx.find(i=>i.name==="DOW JONES")||idx[1];
+  const naz = idx.find(i=>i.name==="NASDAQ COMP")||idx[2];
+  if(!sp||!dow||!naz){ el.innerHTML = '<p style="color:var(--muted)">Partial data received.</p>'; return; }
+  const dir = sp.pct>=0 ? "advanced" : "edged lower";
+  const tone= sp.pct>=0 ? "a positive" : "a cautious";
+  const sorted = [...MARKET_DATA.sectors].sort((a,b)=>b.pct-a.pct);
+  const best=sorted[0], worst=sorted[sorted.length-1];
+  const g=MARKET_DATA.gainers[0], l=MARKET_DATA.losers[0];
+  const {advances,declines}=MARKET_DATA.breadth;
+  const breadthTxt = advances>=declines ? "broadly positive" : "negative, with more stocks falling than rising";
+  el.innerHTML = `
+    <p>US equities ${dir} in the latest session, setting ${tone} tone. The <strong>S&amp;P 500</strong> settled at <strong>${fmt(sp.value)}</strong> (${sign(sp.pct)}%), the <strong>Dow</strong> at <strong>${fmt(dow.value)}</strong> (${sign(dow.pct)}%) and the <strong>Nasdaq</strong> at <strong>${fmt(naz.value)}</strong> (${sign(naz.pct)}%).</p>
+    <p>By sector, <strong>${best.name}</strong> led (${sign(best.pct)}%) while <strong>${worst.name}</strong> lagged (${sign(worst.pct)}%). <strong>${g.t}</strong> was the standout gainer and <strong>${l.t}</strong> the biggest drag among large caps.</p>
+    <p>Market breadth was ${breadthTxt} (${advances.toLocaleString("en-US")} advances vs ${declines.toLocaleString("en-US")} declines on the NYSE).</p>`;
+}
+
+/* ================================================================
+   RENDER ALL (only when data ready)
+   ================================================================ */
+function renderAll(){
+  if(!MARKET_DATA) return;
+  renderIndices(); renderTicker(); renderSummary();
+  renderMovers(); renderSectors(); renderBreadth();
+  renderMacro(); renderGlobal(); paintDate();
+}
+
+/* ================================================================
+   LIVE DATA FETCH — calls Django backend API (reuses _yahoo_fetch)
+   ================================================================ */
+function showSkeletons(){
+  ["indices","gainers","losers","sectors","summary","global","macro"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">⏳ Loading live data...</div>`;
+  });
+}
+
+async function refreshData(){
+  try {
+    const res = await fetch('/markets/api/us-live-data/');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error || "API error");
+    MARKET_DATA = data;
+    renderAll();
+  } catch(err){
+    console.error("US market data fetch failed:", err);
+    const h = document.getElementById("heroDate");
+    if(h && !MARKET_DATA) h.innerHTML += ' &nbsp;<span style="color:var(--down);font-size:.75rem;">(data unavailable)</span>';
+  }
+}
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+paintStatus();
+paintDate();
+showSkeletons();
+
+// Fetch live data immediately
+refreshData();
+
+// Keep status badge updated
+setInterval(paintStatus, 30000);
+
+// Refresh every 5 min during market hours, 15 min otherwise
+setInterval(()=>{ if(marketStatus().open || marketStatus().label==="Pre-market" || marketStatus().label==="After-hours") refreshData(); }, 5*60*1000);
+setInterval(()=>{ if(!marketStatus().open) refreshData(); }, 15*60*1000);
+
+</script>
+{% endblock %}

@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Commodity &amp; Currency Live Prices Today
+{% endblock %}
+
+{% block meta_description %}
+Live commodity and currency rates today: gold and silver prices in India, crude oil, base metals, USD/INR and major currency pairs, plus fuel and LPG rates. Updated daily by Vittarthi.
+{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/comodities.css' %}">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% endblock %}
+{% block content %}
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div class="badges">
+      <span class="pill live"><span class="dot live-dot" id="heroDot"></span><span id="heroStatus">Live Rates</span></span>
+      <span class="pill">🪙 MCX · Spot · Forex</span>
+      <span class="pill">Free · No sign-up required</span>
+    </div>
+    <h1 class="title">Commodities &amp; Currency <em>Today</em></h1>
+    <p class="subline">Gold and silver rates in India, crude oil, base metals, USD/INR and major currencies, plus fuel and LPG prices — all on one page, refreshed every trading day.</p>
+    <p class="updated" id="heroDate">—</p>
+  </div>
+</div>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main>
+<!-- ===================== PRECIOUS METALS ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Gold &amp; Silver</span>
+      <h2>Precious metal rates</h2>
+      <p>Retail gold and silver rates in India, with international spot prices for reference. Indicative — excludes GST, making charges and local levies.</p>
+    </div>
+    <div class="grid idx-grid" id="metals"></div>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Daily Wrap</span>
+      <h2>What moved commodities &amp; the rupee</h2>
+    </div>
+    <div class="summary" id="summary"></div>
+  </div>
+</section>
+
+<!-- ===================== ENERGY ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Energy</span>
+      <h2>Crude oil &amp; gas</h2>
+      <p>Global benchmark energy prices that feed into fuel costs and inflation.</p>
+    </div>
+    <div class="grid idx-grid" id="energy"></div>
+  </div>
+</section>
+
+<!-- ===================== BASE METALS ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Base Metals</span>
+      <h2>Industrial metals (MCX)</h2>
+      <p>Near-month MCX futures, quoted in ₹ per kg.</p>
+    </div>
+    <div class="glob-grid" id="baseMetals"></div>
+  </div>
+</section>
+
+<!-- ===================== CURRENCY ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Currency</span>
+      <h2>Forex rates</h2>
+      <p>The Indian rupee against major currencies, plus the US Dollar Index.</p>
+    </div>
+    <div class="glob-grid" id="currency"></div>
+  </div>
+</section>
+
+<!-- ===================== FUEL ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Fuel &amp; LPG</span>
+      <h2>Fuel prices in India</h2>
+      <p>Indicative metro-average retail prices. Actual rates vary city to city.</p>
+    </div>
+    <div class="glob-grid" id="fuel"></div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>What is the difference between 24K, 22K and 18K gold?</summary><div class="ans">24K is 99.9% pure gold, used mainly for coins and bars. 22K (91.6% pure) is the standard for jewellery as it is more durable. 18K (75% pure) is often used for diamond-studded pieces. Higher purity means a higher price per gram.</div></details>
+      <details><summary>What are MCX commodity trading hours?</summary><div class="ans">The Multi Commodity Exchange trades Monday to Friday, from 9:00 AM to around 11:30 PM IST (extended to about 11:55 PM during US daylight time). It is closed on weekends and declared holidays.</div></details>
+      <details><summary>Why do gold prices change every day?</summary><div class="ans">Indian gold rates track international spot prices (set in London), the USD/INR exchange rate, import duty and GST, and local demand. A weaker rupee or higher global prices push domestic rates up.</div></details>
+      <details><summary>Are these the final prices I'll pay for jewellery?</summary><div class="ans">No. The rates shown are indicative metal prices. Your final bill also includes GST, making charges, and any jeweller-specific premium, so it will be higher than the listed rate.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCLAIMER ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="disc">
+      <b>Disclaimer:</b> Vittarthi provides commodity and currency data for informational purposes only. Prices are indicative, may be delayed, and exclude GST, duties and local charges. This is not financial advice — please consult a SEBI-registered advisor before investing.
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+/* ================================================================
+   COMMODITIES DATA — fetched live from backend API
+   ================================================================ */
+let MARKET_DATA = null;
+
+/* ================================================================
+   FORMATTERS
+   ================================================================ */
+function money(it){
+  const sym = it.cur==="INR" ? "₹" : it.cur==="USD" ? "$" : "";
+  const loc = it.cur==="INR" ? "en-IN" : "en-US";
+  const dec = (it.dec ?? 2);
+  return sym + Number(it.val).toLocaleString(loc,{minimumFractionDigits:dec,maximumFractionDigits:dec}) + (it.unit||"");
+}
+function signMoney(it){
+  const sym = it.cur==="INR" ? "₹" : it.cur==="USD" ? "$" : "";
+  const loc = it.cur==="INR" ? "en-IN" : "en-US";
+  const dec = (it.dec ?? 2);
+  return (it.chg>=0?"+":"−") + sym + Math.abs(it.chg).toLocaleString(loc,{minimumFractionDigits:dec,maximumFractionDigits:dec});
+}
+const cls  = n => n>=0 ? "up" : "down";
+const arrow= n => n>=0 ? "▲" : "▼";
+
+/* ================================================================
+   STATUS CLOCK (IST, MCX hours Mon–Fri 9:00–23:30)
+   ================================================================ */
+function istNow(){
+  return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));
+}
+function marketStatus(){
+  const d=istNow(), day=d.getDay(), mins=d.getHours()*60+d.getMinutes();
+  if(day===0||day===6) return {label:"Closed · Weekend",open:false,color:"var(--flat)"};
+  if(mins>=540 && mins<=1410) return {label:"MCX Open",open:true,color:"var(--up)"};
+  return {label:"MCX Closed",open:false,color:"var(--flat)"};
+}
+function paintStatus(){
+  const s=marketStatus();
+  const navStatus  = document.getElementById("navStatus");
+  const heroStatus = document.getElementById("heroStatus");
+  const navDot     = document.getElementById("navDot");
+  const heroDot    = document.getElementById("heroDot");
+  if(navStatus)  navStatus.textContent  = s.label;
+  if(heroStatus) heroStatus.textContent = s.open ? "Live Rates" : "Last Update";
+  if(navDot)  navDot.style.background  = s.color;
+  if(heroDot){ heroDot.style.background = s.color; heroDot.classList.toggle("live-dot", s.open); }
+}
+
+/* ================================================================
+   DATE HEADER + last-updated stamp
+   ================================================================ */
+function paintDate(){
+  const heroDate = document.getElementById("heroDate");
+  const yr       = document.getElementById("yr");
+  if(!heroDate) return;
+  const today = istNow().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  if(MARKET_DATA?.asOf){
+    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-IN",
+      {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} IST`;
+  } else {
+    heroDate.innerHTML = `<b>${today}</b>`;
+  }
+  if(yr) yr.textContent = istNow().getFullYear();
+}
+
+/* ================================================================
+   RENDERERS
+   ================================================================ */
+function sparkSVG(arr, up){
+  if(!arr||arr.length<2) return "";
+  const w=140,h=36,min=Math.min(...arr),max=Math.max(...arr),rng=(max-min)||1;
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1))*w},${h-((v-min)/rng)*(h-6)-3}`).join(" ");
+  const col=up?"var(--up)":"var(--down)";
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polyline fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/></svg>`;
+}
+
+function bigCards(id, list, metalStyle){
+  const el = document.getElementById(id); if(!el) return;
+  el.innerHTML = list.map(it=>`<div class="card idx${metalStyle?" metal":""}">
+    <div class="idx-top">
+      <div><div class="idx-name">${it.name}</div><div class="idx-sub">${it.sub||""}</div></div>
+      <span class="chip ${cls(it.pct)}">${arrow(it.pct)} ${Math.abs(it.pct).toFixed(2)}%</span>
+    </div>
+    <div class="idx-val num">${money(it)}</div>
+    <div class="idx-chg ${cls(it.chg)} num">${signMoney(it)}</div>
+    ${it.spark ? sparkSVG(it.spark, it.pct>=0) : ""}
+  </div>`).join("");
+}
+
+function compactCards(id, list, showPct){
+  const el = document.getElementById(id); if(!el) return;
+  el.innerHTML = list.map(it=>`<div class="glob">
+    <div class="gn">${it.name}${it.sub?` · ${it.sub}`:""}</div>
+    <div class="gv num">${money(it)}</div>
+    ${showPct && it.pct !== undefined
+      ? `<div class="gc ${cls(it.pct)} num">${arrow(it.pct)} ${Math.abs(it.pct).toFixed(2)}%</div>`
+      : `<div class="gc flat">today</div>`}
+  </div>`).join("");
+}
+
+function renderTicker(){
+  const el = document.getElementById("tickerTrack"); if(!el) return;
+  const picks = [];
+  if(MARKET_DATA.metals?.length>0)   picks.push(MARKET_DATA.metals[0]);                        // Gold 24K
+  if(MARKET_DATA.metals?.length>3)   picks.push(MARKET_DATA.metals[3]);                        // Silver
+  if(MARKET_DATA.metals?.length>4)   picks.push(MARKET_DATA.metals[4]);                        // Gold Spot
+  if(MARKET_DATA.energy?.length>0)   picks.push(MARKET_DATA.energy[0]);                        // Brent
+  if(MARKET_DATA.currency?.length>0) picks.push(MARKET_DATA.currency[0]);                      // USD/INR
+  const dxy = MARKET_DATA.currency?.find(c=>c.name.includes("Dollar Index"));
+  if(dxy) picks.push(dxy);
+
+  const items = picks.map(it=>
+    `<span class="tk"><span class="nm">${it.name}</span> <span class="num">${money(it)}</span>
+     <span class="ch ${cls(it.pct)} num">${arrow(it.pct)} ${Math.abs(it.pct).toFixed(2)}%</span></span>`
+  ).join("");
+  el.innerHTML = items + items;
+}
+
+function renderSummary(){
+  const el = document.getElementById("summary"); if(!el) return;
+  if(!MARKET_DATA?.metals?.length){
+    el.innerHTML = '<p style="color:var(--muted)">Market summary loading...</p>';
+    return;
+  }
+
+  const g     = MARKET_DATA.metals.find(m=>m.name==="Gold 24K");
+  const s     = MARKET_DATA.metals.find(m=>m.name==="Silver");
+  const brent = MARKET_DATA.energy?.find(e=>e.name==="Brent Crude");
+  const usd   = MARKET_DATA.currency?.find(c=>c.name==="USD / INR");
+
+  let html = '';
+  if(g && s){
+    const gDir = g.pct>=0 ? "edged higher" : "slipped";
+    const sDir = s.pct>=0 ? "gained" : "fell";
+    html += `<p>In India, <strong>24K gold</strong> ${gDir} to <strong>${money(g)}</strong> per 10g (${g.pct>=0?"+":""}${g.pct.toFixed(2)}%), while <strong>silver</strong> ${sDir} to <strong>${money(s)}</strong> per kg (${s.pct>=0?"+":""}${s.pct.toFixed(2)}%). Bullion continues to track global spot prices and the rupee.</p>`;
+  }
+  if(brent && usd){
+    const oDir = brent.pct>=0 ? "firmed" : "eased";
+    const rDir = usd.pct>=0 ? "weakened against the dollar" : "strengthened against the dollar";
+    html += `<p>In energy, <strong>Brent crude</strong> ${oDir} to <strong>${money(brent)}</strong> a barrel (${brent.pct>=0?"+":""}${brent.pct.toFixed(2)}%). On the currency side, the rupee ${rDir} at <strong>${money(usd)}</strong> to the US dollar.</p>`;
+  }
+  el.innerHTML = html || '<p style="color:var(--muted)">Summary data unavailable.</p>';
+}
+
+/* ================================================================
+   RENDER ALL
+   ================================================================ */
+function renderAll(){
+  if(!MARKET_DATA) return;
+  bigCards("metals", MARKET_DATA.metals || [], true);
+  bigCards("energy", MARKET_DATA.energy || [], false);
+  compactCards("baseMetals", MARKET_DATA.baseMetals || [], true);
+  compactCards("currency", MARKET_DATA.currency || [], true);
+  compactCards("fuel", MARKET_DATA.fuel || [], false);
+  renderTicker(); renderSummary(); paintDate();
+}
+
+/* ================================================================
+   LIVE DATA FETCH — calls Django backend (reuses _yahoo_fetch)
+   ================================================================ */
+function showSkeletons(){
+  ["metals","energy","baseMetals","currency","fuel","summary"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">⏳ Loading live data...</div>`;
+  });
+}
+
+async function refreshData(){
+  try {
+    const res = await fetch('/markets/api/commodities-live/');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error || "API error");
+    MARKET_DATA = data;
+    renderAll();
+  } catch(err){
+    console.error("Commodities data fetch failed:", err);
+    const h = document.getElementById("heroDate");
+    if(h && !MARKET_DATA) h.innerHTML += ' &nbsp;<span style="color:var(--down);font-size:.75rem;">(data unavailable)</span>';
+  }
+}
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+paintStatus();
+paintDate();
+showSkeletons();
+
+// Fetch live data immediately
+refreshData();
+
+// Status badge every 30s
+setInterval(paintStatus, 30000);
+
+// Refresh every 5 min during MCX hours, 15 min otherwise
+setInterval(()=>{ if(marketStatus().open) refreshData(); }, 5*60*1000);
+setInterval(()=>{ if(!marketStatus().open) refreshData(); }, 15*60*1000);
+
+</script>
+{% endblock %}

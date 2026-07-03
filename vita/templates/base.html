@@ -101,6 +101,17 @@
         <li><a href="/resources/news">News</a></li>
       </ul>
     </li>
+    <li class="dropdown">
+      <a href="javascript:void(0);" class="{% if 'market' in request.path %}active{% endif %}">
+        Live Markets▾
+      </a> 
+      <ul class="dropdown-menu">
+        <li><a href="/markets/india">Indian Market</a></li>
+        <li><a href="/markets/us">US Market</a></li>
+        <li><a href="/markets/commodities-and-currency">Commodities</a></li>
+        <li><a href="/markets/crypto">Crypto</a></li>
+      </ul>
+    </li>
     <li><a href="/contact" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
     <li><a href="/about-us" class="{% if 'about-us' in request.path %}active{% endif %}">About Us</a></li>
   </ul>

@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Indian Stock Market Today : Live Sensex, Nifty & Markets Updates
+{% endblock %}
+
+{% block meta_description %}
+Stay updated with the Indian Stock Market Today featuring live Sensex & Nifty updates, market trends, top gainers, losers, sector performance, and breaking stock market news.
+{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/indianstock.css' %}">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% endblock %}
+{% block content %}
+
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div class="badges">
+      <span class="pill live"><span class="dot live-dot" id="heroDot"></span><span id="heroStatus">Live Markets</span></span>
+      <span class="pill">📊 NSE &amp; BSE</span>
+      <span class="pill">Free · No sign-up required</span>
+    </div>
+    <h1 class="title">Indian Stock Market <em>Today</em></h1>
+    <p class="subline">Nifty 50, Sensex and Bank Nifty levels, top gainers and losers, sector moves, market breadth and FII/DII activity — all on one page, refreshed every trading day.</p>
+    <p class="updated" id="heroDate">—</p>
+  </div>
+</div>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main>
+<!-- ===================== KEY INDICES ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Key Indices</span>
+      <h2>How the headline indices closed</h2>
+      <p>The benchmark and broader-market indices that set the tone for the session.</p>
+    </div>
+    <div class="grid idx-grid" id="indices"></div>
+  </div>
+</section>
+
+<!-- ===================== MARKET SUMMARY ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Market Wrap</span>
+      <h2>What moved the market</h2>
+    </div>
+    <div class="summary" id="summary"></div>
+  </div>
+</section>
+
+<!-- ===================== GAINERS / LOSERS ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Top Movers</span>
+      <h2>Top gainers &amp; losers</h2>
+      <p>Biggest single-day moves among Nifty 50 constituents.</p>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">🟢 Top Gainers <span class="tag up">Nifty 50</span></div>
+        <div id="gainers"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">🔴 Top Losers <span class="tag down">Nifty 50</span></div>
+        <div id="losers"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTORS ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Sectors</span>
+      <h2>Sector performance</h2>
+      <p>How each sectoral index performed through the session.</p>
+    </div>
+    <div class="heat" id="sectors"></div>
+  </div>
+</section>
+
+<!-- ===================== BREADTH + FII/DII ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="info-grid">
+      <div class="card card-pad">
+        <div class="card-title">⚖️ Market breadth</div>
+        <div class="card-note">Advancing vs declining stocks across the exchange.</div>
+        <div class="breadth-bar"><div class="adv" id="breadthAdv"></div><div class="dec" id="breadthDec"></div></div>
+        <div class="breadth-legend">
+          <span class="a">▲ <span id="advN">—</span> Advances</span>
+          <span class="d"><span id="decN">—</span> Declines ▼</span>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <div class="card-title">💰 FII / DII activity (₹ Cr)</div>
+        <div class="card-note">Net cash-market flows for the session.</div>
+        <div id="flows" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GLOBAL CUES ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Global Cues</span>
+      <h2>World markets at a glance</h2>
+      <p>Overnight and intraday moves that influence Indian sentiment.</p>
+    </div>
+    <div class="glob-grid" id="global"></div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>What are the Indian stock market timings?</summary><div class="ans">Normal trading on NSE and BSE runs Monday to Friday, 9:15 AM to 3:30 PM IST, with a pre-open session from 9:00 to 9:15 AM. Markets stay closed on weekends and on declared exchange holidays.</div></details>
+      <details><summary>What is the difference between Nifty 50 and Sensex?</summary><div class="ans">The Nifty 50 tracks 50 large companies listed on the NSE, while the Sensex tracks 30 companies on the BSE. Both are benchmark indices used to gauge the overall direction of the Indian market.</div></details>
+      <details><summary>How often is this page updated?</summary><div class="ans">The date and market-open status refresh automatically. The price data is pulled from a market-data feed and refreshes through the trading day; figures shown after hours reflect the last completed session.</div></details>
+      <details><summary>Can I make investment decisions based on this page?</summary><div class="ans">This page is for information and education only. It is not investment advice. Please consult a SEBI-registered financial advisor before making any investment decision.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCLAIMER ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="disc">
+      <b>Disclaimer:</b> Vittarthi provides market data and educational content for informational purposes only. Figures are indicative, may be delayed, and do not constitute financial advice. Please consult a SEBI-registered financial advisor before making investment decisions.
+    </div>
+  </div>
+</section>
+</main>
+<script>
+/* ================================================================
+   MARKET DATA — fetched live from backend API
+   ================================================================ */
+let MARKET_DATA = null;
+
+/* ================================================================
+   FORMATTERS
+   ================================================================ */
+const inr  = n => Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const sign = n => (n>=0?"+":"") + Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const cls  = n => n>=0 ? "up" : "down";
+const arrow= n => n>=0 ? "▲" : "▼";
+
+/* ================================================================
+   MARKET STATUS CLOCK (IST, Mon–Fri 9:15–15:30)
+   ================================================================ */
+function istNow(){
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset()*60000;
+  return new Date(utc + 5.5*3600000);
+}
+function marketStatus(){
+  const d    = istNow();
+  const day  = d.getDay();
+  const mins = d.getHours()*60 + d.getMinutes();
+  if(day===0||day===6) return {label:"Closed · Weekend",open:false,color:"var(--flat)"};
+  if(mins>=540&&mins<555)  return {label:"Pre-open Session",open:true,color:"#d97706"};
+  if(mins>=555&&mins<=930) return {label:"Markets Open",open:true,color:"var(--up)"};
+  return {label:"Markets Closed",open:false,color:"var(--flat)"};
+}
+function paintStatus(){
+  const s = marketStatus();
+  const navStatus  = document.getElementById("navStatus");
+  const heroStatus = document.getElementById("heroStatus");
+  const navDot     = document.getElementById("navDot");
+  const heroDot    = document.getElementById("heroDot");
+  if(navStatus)  navStatus.textContent  = s.label;
+  if(heroStatus) heroStatus.textContent = s.open ? "Live Markets" : "Last Session";
+  if(navDot)  navDot.style.background  = s.color;
+  if(heroDot){ heroDot.style.background = s.color; heroDot.classList.toggle("live-dot", s.open); }
+}
+
+/* ================================================================
+   DATE HEADER + LAST-UPDATED STAMP
+   ================================================================ */
+function paintDate(){
+  const heroDate = document.getElementById("heroDate");
+  const yr       = document.getElementById("yr");
+  if(!heroDate) return;
+  const today = istNow().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  if(MARKET_DATA?.asOf){
+    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} IST`;
+  } else {
+    heroDate.innerHTML = `<b>${today}</b>`;
+  }
+  if(yr) yr.textContent = istNow().getFullYear();
+}
+
+/* ================================================================
+   RENDERERS
+   ================================================================ */
+function sparkSVG(arr, up){
+  if(!arr||arr.length<2) return "";
+  const w=140,h=36,min=Math.min(...arr),max=Math.max(...arr),rng=(max-min)||1;
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1))*w},${h-((v-min)/rng)*(h-6)-3}`).join(" ");
+  const col=up?"var(--up)":"var(--down)";
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polyline fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/>
+  </svg>`;
+}
+
+function renderIndices(){
+  const el = document.getElementById("indices"); if(!el) return;
+  el.innerHTML = MARKET_DATA.indices.map(i=>{
+    const u=i.pct>=0;
+    return `<div class="card idx">
+      <div class="idx-top">
+        <div><div class="idx-name">${i.name}</div><div class="idx-sub">${i.sub}</div></div>
+        <span class="chip ${cls(i.pct)}">${arrow(i.pct)} ${Math.abs(i.pct).toFixed(2)}%</span>
+      </div>
+      <div class="idx-val num">${inr(i.value)}</div>
+      <div class="idx-chg ${cls(i.change)} num">${sign(i.change)}</div>
+      ${sparkSVG(i.spark,u)}
+    </div>`;
+  }).join("");
+}
+
+function moverRows(list, forceDown){
+  return list.map(m=>{
+    const c = forceDown ? "down" : cls(m.pct);
+    const a = forceDown ? "▼"    : arrow(m.pct);
+    return `<div class="row">
+      <div class="co"><div class="t">${m.t}</div><div class="s">${m.s}</div></div>
+      <div class="px num">₹${inr(m.px)}</div>
+      <div class="pc ${c} num">${a} ${Math.abs(m.pct).toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+}
+function renderMovers(){
+  const g = document.getElementById("gainers");
+  const l = document.getElementById("losers");
+  if(g) g.innerHTML = moverRows(MARKET_DATA.gainers, false);
+  if(l) l.innerHTML = moverRows(MARKET_DATA.losers,  true);
+}
+
+function heat(pct){
+  const m=Math.min(Math.abs(pct)/2.5,1);
+  if(pct>=0) return {bg:`rgba(22,163,74,${0.08+m*0.22})`,bd:`rgba(22,163,74,${0.25+m*0.3})`,fg:"var(--up)"};
+  return {bg:`rgba(220,38,38,${0.07+m*0.22})`,bd:`rgba(220,38,38,${0.22+m*0.3})`,fg:"var(--down)"};
+}
+function renderSectors(){
+  const el = document.getElementById("sectors"); if(!el) return;
+  el.innerHTML = MARKET_DATA.sectors.map(s=>{
+    const c=heat(s.pct);
+    return `<div class="tile" style="background:${c.bg};border-color:${c.bd}">
+      <div class="sn">${s.name}</div>
+      <div class="sv num" style="color:${c.fg}">${arrow(s.pct)} ${Math.abs(s.pct).toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+}
+
+function renderBreadth(){
+  const bAdv = document.getElementById("breadthAdv");
+  const bDec = document.getElementById("breadthDec");
+  const advN = document.getElementById("advN");
+  const decN = document.getElementById("decN");
+  if(!bAdv) return;
+  const {advances,declines}=MARKET_DATA.breadth, tot=advances+declines||1;
+  bAdv.style.width=(advances/tot*100)+"%";
+  bDec.style.width=(declines/tot*100)+"%";
+  if(advN) advN.textContent=advances.toLocaleString("en-IN");
+  if(decN) decN.textContent=declines.toLocaleString("en-IN");
+}
+
+function renderFlows(){
+  const el = document.getElementById("flows"); if(!el) return;
+  el.innerHTML = MARKET_DATA.flows.map(f=>{
+    // Handle null values from backend (FII/DII published post-session only)
+    if(f.value === null || f.value === undefined){
+      return `<div class="fii-row">
+        <span>${f.label}</span>
+        <span class="v num" style="color:var(--flat)">N/A — Post session</span>
+      </div>`;
+    }
+    return `<div class="fii-row">
+      <span>${f.label}</span>
+      <span class="v ${cls(f.value)} num">${f.value>=0?"+":"−"} ₹${inr(Math.abs(f.value))} Cr</span>
+    </div>`;
+  }).join("");
+}
+
+function renderGlobal(){
+  const el = document.getElementById("global"); if(!el) return;
+  el.innerHTML = MARKET_DATA.global.map(g=>`<div class="glob">
+    <div class="gn">${g.name}</div>
+    <div class="gv num">${inr(g.value)}</div>
+    <div class="gc ${cls(g.pct)} num">${arrow(g.pct)} ${Math.abs(g.pct).toFixed(2)}%</div>
+  </div>`).join("");
+}
+
+function renderTicker(){
+  const el = document.getElementById("tickerTrack"); if(!el) return;
+  const items = MARKET_DATA.indices.map(i=>
+    `<span class="tk"><span class="nm">${i.name}</span> <span class="num">${inr(i.value)}</span>
+     <span class="ch ${cls(i.pct)} num">${arrow(i.pct)} ${Math.abs(i.pct).toFixed(2)}%</span></span>`
+  ).join("");
+  el.innerHTML = items + items; // duplicate for seamless loop
+}
+
+function renderSummary(){
+  const el = document.getElementById("summary"); if(!el) return;
+  if(!MARKET_DATA?.summary?.length){
+    el.innerHTML = '<p style="color:var(--muted);padding:.5rem 0;">Market summary loading...</p>';
+    return;
+  }
+  el.innerHTML = MARKET_DATA.summary
+    .map(b=>`<div class="p">• ${b}</div>`)
+    .join('');
+}
+
+/* ================================================================
+   RENDER ALL (only when data is ready)
+   ================================================================ */
+function renderAll(){
+  if(!MARKET_DATA) return;
+  renderIndices();
+  renderMovers();
+  renderSectors();
+  renderBreadth();
+  renderFlows();
+  renderGlobal();
+  renderTicker();
+  renderSummary();
+  paintDate();
+}
+
+/* ================================================================
+   LIVE DATA FETCH — calls Django backend API
+   ================================================================ */
+function showSkeletons(){
+  // Show loading placeholders while API fetches
+  ["indices","gainers","losers","sectors","summary","global","flows"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">⏳ Loading live data...</div>`;
+  });
+}
+
+async function refreshData(){
+  try {
+    const res = await fetch('/markets/api/live-data/');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error || "API returned error");
+    MARKET_DATA = data;
+    renderAll();
+  } catch(err){
+    console.error("Market data fetch failed:", err);
+    // Don't wipe existing data on failure — keep showing last good data
+    const errEl = document.getElementById("heroDate");
+    if(errEl && !MARKET_DATA) errEl.innerHTML += ' &nbsp;<span style="color:var(--down);font-size:.75rem;">(data unavailable)</span>';
+  }
+}
+
+/* ================================================================
+   BOOT — runs after page loads (script is at bottom of body)
+   ================================================================ */
+paintStatus();
+paintDate();
+showSkeletons();
+
+// Fetch live data immediately on page load
+refreshData();
+
+// Keep market status badge updated every 30s
+setInterval(paintStatus, 30000);
+
+// Refresh data every 5 minutes during market hours, 15 min otherwise
+setInterval(()=>{
+  const isOpen = marketStatus().open;
+  const FIVE_MIN = 5 * 60 * 1000;
+  const FIFTEEN_MIN = 15 * 60 * 1000;
+  // We use a single interval — smart refresh based on market hours
+  if(isOpen) refreshData();  // live hours: refresh always
+}, 5 * 60 * 1000);
+
+// After-hours: refresh once every 15 mins to catch post-session FII/DII data
+setInterval(()=>{
+  if(!marketStatus().open) refreshData();
+}, 15 * 60 * 1000);
+
+</script>
+{% endblock %}

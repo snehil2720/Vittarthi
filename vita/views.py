@@ -25,6 +25,14 @@ from bs4 import BeautifulSoup
 from vita.decorators import admin_required, writer_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import cache_page
+import urllib3
+import traceback
+from datetime import datetime
+import os, certifi
+os.environ['CURL_CA_BUNDLE']     = certifi.where()
+os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
+os.environ['SSL_CERT_FILE']      = certifi.where()
 
 def auth_page(request):
     return render(request, "authentication/auth.html")
@@ -2464,3 +2472,641 @@ def llms_txt_view(request):
 def llms_full_txt_view(request):
     content = generate_llms_content(is_full=True)
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
+
+def indianstock(request):
+    return render(request, 'market/indianstock.html')
+
+def usstock(request):
+    return render(request, 'market/usstock.html')
+
+def commodities(request):
+    return render(request, 'market/commodities.html')
+
+def crypto(request):
+    return render(request, 'market/crypto.html')
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+# ── Global Yahoo Session (reused across requests) ──
+_YF_SESSION = None
+_YF_CRUMB   = None
+_NSE_SESSION = None
+def _init_yahoo_session():
+    """Visit Yahoo Finance to get cookies + crumb token."""
+    global _YF_SESSION, _YF_CRUMB
+    s = requests.Session()
+    s.verify = False
+    s.headers.update({
+        "User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+    })
+    # Step 1: Visit homepage to set cookies
+    try:
+        s.get("https://finance.yahoo.com", timeout=10, verify=False)
+    except Exception as e:
+        print(f"Yahoo homepage visit failed: {e}")
+    # Step 2: Fetch crumb
+    try:
+        cr = s.get("https://query1.finance.yahoo.com/v1/test/getcrumb", timeout=10, verify=False)
+        _YF_CRUMB = cr.text.strip()
+    except Exception as e:
+        print(f"Crumb fetch failed: {e}")
+        _YF_CRUMB = None
+    _YF_SESSION = s
+    print(f"Yahoo session initialized. Crumb: {_YF_CRUMB}")
+    return s
+def _yahoo_fetch(symbol, period="5d"):
+    """Fetch OHLCV data from Yahoo Finance chart API."""
+    global _YF_SESSION, _YF_CRUMB
+    if _YF_SESSION is None:
+        _init_yahoo_session()
+
+    url    = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+    params = {"interval": "1d", "range": period}
+    if _YF_CRUMB:
+        params["crumb"] = _YF_CRUMB
+
+    try:
+        r = _YF_SESSION.get(url, params=params, timeout=10, verify=False)
+
+        # If 401/404, reinitialize session and retry once
+        if r.status_code in (401, 404):
+            print(f"Session expired for {symbol}, reinitializing...")
+            _init_yahoo_session()
+            if _YF_CRUMB:
+                params["crumb"] = _YF_CRUMB
+            r = _YF_SESSION.get(url, params=params, timeout=10, verify=False)
+
+        r.raise_for_status()
+        data   = r.json()
+        result = data["chart"]["result"]
+        if not result:
+            print(f"No result for {symbol}")
+            return None
+
+        meta   = result[0]["meta"]
+        curr   = round(float(meta.get("regularMarketPrice") or 0), 2)
+
+        # Extract historical closing prices
+        raw_closes = result[0].get("indicators", {}).get("quote", [{}])[0].get("close", [])
+        clean_closes = [round(float(c), 2) for c in raw_closes if c is not None]
+        
+        # Proper 'Previous Close' calculation for 1-day accurate change
+        if not clean_closes:
+            prev = curr
+        elif curr == clean_closes[-1] and len(clean_closes) > 1:
+            # The array already includes today's close, so yesterday's is the 2nd to last
+            prev = clean_closes[-2]
+        elif curr != clean_closes[-1]:
+            # The array doesn't have today's close yet, so the last element is yesterday's
+            prev = clean_closes[-1]
+        else:
+            prev = curr
+
+        change = round(curr - prev, 2)
+        pct    = round((change / prev) * 100, 2) if prev else 0.0
+
+        # Sparkline (last 7 points)
+        spark = clean_closes[-7:]
+
+        return {"price": curr, "change": change, "pct": pct, "spark": spark}
+
+    except Exception as e:
+        print(f"_yahoo_fetch failed for {symbol}: {e}")
+        return None
+def _init_nse_session():
+    global _NSE_SESSION
+    s = requests.Session()
+    s.verify = False
+    s.headers.update({
+        "User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer":         "https://www.nseindia.com/",
+    })
+    try:
+        s.get("https://www.nseindia.com", timeout=10, verify=False)
+    except Exception as e:
+        print(f"NSE homepage visit failed: {e}")
+    _NSE_SESSION = s
+    return s
+def _fetch_fii_dii():
+    """Fetch today's FII/DII net activity from NSE."""
+    global _NSE_SESSION
+    if _NSE_SESSION is None:
+        _init_nse_session()
+    url = "https://www.nseindia.com/api/fiidiiTradeReact"
+    try:
+        r = _NSE_SESSION.get(url, timeout=10, verify=False)
+        # If blocked, reinit and retry
+        if r.status_code in (401, 403):
+            _init_nse_session()
+            r = _NSE_SESSION.get(url, timeout=10, verify=False)
+        r.raise_for_status()
+        data = r.json()
+        fii_net = None
+        dii_net = None
+        for row in data:
+            cat = row.get("category", "").upper()
+            try:
+                net = round(float(row.get("netValue", "0").replace(",", "")), 2)
+            except (ValueError, AttributeError):
+                net = None
+            if "FII" in cat or "FPI" in cat:
+                fii_net = net
+            elif "DII" in cat:
+                dii_net = net
+        return [
+            {"label": "FII (net)", "value": fii_net},
+            {"label": "DII (net)", "value": dii_net},
+        ]
+    except Exception as e:
+        print(f"FII/DII fetch failed: {e}")
+        return [
+            {"label": "FII (net)", "value": None},
+            {"label": "DII (net)", "value": None},
+        ]
+
+@cache_page(300)
+def market_live_data(request):
+    try:
+        INDEX_SYMBOLS = {
+            "NIFTY 50":         ("^NSEI",     "NSE"),
+            "SENSEX":           ("^BSESN",    "BSE"),
+            "NIFTY BANK":       ("^NSEBANK",  "NSE"),
+            "NIFTY MIDCAP 100": ("^NSMIDCP",  "NSE"),
+            "NIFTY IT":         ("^CNXIT",    "NSE"),
+            "INDIA VIX":        ("^INDIAVIX", "Volatility"),
+        }
+        NIFTY50_STOCKS = [
+            "RELIANCE.NS","TCS.NS","HDFCBANK.NS","INFY.NS","ICICIBANK.NS",
+            "HINDUNILVR.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS","KOTAKBANK.NS",
+            "LT.NS","HCLTECH.NS","AXISBANK.NS","ASIANPAINT.NS","MARUTI.NS",
+            "SUNPHARMA.NS","BAJFINANCE.NS","TITAN.NS","WIPRO.NS","POWERGRID.NS",
+            "NTPC.NS","TATAMOTORS.NS","ULTRACEMCO.NS","ONGC.NS","COALINDIA.NS",
+            "JSWSTEEL.NS","TATASTEEL.NS","HINDALCO.NS","CIPLA.NS","DRREDDY.NS",
+        ]
+        SECTOR_SYMBOLS = {
+            "IT":     "^CNXIT",     "Pharma": "^CNXPHARMA",
+            "Auto":   "^CNXAUTO",   "FMCG":   "^CNXFMCG",
+            "Bank":   "^NSEBANK",   "Realty": "^CNXREALTY",
+            "Energy": "^CNXENERGY", "Metal":  "^CNXMETAL",
+        }
+        GLOBAL_SYMBOLS = {
+            "Dow Jones":  "^DJI",  "Nasdaq":     "^IXIC",
+            "S&P 500":    "^GSPC", "Nikkei 225": "^N225",
+            "FTSE 100":   "^FTSE",
+        }
+        # ── Indices ──
+        indices = []
+        for name, (sym, sub) in INDEX_SYMBOLS.items():
+            d = _yahoo_fetch(sym)
+            if not d:
+                continue
+            indices.append({
+                "name": name, "sub": sub,
+                "value": d["price"], "change": d["change"],
+                "pct": d["pct"], "spark": d["spark"],
+            })
+        # ── Gainers / Losers ──
+        stock_moves = []
+        for sym in NIFTY50_STOCKS:
+            d = _yahoo_fetch(sym)
+            if not d:
+                continue
+            name = sym.replace(".NS", "")
+            stock_moves.append({"t": name, "s": name, "px": d["price"], "pct": d["pct"]})
+        stock_moves.sort(key=lambda x: x["pct"], reverse=True)
+        gainers = stock_moves[:5]
+        losers  = list(reversed(stock_moves))[:5]
+        # ── Sectors ──
+        sectors = []
+        for name, sym in SECTOR_SYMBOLS.items():
+            d = _yahoo_fetch(sym)
+            sectors.append({"name": name, "pct": d["pct"] if d else 0.0})
+        # ── Global ──
+        global_indices = []
+        for name, sym in GLOBAL_SYMBOLS.items():
+            d = _yahoo_fetch(sym)
+            if d:
+                global_indices.append({"name": name, "value": d["price"], "pct": d["pct"]})
+        # ── Breadth ──
+        advancing = len([s for s in stock_moves if s["pct"] > 0])
+        declining = len([s for s in stock_moves if s["pct"] <= 0])
+        breadth   = {"advances": int(advancing * 150), "declines": int(declining * 150)}
+        # ── Auto Summary ──
+        nifty        = next((i for i in indices if "NIFTY 50" in i["name"]), None)
+        sensex       = next((i for i in indices if "SENSEX"   in i["name"]), None)
+        best_sector  = max(sectors, key=lambda s: s["pct"], default=None)
+        worst_sector = min(sectors, key=lambda s: s["pct"], default=None)
+        summary = []
+        if nifty:
+            d = "gained" if nifty["pct"] >= 0 else "fell"
+            summary.append(f"Nifty 50 {d} {abs(nifty['pct']):.2f}% to {nifty['value']:,.2f}")
+        if sensex:
+            d = "rose" if sensex["pct"] >= 0 else "slipped"
+            summary.append(f"Sensex {d} {abs(sensex['pct']):.2f}% to {sensex['value']:,.2f}")
+        if best_sector and best_sector["pct"] > 0:
+            summary.append(f"{best_sector['name']} led the session (+{best_sector['pct']:.2f}%)")
+        if worst_sector and worst_sector["pct"] < 0:
+            summary.append(f"{worst_sector['name']} was under pressure ({worst_sector['pct']:.2f}%)")
+        if gainers:
+            summary.append(f"Top gainer: {gainers[0]['t']} (+{gainers[0]['pct']:.2f}%)")
+        if losers:
+            summary.append(f"Top loser: {losers[0]['t']} ({losers[0]['pct']:.2f}%)")
+        if breadth["advances"] > breadth["declines"]:
+            summary.append(f"Broad market positive — {breadth['advances']:,} stocks advanced")
+        else:
+            summary.append(f"Broad market weak — {breadth['declines']:,} stocks declined")
+        CalcUsage.objects.create(name="MARKET_VIEW")
+        return JsonResponse({
+            "success": True,
+            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "indices": indices,  "gainers": gainers,
+            "losers":  losers,   "sectors": sectors,
+            "breadth": breadth,
+            "flows": _fetch_fii_dii(),
+            "global":  global_indices,
+            "summary": summary,
+        })
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+@cache_page(300)
+def us_market_live_data(request):
+    """US Market live data — reuses _yahoo_fetch from Indian stocks."""
+    try:
+        # ── US Indices ──
+        INDEX_SYMBOLS = {
+            "S&P 500":       ("^GSPC",     "SPX"),
+            "DOW JONES":     ("^DJI",      "DJIA"),
+            "NASDAQ COMP":   ("^IXIC",     "IXIC"),
+            "NASDAQ 100":    ("^NDX",      "NDX"),
+            "RUSSELL 2000":  ("^RUT",      "RUT"),
+            "CBOE VIX":      ("^VIX",      "Volatility"),
+        }
+
+        # ── Major US Stocks (S&P 500 heavyweights) ──
+        US_STOCKS = {
+            "AAPL":  "Apple",        "MSFT":  "Microsoft",
+            "GOOGL": "Alphabet",     "AMZN":  "Amazon",
+            "NVDA":  "NVIDIA",       "META":  "Meta",
+            "TSLA":  "Tesla",        "BRK-B": "Berkshire",
+            "LLY":   "Eli Lilly",    "UNH":   "UnitedHealth",
+            "JPM":   "JPMorgan",     "V":     "Visa",
+            "AVGO":  "Broadcom",     "MA":    "Mastercard",
+            "JNJ":   "Johnson&J",    "PG":    "Procter&Gamble",
+            "HD":    "Home Depot",   "MRK":   "Merck",
+            "COST":  "Costco",       "ABBV":  "AbbVie",
+            "CRM":   "Salesforce",   "WMT":   "Walmart",
+            "BAC":   "Bank of America","KO":  "Coca-Cola",
+            "NFLX":  "Netflix",      "MU":    "Micron",
+            "CAT":   "Caterpillar",  "GS":    "Goldman Sachs",
+            "CSCO":  "Cisco",        "IBM":   "IBM",
+        }
+
+        # ── Sector ETFs (GICS sectors via SPDR ETFs) ──
+        SECTOR_ETFS = {
+            "Technology":    "XLK",   "Health Care":   "XLV",
+            "Financials":    "XLF",   "Industrials":   "XLI",
+            "Staples":       "XLP",   "Real Estate":   "XLRE",
+            "Utilities":     "XLU",   "Materials":     "XLB",
+            "Energy":        "XLE",   "Discretionary": "XLY",
+            "Comm Svcs":     "XLC",
+        }
+
+        # ── Macro (Treasury, Dollar, Oil, Gold) ──
+        MACRO_SYMBOLS = {
+            "US 10-Yr Treasury": {"sym": "^TNX",     "kind": "yield", "suffix": ""},
+            "US Dollar Index":   {"sym": "DX-Y.NYB", "kind": "index", "suffix": ""},
+            "WTI Crude Oil":     {"sym": "CL=F",     "kind": "usd",   "suffix": "/bbl"},
+            "Gold (Spot)":       {"sym": "GC=F",     "kind": "usd",   "suffix": "/oz"},
+        }
+
+        # ── Global Indices (non-US) ──
+        GLOBAL_SYMBOLS = {
+            "Nifty 50 (India)": "^NSEI",
+            "FTSE 100":         "^FTSE",
+            "DAX":              "^GDAXI",
+            "Nikkei 225":       "^N225",
+            "Hang Seng":        "^HSI",
+        }
+
+        # ── Fetch Indices ──
+        indices = []
+        for name, (sym, sub) in INDEX_SYMBOLS.items():
+            d = _yahoo_fetch(sym)
+            if not d:
+                continue
+            indices.append({
+                "name": name, "sub": sub,
+                "value": d["price"], "change": d["change"],
+                "pct": d["pct"], "spark": d["spark"],
+            })
+
+        # ── Fetch Stocks → Gainers/Losers ──
+        stock_moves = []
+        for sym, full_name in US_STOCKS.items():
+            d = _yahoo_fetch(sym)
+            if not d:
+                continue
+            stock_moves.append({"t": full_name, "s": sym, "px": d["price"], "pct": d["pct"]})
+
+        stock_moves.sort(key=lambda x: x["pct"], reverse=True)
+        gainers = stock_moves[:5]
+        losers  = list(reversed(stock_moves))[:5]
+
+        # ── Fetch Sectors ──
+        sectors = []
+        for name, sym in SECTOR_ETFS.items():
+            d = _yahoo_fetch(sym)
+            sectors.append({"name": name, "pct": d["pct"] if d else 0.0})
+        sectors.sort(key=lambda x: x["pct"], reverse=True)
+
+        # ── Fetch Macro ──
+        macro = []
+        for name, info in MACRO_SYMBOLS.items():
+            d = _yahoo_fetch(info["sym"])
+            if d:
+                macro.append({
+                    "name":   name,
+                    "value":  d["price"],
+                    "kind":   info["kind"],
+                    "suffix": info["suffix"],
+                    "chg":    d["pct"],
+                })
+
+        # ── Fetch Global ──
+        global_indices = []
+        for name, sym in GLOBAL_SYMBOLS.items():
+            d = _yahoo_fetch(sym)
+            if d:
+                global_indices.append({"name": name, "value": d["price"], "pct": d["pct"]})
+
+        # ── Market Breadth (estimated) ──
+        advancing = len([s for s in stock_moves if s["pct"] > 0])
+        declining = len([s for s in stock_moves if s["pct"] <= 0])
+        breadth = {
+            "advances": int(advancing * 110),
+            "declines": int(declining * 110),
+        }
+
+        CalcUsage.objects.create(name="US_MARKET_VIEW")
+
+        return JsonResponse({
+            "success": True,
+            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+            "indices": indices,
+            "gainers": gainers,
+            "losers":  losers,
+            "sectors": sectors,
+            "breadth": breadth,
+            "macro":   macro,
+            "global":  global_indices,
+        })
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+    
+@cache_page(300)
+def commodities_live_data(request):
+    """Commodities live data — reuses _yahoo_fetch. All conversions server-side."""
+    try:
+        # ── Get USDINR first (needed for all INR conversions) ──
+        usdinr_data = _yahoo_fetch("USDINR=X")
+        usdinr = usdinr_data["price"] if usdinr_data else 94.38
+
+        # ═══════════ METALS ═══════════
+        gold_spot  = _yahoo_fetch("GC=F")
+        silver_spot = _yahoo_fetch("SI=F")
+
+        # India premium: ~15% import duty + 3% GST ≈ 18.45%
+        INDIA_PREMIUM = 1.13
+        # 1 troy oz = 31.1035 grams
+
+        metals = []
+
+        if gold_spot:
+            # Gold USD/oz → INR/10g
+            g_inr = round(gold_spot["price"] * usdinr / 31.1035 * 10 * INDIA_PREMIUM)
+            g_pct = gold_spot["pct"]
+            g_prev = g_inr / (1 + g_pct / 100) if g_pct != 0 else g_inr
+            g_chg = round(g_inr - g_prev)
+            g_spark = [round(p * usdinr / 31.1035 * 10 * INDIA_PREMIUM) for p in gold_spot["spark"]] if gold_spot["spark"] else []
+
+            metals.append({"name": "Gold 24K", "sub": "per 10g · India", "cur": "INR", "val": g_inr, "unit": "", "dec": 0, "chg": g_chg, "pct": g_pct, "spark": g_spark})
+
+            g22 = round(g_inr * 22 / 24)
+            g22_chg = round(g_chg * 22 / 24)
+            metals.append({"name": "Gold 22K", "sub": "per 10g · India", "cur": "INR", "val": g22, "unit": "", "dec": 0, "chg": g22_chg, "pct": g_pct, "spark": []})
+
+            g18 = round(g_inr * 18 / 24 * 0.97)
+            g18_chg = round(g_chg * 18 / 24)
+            metals.append({"name": "Gold 18K", "sub": "per 10g · India", "cur": "INR", "val": g18, "unit": "", "dec": 0, "chg": g18_chg, "pct": g_pct, "spark": []})
+
+        if silver_spot:
+            # Silver USD/oz → INR/kg
+            s_inr = round(silver_spot["price"] * usdinr / 31.1035 * 1000 * INDIA_PREMIUM)
+            s_pct = silver_spot["pct"]
+            s_prev = s_inr / (1 + s_pct / 100) if s_pct != 0 else s_inr
+            s_chg = round(s_inr - s_prev)
+            s_spark = [round(p * usdinr / 31.1035 * 1000 * INDIA_PREMIUM) for p in silver_spot["spark"]] if silver_spot["spark"] else []
+
+            metals.append({"name": "Silver", "sub": "per kg · India", "cur": "INR", "val": s_inr, "unit": "", "dec": 0, "chg": s_chg, "pct": s_pct, "spark": s_spark})
+
+        # International spot
+        if gold_spot:
+            metals.append({"name": "Gold Spot", "sub": "per oz · COMEX", "cur": "USD", "val": gold_spot["price"], "unit": "", "dec": 2, "chg": gold_spot["change"], "pct": gold_spot["pct"], "spark": gold_spot["spark"]})
+        if silver_spot:
+            metals.append({"name": "Silver Spot", "sub": "per oz · COMEX", "cur": "USD", "val": silver_spot["price"], "unit": "", "dec": 2, "chg": silver_spot["change"], "pct": silver_spot["pct"], "spark": silver_spot["spark"]})
+
+        # ═══════════ ENERGY ═══════════
+        energy = []
+        energy_list = [
+            ("Brent Crude", "BZ=F",  "per barrel"),
+            ("WTI Crude",   "CL=F",  "per barrel"),
+            ("Natural Gas", "NG=F",  "per MMBtu"),
+        ]
+        for name, sym, sub in energy_list:
+            d = _yahoo_fetch(sym)
+            if d:
+                energy.append({"name": name, "sub": sub, "cur": "USD", "val": d["price"], "unit": "", "dec": 2, "chg": d["change"], "pct": d["pct"], "spark": d["spark"]})
+
+        # ═══════════ BASE METALS ═══════════
+        baseMetals = []
+
+        # Copper: HG=F is USD per pound → INR/kg (1 lb = 0.453592 kg)
+        copper = _yahoo_fetch("HG=F")
+        if copper:
+            cu_inr = round(copper["price"] * usdinr / 0.453592, 2)
+            cu_chg = round(copper["change"] * usdinr / 0.453592, 2)
+            baseMetals.append({"name": "Copper", "sub": "₹/kg", "cur": "INR", "val": cu_inr, "dec": 2, "chg": cu_chg, "pct": copper["pct"]})
+
+        # Aluminium, Zinc, Lead, Nickel — approximate from LME USD/tonne via Yahoo
+        lme_metals = [
+            ("Aluminium", "ALI=F",  2450),   # fallback LME ~$2450/tonne
+            ("Zinc",      "ZNC=F",  2700),   # fallback ~$2700/tonne
+            ("Lead",      "LEAD.L", 1820),   # fallback ~$1820/tonne
+            ("Nickel",    "NI=F",   15200),  # fallback ~$15200/tonne
+        ]
+        for name, sym, fallback_usd_tonne in lme_metals:
+            d = _yahoo_fetch(sym)
+            if d and d["price"] > 0:
+                # Yahoo LME prices are USD per tonne → INR/kg
+                val_inr = round(d["price"] * usdinr / 1000, 2)
+                chg_inr = round(d["change"] * usdinr / 1000, 2)
+                baseMetals.append({"name": name, "sub": "₹/kg", "cur": "INR", "val": val_inr, "dec": 2, "chg": chg_inr, "pct": d["pct"]})
+            else:
+                # Use fallback estimate
+                val_inr = round(fallback_usd_tonne * usdinr / 1000, 2)
+                baseMetals.append({"name": name, "sub": "₹/kg (est.)", "cur": "INR", "val": val_inr, "dec": 2, "chg": 0, "pct": 0.0})
+
+        # ═══════════ CURRENCY ═══════════
+        currency = []
+
+        fx_pairs = [
+            ("USD / INR", "USDINR=X"),
+            ("EUR / INR", "EURINR=X"),
+            ("GBP / INR", "GBPINR=X"),
+        ]
+        for name, sym in fx_pairs:
+            d = _yahoo_fetch(sym)
+            if d:
+                currency.append({"name": name, "cur": "INR", "val": d["price"], "dec": 2, "chg": d["change"], "pct": d["pct"]})
+
+        # 100 JPY / INR — compute from USDJPY + USDINR
+        jpyusd = _yahoo_fetch("JPY=X")  # USD per 1 JPY
+        if jpyusd and jpyusd["price"] > 0:
+            # JPY=X gives USD per 1 JPY, so 100 JPY = 100 * JPY=X * USDINR... No wait
+            # Actually JPY=X on Yahoo gives USDJPY (how many JPY per 1 USD)
+            # Let me use JPYINR=X directly
+            jpyinr = _yahoo_fetch("JPYINR=X")
+            if jpyinr:
+                val100 = round(jpyinr["price"] * 100, 2)
+                chg100 = round(jpyinr["change"] * 100, 2)
+                currency.append({"name": "100 JPY / INR", "cur": "INR", "val": val100, "dec": 2, "chg": chg100, "pct": jpyinr["pct"]})
+            else:
+                # Fallback: compute from USDJPY
+                usdjpy = _yahoo_fetch("USDJPY=X")
+                if usdjpy and usdjpy["price"] > 0:
+                    val100 = round(100 * usdinr / usdjpy["price"], 2)
+                    currency.append({"name": "100 JPY / INR", "cur": "INR", "val": val100, "dec": 2, "chg": 0, "pct": 0.0})
+
+        # AED / INR
+        aed = _yahoo_fetch("AEDINR=X")
+        if aed:
+            currency.append({"name": "AED / INR", "cur": "INR", "val": aed["price"], "dec": 2, "chg": aed["change"], "pct": aed["pct"]})
+        else:
+            # AED is pegged to USD: 1 USD = 3.6725 AED → 1 AED = USDINR / 3.6725
+            aed_val = round(usdinr / 3.6725, 2)
+            currency.append({"name": "AED / INR", "cur": "INR", "val": aed_val, "dec": 2, "chg": 0, "pct": 0.0})
+
+        # Dollar Index
+        dxy = _yahoo_fetch("DX-Y.NYB")
+        if dxy:
+            currency.append({"name": "Dollar Index", "sub": "DXY", "cur": "", "val": dxy["price"], "dec": 2, "chg": dxy["change"], "pct": dxy["pct"]})
+
+        # ═══════════ FUEL (Govt-set, update manually) ═══════════
+        fuel = [
+            {"name": "Petrol",  "sub": "₹/litre",       "cur": "INR", "val": 111.21, "dec": 2},
+            {"name": "Diesel",  "sub": "₹/litre",       "cur": "INR", "val": 97.83,  "dec": 2},
+            {"name": "LPG",     "sub": "₹/14.2kg cyl",  "cur": "INR", "val": 941.50, "dec": 2},
+            {"name": "CNG",     "sub": "₹/kg",          "cur": "INR", "val": 76.50,  "dec": 2},
+        ]
+
+        CalcUsage.objects.create(name="COMMODITIES_VIEW")
+
+        return JsonResponse({
+            "success": True,
+            "asOf": datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "metals": metals,
+            "energy": energy,
+            "baseMetals": baseMetals,
+            "currency": currency,
+            "fuel": fuel,
+        })
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+    
+@cache_page(300)
+def crypto_live_data(request):
+    """Crypto live data — CoinGecko (free) + USDINR from Yahoo."""
+    try:
+        # ── USDINR for conversion ──
+        usdinr_data = _yahoo_fetch("USDINR=X")
+        usdinr = usdinr_data["price"] if usdinr_data else 94.38
+
+        # ── CoinGecko — one call, all data ──
+        COIN_IDS = "bitcoin,ethereum,tether,binancecoin,ripple,solana,dogecoin,cardano"
+        url = "https://api.coingecko.com/api/v3/coins/markets"
+        params = {
+            "vs_currency":              "usd",
+            "ids":                      COIN_IDS,
+            "order":                    "market_cap_desc",
+            "sparkline":                "false",
+            "price_change_percentage":  "24h",
+        }
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept":     "application/json",
+        }
+
+        r = requests.get(url, params=params, headers=headers, verify=False, timeout=15)
+        r.raise_for_status()
+        data = r.json()
+
+        SYMBOL_MAP = {
+            "bitcoin": "BTC",  "ethereum": "ETH",  "tether":      "USDT",
+            "binancecoin": "BNB", "ripple": "XRP", "solana":      "SOL",
+            "dogecoin": "DOGE", "cardano": "ADA",
+        }
+
+        coins = []
+        for coin in data:
+            sym       = SYMBOL_MAP.get(coin["id"], coin.get("symbol", "?").upper())
+            usd_price = float(coin.get("current_price", 0) or 0)
+            pct       = round(float(coin.get("price_change_percentage_24h", 0) or 0), 2)
+            mcap      = int(coin.get("market_cap", 0) or 0)
+            inr_price = usd_price * usdinr
+
+            # Smart decimal places
+            if usd_price >= 1:
+                usd_round = round(usd_price, 2)
+            elif usd_price >= 0.01:
+                usd_round = round(usd_price, 4)
+            else:
+                usd_round = round(usd_price, 6)
+
+            if inr_price >= 100:
+                inr_round = round(inr_price, 0)
+            else:
+                inr_round = round(inr_price, 2)
+
+            coins.append({
+                "name": coin.get("name", sym),
+                "sub":  sym,
+                "usd":  usd_round,
+                "inr":  inr_round,
+                "pct":  pct,
+                "mcap": mcap,
+            })
+
+        CalcUsage.objects.create(name="CRYPTO_VIEW")
+
+        return JsonResponse({
+            "success": True,
+            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "coins":   coins,
+        })
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

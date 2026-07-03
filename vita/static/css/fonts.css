@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'DM Sans';
+    src: url('/static/fonts/DMSans-Regular.ttf') format('ttf');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DM Serif Display';
+    src: url('/static/fonts/dm-serif-display-v17-latin-regular.woff2') format('woff2');
+    font-display: swap;
+}

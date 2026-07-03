@@ -129,6 +129,16 @@ urlpatterns = [
     path('compare/nps-vs-mf', views.page_nps_vs_mf, name='page_nps_vs_mf'),
     path('api/compare/nps-vs-mf', views.api_nps_vs_mf, name='api_nps_vs_mf'),
 
+    #path('market/indianstocks', views.indianstock, name='indianstock'),
+    path('markets/api/live-data/', views.market_live_data, name='market_live_data'),
+    path('markets/india', views.indianstock, name='indianstock'),
+    path('markets/us', views.usstock, name='usstock'),
+    path('markets/api/us-live-data/', views.us_market_live_data, name='us_market_live_data'),
+    path('markets/commodities-and-currency', views.commodities, name='commodities'),
+    path('markets/api/commodities-live/', views.commodities_live_data, name='commodities_live_data'),
+    path('markets/crypto', views.crypto, name='crypto'),
+    path('markets/api/crypto-live/', views.crypto_live_data, name='crypto_live_data'),
+
     path('llms.txt', views.llms_txt_view, name='llms_txt'),
     path('llms-full.txt', views.llms_full_txt_view, name='llms_full_txt'),
 ]

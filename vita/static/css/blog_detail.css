@@ -690,14 +690,14 @@ html, body {
 .format-case-study {
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(226, 232, 240, 0.8);
-  padding: 15px;
+  padding: 5px;
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(12px);
   font-family: 'Inter', 'Segoe UI', sans-serif;
   color: #334155;
   line-height: 1.8;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 /* Paragraphs */
@@ -831,12 +831,48 @@ html, body {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
 }
+.format-case-study span {
+  display: block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #0284c7;
+    background: rgba(2, 132, 199, 0.08);
+    border: 1px solid rgba(2, 132, 199, 0.18);
+    text-align: center;
+    
+}
 
 /* Standard Links (Links embedded inside regular text) */
 .format-case-study a:not(p > a:only-child) {
   color: #1a73e8;
   font-weight: 600;
   text-decoration: underline;
+}
+.format-case-study h3{
+    font-size:18px;
+    margin:20px 0 10px;
+    color:#475569;
+}
+
+.format-case-study strong{
+    color:#0f172a;
+}
+
+.format-case-study img{
+    width:100%;
+    border-radius:12px;
+    margin:20px 0;
+}
+
+.format-case-study hr{
+    border:none;
+    height:1px;
+    background:#e2e8f0;
+    margin:30px 0;
 }
 
 /* ── 2. BLOGS & NEWS DESIGN (Clean Reading Format) ── */

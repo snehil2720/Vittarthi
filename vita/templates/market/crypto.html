@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Cryptocurrency Live Prices Today
+{% endblock %}
+
+{% block meta_description %}
+Live cryptocurrency prices today: Bitcoin, Ethereum, Solana, XRP and top coins in INR and USD, with 24-hour change, market caps, movers and a quick converter. Updated by Vittarthi.
+{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/crypto.css' %}">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+{% endblock %}
+{% block content %}
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div class="badges">
+      <span class="pill live"><span class="dot live-dot"></span><span>Trading 24/7</span></span>
+      <span class="pill">🪙 Prices in ₹ &amp; $</span>
+      <span class="pill">Free · No sign-up required</span>
+    </div>
+    <h1 class="title">Crypto Prices <em>Today</em></h1>
+    <p class="subline">Bitcoin, Ethereum, Solana, XRP and the top coins — live prices in rupees and dollars, with 24-hour change, market caps, movers and a quick converter.</p>
+    <p class="updated" id="heroDate">—</p>
+  </div>
+</div>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main>
+<!-- ===================== OVERVIEW ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Market Overview</span>
+      <h2>Crypto market at a glance</h2>
+      <p>Snapshot across the coins tracked on this page.</p>
+    </div>
+    <div class="stat-grid" id="stats"></div>
+  </div>
+</section>
+
+<!-- ===================== COINS ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Top Coins</span>
+      <h2>Live prices</h2>
+      <p>Ranked by market capitalisation. Prices shown in USD and INR.</p>
+    </div>
+    <div class="grid coin-grid" id="coins"></div>
+  </div>
+</section>
+
+<!-- ===================== CONVERTER ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="card conv">
+      <h3>Quick converter</h3>
+      <p>Convert any amount into rupees and dollars at the latest price.</p>
+      <div class="conv-row">
+        <input id="convAmt" type="number" min="0" step="any" value="1" inputmode="decimal" aria-label="Amount" />
+        <select id="convCoin" aria-label="Coin"></select>
+      </div>
+      <div class="conv-out">
+        <div class="o"><div class="ol">In Indian Rupees</div><div class="ov num" id="convInr">—</div></div>
+        <div class="o"><div class="ol">In US Dollars</div><div class="ov num" id="convUsd">—</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MOVERS ===================== -->
+<section style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● 24h Movers</span>
+      <h2>Gainers &amp; losers</h2>
+      <p>Biggest 24-hour moves, excluding stablecoins.</p>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">🟢 Top Gainers <span class="tag up">24h</span></div>
+        <div id="gainers"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">🔴 Top Losers <span class="tag down">24h</span></div>
+        <div id="losers"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● Daily Wrap</span>
+      <h2>How the market is moving</h2>
+    </div>
+    <div class="summary" id="summary"></div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">● FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Is cryptocurrency legal in India?</summary><div class="ans">Buying, holding and selling crypto is legal in India, but it is not legal tender. Crypto (a "Virtual Digital Asset") is regulated for taxation, not endorsed as a payment currency. Always use a registered Indian exchange that follows KYC rules.</div></details>
+      <details><summary>How is crypto taxed in India?</summary><div class="ans">Profits from transferring crypto are taxed at a flat 30% (plus applicable surcharge and cess), with no deduction except the cost of acquisition. A 1% TDS also applies on transfers above the threshold. Losses cannot be set off against other income.</div></details>
+      <details><summary>Why do crypto markets trade 24/7?</summary><div class="ans">Unlike stock exchanges, crypto trades on global, always-on networks with no opening or closing bell. Prices move every second of every day, including weekends and holidays.</div></details>
+      <details><summary>What does market capitalisation mean?</summary><div class="ans">Market cap is the coin's price multiplied by the number of coins in circulation. It is used to rank coins by size — a higher market cap generally means a larger, more established asset.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCLAIMER ===================== -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="disc">
+      <b>Disclaimer:</b> Cryptocurrencies are highly volatile and largely unregulated. Prices shown are indicative and may be delayed. In India, crypto gains are taxed at 30% plus 1% TDS. This page is for information only and is not financial advice — never invest more than you can afford to lose, and consult a qualified advisor.
+    </div>
+  </div>
+</section>
+</main>
+
+
+<script>
+/* ================================================================
+   CRYPTO DATA — fetched live from backend API
+   ================================================================ */
+let MARKET_DATA = null;
+
+const COIN_COLORS = { BTC:"#f7931a", ETH:"#627eea", USDT:"#26a17b", BNB:"#f0b90b",
+  XRP:"#23292f", SOL:"#9945ff", DOGE:"#c2a633", ADA:"#0033ad" };
+const STABLE = new Set(["USDT","USDC","DAI","BUSD"]);
+
+/* ================================================================
+   FORMATTERS
+   ================================================================ */
+function usd(v){ const d = v>=1 ? 2 : (v>=0.01 ? 4 : 6);
+  return "$" + Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function inr(v){ const d = v>=100 ? 0 : 2;
+  return "₹" + Number(v).toLocaleString("en-IN",{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function bigUsd(n){
+  if(n>=1e12) return "$"+(n/1e12).toFixed(2)+"T";
+  if(n>=1e9)  return "$"+(n/1e9).toFixed(1)+"B";
+  if(n>=1e6)  return "$"+(n/1e6).toFixed(1)+"M";
+  return "$"+Number(n).toLocaleString("en-US");
+}
+const cls  = n => n>=0 ? "up" : "down";
+const arrow= n => n>=0 ? "▲" : "▼";
+const badge = (sym,size) => `<div class="${size}" style="background:${COIN_COLORS[sym]||'var(--brand-600)'}">${sym.slice(0,4)}</div>`;
+
+/* ================================================================
+   DATE + CLOCK (IST — crypto trades 24/7)
+   ================================================================ */
+function istNow(){ return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"})); }
+
+function paintDate(){
+  const heroDate = document.getElementById("heroDate");
+  const yr       = document.getElementById("yr");
+  if(!heroDate) return;
+  const today = istNow().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  if(MARKET_DATA?.asOf){
+    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-IN",
+      {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} IST`;
+  } else {
+    heroDate.innerHTML = `<b>${today}</b>`;
+  }
+  if(yr) yr.textContent = istNow().getFullYear();
+}
+
+/* ================================================================
+   RENDERERS
+   ================================================================ */
+function sorted(){ return [...MARKET_DATA.coins].sort((a,b)=>b.mcap-a.mcap); }
+
+function renderStats(){
+  const el = document.getElementById("stats"); if(!el) return;
+  const coins = MARKET_DATA.coins;
+  const totalCap = coins.reduce((s,c)=>s+c.mcap,0);
+  const btc = coins.find(c=>c.sub==="BTC");
+  const dom = btc ? (btc.mcap/totalCap*100) : 0;
+  const movers = coins.filter(c=>!STABLE.has(c.sub));
+  const best = [...movers].sort((a,b)=>b.pct-a.pct)[0];
+  const worst = [...movers].sort((a,b)=>a.pct-b.pct)[0];
+  if(!best||!worst) return;
+  el.innerHTML = `
+    <div class="stat"><div class="l">Market cap (tracked)</div><div class="v num">${bigUsd(totalCap)}</div><div class="s muted">${coins.length} coins</div></div>
+    <div class="stat"><div class="l">BTC dominance</div><div class="v num">${dom.toFixed(1)}%</div><div class="s muted">of tracked coins</div></div>
+    <div class="stat"><div class="l">Best 24h</div><div class="v num">${best.sub}</div><div class="s ${cls(best.pct)}">${arrow(best.pct)} ${Math.abs(best.pct).toFixed(2)}%</div></div>
+    <div class="stat"><div class="l">Worst 24h</div><div class="v num">${worst.sub}</div><div class="s ${cls(worst.pct)}">${arrow(worst.pct)} ${Math.abs(worst.pct).toFixed(2)}%</div></div>`;
+}
+
+function renderCoins(){
+  const el = document.getElementById("coins"); if(!el) return;
+  el.innerHTML = sorted().map(c=>`<div class="card coin">
+    <div class="coin-top">
+      ${badge(c.sub,"badge")}
+      <div><div class="coin-name">${c.name}</div><div class="coin-sym">${c.sub}</div></div>
+      <span class="chip ${cls(c.pct)}">${arrow(c.pct)} ${Math.abs(c.pct).toFixed(2)}%</span>
+    </div>
+    <div class="coin-usd num">${usd(c.usd)}</div>
+    <div class="coin-inr num">${inr(c.inr)}</div>
+    <div class="coin-mcap num">Market cap ${bigUsd(c.mcap)}</div>
+  </div>`).join("");
+}
+
+function moverRows(list, forceDown){
+  return list.map(c=>{
+    const cl = forceDown ? "down" : cls(c.pct);
+    const ar = forceDown ? "▼"    : arrow(c.pct);
+    return `<div class="row">
+      ${badge(c.sub,"mini")}
+      <div class="co"><div class="t">${c.name}</div><div class="s">${usd(c.usd)}</div></div>
+      <div class="pc ${cl} num">${ar} ${Math.abs(c.pct).toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+}
+function renderMovers(){
+  const g = document.getElementById("gainers");
+  const l = document.getElementById("losers");
+  if(!g||!l) return;
+  const movers = MARKET_DATA.coins.filter(c=>!STABLE.has(c.sub));
+  const sorted = [...movers].sort((a,b)=>b.pct-a.pct);  // best → worst
+  const half = Math.ceil(sorted.length / 2);
+
+  // Top half = gainers, bottom half = losers (zero overlap)
+  g.innerHTML = moverRows(sorted.slice(0, half), false);
+  l.innerHTML = moverRows(sorted.slice(half).reverse(), true);  // worst first
+}
+
+function renderTicker(){
+  const el = document.getElementById("tickerTrack"); if(!el) return;
+  const items = sorted().slice(0,6).map(c=>
+    `<span class="tk"><span class="nm">${c.sub}</span> <span class="num">${usd(c.usd)}</span>
+     <span class="ch ${cls(c.pct)} num">${arrow(c.pct)} ${Math.abs(c.pct).toFixed(2)}%</span></span>`
+  ).join("");
+  el.innerHTML = items + items;
+}
+
+function renderSummary(){
+  const el = document.getElementById("summary"); if(!el) return;
+  if(!MARKET_DATA?.coins?.length){
+    el.innerHTML = '<p style="color:var(--muted)">Summary loading...</p>';
+    return;
+  }
+  const btc = MARKET_DATA.coins.find(c=>c.sub==="BTC");
+  const eth = MARKET_DATA.coins.find(c=>c.sub==="ETH");
+  if(!btc||!eth){ el.innerHTML = '<p>Partial data received.</p>'; return; }
+  const movers = MARKET_DATA.coins.filter(c=>!STABLE.has(c.sub));
+  const best = [...movers].sort((a,b)=>b.pct-a.pct)[0];
+  const worst = [...movers].sort((a,b)=>a.pct-b.pct)[0];
+  const tone = btc.pct>=0 ? "in the green" : "under pressure";
+  el.innerHTML = `
+    <p>Crypto is trading ${tone} over the last 24 hours. <strong>Bitcoin</strong> is at <strong>${usd(btc.usd)}</strong> (${inr(btc.inr)}), ${btc.pct>=0?"up":"down"} ${Math.abs(btc.pct).toFixed(2)}%, while <strong>Ethereum</strong> changes hands at <strong>${usd(eth.usd)}</strong> (${eth.pct>=0?"+":""}${eth.pct.toFixed(2)}%).</p>
+    <p>Among the majors, <strong>${best.name}</strong> is the standout (${best.pct>=0?"+":""}${best.pct.toFixed(2)}%) and <strong>${worst.name}</strong> the weakest (${worst.pct>=0?"+":""}${worst.pct.toFixed(2)}%). Remember crypto moves around the clock — these figures change every minute.</p>`;
+}
+
+/* ── Converter ── */
+function fillConverter(){
+  const sel = document.getElementById("convCoin"); if(!sel) return;
+  sel.innerHTML = sorted().map(c=>`<option value="${c.sub}">${c.name} (${c.sub})</option>`).join("");
+  runConvert();
+}
+function runConvert(){
+  const selEl = document.getElementById("convCoin"); if(!selEl) return;
+  const sym = selEl.value;
+  const amt = parseFloat(document.getElementById("convAmt")?.value) || 0;
+  const c = MARKET_DATA?.coins?.find(x=>x.sub===sym);
+  if(!c) return;
+  const elInr = document.getElementById("convInr"); if(elInr) elInr.textContent = inr(c.inr*amt);
+  const elUsd = document.getElementById("convUsd"); if(elUsd) elUsd.textContent = usd(c.usd*amt);
+}
+
+/* ================================================================
+   RENDER ALL
+   ================================================================ */
+function renderAll(){
+  if(!MARKET_DATA) return;
+  paintDate(); renderStats(); renderCoins();
+  renderMovers(); renderTicker(); renderSummary();
+  fillConverter();
+}
+
+/* ================================================================
+   LIVE DATA FETCH — CoinGecko via Django backend
+   ================================================================ */
+function showSkeletons(){
+  ["stats","coins","gainers","losers","summary"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">⏳ Loading live data...</div>`;
+  });
+}
+
+async function refreshData(){
+  try {
+    const res = await fetch('/markets/api/crypto-live/');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error || "API error");
+    MARKET_DATA = data;
+    renderAll();
+  } catch(err){
+    console.error("Crypto data fetch failed:", err);
+    const h = document.getElementById("heroDate");
+    if(h && !MARKET_DATA) h.innerHTML += ' &nbsp;<span style="color:var(--down);font-size:.75rem;">(data unavailable)</span>';
+  }
+}
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+paintDate();
+showSkeletons();
+
+// Fetch live data immediately
+refreshData();
+
+// Crypto trades 24/7 — refresh every 5 minutes always
+setInterval(refreshData, 5 * 60 * 1000);
+
+// Converter event listeners
+const convAmt  = document.getElementById("convAmt");
+const convCoin = document.getElementById("convCoin");
+if(convAmt)  convAmt.addEventListener("input", runConvert);
+if(convCoin) convCoin.addEventListener("change", runConvert);
+
+</script>
+{% endblock %}
