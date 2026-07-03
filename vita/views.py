@@ -30,6 +30,8 @@ import urllib3
 import traceback
 from datetime import datetime
 import os, certifi
+from zoneinfo import ZoneInfo
+IST = ZoneInfo("Asia/Kolkata")
 os.environ['CURL_CA_BUNDLE']     = certifi.where()
 os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
 os.environ['SSL_CERT_FILE']      = certifi.where()
@@ -2721,7 +2723,7 @@ def market_live_data(request):
         CalcUsage.objects.create(name="MARKET_VIEW")
         return JsonResponse({
             "success": True,
-            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "asOf": 	datetime.now(tz=ZoneInfo("Asia/Kolkata")).isoformat(),
             "indices": indices,  "gainers": gainers,
             "losers":  losers,   "sectors": sectors,
             "breadth": breadth,
@@ -2857,7 +2859,7 @@ def us_market_live_data(request):
 
         return JsonResponse({
             "success": True,
-            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+            "asOf":    datetime.now(tz=ZoneInfo("America/New_York")).isoformat(),
             "indices": indices,
             "gainers": gainers,
             "losers":  losers,
@@ -3022,7 +3024,7 @@ def commodities_live_data(request):
 
         return JsonResponse({
             "success": True,
-            "asOf": datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "asOf": datetime.now(tz=ZoneInfo("Asia/Kolkata")).isoformat(),
             "metals": metals,
             "energy": energy,
             "baseMetals": baseMetals,
@@ -3102,7 +3104,7 @@ def crypto_live_data(request):
 
         return JsonResponse({
             "success": True,
-            "asOf":    datetime.now().strftime("%Y-%m-%dT%H:%M:%S+05:30"),
+            "asOf":    datetime.now(tz=ZoneInfo("Asia/Kolkata")).isoformat(),
             "coins":   coins,
         })
 

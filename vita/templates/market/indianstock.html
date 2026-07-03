@@ -199,8 +199,8 @@ function paintDate(){
   if(!heroDate) return;
   const today = istNow().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   if(MARKET_DATA?.asOf){
-    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
-    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} IST`;
+    const upd = new Date(MARKET_DATA.asOf).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    heroDate.innerHTML = `<b>${today}</b> &nbsp;·&nbsp; Last updated: ${upd} <span style="opacity:.7">(IST · India)</span>`;
   } else {
     heroDate.innerHTML = `<b>${today}</b>`;
   }
