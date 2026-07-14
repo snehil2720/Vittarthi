@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-Commodity &amp; Currency Live Prices Today
+{{ meta_title }}
 {% endblock %}
 
 {% block meta_description %}
-Live commodity and currency rates today: gold and silver prices in India, crude oil, base metals, USD/INR and major currency pairs, plus fuel and LPG rates. Updated daily by Vittarthi.
+{{ meta_desc }}
 {% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/comodities.css' %}">

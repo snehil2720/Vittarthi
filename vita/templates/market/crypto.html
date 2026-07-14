@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-Cryptocurrency Live Prices Today
+{{ meta_title }}
 {% endblock %}
 
 {% block meta_description %}
-Live cryptocurrency prices today: Bitcoin, Ethereum, Solana, XRP and top coins in INR and USD, with 24-hour change, market caps, movers and a quick converter. Updated by Vittarthi.
+{{ meta_desc }}
 {% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/crypto.css' %}">

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-Indian Stock Market Today : Live Sensex, Nifty & Markets Updates
+{{ meta_title }}
 {% endblock %}
 
 {% block meta_description %}
-Stay updated with the Indian Stock Market Today featuring live Sensex & Nifty updates, market trends, top gainers, losers, sector performance, and breaking stock market news.
+{{ meta_desc }}
 {% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/indianstock.css' %}">

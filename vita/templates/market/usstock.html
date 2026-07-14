@@ -2,11 +2,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-US Stock Market Today — S&amp;P 500, Dow, Nasdaq, Sectors &amp; Movers
+{{ meta_title }}
 {% endblock %}
 
 {% block meta_description %}
-Live US stock market today: S&amp;P 500, Dow Jones, Nasdaq levels, top gainers and losers, sector performance, market breadth, Treasury yields and the dollar. Updated daily by Vittarthi.
+{{ meta_desc }}
 {% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/usstock.css' %}">

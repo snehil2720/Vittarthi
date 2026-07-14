@@ -2476,16 +2476,115 @@ def llms_full_txt_view(request):
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
 def indianstock(request):
-    return render(request, 'market/indianstock.html')
+    is_open = _is_market_open_india()
+    today_str = datetime.now(tz=IST).strftime("%d %b %Y")  
+    
+    if is_open:
+        meta_title = f"Indian Stock Market Live Today {today_str} — Nifty, Sensex & NSE Markets Updates"
+        meta_desc  = (
+            f"Live Indian stock market updates for {today_str}. "
+            "Track Nifty 50, Sensex, Bank Nifty in real-time — top gainers, losers, "
+            "sector heatmap, FII/DII flows and global cues on one page."
+            "Updated daily by Vittarthi."
+        )
+    else:
+        meta_title = f"Indian Stock Market Today {today_str} — Nifty & Sensex Closing Summary"
+        meta_desc  = (
+            f"Indian stock market closing summary for {today_str}. "
+            "Nifty 50, Sensex and Bank Nifty performance, top movers, sector data, "
+            "FII/DII activity and global market cues — updated after market hours."
+            "Updated daily by Vittarthi."
+        )
+    
+    return render(request, 'market/indianstock.html', {
+        'meta_title': meta_title,
+        'meta_desc':  meta_desc,
+    })
 
 def usstock(request):
-    return render(request, 'market/usstock.html')
+    is_open = _is_market_open_us()
+    today_str = datetime.now(tz=ET).strftime("%b %d, %Y")  # e.g. "Jul 14, 2026"
+    
+    if is_open:
+        meta_title = f"US Stock Market Live Today {today_str} — S&P 500, Dow, Nasdaq, Sectors & Movers"
+        meta_desc  = (
+            f"Live US stock market updates for {today_str}. "
+            "Track S&P 500, Dow Jones, Nasdaq in real-time — top movers, sector data, "
+            "Treasury yields, dollar index and global market cues on one page."
+            "Updated daily by Vittarthi."
+        )
+    else:
+        meta_title = f"US Stock Market Today {today_str} — S&P 500, Dow & Nasdaq Close"
+        meta_desc  = (
+            f"US stock market closing data for {today_str}. "
+            "S&P 500, Dow Jones, Nasdaq performance, top gainers & losers, "
+            "sector moves, yields and the dollar — updated post-session."
+            "Updated daily by Vittarthi."
+        )
+    
+    return render(request, 'market/usstock.html', {
+        'meta_title': meta_title,
+        'meta_desc':  meta_desc,
+    })
 
 def commodities(request):
-    return render(request, 'market/commodities.html')
+    today_str = datetime.now(tz=IST).strftime("%d %b %Y")
+    hour = datetime.now(tz=IST).hour
+
+    is_active = 9 <= hour < 15 or hour >= 15  
+    session = "Live" if (9 <= hour <= 23) else "Closing"
+    
+    meta_title = f"Commodity & Currency {session} Prices {today_str} — Gold, Silver, Crude Oil"
+    meta_desc  = (
+        f"Commodity and currency rates for {today_str}. "
+        "Gold and silver prices in India (24K, 22K per 10g), Brent crude oil, "
+        "base metals (MCX), USD/INR, major forex pairs and Indian fuel prices."
+        "Updated daily by Vittarthi."
+    )
+    
+    return render(request, 'market/commodities.html', {
+        'meta_title': meta_title,
+        'meta_desc':  meta_desc,
+    })
 
 def crypto(request):
-    return render(request, 'market/crypto.html')
+    today_str = datetime.now(tz=IST).strftime("%d %b %Y")
+    hour = datetime.now(tz=IST).hour
+    
+    # Crypto trades 24/7 — morning vs evening slot
+    slot = "Morning" if 6 <= hour < 14 else "Evening" if 14 <= hour < 22 else "Late Night"
+    
+    meta_title = f"Crypto Prices Today {today_str} — Bitcoin, Ethereum & Top Coins in INR & USD"
+    meta_desc  = (
+        f"{slot} crypto market update for {today_str}. "
+        "Bitcoin, Ethereum, Solana, XRP and top cryptocurrencies — live prices in "
+        "rupees (INR) and dollars (USD), 24h change, market cap and quick converter."
+        "Updated daily by Vittarthi."
+    )
+    
+    return render(request, 'market/crypto.html', {
+        'meta_title': meta_title,
+        'meta_desc':  meta_desc,
+    })
+
+IST = ZoneInfo("Asia/Kolkata")
+ET  = ZoneInfo("America/New_York")
+
+def _is_market_open_india():
+    """True if NSE/BSE is currently open (Mon-Fri 9:15–15:30 IST)."""
+    now = datetime.now(tz=IST)
+    if now.weekday() >= 5:  # Saturday/Sunday
+        return False
+    minutes = now.hour * 60 + now.minute
+    return 555 <= minutes <= 930  # 9:15 AM to 3:30 PM
+
+def _is_market_open_us():
+    """True if NYSE/Nasdaq is currently open (Mon-Fri 9:30–16:00 ET)."""
+    now = datetime.now(tz=ET)
+    if now.weekday() >= 5:
+        return False
+    minutes = now.hour * 60 + now.minute
+    return 570 <= minutes <= 960  # 9:30 AM to 4:00 PM
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ── Global Yahoo Session (reused across requests) ──
