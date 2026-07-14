@@ -37,7 +37,11 @@ class PagesSitemap(Sitemap):
             'calculators',
             'contact',
             'aboutus',
-            'resources'
+            'resources',
+            'indianstock',
+            'usstock',
+            'commodities',
+            'crypto'
         ]
         legal_pages = LegalPage.objects.all()
         return static_pages + list(legal_pages)
