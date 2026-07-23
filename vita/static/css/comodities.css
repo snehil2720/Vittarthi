@@ -101,3 +101,161 @@
 
   .disc{background:#fff8ec;border:1px solid #f4e3c1;border-radius:var(--radius);padding:16px 18px;font-size:13px;color:#7a5a1e}
   .disc b{color:#5c4413}
+/* ─── Premium AI Section UI ─── */
+.ai-section { margin: 40px 0 50px; font-family: 'DM Sans', sans-serif; }
+.ai-header { text-align:center; margin-bottom:28px; }
+.ai-live-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2);
+  color:#6366f1; padding:6px 16px; border-radius:30px;
+  font-size:.8rem; font-weight:700; margin-bottom:12px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.ai-pulse {
+  width:8px; height:8px; background:#6366f1; border-radius:50%;
+  animation:aiPulse 2s ease-in-out infinite;
+}
+@keyframes aiPulse {
+  0%,100%{opacity:1;transform:scale(1); box-shadow: 0 0 0 0 rgba(99,102,241, 0.4);}
+  50%{opacity:.6;transform:scale(1.2); box-shadow: 0 0 0 6px rgba(99,102,241, 0);}
+}
+.ai-title { font-size:1.8rem; font-weight:800; margin:0 0 6px; letter-spacing: -0.5px; }
+.ai-sub   { font-size:.9rem; opacity:.6; margin:0; }
+/* ─── Tabs / Carousel ─── */
+.ai-tabs-row {
+  display:flex; justify-content: center; gap:10px; overflow-x:auto; padding-bottom:16px;
+  margin-bottom:20px; scrollbar-width:none;
+}
+.ai-tabs-row::-webkit-scrollbar { display:none; }
+.ai-tab-btn {
+  flex-shrink:0; display:inline-flex; align-items:center; gap:6px;
+  padding:8px 20px; border-radius:24px;
+  border:1px solid rgba(0,0,0,0.08); background:#f8f9fa;
+  color:#444; font-size:.85rem; font-weight:600;
+  cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ai-tab-btn:hover {transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.ai-tab-active {
+  background:#111; border-color:#111; color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+}
+.ai-today-dot {
+  width:6px; height:6px; background:#4ade80; border-radius:50%;
+  box-shadow: 0 0 6px #4ade80;
+}
+.ai-today-lbl {
+  font-size:.65rem; background:rgba(255,255,255,.2);
+  padding:2px 8px; border-radius:12px; margin-left:4px; text-transform: uppercase;
+}
+/* ─── Slides ─── */
+.ai-slide       { display:none; }
+.ai-slide-active{ display:block; animation:aiFadeIn .4s ease-out forwards; }
+@keyframes aiFadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+/* ─── 50/50 Split Layout ─── */
+.ai-split-grid {
+  display:grid;
+  grid-template-columns: 1fr 1px 1fr;
+  min-height:300px;
+  background:#ffffff;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+  overflow:hidden;
+}
+.ai-panel { padding:32px; }
+.ai-panel-top {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.ai-icon-box {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+}
+.bg-blue { background: rgba(59,130,246,0.1); }
+.bg-amber { background: rgba(245,158,11,0.1); }
+.ai-panel-title{ font-size:1.15rem; font-weight:800; color:#111; }
+.ai-panel-sub  { font-size:.8rem; color:#666; margin-top:2px; font-weight:500; }
+.ai-vdivider { background:rgba(0,0,0,.04); width:1px; margin: 20px 0;}
+/* ─── Typography Inside AI Text ─── */
+.ai-panel-body {
+  font-size:.95rem; line-height:1.7; color:#444; font-weight:400;
+}
+.ai-panel-body p  { margin:0 0 14px; }
+.ai-panel-body p:last-child { margin-bottom:0; }
+.ai-panel-body ul { padding-left:20px; margin:10px 0 14px; }
+.ai-panel-body li { margin-bottom:8px; position:relative; }
+.ai-panel-body li::marker { color: #888; }
+.ai-panel-body h3 { display:none; } /* Hide raw H3 headings */
+.ai-body-green strong { color:#059669; font-weight:700; background:rgba(5,150,105,0.05); padding:0 4px; border-radius:4px; }
+.ai-body-amber strong { color:#d97706; font-weight:700; background:rgba(217,119,6,0.05); padding:0 4px; border-radius:4px; }
+/* ─── Timestamp ─── */
+.ai-ts {
+  text-align:right; font-size:.75rem; color:#888; font-weight:500;
+  margin-top:16px; padding-right:10px;
+}
+/* Panel Time Badge */
+.ai-panel-time {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+}
+
+/* Gemini Sentiment Badge */
+.ai-sentiment {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.ai-sentiment.up { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.ai-sentiment.down { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.ai-sentiment.neutral { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+/* 1. Futuristic AI Glow Background */
+.ai-section {
+  position: relative;
+  z-index: 1;
+}
+.ai-section::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 200px;
+  background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(255,255,255,0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 2. Premium Gradient Title */
+.ai-title {
+  background: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* 3. Panel Hover Interaction */
+.ai-panel {
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+/* ─── Mobile ─── */
+@media(max-width:768px){
+  .ai-split-grid {
+    grid-template-columns:1fr;
+    grid-template-rows:auto 1px auto;
+  }
+  .ai-vdivider { width:100%; height:1px; margin:0; }
+  .ai-panel { padding:24px 20px; }
+  .ai-tabs-row { justify-content: flex-start; padding-left: 10px; }
+}

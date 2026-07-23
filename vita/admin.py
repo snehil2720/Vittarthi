@@ -1,11 +1,13 @@
 from django.contrib import admin
-from .models import Blog,PrimaryCategory,SecondaryCategory,ContactMessage,PrivacyPolicy,LegalPage,Author,CustomUser
+from .models import Blog,PrimaryCategory,SecondaryCategory,ContactMessage,PrivacyPolicy,LegalPage,Author,CustomUser,MarketSummary
 from django.contrib.auth.admin import UserAdmin
 admin.site.register(SecondaryCategory)
 admin.site.register(PrimaryCategory)
 admin.site.register(PrivacyPolicy)
 admin.site.register(LegalPage)
 admin.site.register(Author)
+admin.site.register(MarketSummary)
+
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'status', 'is_featured', 'created_at')

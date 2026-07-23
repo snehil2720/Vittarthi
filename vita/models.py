@@ -322,3 +322,23 @@ def get_absolute_url(self):
             'slug': self.slug
         }
     )
+
+from django.utils import timezone
+
+class MarketSummary(models.Model):
+    MARKET_CHOICES = [
+        ('india', 'Indian Market'),
+        ('us', 'US Market'),
+        ('crypto', 'Crypto Market'),
+        ('commodities', 'Commodities'),
+    ]
+    
+    market_type = models.CharField(max_length=20, choices=MARKET_CHOICES)
+    date_created = models.DateTimeField(default=timezone.now)
+    summary_html = models.TextField()
+    
+    class Meta:
+        ordering = ['-date_created']
+        
+    def __str__(self):
+        return f"{self.market_type} - {self.date_created.strftime('%d %b %Y')}"

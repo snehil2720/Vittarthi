@@ -27,7 +27,131 @@
     <p class="updated" id="heroDate">—</p>
   </div>
 </div>
+{% if summaries %}
+<section class="ai-section">
+  <!-- Header -->
+  <div class="ai-header">
+    <div class="ai-live-badge"><span class="ai-pulse"></span> AI-Powered Analysis</div>
+    <h2 class="ai-title">Market Intelligence</h2>
+    <p class="ai-sub">Driven by real-time data &amp; live news · Updates twice daily</p>
+  </div>
+  <!-- Date Tabs (Carousel Navigation) -->
+  <div class="ai-tabs-row" id="aiTabsRow">
+    {% for s in summaries %}
+    <button class="ai-tab-btn {% if forloop.first %}ai-tab-active{% endif %}"
+            onclick="aiShowSlide({{ forloop.counter0 }})"
+            data-ai-idx="{{ forloop.counter0 }}">
+      {% if forloop.first %}<span class="ai-today-dot"></span>{% endif %}
+      {{ s.date_created|date:"d M" }}
+      {% if forloop.first %}<span class="ai-today-lbl">Today</span>{% endif %}
+    </button>
+    {% endfor %}
+  </div>
+  <!-- Slides -->
+  <div class="ai-slides-container">
+    {% for s in summaries %}
+    <div class="ai-slide {% if forloop.first %}ai-slide-active{% endif %}" id="ai-slide-{{ forloop.counter0 }}">
+      
+      <!-- HIDDEN TEMPLATE: Yahan raw HTML safe rahega, screen pe ganda nahi dikhega -->
+      <template class="ai-raw-html">{{ s.summary_html|safe }}</template>
+    <!-- 50 / 50 SPLIT GRID -->
+    <div class="ai-split-grid">
+      
+      <!-- LEFT — Market Wrap-Up (Numbers) -->
+      <div class="ai-panel ai-panel-left">
+        <div class="ai-panel-top">
+          <div class="ai-icon-box bg-blue">📊</div>
+          <div style="flex-grow: 1;">
+            <div class="ai-panel-title">Market Wrap-Up</div>
+            <div class="ai-panel-sub">Data-driven summary</div>
+          </div>
+          <!-- Right side timestamp -->
+          <div class="ai-panel-time">
+            <span>⏱️ {{ s.date_created|date:"h:i A" }}</span>
+          </div>
+        </div>
+        <div class="ai-panel-body ai-body-green ai-wrap-content">
+          <!-- JS yahan left side ka content daalega -->
+        </div>
+      </div>
 
+      <!-- Vertical Divider -->
+      <div class="ai-vdivider"></div>
+
+      <!-- RIGHT — Market Pulse & Outlook (News) -->
+      <div class="ai-panel ai-panel-right">
+        <div class="ai-panel-top">
+          <div class="ai-icon-box bg-amber">🔮</div>
+          <div style="flex-grow: 1;">
+            <div class="ai-panel-title">Pulse &amp; Outlook</div>
+            <div class="ai-panel-sub">News-driven prediction</div>
+          </div>
+          <!-- Right side timestamp -->
+          <div class="ai-panel-time">
+            <span>⏱️ {{ s.date_created|date:"h:i A" }}</span>
+          </div>
+        </div>
+        <div class="ai-panel-body ai-body-amber ai-pulse-content">
+          <!-- JS yahan right side ka content daalega -->
+        </div>
+      </div>
+
+    </div><!-- /.ai-split-grid -->
+      <!-- Timestamp -->
+      <div class="ai-ts">
+        ✦ Generated: {{ s.date_created|date:"d M Y · H:i" }} IST
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+<script>
+// ── AI Carousel Navigation ────────────────────────────────
+function aiShowSlide(idx){
+  document.querySelectorAll('.ai-slide').forEach(s=>s.classList.remove('ai-slide-active'));
+  document.querySelectorAll('.ai-tab-btn').forEach(t=>t.classList.remove('ai-tab-active'));
+  document.getElementById('ai-slide-'+idx)?.classList.add('ai-slide-active');
+  document.querySelector(`[data-ai-idx="${idx}"]`)?.classList.add('ai-tab-active');
+}
+// ── Clean & Split AI Content (NO ESCAPING BUGS) ────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.ai-slide').forEach(slide => {
+    // Hidden template se raw HTML nikalo
+    const templateEl = slide.querySelector('.ai-raw-html');
+    const wrapEl = slide.querySelector('.ai-wrap-content');
+    const pulseEl = slide.querySelector('.ai-pulse-content');
+    
+    if(!templateEl || !wrapEl || !pulseEl) return;
+    let rawHTML = templateEl.innerHTML;
+    
+    // Split logic: '🔮' emoji ke paas se <h3> tag ko dhundo
+    const splitIndex = rawHTML.indexOf('🔮');
+    
+    if(splitIndex === -1){
+      // Agar API ne prediction tag nahi bheja toh sara text left me
+      wrapEl.innerHTML = rawHTML;
+      pulseEl.innerHTML = '<p style="color:#888;">Outlook not available for this session.</p>';
+    } else {
+      // '🔮' se pehle wala <h3> dhundo
+      let h3Start = rawHTML.lastIndexOf('<h3>', splitIndex);
+      if(h3Start === -1) h3Start = rawHTML.lastIndexOf('<h3', splitIndex); // In case of attributes
+      if(h3Start === -1) h3Start = splitIndex; // Fallback
+      
+      let leftPart = rawHTML.substring(0, h3Start).trim();
+      let rightPart = rawHTML.substring(h3Start).trim();
+      
+      wrapEl.innerHTML = leftPart;
+      pulseEl.innerHTML = rightPart;
+    }
+    
+    // Dono panel se <h3> tags hata do kyunki UI mein already headings hain
+    [wrapEl, pulseEl].forEach(el => {
+      el.querySelectorAll('h3').forEach(h => h.remove());
+    });
+  });
+});
+</script>
+{% endif %}
 <!-- ===================== TICKER ===================== -->
 <div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
 

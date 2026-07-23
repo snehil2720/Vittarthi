@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage,Author
+from .models import Blog,CalcUsage,PrimaryCategory,SecondaryCategory,PrivacyPolicy,CustomUser,ContactMessage,LegalPage,Author,MarketSummary
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
@@ -2495,10 +2495,18 @@ def indianstock(request):
             "FII/DII activity and global market cues — updated after market hours."
             "Updated daily by Vittarthi."
         )
-    
+
+    # Last 7 days ki summaries fetch karo (carousel ke liye)
+    summaries = list(
+        MarketSummary.objects.filter(market_type='india')
+        .order_by('-date_created')[:7]
+        .values('summary_html', 'date_created')
+    )
+
     return render(request, 'market/indianstock.html', {
         'meta_title': meta_title,
         'meta_desc':  meta_desc,
+        'summaries': summaries,   
     })
 
 def usstock(request):
@@ -2521,10 +2529,15 @@ def usstock(request):
             "sector moves, yields and the dollar — updated post-session."
             "Updated daily by Vittarthi."
         )
-    
+    summaries = list(
+        MarketSummary.objects.filter(market_type='us')
+        .order_by('-date_created')[:7]
+        .values('summary_html', 'date_created')
+    )
     return render(request, 'market/usstock.html', {
         'meta_title': meta_title,
         'meta_desc':  meta_desc,
+        'summaries': summaries,
     })
 
 def commodities(request):
@@ -2541,10 +2554,15 @@ def commodities(request):
         "base metals (MCX), USD/INR, major forex pairs and Indian fuel prices."
         "Updated daily by Vittarthi."
     )
-    
+    summaries = list(
+        MarketSummary.objects.filter(market_type='commodities')
+        .order_by('-date_created')[:7]
+        .values('summary_html', 'date_created')
+    )
     return render(request, 'market/commodities.html', {
         'meta_title': meta_title,
         'meta_desc':  meta_desc,
+        'summaries': summaries,
     })
 
 def crypto(request):
@@ -2561,10 +2579,15 @@ def crypto(request):
         "rupees (INR) and dollars (USD), 24h change, market cap and quick converter."
         "Updated daily by Vittarthi."
     )
-    
+    summaries = list(
+        MarketSummary.objects.filter(market_type='crypto')
+        .order_by('-date_created')[:7]
+        .values('summary_html', 'date_created')
+    )
     return render(request, 'market/crypto.html', {
         'meta_title': meta_title,
         'meta_desc':  meta_desc,
+        'summaries': summaries,
     })
 
 IST = ZoneInfo("Asia/Kolkata")
