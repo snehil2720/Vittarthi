@@ -478,11 +478,23 @@ class Command(BaseCommand):
             if summary_html.startswith("```"):
                 summary_html = summary_html.split("```")[-2].replace("html", "").strip()
 
-            # Step 5: Database mein save
-            MarketSummary.objects.create(market_type=market, summary_html=summary_html)
-            self.stdout.write(self.style.SUCCESS(f'✅ Summary with Predictions saved for {market}!'))
-
-            # Step 6: 7 din purane delete karo
+            today = timezone.localdate()  
+            
+            existing_summary = MarketSummary.objects.filter(
+                market_type=market,
+                date_created__date=today
+            ).first()
+            if existing_summary:
+                # Agar aaj ki summary hai, toh usko UPDATE kar do
+                existing_summary.summary_html = summary_html
+                existing_summary.date_created = timezone.now()  # Time ko latest kar do
+                existing_summary.save()
+                self.stdout.write(self.style.SUCCESS(f'✅ Summary updated for today ({market})!'))
+            else:
+                # Agar aaj ki koi summary nahi hai (din ka pehla run), toh CREATE karo
+                MarketSummary.objects.create(market_type=market, summary_html=summary_html)
+                self.stdout.write(self.style.SUCCESS(f'✅ New summary created for today ({market})!'))
+            # Step 6: 7 din purane delete karo (Ye waisa hi rahega)
             seven_days_ago = timezone.now() - timedelta(days=7)
             deleted, _ = MarketSummary.objects.filter(
                 market_type=market,
