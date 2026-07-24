@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 from vita.models import MarketSummary  
 from vita.views import _fetch_fii_dii
+import urllib.parse 
 # ─── 1. News Fetcher (New Addition) ──────────────────────────────────────────
 
 def _fetch_news(market):
@@ -37,17 +38,18 @@ def _fetch_news(market):
     }
 
     query = queries.get(market, "Financial Markets")
+    safe_query = urllib.parse.quote(f"({query}) when:1d")
 
     if market in ("india", "commodities"):
         rss_url = (
             "https://news.google.com/rss/search?"
-            f"q={query}+when:1d"
+            f"q={safe_query}+when:1d"
             "&hl=en-IN&gl=IN&ceid=IN:en"
         )
     else:
         rss_url = (
             "https://news.google.com/rss/search?"
-            f"q={query}+when:1d"
+            f"q={safe_query}+when:1d"
             "&hl=en-US&gl=US&ceid=US:en"
         )
 
